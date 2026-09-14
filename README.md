@@ -6,7 +6,7 @@ git syntax
 3. git status    -> check what branch are u in
 4. git checkout branch-name  -> let u switch branch
 
-git syntax on creating a branch
+git syntax on creating a branch 
 1. git checkout main  -. switch to main branch
 2. git pull   -> pull all recent changes
 3. git checkout -b new-branch-name   -> creates and jumps into your new branch
