@@ -29,7 +29,7 @@ export function AudioProvider({ children }) {
 
     bgmRef.current = bgm;
 
-    //clicking sound 
+    //clicking sound
     const clicks = new Sound('click', Sound.MAIN_BUNDLE,(error) =>{
       if (error) {
         console.log('did not load', error);
@@ -37,7 +37,7 @@ export function AudioProvider({ children }) {
 
     });
       clickref.current= clicks;
-      
+
 
     return () => {
       bgm.stop(() => bgm.release());
@@ -65,11 +65,11 @@ const Playclick = () => {
 
   return (
     <Audiostore.Provider
-      value={{ 
-        masterVolume, 
+      value={{
+        masterVolume,
         musicVolume,
         soundVolume,
-        changeMasterVolume, 
+        changeMasterVolume,
         changeMusicVolume,
         changeSoundVolume,
         Playclick
