@@ -296,4 +296,17 @@ export default StyleSheet.create({
     fontWeight: "bold",
     letterSpacing: 0.5,
   },
+//------------------------------menu-------------------------------------
+menuOverlay: {
+  position: 'absolute',
+  top: 12,
+  left: 20,
+  flexDirection: 'row',
+  gap: 15,
+  zIndex: 20,
+},
+menuIcon: {
+  width: 40,
+  height: 40,
+},
 });

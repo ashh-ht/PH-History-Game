@@ -4,12 +4,23 @@ import { useGameProgress } from "../../GameProgress";
 import styles from "../../Styles/GameScreen/StyleCompilation";
 import { Chapter1 } from "./StoryScreen/Chapter1";
 
-
-
+function GameplayMenuOverlay({ navigation }) {
+  return (
+    <View style={styles.menuOverlay}>
+      <TouchableOpacity onPress={() => navigation.navigate('Second')}>
+        <Image source={require("../../assets/icons/Menu_icon.png")} style={styles.menuIcon} />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('Journal')}>
+        <Image source={require("../../assets/icons/journal_closed.png")} style={styles.menuIcon} />
+      </TouchableOpacity>
+    </View>
+  );
+}
 
 //Main render engine
 function PartRenderer(props) {
   const { sceneData, chapterNumber, partNumber, isLastPart } = props;
+  const navigation = props.navigation;
 
   //game.scene = where the player is, from App.jsx, shared sa lahat ng screens
   //sceneIdx = same value lang, but local copy so no lag for taps
@@ -17,6 +28,7 @@ function PartRenderer(props) {
   const [sceneIdx, setSceneIdx] = useState(game.scene);
   const [picked, setPicked] = useState(null); // which choice button player picked
   const [quizAnswer, setQuizAnswer] = useState(null);
+
   useEffect(() => {
     game.setChapter(chapterNumber);
     game.setPart(partNumber);
@@ -30,7 +42,7 @@ function PartRenderer(props) {
 
   const goToIndex = (i) => {
     setPicked(null);
-    setQuizAnswer(null); 
+    setQuizAnswer(null);
     setSceneIdx(i);
     game.setScene(i);
   };
@@ -44,8 +56,16 @@ function PartRenderer(props) {
     }
   }, [sceneIdx, current]);
 
+  // wraps every rendered outcome with the settings/journal overlay
+  const withOverlay = (node) => (
+    <>
+      {node}
+      <GameplayMenuOverlay navigation={navigation} />
+    </>
+  );
+
   if (!hasMoreScenes) {
-    return (
+    return withOverlay(
       <View style={styles.container}>
         <Text style={styles.dialogueText}>Part {partNumber} complete!</Text>
         <TouchableOpacity
@@ -67,51 +87,52 @@ function PartRenderer(props) {
 
   switch (current.type) {
     case "quiz": {
-  const isAnswered = quizAnswer !== null;
-  const isCorrect = quizAnswer === current.correctIndex;
+      const isAnswered = quizAnswer !== null;
+      const isCorrect = quizAnswer === current.correctIndex;
 
-  return (
-    <View style={styles.choiceScreen}>
-      <View style={styles.choiceParchmentWrapper}>
-        <ImageBackground
-          source={require("../../assets/foreground/narration_box.png")}
-          style={styles.choiceParchmentBox}
-          resizeMode="stretch"
-        >
-          <Text style={styles.choiceQuestion}>{current.question}</Text>
-          {isAnswered && (
-            <Text style={styles.choicePrompt}>{isCorrect ? "Correct!" : "Not quite..."}</Text>
-          )}
-        </ImageBackground>
-      </View>
-
-      <View style={styles.choiceButtonsRow}>
-        {current.options.map((option, index) => (
-          <TouchableOpacity
-            key={index}
-            style={styles.choiceImageButton}
-            onPress={() => !isAnswered && setQuizAnswer(index)}
-            activeOpacity={0.85}
-          >
+      return withOverlay(
+        <View style={styles.choiceScreen}>
+          <View style={styles.choiceParchmentWrapper}>
             <ImageBackground
-              source={require("../../assets/buttons/choice_button.png")}
-              style={styles.choiceImageButtonBg}
+              source={require("../../assets/foreground/narration_box.png")}
+              style={styles.choiceParchmentBox}
               resizeMode="stretch"
             >
-              <Text style={styles.choiceButtonText}>{option}</Text>
+              <Text style={styles.choiceQuestion}>{current.question}</Text>
+              {isAnswered && (
+                <Text style={styles.choicePrompt}>{isCorrect ? "Correct!" : "Not quite..."}</Text>
+              )}
             </ImageBackground>
-          </TouchableOpacity>
-        ))}
-      </View>
+          </View>
 
-      {isAnswered && (
-        <TouchableOpacity style={styles.arrowButton} onPress={goNext}>
-          <Image source={require("../../assets/icons/arrow_next.png")} style={styles.arrowImage} />
-        </TouchableOpacity>
-      )}
-    </View>
-  );
-}
+          <View style={styles.choiceButtonsRow}>
+            {current.options.map((option, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.choiceImageButton}
+                onPress={() => !isAnswered && setQuizAnswer(index)}
+                activeOpacity={0.85}
+              >
+                <ImageBackground
+                  source={require("../../assets/buttons/choice_button.png")}
+                  style={styles.choiceImageButtonBg}
+                  resizeMode="stretch"
+                >
+                  <Text style={styles.choiceButtonText}>{option}</Text>
+                </ImageBackground>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          {isAnswered && (
+            <TouchableOpacity style={styles.arrowButton} onPress={goNext}>
+              <Image source={require("../../assets/icons/arrow_next.png")} style={styles.arrowImage} />
+            </TouchableOpacity>
+          )}
+        </View>
+      );
+    }
+
     case "system": {
       // To do: swap grey bg for real bg.png soon
       const content = (
@@ -132,18 +153,18 @@ function PartRenderer(props) {
       );
 
       if (current.background) {
-        return (
+        return withOverlay(
           <ImageBackground source={current.background} style={styles.systemScreen} resizeMode="cover">
             {content}
           </ImageBackground>
         );
       }
-      return <View style={styles.systemScreen}>{content}</View>;
+      return withOverlay(<View style={styles.systemScreen}>{content}</View>);
     }
 
     // auto-skipped, never actually shows; might be used for auto saving idk
     case "scene":
-      return <View style={styles.background} />;
+      return withOverlay(<View style={styles.background} />);
 
     case "narrator": {
       const content = (
@@ -177,21 +198,18 @@ function PartRenderer(props) {
       );
 
       if (current.background) {
-        return (
+        return withOverlay(
           <ImageBackground source={current.background} style={styles.background} resizeMode="cover">
             {content}
           </ImageBackground>
         );
       }
-      return <View style={styles.background}>{content}</View>;
+      return withOverlay(<View style={styles.background}>{content}</View>);
     }
 
 //-------------------------------------------------------------------------------------------
 //Choice
-
     case "choice": {
-
-      
       //nothing picked yet, show both buttons
       if (picked === null) {
         const content = (
@@ -229,13 +247,13 @@ function PartRenderer(props) {
         );
 
         if (current.background) {
-          return (
+          return withOverlay(
             <ImageBackground source={current.background} style={styles.choiceScreen} resizeMode="cover">
               {content}
             </ImageBackground>
           );
         }
-        return <View style={styles.choiceScreen}>{content}</View>;
+        return withOverlay(<View style={styles.choiceScreen}>{content}</View>);
       }
 
       //player picked a choice, show the response
@@ -263,13 +281,13 @@ function PartRenderer(props) {
       );
 
       if (current.background) {
-        return (
+        return withOverlay(
           <ImageBackground source={current.background} style={styles.background} resizeMode="cover">
             {responseContent}
           </ImageBackground>
         );
       }
-      return <View style={styles.background}>{responseContent}</View>;
+      return withOverlay(<View style={styles.background}>{responseContent}</View>);
     }
 
 //-------------------------------------------------------------------------------------------
@@ -310,13 +328,13 @@ function PartRenderer(props) {
       );
 
       if (current.background) {
-        return (
+        return withOverlay(
           <ImageBackground source={current.background} style={styles.background} resizeMode="cover">
             {content}
           </ImageBackground>
         );
       }
-      return <View style={styles.background}>{content}</View>;
+      return withOverlay(<View style={styles.background}>{content}</View>);
     }
   }
 }
@@ -332,6 +350,7 @@ export function Chap1Part1Screen({ navigation, ...props }) {
       isLastPart={false}
       onPartComplete={() => navigation.navigate('Part2')}
       onChapterComplete={() => navigation.navigate('ChapterSelect')}
+      navigation={navigation}
       {...props}
     />
   );
@@ -346,6 +365,7 @@ export function Chap1Part2Screen({ navigation, ...props }) {
       isLastPart={false}
       onPartComplete={() => navigation.navigate('Part3')}
       onChapterComplete={() => navigation.navigate('ChapterSelect')}
+      navigation={navigation}
       {...props}
     />
   );
@@ -360,6 +380,7 @@ export function Chap1Part3Screen({ navigation, ...props }) {
       isLastPart={false}
       onPartComplete={() => navigation.navigate('Part4')}
       onChapterComplete={() => navigation.navigate('ChapterSelect')}
+      navigation={navigation}
       {...props}
     />
   );
@@ -374,6 +395,7 @@ export function Chap1Part4Screen({ navigation, ...props }) {
       isLastPart={false}
       onPartComplete={() => navigation.navigate('Part5')}
       onChapterComplete={() => navigation.navigate('ChapterSelect')}
+      navigation={navigation}
       {...props}
     />
   );
@@ -388,6 +410,7 @@ export function Chap1Part5Screen({ navigation, ...props }) {
       isLastPart={false}
       onPartComplete={() => navigation.navigate('Part6')}
       onChapterComplete={() => navigation.navigate('ChapterSelect')}
+      navigation={navigation}
       {...props}
     />
   );
@@ -402,6 +425,7 @@ export function Chap1Part6Screen({ navigation, ...props }) {
       isLastPart={false}
       onPartComplete={() => navigation.navigate('Part7')}
       onChapterComplete={() => navigation.navigate('ChapterSelect')}
+      navigation={navigation}
       {...props}
     />
   );
@@ -416,6 +440,7 @@ export function Chap1Part7Screen({ navigation, ...props }) {
       isLastPart={false}
       onPartComplete={() => navigation.navigate('Part8')}
       onChapterComplete={() => navigation.navigate('ChapterSelect')}
+      navigation={navigation}
       {...props}
     />
   );
@@ -430,6 +455,7 @@ export function Chap1Part8Screen({ navigation, ...props }) {
       isLastPart={true}
       onPartComplete={() => navigation.navigate('ChapterSelect')}
       onChapterComplete={() => navigation.navigate('ChapterSelect')}
+      navigation={navigation}
       {...props}
     />
   );

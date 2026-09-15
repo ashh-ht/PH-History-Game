@@ -41,6 +41,8 @@ function chapter1selection({ navigation }) {
     setShowBackBtn(scrollY < 50);
   };
 
+  const isUnlocked = (i) => i === 0 || i < part;
+
   return (
     <ImageBackground
       source={require('../../assets/Parts_bg.png')}
@@ -65,11 +67,10 @@ function chapter1selection({ navigation }) {
           <Sound_clicks
             key={i}
             onPress={() => {
-              if (i < part) navigation.navigate(PART_ROUTES[i]);
+              if (isUnlocked(i)) navigation.navigate(PART_ROUTES[i]);
             }}
           >
-            {/* part unlocked the part 1 */}
-            <Image source={i === 0 || i < part ? image : LOCK_IMAGES[i]} style={styles.button} />
+            <Image source={isUnlocked(i) ? image : LOCK_IMAGES[i]} style={styles.button} />
           </Sound_clicks>
         ))}
       </ScrollView>
