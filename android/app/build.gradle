@@ -44,10 +44,16 @@ android {
     androidResources {
         ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:!CVS:!thumbs.db:!picasa.ini:!*~'
     }
+
+    plugins {
+        id 'com.android.application'
+        id 'com.google.gms.google-services'
+    }
 }
 
 dependencies {
     implementation("com.facebook.react:react-android")
+    implementation platform('com.google.firebase:firebase-bom:34.19.0')
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
