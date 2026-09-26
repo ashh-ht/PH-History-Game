@@ -42,6 +42,8 @@ async function getCheckpoints() {
     }
 }
 
+//for restoring ng gameplay progress if the player clicks on a specific save history
+//when to call: when the user clicks on a specific save history
 async function restoreCheckpoint(id){
     try {
         const allChcekpoints = await getCheckpoints();
