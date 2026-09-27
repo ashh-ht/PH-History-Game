@@ -52,7 +52,7 @@
         "chapter": "1",
         "part": "1",
         "date": "May 3, 1570",
-        "content": " Martín de Goiti and Juan de Salcedo depart Panay for Luzon with two ships (the San Miguel and the Tortuga) and fifteen native proas."
+        "content": "Martín de Goiti and Juan de Salcedo depart Panay for Luzon with two ships (the San Miguel and the Tortuga) and fifteen native proas."
       },
       {
         "chapter": "1",
@@ -88,7 +88,7 @@
         "chapter": "1",
         "part": "3",
         "date": "June 26, 1892",
-        "content": " Dr. José Rizal returns to Manila from Hong Kong, having concluded that reform had to be pursued directly in the homeland."
+        "content": "Dr. José Rizal returns to Manila from Hong Kong, having concluded that reform had to be pursued directly in the homeland."
       },
       {
         "chapter": "1",
@@ -316,7 +316,7 @@
         "chapter": "1",
         "part": "8",
         "date": "December 21, 1898",
-        "content": " President William McKinley issues the Benevolent Assimilation Proclamation, declaring U.S. sovereignty over the Philippines before the Senate has even ratified the Treaty of Paris."
+        "content": "President William McKinley issues the Benevolent Assimilation Proclamation, declaring U.S. sovereignty over the Philippines before the Senate has even ratified the Treaty of Paris."
       },
       {
         "chapter": "1",
@@ -337,213 +337,250 @@
     "content": [
       {
         "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
+        "part": "1",
+        "name": "Rajah Tupas",
+        "content": "Chief of Cebu who protected his people by evacuating them to the hills and launching a passive starvation blockade rather than accepting vassalage immediately."
+      },
+      {
+        "chapter": "1",
+        "part": "1",
+        "name": "Martín de Goiti",
+        "content": "Legazpi's Master-of-Camp; commanded pacification and foraging expeditions across Cebu, Panay, Negros, and Leyte. Led the May 3, 1570 expedition to Luzon, capturing Maynila and burning fifteen hundred homes."
+      },
+      {
+        "chapter": "1",
+        "part": "1",
+        "name": "Juan de Salcedo",
+        "content": "Legazpi's 21-year-old grandson; won native sympathy through personal valor and diplomacy. At 23, led a four-month pacification campaign around northern Luzon, Pangasinan, and the eastern coasts. In his will, he named the native Filipinos of his Vigan encomienda as heirs to most of his estate."
+      },
+      {
+        "chapter": "1",
+        "part": "2",
+        "name": "Francisco Dagohoy (Francisco Sendrijas)",
+        "content": "A Boholano cabeza de barangay who led the longest rebellion in Philippine history (1744–1829). Used his skill in guerrilla warfare and personal charisma to mobilize up to 20,000 followers deep in the Bohol mountains to escape colonial exploitation, unfair taxes, and forced labor."
+      },
+      {
+        "chapter": "1",
+        "part": "2",
+        "name": "Father Gaspar Morales",
+        "content": "Jesuit parish priest of Inabanga, Bohol. His refusal to bury Dagohoy's brother — who died on Morales's own orders while pursuing a fugitive — was the immediate catalyst for the rebellion. Later captured and executed by Dagohoy's forces."
+      },
+      {
+        "chapter": "1",
+        "part": "2",
+        "name": "Captain Manuel Sanz",
+        "content": "Spanish officer who landed in Bohol in April 1828 and spent over a year, with 6,000 native troops, systematically subduing the Boholano mountain strongholds."
+      },
+      {
+        "chapter": "1",
+        "part": "2",
+        "name": "Governor-General Mariano Ricafort",
+        "content": "Governor-General of the Philippines (1825–1830), tasked with reclaiming Bohol. Combined prolonged military campaigns with political amnesty, ultimately pardoning and resettling 19,420 survivors instead of continuing to fight."
+      },
+      {
+        "chapter": "1",
+        "part": "3,6",
+        "name": "Dr. José Rizal",
+        "content": "Founder of La Liga Filipina; influenced by Rousseau's social contract theory, he believed Filipinos needed to build collective civic virtue to earn independence. Author of Noli Me Tángere and El Filibusterismo, whose exposure of clerical corruption inspired national consciousness. Arrested and exiled to Dapitan in 1892; though he declined Bonifacio's invitation to join the Katipunan, he was implicated in the 1896 uprising and executed at Bagumbayan on December 30, 1896 — commemorated annually as Rizal Day."
+      },
+      {
+        "chapter": "1",
+        "part": "3,4,6,7",
+        "name": "Andrés Bonifacio",
+        "content": "Born to a working-class family in Tondo on November 30, 1863; self-taught. A founding member of La Liga Filipina, he became convinced by Rizal's exile that peaceful petitioning was futile, and co-founded the Katipunan (KKK) the same evening Rizal was exiled. Bonifacio unified the movement under the inclusive concept of the Tagalog nation (Katagalugan), organized the Katipunan's first national cabinet, directed its first military attacks, and — after the society's exposure — established guerrilla networks north of the Pasig River, becoming known contemporarily as president of the 'Tagalog Republic' (Republika ng Katagalugan). He traveled to Cavite to mediate the Magdiwang–Magdalo rivalry, but after annulling the Tejeros Convention's contested elections, he withdrew to Naik. He was arrested at Limbon, court-martialed for treason, and executed in the Maragondon mountains on May 10, 1897. He is honored today as a foremost national hero, celebrated annually on Bonifacio Day."
+      },
+      {
+        "chapter": "1",
+        "part": "3,8",
+        "name": "Apolinario Mabini",
+        "content": "A brilliant, self-taught lawyer and writer, born the son of an unlettered farmer. Paralyzed by polio — which initially led Spanish authorities to dismiss him as harmless during the 1896 outbreak — Mabini's political career launched during the 1893 revival of La Liga Filipina, where he served as Supreme Council secretary. When the Liga dissolved, he founded the Junta de Compromisarios (Cuerpo de Compromisarios) to keep funding La Solidaridad, and served as Grand Orator of the Gran Consejo Regional de Filipinas in December 1893. In 1898, at Aguinaldo's insistence, Mabini became the President's chief private advisor, advising the shift from one-person dictatorial rule to a constitutional Revolutionary Government, and was appointed the first cabinet president (Presidente del Consejo de Gobierno) of the First Philippine Republic. Regarded as 'the brains of the First Philippine Republic,' he reorganized provincial and municipal administration, authored El Verdadero Decálogo (May 1898), and envisioned the revolution as part of a broader Pan-Malay social emancipation. Refusing to swear allegiance to the United States, he was exiled to Guam in 1901 alongside Artemio Ricarte, only relenting in 1903 due to failing health."
+      },
+      {
+        "chapter": "1",
+        "part": "3",
+        "name": "Deodato Arellano",
+        "content": "A reformist clerk at the Spanish military arsenal (Maestranza de Artillería) in Manila, married to Hilaria, sister of Marcelo H. del Pilar. Founding secretary of La Liga Filipina (July 3, 1892), and chosen as the first president of the Katipunan's Supreme Council in October 1892."
+      },
+      {
+        "chapter": "1",
+        "part": "3",
+        "name": "Eulogio Despujol",
+        "content": "Governor-General who ordered Rizal's arrest at Fort Santiago (July 6, 1892) on trumped-up charges, then his exile to Dapitan the following day — an act that directly catalyzed the founding of the Katipunan that same evening."
+      },
+      {
+        "chapter": "1",
+        "part": "3",
+        "name": "Domingo Franco",
+        "content": "Reformist lawyer and merchant, born in Mambusao, Capiz (August 4, 1856). Studied law at the University of Santo Tomás, where he became close friends with Mabini and a fellow member of Masonic lodge Logia Balagtas No. 149. Entrusted by Rizal with La Liga Filipina's documents, he was elected president of the revived Liga (April 3, 1893). Following the Katipunan's exposure, he was arrested and executed by firing squad at Bagumbayan on January 11, 1897 — one of the Thirteen Martyrs of Bagumbayan."
+      },
+      {
+        "chapter": "1",
+        "part": "3",
+        "name": "Valentin Diaz",
+        "content": "Founding Katipunan member, born in Paoay, Ilocos Norte (Masonic name Tupas, Logia Taliba No. 165). Worked as Oficial de Mesa del Juzgado de Binondo; also a La Liga Filipina member. Served on the Katipunan's Supreme Council (1892–1893), signed the Pact of Biak-na-Bato, and was exiled with Aguinaldo to Hong Kong. Served as a Colonel in the revolutionary army during the Philippine-American War; survived, and died in 1916."
+      },
+      {
+        "chapter": "1",
+        "part": "3",
+        "name": "Ladislao Diwa",
+        "content": "Born in San Roque, Cavite; studied at UST with Teodoro Plata; worked as Escribano del Juzgado. Co-founded the Katipunan on July 7, 1892 (Masonic name Baguio, Logia Taliba No. 165). Arrested in Betis, Pampanga following the society's exposure, released under the Pact of Biak-na-Bato, and joined General Mariano Trías's forces, playing a decisive role in the surrender of Spanish General Leopoldo García Peña in May 1898. Later a Malolos Congress delegate; died March 12, 1930."
+      },
+      {
+        "chapter": "1",
+        "part": "3",
+        "name": "Jose Dizon",
+        "content": "Merchant and co-founder of the Katipunan; Venerable Master of Logia Taliba No. 165 (Masonic name Montgomery); Grand Fourth Vice-President of the Gran Consejo Regional de Filipinas; maternal uncle of Emilio Jacinto. Rejected the reformist Cuerpo de Compromisarios to align fully with Bonifacio's armed path. Executed at Bagumbayan on January 11, 1897, as one of the Thirteen Martyrs of Bagumbayan."
+      },
+      {
+        "chapter": "1",
+        "part": "3,5",
+        "name": "Teodoro Plata",
+        "content": "Co-founder of the Katipunan; cousin of Gregoria de Jesús and close friend of Ladislao Diwa (they studied together at UST); husband of Bonifacio's sister, Espiridiona (Masonic name Balany, Logia Taliba No. 165). Served as Secretary of War in Bonifacio's de facto revolutionary cabinet of August 1896. Executed by firing squad at Bagumbayan in February 1897."
+      },
+      {
+        "chapter": "1",
+        "part": "4",
+        "name": "Emilio Jacinto ('Brains of the Katipunan')",
+        "content": "A 19-year-old law student at the University of Santo Tomás and Jose Dizon's nephew. As Bonifacio's closest adviser, he intellectualized the society's aims, edited the newspaper Kalayaan, and authored the Kartilya ng Katipunan, the movement's official moral primer."
+      },
+      {
+        "chapter": "1",
+        "part": "4",
+        "name": "Gregoria de Jesús",
+        "content": "Wife of Andrés Bonifacio and cousin of Teodoro Plata. As the Katipunan's Lakambini (Muse), she played a vital counter-intelligence role, keeping the society's records, seals, and supplies safe from Spanish authorities by constantly relocating them (and, per some accounts, sleeping on the documents to hide them during raids). Present at Bonifacio's capture at Limbon in 1897."
+      },
+      {
+        "chapter": "1",
+        "part": "4,5",
+        "name": "Melchora Aquino ('Tandang Sora')",
+        "content": "An 83-year-old widow who ran a local store and hosted the historic August 24, 1896 national assembly in her barn in barrio Banlat, Kalookan, providing food and sanctuary to the gathered rebels. Arrested by Spanish authorities for this support, she was imprisoned at Bilibid and exiled to the Mariana Islands."
+      },
+      {
+        "chapter": "1",
+        "part": "4",
+        "name": "Teodoro Patiño",
+        "content": "Katipunan member and typesetter at the Diario de Manila press. On August 19, 1896, his disclosure to his sister at her orphanage provided the confirming leak that exposed the society. Later testified before Spanish military judge Colonel Francisco Olive y García."
+      },
+      {
+        "chapter": "1",
+        "part": "4",
+        "name": "Honoria Patiño",
+        "content": "Teodoro Patiño's sister, raised under the Augustinian nuns at a Mandaluyong orphanage. Her distress at her brother's revelation led her to confide in her orphanage director, setting off the society's exposure."
+      },
+      {
+        "chapter": "1",
+        "part": "4",
+        "name": "Sor Teresa de Jesús",
+        "content": "Mother Superior of the Mandaluyong orphanage. Upon hearing Honoria's disclosure, she escorted the Patiño siblings to reveal the conspiracy to the parish priest of Tondo."
+      },
+      {
+        "chapter": "1",
+        "part": "4",
+        "name": "Father Mariano Gil",
+        "content": "Augustinian curate and parish priest of Tondo. After securing the Patiño siblings' confession, he alerted the Guardia Civil and led the August 19, 1896 raid on the Diario de Manila press, seizing lithographic stones and membership rosters — sparking the mass arrests that forced Bonifacio's hand."
+      },
+      {
+        "chapter": "1",
+        "part": "6",
+        "name": "Mariano Álvarez",
+        "content": "Defiant president of the Magdiwang Council in Cavite, previously imprisoned by Spain for anti-colonial agitation. Remained fiercely loyal to Bonifacio's supreme authority, resisting Magdalo-led attempts to bypass the Katipunan's Supreme Council."
+      },
+      {
+        "chapter": "1",
+        "part": "6,7,8",
+        "name": "Emilio Aguinaldo",
+        "content": "A member of Cavite's provincial elite and mayor of Kawit; initiated into Masonry in 1895 and joined the Katipunan under the symbolic name 'Magdalo.' His disciplined military strategy and rapid victories in Cavite earned him leadership of the revolutionary forces. Elected President at the Tejeros Convention, he dismantled the Katipunan's structures, reorganized the Tagalog Republic into the República Filipina, and negotiated the Pact of Biak-na-Bato (December 1897). After returning from exile in 1898, he declared Philippine independence at Kawit on June 12, 1898, and — with Mabini's guidance — transitioned the Dictatorship into a constitutional Revolutionary Government."
+      },
+      {
+        "chapter": "1",
+        "part": "6,7",
+        "name": "Daniel Tirona",
+        "content": "Prominent Magdalo leader whose public challenge to Bonifacio's qualifications for Director of the Interior — insisting Bonifacio lacked a lawyer's diploma — during the March 22, 1897 Tejeros proclamation permanently shattered the assembly, setting off the fracture that ended in Bonifacio's arrest and execution."
+      },
+      {
+        "chapter": "1",
+        "part": "7",
+        "name": "General Artemio Ricarte ('Vibora')",
+        "content": "Prominent revolutionary general and close associate of Bonifacio; intervened to prevent Bonifacio from shooting Tirona during the Tejeros election. Took his oath of office under protest, but meticulously and honestly documented the convention's irregularities in his personal memoirs, preserving the record for history."
       },
       {
         "chapter": "1",
         "part": "",
-        "name": "",
-        "content": ""
+        "name": "General Mariano Noriel",
+        "content": "Senior revolutionary general who presided over Aguinaldo's court-martial of the Bonifacio brothers, rendering the guilty verdict of treason and sedition that led to their executions."
       },
       {
         "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
+        "part": "7",
+        "name": "Mariano Trías",
+        "content": "Prominent Caviteño revolutionary leader, active Freemason, and general. In May–June 1898, his forces compelled the surrender of Spanish General Leopoldo García Peña, Cavite's military commander. Later appointed Secretary of Finance in Aguinaldo's first Cabinet (January 2, 1899)."
       },
       {
         "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
+        "part": "8",
+        "name": "Ambrosio Rianzares Bautista",
+        "content": "Reformist lawyer and legal advisor to Aguinaldo during the revolution's second phase. Wrote and read the Act of the Declaration of Philippine Independence on June 12, 1898, in Kawit, Cavite."
       },
       {
         "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
+        "part": "8",
+        "name": "Admiral George Dewey",
+        "content": "Commander of the American Asiatic Squadron; destroyed the Spanish Pacific fleet at Manila Bay (May 1, 1898), ending Spanish maritime dominance. Facilitated Aguinaldo's return from exile by dispatching the McCulloch, and advised him aboard the USS Olympia that raising a national flag would make the Filipino cause appear credible internationally."
       },
       {
         "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
+        "part": "8",
+        "name": "E. Spencer Pratt",
+        "content": "U.S. consul-general in Singapore who sought out Aguinaldo during his exile, urging his return and assuring him the U.S. had no colonial ambitions and had entered the war solely to liberate Cuba. Reportedly assured Aguinaldo that Dewey guaranteed U.S. recognition of independence, though no formal written agreement was ever signed."
       },
       {
         "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
+        "part": "8",
+        "name": "Rounsevelle Wildman",
+        "content": "U.S. consul-general in Hong Kong who, alongside Pratt, gave Aguinaldo verbal assurances of American support and facilitated his return aboard the McCulloch."
       },
       {
         "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
+        "part": "8",
+        "name": "U.S. President William McKinley",
+        "content": "President during the Spanish-American and Philippine-American Wars. Initially focused on domestic economic recovery and sought to avoid conflict with Spain; after Spain's defeat, refused to recognize Philippine independence, issuing the Benevolent Assimilation Proclamation on December 21, 1898. Mobilized volunteer troops from California and created the Schurman Commission (January 21, 1899), which concluded Filipinos 'were not ready for self-rule.' Assassinated September 6, 1901; succeeded by Theodore Roosevelt."
+      }
+    ]
+  },
+  {
+    "title": "Glossary",
+    "content": [
+      {
+        "term": "Alcalde Mayor",
+        "meaning": "The head official of a province or judicial district, responsible for provincial administration and tax collection; many holders were criticized for abusing this power for personal gain."
       },
       {
-        "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
+        "term": "Anak ng Bayan",
+        "meaning": "'Sons of the People' / 'Children of the Nation'— the sacred password and identity of first-degree Katipunan members (Katipon), reflecting the society's commitment to human equality and rejection of colonial hierarchy."
       },
       {
-        "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
+        "term": "Augustinian Nuns (Augustinian Sisters)",
+        "meaning": "A Catholic congregation that administered educational and charitable institutions in the colonial Philippines, including the Mandaluyong Orphanage — the site of the Katipunan's exposure in 1896."
       },
       {
-        "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
+        "term": "Benevolent Assimilation Proclamation",
+        "meaning": "U.S. President McKinley's decree of December 21, 1898, asserting American military sovereignty over the Philippines even before the Senate ratified the Treaty of Paris — a direct refusal to recognize the already-declared Philippine Republic, and the immediate lead-up to the Philippine-American War."
       },
       {
-        "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
+        "term": "Bonifacio Day",
+        "meaning": "A national holiday observed every November 30, commemorating Andrés Bonifacio's birth (1863) and honoring his life and sacrifice as the Father of the Philippine Revolution."
       },
       {
-        "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
+        "term": "Cabeza de Barangay",
+        "meaning": "A local village headman, drawn from the native principalia, responsible for tribute collection, census registration, cédulas, and organizing forced labor — the position Francisco Dagohoy held before leading his rebellion."
       },
       {
-        "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
+        "term": "Cédula Personal",
+        "meaning": "A compulsory residence certificate and head-tax receipt symbolizing submission to Spanish rule; tearing it up (as at the Cry of Pugad Lawin) was a direct declaration of defiance."
       },
       {
-        "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
-      },
-      {
-        "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
-      },
-      {
-        "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
-      },
-      {
-        "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
-      },
-      {
-        "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
-      },
-      {
-        "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
-      },
-      {
-        "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
-      },
-      {
-        "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
-      },
-      {
-        "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
-      },
-      {
-        "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
-      },
-      {
-        "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
-      },
-      {
-        "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
-      },
-      {
-        "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
-      },
-      {
-        "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
-      },
-      {
-        "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
-      },
-      {
-        "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
-      },
-      {
-        "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
-      },
-      {
-        "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
-      },
-      {
-        "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
-      },
-      {
-        "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
-      },
-      {
-        "chapter": "1",
-        "part": "",
-        "name": "",
-        "content": ""
+        "term": "Colonial Caste System (simplified)",
+        "meaning": "Spanish colonial society was organized into layers, roughly from most to least privileged."
       }
     ]
   }

@@ -19,7 +19,7 @@ function Setting_screen({ navigation }) {
           <Image source={require('../../assets/return.png')} style={styles.icon} />
         </Sound_clicks>
         <Sound_clicks onPress={() => navigation.navigate('Journal')}>
-          <Image source={require('../../assets/Journal_page.png')} style={styles.icon} />
+          <Image source={require('../../assets/Journal_parts/Journal_page.png')} style={styles.icon} />
         </Sound_clicks>
       </View>
 

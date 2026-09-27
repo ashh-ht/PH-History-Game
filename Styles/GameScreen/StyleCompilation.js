@@ -96,7 +96,7 @@ export default StyleSheet.create({
     paddingHorizontal: 35,
     paddingVertical: 40,
     paddingBottom: 50,
-    borderRadius: 12,
+     borderRadius: 12,
   },
 
   speakerName: {

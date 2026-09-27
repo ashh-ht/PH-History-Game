@@ -1,15 +1,30 @@
 import { useState } from 'react';
-import { ImageBackground, ScrollView, StyleSheet, Text, View, Pressable, Image } from 'react-native';
+import { ImageBackground, ScrollView, Text, View, Pressable, Image } from 'react-native';
 import Journal from './Journal.json';
+import styles from '../../Styles/Others/StyleJournal';
+
 
 const TABS = ['Timeline', 'Character Profiles', 'Minigame Collections', 'Glossary'];
 const TABICONS = {
-  'Timeline': require('../../assets/timeline.png'),
-  'Character Profiles': require('../../assets/profile.png'),
-  'Minigame Collections': require('../../assets/minigame.png'),
-  'Glossary': require('../../assets/dictionary.png'),
+  'Timeline': require('../../assets/Journal_parts/timeline.png'),
+  'Character Profiles': require('../../assets/Journal_parts/profile.png'),
+  'Minigame Collections': require('../../assets/Journal_parts/minigame.png'),
+  'Glossary': require('../../assets/Journal_parts/dictionary.png'),
 };
 const CLOSEICON = require('../../assets/returnarrow.png');
+const BOOKMARK_BG = require('../../assets/Journal_parts/bookmark.png');
+const LISTBUTTON_BG = require('../../assets/Journal_parts/journal_button.png');
+
+// Character Profiles
+const CARD_BG = require('../../assets/Journal_parts/char_holder.png'); // gold-framed card
+const PLACEHOLDER = require('../../assets/Journal_parts/char_profile.png'); // temporary, known-good
+
+const PORTRAITS = {
+  // Not yet available
+};
+
+const CARDS_PER_SIDE = 3;
+const PER_SPREAD = CARDS_PER_SIDE * 2; // 6 cards per open book
 
 function splitInHalf(arr) {
   const mid = Math.ceil(arr.length / 2);
@@ -26,26 +41,115 @@ function getDateLabel(entries) {
   const dates = entries.map((e) => e.date);
   return `${dates[0]} - ${dates[dates.length - 1]}`;
 }
+//---------------mini game stuff--------------------
+//dummy placeholders for minigame
+const REMNANTS = [
+  { id: 1, unlocked: true,  image: require('../../assets/Journal_parts/Remnant_found.png') },
+  { id: 2, unlocked: true,  image: require('../../assets/Journal_parts/remnant.png') },
+  { id: 3, unlocked: false },
+  { id: 4, unlocked: false },
+  { id: 5, unlocked: false },
+  { id: 6, unlocked: false },
+  { id: 7, unlocked: false },
+  { id: 8, unlocked: false },
+  { id: 9, unlocked: false },
+];
+//-------------------------------------------
 
 function BookmarkTab({ icon, label, active, onPress }) {
   return (
     <Pressable onPress={onPress} style={styles.bookmarkWrapper}>
-      <View style={[styles.bookmarkTop, active && styles.bookmarkTopActive]}>
+      <ImageBackground
+        source={BOOKMARK_BG}
+        style={[styles.bookmarkBg, active && styles.bookmarkBgActive]}
+        resizeMode="contain"
+      >
         <Image source={icon} style={styles.bookmarkIcon} />
-      </View>
-      <View style={styles.bookmarkNotch}>
-        <View style={[styles.bookmarkNotchLeft, active && styles.bookmarkNotchLeftActive]} />
-        <View style={[styles.bookmarkNotchRight, active && styles.bookmarkNotchRightActive]} />
-      </View>
+      </ImageBackground>
       {active && label && <Text style={styles.bookmarkLabel}>{label}</Text>}
     </Pressable>
+  );
+}
+
+function ListButton({ text, onPress }) {
+  return (
+    <Pressable style={styles.listButtonWrapper} onPress={onPress}>
+      <ImageBackground
+        source={LISTBUTTON_BG}
+        style={styles.listButtonBg}
+        resizeMode="stretch"
+      >
+        <Text style={styles.listButtonText}>{text}</Text>
+      </ImageBackground>
+    </Pressable>
+  );
+}
+
+function GlossaryEntry({term,meaning}){
+  return(
+    <View style ={styles.glossaryBlock}>
+      <Text style ={styles.glossaryTerm}>{term}</Text>
+      <Text style ={styles.glossaryMeaning}>{meaning}</Text>
+    </View>
+  );
+}
+
+function CharacterCard({ name, content, onPress }) {
+  return (
+    <Pressable onPress={onPress} style={styles.cardWrapper}>
+      <ImageBackground source={CARD_BG} style={styles.cardBg} resizeMode="stretch">
+        <Image source={PORTRAITS[name] || PLACEHOLDER} style={styles.cardPortrait} />
+        <View style={styles.cardTextBox}>
+          <Text style={styles.cardName} numberOfLines={2}>{name}</Text>
+          <Text style={styles.cardDesc} numberOfLines={3}>{content}</Text>
+        </View>
+      </ImageBackground>
+    </Pressable>
+  );
+}
+
+function RemnantCard({ id, unlocked, image }) {
+  return (
+    <View style={styles.remnantCard}>
+      {unlocked ? (
+        <Image source={image} style={styles.remnantImage} resizeMode="cover" />
+      ) : (
+        <View style={styles.remnantPlaceholder}>
+          <Text style={styles.remnantslocked}>?</Text>
+        </View>
+      )}
+      <Text style={styles.remnantLabel}>Remnant #{id}</Text>
+    </View>
+  );
+}
+
+function CompleteCard({ unlocked }) {
+  return (
+    <View style={[styles.remnantCard, styles.completeCard]}>
+      {unlocked ? (
+        <Image
+          source={require('../../assets/Journal_parts/remnant.png')}
+          style={styles.remnantImage}
+          resizeMode="cover"
+        />
+      ) : (
+        <View style={styles.remnantPlaceholder}>
+          <Text style={styles.remnantslocked}>?</Text>
+        </View>
+      )}
+      <Text style={styles.remnantLabel}>Complete</Text>
+    </View>
   );
 }
 
 function Journalbook({ navigation }) {
   const [activeTab, setActiveTab] = useState('Timeline');
   const [selectedEntry, setSelectedEntry] = useState(null);
-
+  const [charPage, setCharPage] = useState(0);
+  const [selectedChar, setSelectedChar] = useState(null);
+  const [glossarypage, setGlossarypPage] = useState(0);
+  const [timelinepage, setTimelinePage] = useState(0);
+  // ---- Timeline data ----
   const timelineSection = Journal.find((s) => s.title === 'Timeline');
 
   const groupedTimeline = {};
@@ -56,15 +160,63 @@ function Journalbook({ navigation }) {
   });
 
   const allKeys = Object.keys(groupedTimeline);
-  const [leftKeys, rightKeys] = splitInHalf(allKeys);
 
+  const Timeline_per_side = 6;
+  const timeline_per_spread = Timeline_per_side * 2;
+  const totalTimespread = Math.ceil(allKeys.length / timeline_per_spread);
+
+  const timelinespread = allKeys.slice(timelinepage * timeline_per_spread,
+    (timelinepage +1) * timeline_per_spread
+  );
+  const leftkeys = timelinespread.slice(0, Timeline_per_side);
+  const rightkeys = timelinespread.slice(Timeline_per_side);
+
+  // ---- Timeline chapter-detail data ----
   const selectedEntries = selectedEntry ? groupedTimeline[selectedEntry] : [];
   const [leftEntries, rightEntries] = splitInHalf(selectedEntries);
+
+  // ---- Character Profiles data ----
+  const characters = Journal.find((s) => s.title === 'Character Profiles')?.content ?? [];
+  const totalSpreads = Math.ceil(characters.length / PER_SPREAD);
+
+  const spread = characters.slice(charPage * PER_SPREAD, (charPage + 1) * PER_SPREAD);
+  const leftChars = spread.slice(0, CARDS_PER_SIDE);
+  const rightChars = spread.slice(CARDS_PER_SIDE);
+
+
+  // ------- Mini games Collection data -----------
+  const  minigame_per_side = 3;
+  const  [minigameleft,minigameright] =splitInHalf(REMNANTS);
+  const allRemnantunlocked = REMNANTS.every((r) => r.unlocked);
+
+  const minigameLeft = REMNANTS.slice(0,6);
+  const minigameRight = REMNANTS.slice(6);
+
+  // ---- Glossary data entry
+  const glossaryterm = Journal.find((s) => s.title === "Glossary" )?.content ?? [];
+  const sortglossary =[...glossaryterm].sort((a,b) => a.term.localeCompare(b.term));
+
+  const Glossary_per_side = 2;
+  const glossary_per_spread = Glossary_per_side * 2;
+  const toal_glossary_spread = Math.ceil(sortglossary.length / glossary_per_spread);
+
+  const glossary_spread = sortglossary.slice(
+    glossarypage * glossary_per_spread,
+    (glossarypage + 1) * glossary_per_spread
+  );
+
+  const glossaryLeft = glossary_spread.slice(0, Glossary_per_side);
+  const glossaryRight =glossary_spread.slice(Glossary_per_side);
+
+/*
+const CARDS_PER_SIDE = 3;
+const PER_SPREAD = CARDS_PER_SIDE * 2; // 6 cards per open book
+*/
 
   return (
     <ImageBackground source={require('../../assets/Settingbg.png')} style={styles.container}>
       <ImageBackground
-        source={require('../../assets/Journal_Book.png')}
+        source={require('../../assets/Journal_parts/JounalBook2.png')}
         style={styles.book}
         resizeMode="contain"
       >
@@ -76,7 +228,14 @@ function Journalbook({ navigation }) {
               icon={TABICONS[tab]}
               label={tab}
               active={activeTab === tab}
-              onPress={() => { setActiveTab(tab); setSelectedEntry(null); }}
+              onPress={() => {
+                setActiveTab(tab);
+                setSelectedEntry(null);
+                setSelectedChar(null);
+                setTimelinePage(0);
+                setCharPage(0);
+                setGlossarypPage(0);
+              }}
             />
           ))}
         </View>
@@ -90,25 +249,49 @@ function Journalbook({ navigation }) {
                 This is the timeline, where all of your journey events are tracked. Finish all
                 chapters to complete your journey!
               </Text>
-              {leftKeys.map((key, i) => (
-                <Pressable key={key} style={styles.listButton} onPress={() => setSelectedEntry(key)}>
-                  <Text style={styles.listButtonText}>
-                    {toRoman(i + 1)}. {getDateLabel(groupedTimeline[key])}
-                  </Text>
-                </Pressable>
-              ))}
+              {leftkeys.map((key) => {
+                const globalIndex = allKeys.indexOf(key);
+                return (
+                  <ListButton
+                    key={key}
+                    text={`${toRoman(globalIndex + 1)}. ${getDateLabel(groupedTimeline[key])}`}
+                    onPress={() => setSelectedEntry(key)}
+                  />
+                );
+              })}
             </ScrollView>
 
             <ScrollView style={styles.rightPage} contentContainerStyle={styles.pageContent}>
-              {rightKeys.map((key, i) => (
-                <Pressable key={key} style={styles.listButton} onPress={() => setSelectedEntry(key)}>
-                  <Text style={styles.listButtonText}>
-                    {toRoman(i + 1 + leftKeys.length)}. {getDateLabel(groupedTimeline[key])}
-                  </Text>
-                </Pressable>
-              ))}
+              {rightkeys.map((key) => {
+                const globalIndex = allKeys.indexOf(key);
+                return (
+                  <ListButton
+                    key={key}
+                    text={`${toRoman(globalIndex + 1)}. ${getDateLabel(groupedTimeline[key])}`}
+                    onPress={() => setSelectedEntry(key)}
+                  />
+                );
+              })}
             </ScrollView>
-          </View>
+
+            {timelinepage > 0 &&(
+
+              <Pressable style = {[styles.arrow, styles.arrowLeft]}
+              onPress={() => setTimelinePage(timelinepage -1)}
+              >
+                <Text style={styles.arrowText}>◀</Text>
+              </Pressable>
+            )}
+
+            { timelinepage < totalTimespread - 1 && (
+              
+              <Pressable style = {[styles.arrow, styles.arrowRight]}
+              onPress={() => setTimelinePage(timelinepage + 1)}
+              >
+                <Text style={styles.arrowText}>▶</Text>
+              </Pressable>
+            )}
+            </View>
         )}
 
         {/* ---- TIMELINE (chapter detail) ---- */}
@@ -138,211 +321,139 @@ function Journalbook({ navigation }) {
           </View>
         )}
 
-        {/* ---- CHARACTER PROFILES ---- */}
-        {activeTab === 'Character Profiles' && (
-          <View style={styles.pageRow}>
+        {/* ---- CHARACTER PROFILES (card list) ---- */}
+        {activeTab === 'Character Profiles' && !selectedChar && (
+          <View key ="char-list" style={styles.pageRow}>
             <ScrollView style={styles.leftPage} contentContainerStyle={styles.pageContent}>
-              <Text style={styles.pageTitle}>Character Profiles</Text>
-              <Text style={styles.pageIntro}>
-                Every important character you encountered will be displayed here. Find them all!
-              </Text>
+              {leftChars.map((c) => (
+                <CharacterCard
+                  key={c.name}
+                  name={c.name}
+                  content={c.content}
+                  onPress={() => setSelectedChar(c)}
+                />
+              ))}
             </ScrollView>
+
             <ScrollView style={styles.rightPage} contentContainerStyle={styles.pageContent}>
-              <Text style={styles.placeholderText}>More entries coming soon...</Text>
+              {rightChars.map((c) => (
+                <CharacterCard
+                  key={c.name}
+                  name={c.name}
+                  content={c.content}
+                  onPress={() => setSelectedChar(c)}
+                />
+              ))}
+            </ScrollView>
+
+            {charPage > 0 && (
+              <Pressable
+                style={[styles.arrow, styles.arrowLeft]}
+                onPress={() => setCharPage(charPage - 1)}
+              >
+                <Text style={styles.arrowText}>◀</Text>
+              </Pressable>
+            )}
+            {charPage < totalSpreads - 1 && (
+              <Pressable
+                style={[styles.arrow, styles.arrowRight]}
+                onPress={() => setCharPage(charPage + 1)}
+              >
+                <Text style={styles.arrowText}>▶</Text>
+              </Pressable>
+            )}
+          </View>
+        )}
+
+        {/* CHARACTER PROFILES full description */}
+        {activeTab === 'Character Profiles' && selectedChar && (
+          <View key ="char-detail" style={styles.pageRow}>
+            <ScrollView style={styles.leftPage} contentContainerStyle={styles.pageContent}>
+              <Pressable onPress={() => setSelectedChar(null)}>
+                <Text style={styles.backLink}>← Back to characters</Text>
+              </Pressable>
+              <Image
+                source={PORTRAITS[selectedChar.name] || PLACEHOLDER}
+                style={styles.detailPortrait}
+              />
+              <Text style={styles.detailName}>{selectedChar.name}</Text>
+            </ScrollView>
+
+            <ScrollView style={styles.rightPage} contentContainerStyle={styles.pageContent}>
+              <Text style={styles.entryContent}>{selectedChar.content}</Text>
             </ScrollView>
           </View>
         )}
 
-        {/* ---- Minigame Collections ---- */}
+        {/* ---- Minigame Collections with Remnants ---- */}
         {activeTab === 'Minigame Collections' && (
+
+          // gets the function and their key for the Minigame part
           <View style={styles.pageRow}>
             <ScrollView style={styles.leftPage} contentContainerStyle={styles.pageContent}>
-              <Text style={styles.pageTitle}>Minigame Collections</Text>
-              <Text style={styles.pageIntro}>
-                Every minigame you finish adds a piece of the puzzle. Collect them all to reveal
-                the full painting.
-              </Text>
+            <View style ={styles.Remnancegrid}>
+              {minigameLeft.map((r) =>(
+                <RemnantCard key ={r.id} id ={r.id} unlocked={r.unlocked} image ={r.image}/>
+              ))}
+            </View>
             </ScrollView>
+                
             <ScrollView style={styles.rightPage} contentContainerStyle={styles.pageContent}>
-              <Text style={styles.placeholderText}>More entries coming soon...</Text>
+            <View style ={styles.Remnancegrid}>
+              {minigameRight.map((r) =>(
+                <RemnantCard key ={r.id} id ={r.id} unlocked={r.unlocked} image ={r.image}/>
+              ))}
+            <CompleteCard unlocked={allRemnantunlocked}/>
+            </View>    
             </ScrollView>
           </View>
         )}
 
         {/* ---- Glossary ---- */}
         {activeTab === 'Glossary' && (
+          // this is for taking the contents of the Journal JSON
           <View style={styles.pageRow}>
             <ScrollView style={styles.leftPage} contentContainerStyle={styles.pageContent}>
-              <Text style={styles.pageTitle}>Glossary</Text>
-              <Text style={styles.pageIntro}>
-                Important terms that you have encountered will be added here. Tap to see what
-                they mean.
-              </Text>
+            {glossaryLeft.map((g) => (
+
+            <GlossaryEntry key={g.term} term={g.term} meaning ={g.meaning} />
+            ))}
             </ScrollView>
+
             <ScrollView style={styles.rightPage} contentContainerStyle={styles.pageContent}>
-              <Text style={styles.placeholderText}>More entries coming soon...</Text>
+            {glossaryRight.map((g) => (
+            <GlossaryEntry key={g.term} term={g.term} meaning ={g.meaning} />
+            ))}
             </ScrollView>
+
+            {/* left page and right page*/}
+
+            {glossarypage > 0 && (
+              <Pressable
+                style ={[styles.arrow, styles.arrowLeft]}
+                onPress={() =>setGlossarypPage(glossarypage -1)}
+                >
+                  {/* temporary arrow bro just replace this when there is replacable */}
+                <Text style={styles.arrowText}>◀</Text>
+              </Pressable> 
+            )}
+            {
+              glossarypage < toal_glossary_spread -1 &&(
+                <Pressable
+                style ={[styles.arrow, styles.arrowRight]}
+                onPress={() =>setGlossarypPage(glossarypage + 1)}
+                >
+                  {/* temporary arrow bro just replace this when there is replacable */}
+                <Text style={styles.arrowText}>▶</Text>
+              </Pressable> 
+              )
+            }
+
           </View>
         )}
       </ImageBackground>
     </ImageBackground>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  book: {
-    width: '100%',
-    height: '100%',
-    alignItems: 'center',
-  },
-
-  topBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    alignItems: 'flex-start',
-    top: 9,
-    marginBottom: 8,
-    paddingHorizontal: '18%',
-    gap:70
-  },
-
-  bookmarkWrapper: {
-    alignItems: 'center',
-  },
-  bookmarkTop: {
-    width: 44,
-    height: 40,
-    backgroundColor: '#5a4a35',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  bookmarkTopActive: {
-    backgroundColor: '#7a5a2f',
-  },
-  bookmarkNotch: {
-    flexDirection: 'row',
-    width: 44,
-  },
-  bookmarkNotchLeft: {
-    width: 0,
-    height: 0,
-    borderLeftWidth: 22,
-    borderLeftColor: 'transparent',
-    borderTopWidth: 10,
-    borderTopColor: '#5a4a35',
-  },
-  bookmarkNotchLeftActive: {
-    borderTopColor: '#7a5a2f',
-  },
-  bookmarkNotchRight: {
-    width: 0,
-    height: 0,
-    borderRightWidth: 22,
-    borderRightColor: 'transparent',
-    borderTopWidth: 10,
-    borderTopColor: '#5a4a35',
-  },
-  bookmarkNotchRightActive: {
-    borderTopColor: '#7a5a2f',
-  },
-  bookmarkIcon: {
-    width: 20,
-    height: 20,
-    resizeMode: 'contain',
-    tintColor: '#fff',
-  },
-  bookmarkLabel: {
-    fontSize: 9,
-    color: '#3a2e1f',
-    marginTop: 2,
-    fontWeight: '600',
-  },
-
-  pageRow: {
-    flex: 1,
-    flexDirection: 'row',
-    marginHorizontal: '16%',
-    marginTop: '2%',
-    marginBottom: '8%',
-    gap: '3%',
-  },
-  leftPage: {
-    flex: 1,
-  },
-  rightPage: {
-    flex: 1,
-  },
-  pageContent: {
-    padding: 10,
-  },
-
-  pageTitle: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: '#3a2e1f',
-    marginBottom: 6,
-  },
-
-  pageIntro: {
-    fontSize: 10,
-    color: '#5a4a35',
-    marginBottom: 10,
-    fontStyle: 'italic',
-  },
-
-  placeholderText: {
-    fontSize: 10,
-    color: '#8a6d3b',
-    fontStyle: 'italic',
-    textAlign: 'center',
-    marginTop: 20,
-  },
-
-  listButton: {
-    backgroundColor: '#fff8e6',
-    borderWidth: 1,
-    borderColor: '#000000',
-    borderRadius: 6,
-    paddingVertical: 6,
-    paddingHorizontal: 8,
-    alignItems: 'center',
-    marginBottom: 6,
-  },
-  listButtonText: {
-    color: '#3a2e1f',
-    fontWeight: '600',
-    fontSize: 11,
-  },
-
-  backLink: {
-    color: '#050505',
-    marginBottom: 8,
-    fontWeight: '600',
-    fontSize: 11,
-  },
-
-  entryBlock: {
-    marginBottom: 10,
-  },
-
-  entryDate: {
-    fontWeight: 'bold',
-    color: '#3a2e1f',
-    marginBottom: 3,
-    fontSize: 11,
-  },
-
-  entryContent: {
-    color: '#5a4a35',
-    fontSize: 10,
-    lineHeight: 14,
-  },
-});
 
 export default Journalbook;
