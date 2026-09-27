@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "616892516710",
+    "project_id": "ph-history-game",
+    "storage_bucket": "ph-history-game.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:616892516710:android:ac48a6524e0b3995fa20a7",
+        "android_client_info": {
+          "package_name": "Pamana.Game_v1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAyae9lGRf7nrpPKYtHI6w1-cy9tPGHncI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
