@@ -17,6 +17,7 @@ import PartSelectScreen from './Main/Others/PartSelect';
 import Setting_screen from './Main/Others/Settings';
 import AudioScreen from './Main/Others/AudioScreen';
 import Journalbook from './Main/Others/Journal';
+import SaveScreen from './Main/Others/SaveScreen';
 
 // Chapter 1 story screens
 import {
@@ -70,6 +71,7 @@ export default function App() {
               <Stack.Screen name="Second" component={Setting_screen} />
               <Stack.Screen name="AudioScreen" component={AudioScreen} />
               <Stack.Screen name="Journal" component={Journalbook} />
+              <Stack.Screen name="SaveScreen" component={SaveScreen} />
             </Stack.Navigator>
           </NavigationContainer>
         </GameProgressProvider>

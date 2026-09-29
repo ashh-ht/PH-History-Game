@@ -10,6 +10,7 @@ import {
 } from "react-native";
 
 import { useGameProgress } from "../../GameProgress";
+import { saveCheckpoint } from "../Others/saveProgress";
 import { Chapter1 } from "./StoryScreen/Chapter1";
 
 
@@ -20,18 +21,14 @@ import { Chapter1 } from "./StoryScreen/Chapter1";
 function GameplayMenuOverlay({ navigation }) {
   return (
     <View style={styles.menuOverlay}>
-      <TouchableOpacity
-        onPress={() => navigation.navigate("Second")}
-      >
+      <TouchableOpacity onPress={() => navigation.navigate("Second")}>
         <Image
           source={require("../../assets/icons/Menu_icon.png")}
           style={styles.menuIcon}
         />
       </TouchableOpacity>
 
-      <TouchableOpacity
-        onPress={() => navigation.navigate("Journal")}
-      >
+      <TouchableOpacity onPress={() => navigation.navigate("Journal")}>
         <Image
           source={require("../../assets/icons/journal_closed.png")}
           style={styles.menuIcon}
@@ -84,24 +81,23 @@ function PartRenderer(props) {
     partNumber,
     isLastPart,
     navigation,
+    route,
   } = props;
 
   const game = useGameProgress();
 
-  const [sceneIdx, setSceneIdx] = useState(game.scene);
+  // If the player restored a save, Saves screen passes startScene.
+  // Otherwise fall back to the normal progress.
+  const startIdx = route?.params?.startScene ?? game.scene;
+
+  const [sceneIdx, setSceneIdx] = useState(startIdx);
   const [picked, setPicked] = useState(null);
   const [quizAnswer, setQuizAnswer] = useState(null);
 
   // Intro crossfade
-  const introProgress = useRef(
-    new Animated.Value(1)
-  ).current;
-
-  const [introChanging, setIntroChanging] =
-    useState(false);
-
-  const [introNextIndex, setIntroNextIndex] =
-    useState(null);
+  const introProgress = useRef(new Animated.Value(1)).current;
+  const [introChanging, setIntroChanging] = useState(false);
+  const [introNextIndex, setIntroNextIndex] = useState(null);
 
 
   // ===================================================
@@ -113,9 +109,7 @@ function PartRenderer(props) {
     game.setPart(partNumber);
     game.setInGame(true);
 
-    console.log(
-      `loaded ch${chapterNumber} part${partNumber}`
-    );
+    console.log(`loaded ch${chapterNumber} part${partNumber}`);
 
     return () => {
       game.setInGame(false);
@@ -127,13 +121,66 @@ function PartRenderer(props) {
   // CURRENT SCENE
   // ===================================================
 
-  const hasMoreScenes =
-    sceneIdx < sceneData.length;
+  const hasMoreScenes = sceneIdx < sceneData.length;
+  const current = hasMoreScenes ? sceneData[sceneIdx] : null;
 
-  const current =
-    hasMoreScenes
-      ? sceneData[sceneIdx]
-      : null;
+
+  // ===================================================
+  // SAVE HELPERS
+  // ===================================================
+
+  // Counts how many "scene" title cards exist up to idx,
+  // and returns the latest scene's title.
+  const getSceneInfo = (idx) => {
+    let sceneNumber = 0;
+    let sceneTitle = "";
+
+    for (let i = 0; i <= idx && i < sceneData.length; i++) {
+      if (sceneData[i].type === "scene") {
+        sceneNumber += 1;
+        sceneTitle = sceneData[i].title;
+      }
+    }
+
+    return { sceneNumber, sceneTitle };
+  };
+
+  // AUTOSAVE #1: whenever a scene title card appears
+  // (skips the very last card, "Their story does not end here.")
+  useEffect(() => {
+    if (!current || current.type !== "scene") return;
+    if (sceneIdx === sceneData.length - 1) return;
+
+    saveCheckpoint({
+      chap: chapterNumber,
+      part: partNumber,
+      sceneIdx,
+      ...getSceneInfo(sceneIdx),
+    });
+  }, [sceneIdx]);
+
+  // AUTOSAVE #2: right after the player makes a decision.
+  // Saves at nextScene so restoring resumes AFTER the choice.
+  const saveDecision = (choiceIndex) => {
+    if (!current || current.type !== "choice") return;
+
+    const decNum =
+      current.title?.match(/Choice (\d+\.\d+)/)?.[1] ?? null;
+
+    const resumeIdx =
+      typeof current.nextScene === "number"
+        ? current.nextScene
+        : sceneIdx + 1;
+
+    saveCheckpoint({
+      chap: chapterNumber,
+      part: partNumber,
+      sceneIdx: resumeIdx,
+      ...getSceneInfo(resumeIdx),
+      decNum,
+      choice: current.choices[choiceIndex].text,
+    });
+  };
 
 
   // ===================================================
@@ -141,10 +188,7 @@ function PartRenderer(props) {
   // ===================================================
 
   const goToIndex = (index) => {
-    if (
-      index < 0 ||
-      index >= sceneData.length
-    ) {
+    if (index < 0 || index >= sceneData.length) {
       return;
     }
 
@@ -156,16 +200,16 @@ function PartRenderer(props) {
 
 
   const goNext = () => {
-  const nextIndex = sceneIdx + 1;
+    const nextIndex = sceneIdx + 1;
 
-  if (nextIndex >= sceneData.length) {
-    setSceneIdx(sceneData.length);
-    game.setScene(sceneData.length);
-    return;
-  }
+    if (nextIndex >= sceneData.length) {
+      setSceneIdx(sceneData.length);
+      game.setScene(sceneData.length);
+      return;
+    }
 
-  goToIndex(nextIndex);
-};
+    goToIndex(nextIndex);
+  };
 
 
   // ===================================================
@@ -179,15 +223,11 @@ function PartRenderer(props) {
 
     const nextIndex = sceneIdx + 1;
 
-    if (
-      nextIndex < 0 ||
-      nextIndex >= sceneData.length
-    ) {
+    if (nextIndex < 0 || nextIndex >= sceneData.length) {
       return;
     }
 
-    const nextScene =
-      sceneData[nextIndex];
+    const nextScene = sceneData[nextIndex];
 
     if (
       !nextScene ||
@@ -227,9 +267,7 @@ function PartRenderer(props) {
     return (
       <>
         {node}
-        <GameplayMenuOverlay
-          navigation={navigation}
-        />
+        <GameplayMenuOverlay navigation={navigation} />
       </>
     );
   };
@@ -253,19 +291,13 @@ function PartRenderer(props) {
             game.setScene(0);
 
             if (isLastPart) {
-              props.onChapterComplete?.(
-                chapterNumber + 1
-              );
+              props.onChapterComplete?.(chapterNumber + 1);
             } else {
-              props.onPartComplete?.(
-                partNumber + 1
-              );
+              props.onPartComplete?.(partNumber + 1);
             }
           }}
         >
-          <Text style={styles.nextButtonText}>
-            Continue
-          </Text>
+          <Text style={styles.nextButtonText}>Continue</Text>
         </TouchableOpacity>
 
       </View>
@@ -277,15 +309,10 @@ function PartRenderer(props) {
   // INTRO SCREENS
   // ===================================================
 
-  if (
-    current.type === "system" &&
-    current.intro === true
-  ) {
+  if (current.type === "system" && current.intro === true) {
 
     const nextIntro =
-      introNextIndex !== null
-        ? sceneData[introNextIndex]
-        : null;
+      introNextIndex !== null ? sceneData[introNextIndex] : null;
 
     return withOverlay(
       <View style={styles.introScreen}>
@@ -297,9 +324,7 @@ function PartRenderer(props) {
           resizeMode="cover"
         >
           <View style={styles.introTextBox}>
-            <Text style={styles.introText}>
-              {current.text}
-            </Text>
+            <Text style={styles.introText}>{current.text}</Text>
           </View>
         </ImageBackground>
 
@@ -308,12 +333,7 @@ function PartRenderer(props) {
         {nextIntro && (
           <Animated.View
             pointerEvents="none"
-            style={[
-              styles.introNextLayer,
-              {
-                opacity: introProgress,
-              },
-            ]}
+            style={[styles.introNextLayer, { opacity: introProgress }]}
           >
             <ImageBackground
               source={nextIntro.background}
@@ -321,9 +341,7 @@ function PartRenderer(props) {
               resizeMode="cover"
             >
               <View style={styles.introTextBox}>
-                <Text style={styles.introText}>
-                  {nextIntro.text}
-                </Text>
+                <Text style={styles.introText}>{nextIntro.text}</Text>
               </View>
             </ImageBackground>
           </Animated.View>
@@ -348,11 +366,8 @@ function PartRenderer(props) {
 
   if (current.type === "quiz") {
 
-    const isAnswered =
-      quizAnswer !== null;
-
-    const isCorrect =
-      quizAnswer === current.correctIndex;
+    const isAnswered = quizAnswer !== null;
+    const isCorrect = quizAnswer === current.correctIndex;
 
     return withOverlay(
       <View style={styles.choiceScreen}>
@@ -365,15 +380,11 @@ function PartRenderer(props) {
             resizeMode="stretch"
           >
 
-            <Text style={styles.choiceQuestion}>
-              {current.question}
-            </Text>
+            <Text style={styles.choiceQuestion}>{current.question}</Text>
 
             {isAnswered && (
               <Text style={styles.choicePrompt}>
-                {isCorrect
-                  ? "Correct!"
-                  : "Not quite..."}
+                {isCorrect ? "Correct!" : "Not quite..."}
               </Text>
             )}
 
@@ -384,45 +395,36 @@ function PartRenderer(props) {
 
         <View style={styles.choiceButtonsColumn}>
 
-          {current.options.map(
-            (option, index) => (
+          {current.options.map((option, index) => (
 
-              <TouchableOpacity
-                key={index}
-                style={styles.choiceImageButton}
-                onPress={() => {
-                  if (!isAnswered) {
-                    setQuizAnswer(index);
-                  }
-                }}
-                activeOpacity={0.85}
+            <TouchableOpacity
+              key={index}
+              style={styles.choiceImageButton}
+              onPress={() => {
+                if (!isAnswered) {
+                  setQuizAnswer(index);
+                }
+              }}
+              activeOpacity={0.85}
+            >
+
+              <ImageBackground
+                source={require("../../assets/buttons/choice_button.png")}
+                style={styles.choiceImageButtonBg}
+                resizeMode="stretch"
               >
+                <Text style={styles.choiceButtonText}>{option}</Text>
+              </ImageBackground>
 
-                <ImageBackground
-                  source={require("../../assets/buttons/choice_button.png")}
-                  style={styles.choiceImageButtonBg}
-                  resizeMode="stretch"
-                >
+            </TouchableOpacity>
 
-                  <Text style={styles.choiceButtonText}>
-                    {option}
-                  </Text>
-
-                </ImageBackground>
-
-              </TouchableOpacity>
-
-            )
-          )}
+          ))}
 
         </View>
 
 
         {isAnswered && (
-          <TouchableOpacity
-            style={styles.arrowButton}
-            onPress={goNext}
-          >
+          <TouchableOpacity style={styles.arrowButton} onPress={goNext}>
             <Image
               source={require("../../assets/icons/arrow_next.png")}
               style={styles.arrowImage}
@@ -450,20 +452,13 @@ function PartRenderer(props) {
             style={styles.systemParchmentBox}
             resizeMode="stretch"
           >
-
-            <Text style={styles.systemText}>
-              {current.text}
-            </Text>
-
+            <Text style={styles.systemText}>{current.text}</Text>
           </ImageBackground>
 
         </View>
 
 
-        <TouchableOpacity
-          style={styles.arrowButton}
-          onPress={goNext}
-        >
+        <TouchableOpacity style={styles.arrowButton} onPress={goNext}>
           <Image
             source={require("../../assets/icons/arrow_next.png")}
             style={styles.arrowImage}
@@ -487,9 +482,7 @@ function PartRenderer(props) {
 
 
     return withOverlay(
-      <View style={styles.systemScreen}>
-        {systemContent}
-      </View>
+      <View style={styles.systemScreen}>{systemContent}</View>
     );
   }
 
@@ -511,14 +504,10 @@ function PartRenderer(props) {
 
           <View style={styles.sceneTitleBox}>
 
-            <Text style={styles.sceneTitle}>
-              {current.title}
-            </Text>
+            <Text style={styles.sceneTitle}>{current.title}</Text>
 
             {current.date ? (
-              <Text style={styles.sceneDate}>
-                {current.date}
-              </Text>
+              <Text style={styles.sceneDate}>{current.date}</Text>
             ) : null}
 
           </View>
@@ -551,9 +540,7 @@ function PartRenderer(props) {
     const narratorContent = (
       <>
 
-        <CharacterLayer
-          characters={current.characters}
-        />
+        <CharacterLayer characters={current.characters} />
 
 
         <View style={styles.narratorWrapper}>
@@ -564,23 +551,16 @@ function PartRenderer(props) {
             resizeMode="stretch"
           >
 
-            <Text style={styles.narratorLabel}>
-              Narrator:
-            </Text>
+            <Text style={styles.narratorLabel}>Narrator:</Text>
 
-            <Text style={styles.narratorText}>
-              {current.text}
-            </Text>
+            <Text style={styles.narratorText}>{current.text}</Text>
 
           </ImageBackground>
 
         </View>
 
 
-        <TouchableOpacity
-          style={styles.arrowButton}
-          onPress={goNext}
-        >
+        <TouchableOpacity style={styles.arrowButton} onPress={goNext}>
           <Image
             source={require("../../assets/icons/arrow_next.png")}
             style={styles.arrowImage}
@@ -605,9 +585,7 @@ function PartRenderer(props) {
 
 
     return withOverlay(
-      <View style={styles.background}>
-        {narratorContent}
-      </View>
+      <View style={styles.background}>{narratorContent}</View>
     );
   }
 
@@ -635,13 +613,9 @@ function PartRenderer(props) {
               resizeMode="stretch"
             >
 
-              <Text style={styles.choiceQuestion}>
-                {current.question}
-              </Text>
+              <Text style={styles.choiceQuestion}>{current.question}</Text>
 
-              <Text style={styles.choicePrompt}>
-                What will you choose?
-              </Text>
+              <Text style={styles.choicePrompt}>What will you choose?</Text>
 
             </ImageBackground>
 
@@ -650,32 +624,29 @@ function PartRenderer(props) {
 
           <View style={styles.choiceButtonsColumn}>
 
-            {current.choices.map(
-              (choice, index) => (
+            {current.choices.map((choice, index) => (
 
-                <TouchableOpacity
-                  key={index}
-                  style={styles.choiceImageButton}
-                  onPress={() => setPicked(index)}
-                  activeOpacity={0.85}
+              <TouchableOpacity
+                key={index}
+                style={styles.choiceImageButton}
+                onPress={() => {
+                  setPicked(index);
+                  saveDecision(index); // AUTOSAVE after decision
+                }}
+                activeOpacity={0.85}
+              >
+
+                <ImageBackground
+                  source={require("../../assets/buttons/choice_button.png")}
+                  style={styles.choiceImageButtonBg}
+                  resizeMode="stretch"
                 >
+                  <Text style={styles.choiceButtonText}>{choice.text}</Text>
+                </ImageBackground>
 
-                  <ImageBackground
-                    source={require("../../assets/buttons/choice_button.png")}
-                    style={styles.choiceImageButtonBg}
-                    resizeMode="stretch"
-                  >
+              </TouchableOpacity>
 
-                    <Text style={styles.choiceButtonText}>
-                      {choice.text}
-                    </Text>
-
-                  </ImageBackground>
-
-                </TouchableOpacity>
-
-              )
-            )}
+            ))}
 
           </View>
 
@@ -697,9 +668,7 @@ function PartRenderer(props) {
 
 
       return withOverlay(
-        <View style={styles.choiceScreen}>
-          {choiceContent}
-        </View>
+        <View style={styles.choiceScreen}>{choiceContent}</View>
       );
     }
 
@@ -708,17 +677,12 @@ function PartRenderer(props) {
     // RESPONSE SCREEN
     // -------------------------------------------------
 
-    const selectedChoice =
-      current.choices[picked];
+    const selectedChoice = current.choices[picked];
 
     const responseContent = (
       <>
 
-        <CharacterLayer
-          characters={
-            selectedChoice.characters
-          }
-        />
+        <CharacterLayer characters={selectedChoice.characters} />
 
 
         <View style={styles.dialogueWrapper}>
@@ -729,13 +693,9 @@ function PartRenderer(props) {
             resizeMode="stretch"
           >
 
-            <Text style={styles.speakerName}>
-              {selectedChoice.speaker}
-            </Text>
+            <Text style={styles.speakerName}>{selectedChoice.speaker}</Text>
 
-            <Text style={styles.dialogueText}>
-              {selectedChoice.dialogue}
-            </Text>
+            <Text style={styles.dialogueText}>{selectedChoice.dialogue}</Text>
 
             {selectedChoice.translation ? (
               <Text style={styles.dialogueTranslation}>
@@ -750,9 +710,7 @@ function PartRenderer(props) {
 
         <TouchableOpacity
           style={styles.arrowButton}
-          onPress={() =>
-            goToIndex(current.nextScene)
-          }
+          onPress={() => goToIndex(current.nextScene)}
         >
           <Image
             source={require("../../assets/icons/arrow_next.png")}
@@ -778,9 +736,7 @@ function PartRenderer(props) {
 
 
     return withOverlay(
-      <View style={styles.background}>
-        {responseContent}
-      </View>
+      <View style={styles.background}>{responseContent}</View>
     );
   }
 
@@ -792,9 +748,7 @@ function PartRenderer(props) {
   const dialogueContent = (
     <>
 
-      <CharacterLayer
-        characters={current.characters}
-      />
+      <CharacterLayer characters={current.characters} />
 
 
       <View style={styles.dialogueWrapper}>
@@ -805,13 +759,9 @@ function PartRenderer(props) {
           resizeMode="stretch"
         >
 
-          <Text style={styles.speakerName}>
-            {current.speaker}
-          </Text>
+          <Text style={styles.speakerName}>{current.speaker}</Text>
 
-          <Text style={styles.dialogueText}>
-            {current.text}
-          </Text>
+          <Text style={styles.dialogueText}>{current.text}</Text>
 
           {current.translation ? (
             <Text style={styles.dialogueTranslation}>
@@ -824,10 +774,7 @@ function PartRenderer(props) {
       </View>
 
 
-      <TouchableOpacity
-        style={styles.arrowButton}
-        onPress={goNext}
-      >
+      <TouchableOpacity style={styles.arrowButton} onPress={goNext}>
         <Image
           source={require("../../assets/icons/arrow_next.png")}
           style={styles.arrowImage}
@@ -852,30 +799,24 @@ function PartRenderer(props) {
 
 
   return withOverlay(
-    <View style={styles.background}>
-      {dialogueContent}
-    </View>
+    <View style={styles.background}>{dialogueContent}</View>
   );
 }
 
 
 // =====================================================
 // SCREEN EXPORTS
+// (`...props` includes `route`, so route.params.startScene reaches PartRenderer)
 // =====================================================
 
-export function Chap1Part1Screen({
-  navigation,
-  ...props
-}) {
+export function Chap1Part1Screen({ navigation, ...props }) {
   return (
     <PartRenderer
       sceneData={Chapter1.part1}
       chapterNumber={1}
       partNumber={1}
       isLastPart={false}
-      onPartComplete={() =>
-        navigation.navigate("Part2")
-      }
+      onPartComplete={() => navigation.navigate("Part2")}
       navigation={navigation}
       {...props}
     />
@@ -883,19 +824,14 @@ export function Chap1Part1Screen({
 }
 
 
-export function Chap1Part2Screen({
-  navigation,
-  ...props
-}) {
+export function Chap1Part2Screen({ navigation, ...props }) {
   return (
     <PartRenderer
       sceneData={Chapter1.part2}
       chapterNumber={1}
       partNumber={2}
       isLastPart={false}
-      onPartComplete={() =>
-        navigation.navigate("Part3")
-      }
+      onPartComplete={() => navigation.navigate("Part3")}
       navigation={navigation}
       {...props}
     />
@@ -903,19 +839,14 @@ export function Chap1Part2Screen({
 }
 
 
-export function Chap1Part3Screen({
-  navigation,
-  ...props
-}) {
+export function Chap1Part3Screen({ navigation, ...props }) {
   return (
     <PartRenderer
       sceneData={Chapter1.part3}
       chapterNumber={1}
       partNumber={3}
       isLastPart={false}
-      onPartComplete={() =>
-        navigation.navigate("Part4")
-      }
+      onPartComplete={() => navigation.navigate("Part4")}
       navigation={navigation}
       {...props}
     />
@@ -923,19 +854,14 @@ export function Chap1Part3Screen({
 }
 
 
-export function Chap1Part4Screen({
-  navigation,
-  ...props
-}) {
+export function Chap1Part4Screen({ navigation, ...props }) {
   return (
     <PartRenderer
       sceneData={Chapter1.part4}
       chapterNumber={1}
       partNumber={4}
       isLastPart={false}
-      onPartComplete={() =>
-        navigation.navigate("Part5")
-      }
+      onPartComplete={() => navigation.navigate("Part5")}
       navigation={navigation}
       {...props}
     />
@@ -943,19 +869,14 @@ export function Chap1Part4Screen({
 }
 
 
-export function Chap1Part5Screen({
-  navigation,
-  ...props
-}) {
+export function Chap1Part5Screen({ navigation, ...props }) {
   return (
     <PartRenderer
       sceneData={Chapter1.part5}
       chapterNumber={1}
       partNumber={5}
       isLastPart={false}
-      onPartComplete={() =>
-        navigation.navigate("Part6")
-      }
+      onPartComplete={() => navigation.navigate("Part6")}
       navigation={navigation}
       {...props}
     />
@@ -963,19 +884,14 @@ export function Chap1Part5Screen({
 }
 
 
-export function Chap1Part6Screen({
-  navigation,
-  ...props
-}) {
+export function Chap1Part6Screen({ navigation, ...props }) {
   return (
     <PartRenderer
       sceneData={Chapter1.part6}
       chapterNumber={1}
       partNumber={6}
       isLastPart={false}
-      onPartComplete={() =>
-        navigation.navigate("Part7")
-      }
+      onPartComplete={() => navigation.navigate("Part7")}
       navigation={navigation}
       {...props}
     />
@@ -983,19 +899,14 @@ export function Chap1Part6Screen({
 }
 
 
-export function Chap1Part7Screen({
-  navigation,
-  ...props
-}) {
+export function Chap1Part7Screen({ navigation, ...props }) {
   return (
     <PartRenderer
       sceneData={Chapter1.part7}
       chapterNumber={1}
       partNumber={7}
       isLastPart={false}
-      onPartComplete={() =>
-        navigation.navigate("Part8")
-      }
+      onPartComplete={() => navigation.navigate("Part8")}
       navigation={navigation}
       {...props}
     />
@@ -1003,19 +914,14 @@ export function Chap1Part7Screen({
 }
 
 
-export function Chap1Part8Screen({
-  navigation,
-  ...props
-}) {
+export function Chap1Part8Screen({ navigation, ...props }) {
   return (
     <PartRenderer
       sceneData={Chapter1.part8}
       chapterNumber={1}
       partNumber={8}
       isLastPart={true}
-      onChapterComplete={() =>
-        navigation.navigate("ChapterSelect")
-      }
+      onChapterComplete={() => navigation.navigate("ChapterSelect")}
       navigation={navigation}
       {...props}
     />
@@ -1271,6 +1177,7 @@ const styles = StyleSheet.create({
   characterRight: {
     right: "2%",
   },
+
 
   // ===================================================
   // DIALOGUE

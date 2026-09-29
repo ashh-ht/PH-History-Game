@@ -15,12 +15,15 @@ const CLOSEICON = require('../../assets/returnarrow.png');
 const BOOKMARK_BG = require('../../assets/Journal_parts/bookmark.png');
 const LISTBUTTON_BG = require('../../assets/Journal_parts/journal_button.png');
 
+
 // Character Profiles
 const CARD_BG = require('../../assets/Journal_parts/char_holder.png'); // gold-framed card
-const PLACEHOLDER = require('../../assets/Journal_parts/char_profile.png'); // temporary, known-good
+const PLACEHOLDER = require('../../assets/Journal_parts/char_holder.png'); // known-good fallback
 
 const PORTRAITS = {
-  // Not yet available
+  'Andrés Bonifacio': require('../../Character Images/Temporary Placeholders/Bonifacio.png'),
+  'Dr. José Rizal': require('../../Character Images/Temporary Placeholders/Rizal.png'),
+  'Apolinario Mabini': require('../../Character Images/Temporary Placeholders/Mabini.png'),
 };
 
 const CARDS_PER_SIDE = 3;

@@ -13,7 +13,7 @@ function MainMenuScreen({ navigation }) {
           <Image source={require('../../assets/mainmenu/Menu_NewGame.png')} style={styles.button} />
         </Sound_clicks>
 
-        <Sound_clicks onPress={() => navigation.navigate('ChapterSelect')}>
+        <Sound_clicks onPress={() => navigation.navigate('PartSelect')}>
           <Image source={require('../../assets/mainmenu/Menu_Continue.png')} style={styles.button} />
         </Sound_clicks>
 

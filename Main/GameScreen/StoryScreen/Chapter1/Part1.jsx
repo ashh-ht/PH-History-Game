@@ -14,7 +14,7 @@ export const Chapter1_Part1 = [
     background: require("../../../../Background Images/Intro/Intro 2.png")
   },
 
-  {
+  { 
     type: "system",
     intro: true,
     text: "They built homes, sailed between islands, traded with distant shores, and raised families.",
@@ -361,7 +361,7 @@ export const Chapter1_Part1 = [
       }
     ],
 
-    nextScene: 29
+    nextScene: 30
   },
 
   // CONTINUE
@@ -626,7 +626,7 @@ export const Chapter1_Part1 = [
     ],
 
 
-    nextScene: 50
+    nextScene: 51
   },
 
 
