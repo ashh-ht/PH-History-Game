@@ -11,9 +11,9 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath('com.android.tools.build:gradle:9.3.2')
     classpath('com.facebook.react:react-native-gradle-plugin')
     classpath('org.jetbrains.kotlin:kotlin-gradle-plugin:2.2.0')
+    classpath('com.google.gms:google-services:4.4.2')
   }
 }
 
@@ -22,10 +22,6 @@ allprojects {
     google()
     mavenCentral()
     maven { url 'https://www.jitpack.io' }
-  }
-
-  plugins {
-    id 'com.google.gms.google-services' version '4.5.0' apply false
   }
 }
 
