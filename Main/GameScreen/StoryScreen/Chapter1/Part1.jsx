@@ -732,7 +732,7 @@ export const Chapter1_Part1 = [
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
 
-  {
+  { 
     type: "scene",
     title: "There are still centuries of history waiting to unfold.",
     date: " ",

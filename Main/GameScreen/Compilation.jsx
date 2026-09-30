@@ -497,7 +497,7 @@ function PartRenderer(props) {
 
 
   // ===================================================
-  // QUIZ / MINIGAME
+  // QUIZ / MINIGAME / MINIGAME
   // ===================================================
 
   if (current.type === "quiz") {
@@ -506,7 +506,7 @@ function PartRenderer(props) {
     const isCorrect = quizAnswer === current.correctIndex;
 
     return withOverlay(
-      <View style={[styles.choiceScreen, { backgroundColor: "#fffca0" }]}>
+      <View style={[[styles.choiceScreen, { backgroundColor: "#fffca0" }], { backgroundColor: "#fffca0" }]}>
 
         <View style={styles.choiceParchmentWrapper}>
 
@@ -535,11 +535,15 @@ function PartRenderer(props) {
         {/* QUIZ ANSWERS ONLY */}
 
         <View style={styles.quizButtonsGrid}>
+        {/* QUIZ ANSWERS ONLY */}
+
+        <View style={styles.quizButtonsGrid}>
 
           {current.options.map((option, index) => (
 
             <TouchableOpacity
               key={index}
+              style={styles.quizImageButton}
               style={styles.quizImageButton}
               onPress={() => {
                 if (!isAnswered) {
@@ -570,8 +574,11 @@ function PartRenderer(props) {
 
         {isAnswered && (
           <TouchableOpacity
+           
             style={styles.arrowButton}
+           
             onPress={goNext}
+          
           >
             <Image
               source={require("../../assets/icons/arrow_next.png")}
@@ -1458,6 +1465,39 @@ const styles = StyleSheet.create({
   choiceButtonText: {
     color: "#000000",
     fontSize: 16,
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+
+  // ===================================================
+  // QUIZ / MINIGAME CHOICES
+  // ===================================================
+
+  quizButtonsGrid: {
+    paddingHorizontal: 15,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: 10,
+  },
+
+  quizImageButton: {
+    width: "47%",
+  },
+
+  quizImageButtonBg: {
+    width: "100%",
+    minHeight: 65,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+  },
+
+  quizButtonText: {
+    color: "#000000",
+    fontSize: 15,
+    lineHeight: 20,
     textAlign: "center",
     fontWeight: "bold",
   },

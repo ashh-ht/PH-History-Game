@@ -601,6 +601,7 @@ export const Chapter1_Part8 = [
     text: "The Revolution had changed the Philippines forever. But history did not end at Kawit.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
+  
 
 
   {
