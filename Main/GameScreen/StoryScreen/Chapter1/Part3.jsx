@@ -433,4 +433,89 @@ export const Chapter1_Part3 = [
     text: "From today, we work only for the freedom of our country."
   },
 
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // QUIZ TIME
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  {
+    type: "scene",
+    title: "Test Your Knowledge!",
+    date: "How well do you remember the events of 1892?",
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+  },
+
+  {
+    type: "quiz",
+    question: "What did José Rizal hope to accomplish after returning to the Philippines in 1892?",
+    options: [
+      "Become a Spanish government official",
+      "Work with Filipinos to improve their country",
+      "Leave Manila immediately",
+      "Start a military campaign"
+    ],
+    correctIndex: 1
+  },
+
+  {
+    type: "quiz",
+    question: "What organization did Rizal help establish on July 3, 1892?",
+    options: [
+      "The Katipunan",
+      "La Liga Filipina",
+      "The Philippine Republic",
+      "The Propaganda Movement"
+    ],
+    correctIndex: 1
+  },
+
+  {
+    type: "quiz",
+    question: "What happened to Rizal shortly after the founding of La Liga Filipina?",
+    options: [
+      "He was elected president of the Liga",
+      "He returned to Spain voluntarily",
+      "He was arrested and exiled to Dapitan",
+      "He joined Bonifacio's secret organization"
+    ],
+    correctIndex: 2
+  },
+
+  {
+    type: "quiz",
+    question: "Why did members of La Liga Filipina begin to disagree about its future?",
+    options: [
+      "They disagreed about whether to continue\npeaceful reform or pursue a different approach",
+      "They could not agree on where to meet",
+      "They wanted to replace Rizal as a novelist",
+      "They disagreed about which language to use"
+    ],
+    correctIndex: 0
+  },
+
+  {
+    type: "quiz",
+    question: "What secret organization was founded by Andrés Bonifacio and his companions?",
+    options: [
+      "La Liga Filipina",
+      "The Propaganda Movement",
+      "The Katipunan",
+      "The Philippine Assembly"
+    ],
+    correctIndex: 2
+  },
+
+  {
+    type: "scene",
+    title: "Chapter Complete.",
+    date: "The call for change had become a call for freedom.",
+    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+  },
+  
+  {
+    type: "scene",
+    title: "And soon, that call would no longer remain in secret.",
+    date: " ",
+    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+  }
+
 ];

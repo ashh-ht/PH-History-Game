@@ -361,7 +361,7 @@ function PartRenderer(props) {
 
 
   // ===================================================
-  // QUIZ
+  // QUIZ / MINIGAME
   // ===================================================
 
   if (current.type === "quiz") {
@@ -370,7 +370,7 @@ function PartRenderer(props) {
     const isCorrect = quizAnswer === current.correctIndex;
 
     return withOverlay(
-      <View style={styles.choiceScreen}>
+      <View style={[styles.choiceScreen, { backgroundColor: "#fffca0" }]}>
 
         <View style={styles.choiceParchmentWrapper}>
 
@@ -380,7 +380,9 @@ function PartRenderer(props) {
             resizeMode="stretch"
           >
 
-            <Text style={styles.choiceQuestion}>{current.question}</Text>
+            <Text style={styles.choiceQuestion}>
+              {current.question}
+            </Text>
 
             {isAnswered && (
               <Text style={styles.choicePrompt}>
@@ -393,13 +395,15 @@ function PartRenderer(props) {
         </View>
 
 
-        <View style={styles.choiceButtonsColumn}>
+        {/* QUIZ ANSWERS ONLY */}
+
+        <View style={styles.quizButtonsGrid}>
 
           {current.options.map((option, index) => (
 
             <TouchableOpacity
               key={index}
-              style={styles.choiceImageButton}
+              style={styles.quizImageButton}
               onPress={() => {
                 if (!isAnswered) {
                   setQuizAnswer(index);
@@ -410,10 +414,14 @@ function PartRenderer(props) {
 
               <ImageBackground
                 source={require("../../assets/buttons/choice_button.png")}
-                style={styles.choiceImageButtonBg}
+                style={styles.quizImageButtonBg}
                 resizeMode="stretch"
               >
-                <Text style={styles.choiceButtonText}>{option}</Text>
+
+                <Text style={styles.quizButtonText}>
+                  {option}
+                </Text>
+
               </ImageBackground>
 
             </TouchableOpacity>
@@ -424,7 +432,10 @@ function PartRenderer(props) {
 
 
         {isAnswered && (
-          <TouchableOpacity style={styles.arrowButton} onPress={goNext}>
+          <TouchableOpacity
+            style={styles.arrowButton}
+            onPress={goNext}
+          >
             <Image
               source={require("../../assets/icons/arrow_next.png")}
               style={styles.arrowImage}
@@ -1284,6 +1295,39 @@ const styles = StyleSheet.create({
   choiceButtonText: {
     color: "#000000",
     fontSize: 16,
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+
+  // ===================================================
+  // QUIZ / MINIGAME CHOICES
+  // ===================================================
+
+  quizButtonsGrid: {
+    paddingHorizontal: 15,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: 10,
+  },
+
+  quizImageButton: {
+    width: "47%",
+  },
+
+  quizImageButtonBg: {
+    width: "100%",
+    minHeight: 65,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+  },
+
+  quizButtonText: {
+    color: "#000000",
+    fontSize: 15,
+    lineHeight: 20,
     textAlign: "center",
     fontWeight: "bold",
   },

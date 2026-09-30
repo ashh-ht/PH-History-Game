@@ -14,7 +14,7 @@ export const Chapter1_Part1 = [
     background: require("../../../../Background Images/Intro/Intro 2.png")
   },
 
-  { 
+  {
     type: "system",
     intro: true,
     text: "They built homes, sailed between islands, traded with distant shores, and raised families.",
@@ -533,7 +533,7 @@ export const Chapter1_Part1 = [
 
   {
     type: "scene",
-    title: "Scene 4: The Sandugo of Manila",
+    title: "The Sandugo of Manila",
     date: "June 1571",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg")
   },
@@ -649,6 +649,93 @@ export const Chapter1_Part1 = [
     type: "scene",
     title: "Their story does not end here.",
     date: "It will continue for centuries. Through generations of change, resistance,\nand eventually the fight for independence.",
+    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+  },
+
+
+
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // QUIZ TIME
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  {
+    type: "scene",
+    title: "Test Your Knowledge!",
+    date: "How well do you remember the journey?",
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+  },
+
+  {
+    type: "quiz",
+    question: "Where did Legazpi and his fleet first anchor in February 1565?",
+    options: [
+      "Cebu",
+      "Cibabao, Samar",
+      "Bohol",
+      "Manila"
+    ],
+    correctIndex: 1
+  },
+
+  {
+    type: "quiz",
+    question: "What did Legazpi plant on Leyte to formally claim the territory for Spain?",
+    options: [
+      "A Spanish flag",
+      "A wooden fort",
+      "A cross",
+      "A cannon"
+    ],
+    correctIndex: 2
+  },
+
+  {
+    type: "quiz",
+    question: "Who welcomed Legazpi in Bohol and sealed their friendship with a sandugo?",
+    options: [
+      "Rajah Tupas",
+      "Lakan Dula",
+      "Rajah Sulayman",
+      "Datu Sikatuna"
+    ],
+    correctIndex: 3
+  },
+
+  {
+    type: "quiz",
+    question: "What important object did Juan de Camus discover inside a house in Cebu?",
+    options: [
+      "A Spanish sword",
+      "The Santo Niño",
+      "A gold crown",
+      "A map of Manila"
+    ],
+    correctIndex: 1
+  },
+
+  {
+    type: "quiz",
+    question: "Who urged Rajah Sulayman to negotiate with Legazpi when\nthe Spanish arrived in Manila?",
+    options: [
+      "Datu Sikatuna",
+      "Rajah Tupas",
+      "Lakan Dula",
+      "Juan de Salcedo"
+    ],
+    correctIndex: 2
+  },
+
+  {
+    type: "scene",
+    title: "Chapter Complete.",
+    date: "You survived the first encounters.\nBut the story doesn't end here...",
+    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+  },
+
+  { 
+    type: "scene",
+    title: "There are still centuries of history waiting to unfold.",
+    date: " ",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
 

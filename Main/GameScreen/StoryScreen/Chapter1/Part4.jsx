@@ -565,7 +565,91 @@ export const Chapter1_Part4 = [
     title: "The Katipunan is no longer a secret.",
     date: "Its dream of independence is about to become a revolution.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
-  }
+  },
 
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // QUIZ TIME
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  {
+    type: "scene",
+    title: "Test Your Knowledge!",
+    date: "How well do you remember the Katipunan?",
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+  },
+
+  {
+    type: "quiz",
+    question: "What was the main goal of the Katipunan when it was founded?",
+    options: [
+      "To support Spanish rule",
+      "To win independence for the Philippines",
+      "To become a political party in Spain",
+      "To replace La Liga Filipina as a reform group"
+    ],
+    correctIndex: 1
+  },
+
+  {
+    type: "quiz",
+    question: "What name did the Katipunan use for the nation it imagined?",
+    options: [
+      "Filipinas",
+      "Nueva España",
+      "Katagalugan",
+      "Manila"
+    ],
+    correctIndex: 2
+  },
+
+  {
+    type: "quiz",
+    question: "What was the purpose of the Triangle System?",
+    options: [
+      "To organize military battles",
+      "To train members in writing",
+      "To recruit members while limiting\nwhat each member knew",
+      "To divide the Katipunan into three armies"
+    ],
+    correctIndex: 2
+  },
+
+  {
+    type: "quiz",
+    question: "Who wrote the Kartilya ng Katipunan?",
+    options: [
+      "Andrés Bonifacio",
+      "Emilio Jacinto",
+      "José Rizal",
+      "Deodato Arellano"
+    ],
+    correctIndex: 1
+  },
+
+  {
+    type: "quiz",
+    question: "What happened after the Katipunan was discovered by\nSpanish authorities in August 1896?",
+    options: [
+      "The Katipunan immediately surrendered",
+      "Bonifacio returned to Spain",
+      "The movement moved toward open revolt",
+      "La Liga Filipina was restored"
+    ],
+    correctIndex: 2
+  },
+
+  {
+    type: "scene",
+    title: "Chapter Complete.",
+    date: "The secret is out.",
+    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+  },
+
+  {
+    type: "scene",
+    title: "What began in secret would soon shake the entire country.",
+    date: " ",
+    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+  }
 
 ];

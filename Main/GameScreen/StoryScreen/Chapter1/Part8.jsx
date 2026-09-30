@@ -471,7 +471,7 @@ export const Chapter1_Part8 = [
 
   {
     type: "scene",
-    title: "Scene 8: Santa Mesa",
+    title: "Santa Mesa",
     date: "February 4, 1899",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg")
   },
@@ -503,12 +503,105 @@ export const Chapter1_Part8 = [
 
   // END YAH
 
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // FINAL QUIZ
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  {
+    type: "scene",
+    title: "Test Your Knowledge!",
+    date: "How well do you remember the final chapter?",
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+  },
+
+  {
+    type: "quiz",
+    question: "What agreement ended the fighting between Spain and\nthe revolutionaries at the end of 1897?",
+    options: [
+      "Treaty of Paris",
+      "Pact of Biak-na-Bato",
+      "Naic Agreement",
+      "Treaty of Manila"
+    ],
+    correctIndex: 1
+  },
+
+  {
+    type: "quiz",
+    question: "Where did Aguinaldo and other revolutionary leaders\ngo after the Pact of Biak-na-Bato?",
+    options: [
+      "Japan",
+      "Spain",
+      "Hong Kong",
+      "Singapore"
+    ],
+    correctIndex: 2
+  },
+
+  {
+    type: "quiz",
+    question: "What happened on June 12, 1898?",
+    options: [
+      "The Battle of Manila was fought",
+      "The Philippine flag was first designed",
+      "Philippine independence was declared in Kawit",
+      "The Treaty of Paris was signed"
+    ],
+    correctIndex: 2
+  },
+
+  {
+    type: "quiz",
+    question: "Who helped prepare the Act of the Declaration\nof Independence?",
+    options: [
+      "Emilio Jacinto",
+      "Ambrosio Rianzares Bautista",
+      "Mariano Trías",
+      "Daniel Tirona"
+    ],
+    correctIndex: 1
+  },
+
+  {
+    type: "quiz",
+    question: "What happened when Spain and the United States signed\nthe Treaty of Paris in December 1898?",
+    options: [
+      "Spain recognized Philippine independence",
+      "The Philippines was ceded\nto the United States",
+      "Aguinaldo became president\nof the United States",
+      "The Philippine-American War ended"
+    ],
+    correctIndex: 1
+  },
+
+  {
+    type: "quiz",
+    question: "What event marked the beginning of the Philippine-American War?",
+    options: [
+      "The Declaration of Independence",
+      "The Battle of Alapan",
+      "The fighting near Santa Mesa on\nFebruary 4, 1899",
+      "The signing of the Treaty of Paris"
+    ],
+    correctIndex: 2
+  },
+
+  {
+    type: "scene",
+    title: "Final Chapter Complete.",
+    date: " ",
+    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+  },
+
+  // END YAH
+
   {
     type: "system",
     intro: true,
-    text: "The Revolution had changed the Philippines forever. But history did\nnot end at Kawit.",
+    text: "The Revolution had changed the Philippines forever. But history did not end at Kawit.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
+  
 
   {
     type: "system",

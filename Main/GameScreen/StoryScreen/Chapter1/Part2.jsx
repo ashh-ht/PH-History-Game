@@ -1,6 +1,6 @@
 export const Chapter1_Part2 = [
 
-  
+
   {
     type: "system",
     intro: true,
@@ -370,5 +370,92 @@ export const Chapter1_Part2 = [
     title: "After 85 years,",
     date: "the Dagohoy rebellion comes to an end.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+  },
+
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // QUIZ TIME
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  {
+    type: "scene",
+    title: "Test Your Knowledge!",
+    date: "How well do you remember Dagohoy's story?",
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+  },
+
+  {
+    type: "quiz",
+    question: "Why did Francisco Dagohoy begin his rebellion in 1744?",
+    options: [
+      "Spain refused to trade with Bohol",
+      "His brother Sagarino was denied a proper burial",
+      "The Spanish destroyed his mountain community",
+      "He wanted to become governor of Bohol"
+    ],
+    correctIndex: 1
+  },
+
+  {
+    type: "quiz",
+    question: "Where did Dagohoy and his followers establish their community?",
+    options: [
+      "Along the coast of Cebu",
+      "In the mountains of Bohol",
+      "Inside Manila",
+      "On the island of Leyte"
+    ],
+    correctIndex: 1
+  },
+
+  {
+    type: "quiz",
+    question: "About how large did Dagohoy's mountain community eventually become?",
+    options: [
+      "Around 3,000 people",
+      "Around 10,000 people",
+      "Around 20,000 people",
+      "Around 50,000 people"
+    ],
+    correctIndex: 2
+  },
+
+  {
+    type: "quiz",
+    question: "What happened when a Spanish expedition of 2,200 soldiers\nentered the mountains in 1827?",
+    options: [
+      "The Boholanos immediately surrendered",
+      "The expedition withdrew after\na difficult standoff",
+      "The community moved to Cebu",
+      "Dagohoy signed a peace treaty with Spain"
+    ],
+    correctIndex: 1
+  },
+
+  {
+    type: "quiz",
+    question: "How did the Dagohoy rebellion finally come to an end in 1829?",
+    options: [
+      "The Spanish captured every rebel leader",
+      "The community accepted peace and was\ngranted a pardon",
+      "The Boholanos left the Philippines",
+      "The mountain community defeated the\nSpanish completely"
+    ],
+    correctIndex: 1
+  },
+
+  
+  {
+    type: "scene",
+    title: "Chapter Complete.",
+    date: "The longest rebellion in Philippine history has ended.",
+    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+  },
+
+  {
+    type: "scene",
+    title: "But the story of resistance is far from over.",
+    date: " ",
+    background: require("../../../../Background Images/Usuals/Black Background.jpg")
   }
+
 ];

@@ -111,7 +111,7 @@ export const Chapter1_Part6 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Rizal execution.png"),
-    text: "Months earlier, José Rizal had been arrested and exciled for his\nalleged connection to the revolution."
+    text: "Months earlier, José Rizal had been arrested and exiled for his\nalleged connection to the revolution."
   },
 
   {
@@ -419,5 +419,89 @@ export const Chapter1_Part6 = [
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
 
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // QUIZ TIME
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  {
+    type: "scene",
+    title: "Test Your Knowledge!",
+    date: "How well do you remember the Revolution's early months?",
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+  },
+
+  {
+    type: "quiz",
+    question: "Which province became a major center of revolutionary victories in late 1896?",
+    options: [
+      "Cavite",
+      "Cebu",
+      "Leyte",
+      "Ilocos"
+    ],
+    correctIndex: 0
+  },
+
+  {
+    type: "quiz",
+    question: "What were the two main factions that emerged in Cavite?",
+    options: [
+      "Katipon and Kawal",
+      "Magdiwang and Magdalo",
+      "La Liga and Katipunan",
+      "Cavite and Manila"
+    ],
+    correctIndex: 1
+  },
+
+  {
+    type: "quiz",
+    question: "What happened to José Rizal on December 30, 1896?",
+    options: [
+      "He escaped from Dapitan",
+      "He joined the Katipunan",
+      "He was executed at Bagumbayan",
+      "He became a revolutionary commander"
+    ],
+    correctIndex: 2
+  },
+
+  {
+    type: "quiz",
+    question: "Why did the rivalry between the Magdiwang and Magdalo become a problem?",
+    options: [
+      "They disagreed over who should lead\nthe revolutionary forces",
+      "They wanted to abandon the Revolution",
+      "They were fighting over control of Manila",
+      "They refused to fight Spain"
+    ],
+    correctIndex: 0
+  },
+
+  {
+    type: "quiz",
+    question: "What major problem faced the revolutionaries as Spanish forces advanced?",
+    options: [
+      "They had too many weapons",
+      "They had no support from Cavite",
+      "They faced military pressure, shortages,\nand divisions over leadership",
+      "They had already defeated Spain"
+    ],
+    correctIndex: 2
+  },
+
+  {
+    type: "scene",
+    title: "Chapter Complete.",
+    date: "The Revolution was under pressure from within and without.",
+    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+  },
+
+  {
+    type: "scene",
+    title: "Soon, the question of leadership would be decided.",
+    date: " ",
+    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+  }
 
 ];

@@ -415,6 +415,91 @@ export const Chapter1_Part5 = [
     title: "The fighting at San Juan del Monte makes one thing clear:",
     date: "the Revolution has begun.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+  },
+
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // QUIZ TIME
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  {
+    type: "scene",
+    title: "Test Your Knowledge!",
+    date: "How well do you remember the beginning of the Revolution?",
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+  },
+
+  {
+    type: "quiz",
+    question: "What led Bonifacio and the Katipunan to move toward\nopen revolt in August 1896?",
+    options: [
+      "The Spanish government offered\nthem independence",
+      "The Katipunan was exposed and its\nembers began facing arrests",
+      "Rizal returned from exile",
+      "The Spanish army abandoned Manila"
+    ],
+    correctIndex: 1
+  },
+
+  {
+    type: "quiz",
+    question: "What did the tearing of the cédulas symbolize?",
+    options: [
+      "The end of the Katipunan",
+      "A rejection of Spanish rule",
+      "The beginning of a new tax system",
+      "A celebration of Spanish citizenship"
+    ],
+    correctIndex: 1
+  },
+
+  {
+    type: "quiz",
+    question: "Where did the Katipuneros launch a major attack on August 30, 1896?",
+    options: [
+      "Cavite",
+      "Pugad Lawin",
+      "San Juan del Monte",
+      "Cebu"
+    ],
+    correctIndex: 2
+  },
+
+  {
+    type: "quiz",
+    question: "What happened after the attack at San Juan del Monte?",
+    options: [
+      "The revolutionaries captured Manila",
+      "The Spanish forces surrendered",
+      "The revolutionaries suffered heavy\nlosses and retreated",
+      "The Katipunan disbanded"
+    ],
+    correctIndex: 2
+  },
+
+  {
+    type: "quiz",
+    question: "What did Governor-General Ramón Blanco declare on August 30, 1896?",
+    options: [
+      "A peace agreement",
+      "Eight provinces under a state of war",
+      "Philippine independence",
+      "The restoration of La Liga Filipina"
+    ],
+    correctIndex: 1
+  },
+
+  {
+    type: "scene",
+    title: "Chapter Complete.",
+    date: "The uprising had begun.",
+    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+  },
+
+  {
+    type: "scene",
+    title: "The first battles were only the beginning.",
+    date: " ",
+    background: require("../../../../Background Images/Usuals/Black Background.jpg")
   }
 
 ];

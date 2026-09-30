@@ -1,6 +1,6 @@
 export const Chapter1_Part7 = [
 
-  
+
   {
     type: "system",
     intro: true,
@@ -122,7 +122,7 @@ export const Chapter1_Part7 = [
   },
 
 
-  
+
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 2
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -423,17 +423,94 @@ export const Chapter1_Part7 = [
 
   {
     type: "scene",
-    intro: true,
-    text: "is executed alongside his brother.",
+    title: "A Revolution Changed Forever.",
+    date: "May 10, 1897",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
 
-  
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // QUIZ TIME
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   {
     type: "scene",
-    title: "His death is a dark moment of the Revolution, ",
-    date: "and his name will forever remain tied to the struggle for Philippine independence.",
+    title: "Test Your Knowledge!",
+    date: "How well do you remember the struggle for leadership?",
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+  },
+
+  {
+    type: "quiz",
+    question: "What was the main purpose of the Tejeros Convention?",
+    options: [
+      "To negotiate peace with Spain",
+      "To organize a new revolutionary government",
+      "To restore Spanish rule in Cavite",
+      "To establish the Katipunan"
+    ],
+    correctIndex: 1
+  },
+
+  {
+    type: "quiz",
+    question: "Who was elected President at the Tejeros Convention?",
+    options: [
+      "Andrés Bonifacio",
+      "Mariano Álvarez",
+      "Emilio Aguinaldo",
+      "Artemio Ricarte"
+    ],
+    correctIndex: 2
+  },
+
+  {
+    type: "quiz",
+    question: "Why did Bonifacio object to the results of the Tejeros Convention?",
+    options: [
+      "He wanted to become President",
+      "He believed the election was\nnot conducted fairly",
+      "He wanted to surrender to Spain",
+      "He opposed the creation of a\nrevolutionary government"
+    ],
+    correctIndex: 1
+  },
+
+  {
+    type: "quiz",
+    question: "What happened to Bonifacio after the conflict\nbetween the revolutionary factions?",
+    options: [
+      "He returned to Manila",
+      "He was sent to Spain",
+      "He was arrested and brought\nbefore a military court",
+      "He became President of the\nnew government"
+    ],
+    correctIndex: 2
+  },
+
+  {
+    type: "quiz",
+    question: "What happened to Andrés and Procopio Bonifacio on May 10, 1897?",
+    options: [
+      "They were exiled",
+      "They escaped from Cavite",
+      "They were executed at Mount Buntis",
+      "They surrendered to Spanish forces"
+    ],
+    correctIndex: 2
+  },
+
+  {
+    type: "scene",
+    title: "Chapter Complete.",
+    date: "Bonifacio is gone, but the Revolution will continue.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
+
+  {
+    type: "scene",
+    title: "The Revolution has now entered a new chapter.",
+    date: " ",
+    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+  }
 
 ];
