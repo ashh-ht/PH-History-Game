@@ -1,7 +1,17 @@
 {
   "name": "PHHistoryGameTemp",
   "displayName": "PHHistoryGameTemp",
-  "android": {
-    "package": "com.anonymous.phhistorygametemp"
+  "expo": {
+    "name": "PHHistoryGameTemp",
+    "slug": "phhistorygametemp",
+    "android": {
+      "package": "com.anonymous.phhistorygametemp"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c4d3b743-8c6e-48e0-8bb8-95d28a8fea2c"
+      }
+    },
+    "owner": "heshuhiroishikis-team"
   }
 }
