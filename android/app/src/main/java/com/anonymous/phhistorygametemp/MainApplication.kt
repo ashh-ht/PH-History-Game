@@ -1,4 +1,8 @@
 package com.anonymous.phhistorygametemp
+import android.content.res.Configuration
+import expo.modules.ApplicationLifecycleDispatcher
+import expo.modules.ExpoReactHostFactory
+import expo.modules.ReactNativeHostWrapper
 
 import android.app.Application
 import com.facebook.react.PackageList
@@ -15,7 +19,7 @@ import com.facebook.react.soloader.OpenSourceMergedSoMapping
 class MainApplication : Application(), ReactApplication {
 
   override val reactNativeHost: ReactNativeHost =
-    object : DefaultReactNativeHost(this@MainApplication) {
+    ReactNativeHostWrapper(this, object : DefaultReactNativeHost(this@MainApplication) {
       override fun getPackages(): List<ReactPackage> = PackageList(this@MainApplication).packages
 
       override fun getJSMainModuleName(): String = "index"
@@ -24,10 +28,10 @@ class MainApplication : Application(), ReactApplication {
 
       override val isNewArchEnabled: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
       override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
-    }
+    })
 
   override val reactHost: ReactHost
-    get() = getDefaultReactHost(applicationContext, reactNativeHost)
+    get() = ExpoReactHostFactory.getDefaultReactHost(applicationContext, reactNativeHost)
 
   override fun onCreate() {
     super.onCreate()
@@ -35,5 +39,11 @@ class MainApplication : Application(), ReactApplication {
     if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
       load()
     }
+    ApplicationLifecycleDispatcher.onApplicationCreate(this)
+  }
+
+  override fun onConfigurationChanged(newConfig: Configuration) {
+    super.onConfigurationChanged(newConfig)
+    ApplicationLifecycleDispatcher.onConfigurationChanged(this, newConfig)
   }
 }
