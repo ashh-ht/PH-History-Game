@@ -18,8 +18,7 @@ pluginManagement {
 
 plugins {
   id("com.facebook.react.settings")
-
-id("expo-autolinking-settings")
+  id("expo-autolinking-settings")
 }
 
 extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
@@ -28,13 +27,8 @@ extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
 
 rootProject.name = 'PHHistoryGameTemp'
 
-include ':app'
-
-includeBuild(new File(
-  providers.exec {
-    workingDir(rootDir)
-    commandLine("node", "--print", "require.resolve('@react-native/gradle-plugin/package.json')")
-  }.standardOutput.asText.get().trim()
-).getParentFile().absolutePath)expoAutolinking.useExpoModules()
+expoAutolinking.useExpoModules()
 expoAutolinking.useExpoVersionCatalog()
+
+include ':app'
 includeBuild(expoAutolinking.reactNativeGradlePlugin)
