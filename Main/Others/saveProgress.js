@@ -103,10 +103,21 @@ async function clearCheckpoints() {
   }
 }
 
+async function restartEverything() {
+  try{
+    await AsyncStorage.clear();
+    return true;
+  } catch(error){
+        console.error("Error clearing AsyncStorage:", error);
+    return false;
+  }
+}
+
 export {
   saveCheckpoint,
   getCheckpoints,
   restoreCheckpoint,
   continueGame,
   clearCheckpoints,
+  restartEverything
 };

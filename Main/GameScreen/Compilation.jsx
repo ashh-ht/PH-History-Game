@@ -10,8 +10,58 @@ import {
 } from "react-native";
 
 import { useGameProgress } from "../../GameProgress";
+import { useGameplaySettings } from "../Others/GameplaySetting";
+import { useDisplaySettings, FONT_SCALE } from "../Others/DisplaySetting";
 import { saveCheckpoint } from "../Others/saveProgress";
 import { Chapter1 } from "./StoryScreen/Chapter1";
+
+
+// =====================================================
+// TYPEWRITER
+// =====================================================
+
+// Milliseconds per character for each Text Speed option
+const SPEED_MS = { Slow: 60, Normal: 30, Fast: 12 };
+
+function useTypewriter(text, msPerChar, resetKey) {
+  const [state, setState] = useState({ key: resetKey, count: 0 });
+  const length = text ? text.length : 0;
+
+  // If the line changed but state hasn't reset yet, show 0 characters
+  const count = state.key === resetKey ? state.count : 0;
+
+  useEffect(() => {
+    setState({ key: resetKey, count: 0 });
+    if (!length) return;
+
+    const id = setInterval(() => {
+      setState((s) =>
+        s.key === resetKey && s.count < length
+          ? { ...s, count: s.count + 1 }
+          : s
+      );
+    }, msPerChar);
+
+    return () => clearInterval(id);
+  }, [resetKey, length, msPerChar]);
+
+  return {
+    shown: text ? text.slice(0, count) : "",
+    done: count >= length,
+    skip: () => setState({ key: resetKey, count: length }),
+  };
+}
+
+// FIX: renders the FULL text invisibly to reserve the space, and puts the
+// typed text on top. This stops the box from re-centering/jumping while typing.
+function TypedText({ style, full, shown }) {
+  return (
+    <View>
+      <Text style={[style, { opacity: 0 }]}>{full}</Text>
+      <Text style={[style, styles.typedOverlay]}>{shown}</Text>
+    </View>
+  );
+}
 
 
 // =====================================================
@@ -85,6 +135,23 @@ function PartRenderer(props) {
   } = props;
 
   const game = useGameProgress();
+  const settings = useGameplaySettings();
+  const display = useDisplaySettings();
+  const fontScale = FONT_SCALE[display?.fontSize] ?? 1;
+
+  // FIX: applied to every box image now (dialogue AND narration boxes)
+  const boxImage = { opacity: display?.boxOpacity ?? 1 };
+
+  // FIX: safe if a style has no fontSize / lineHeight
+  const scaled = (style) => {
+    const s = StyleSheet.flatten(style) || {};
+    return {
+      ...s,
+      ...(s.fontSize ? { fontSize: Math.round(s.fontSize * fontScale) } : {}),
+      ...(s.lineHeight ? { lineHeight: Math.round(s.lineHeight * fontScale) } : {}),
+    };
+  };
+
 
   // If the player restored a save, Saves screen passes startScene.
   // Otherwise fall back to the normal progress.
@@ -115,6 +182,17 @@ function PartRenderer(props) {
       game.setInGame(false);
     };
   }, []);
+
+  // FIX: if the screen is already mounted and a save is restored later,
+  // useState's initial value is ignored, so jump to the new scene here.
+  const startScene = route?.params?.startScene;
+  useEffect(() => {
+    if (startScene == null) return;
+    setPicked(null);
+    setQuizAnswer(null);
+    setSceneIdx(startScene);
+    game.setScene(startScene);
+  }, [startScene]);
 
 
   // ===================================================
@@ -188,7 +266,8 @@ function PartRenderer(props) {
   // ===================================================
 
   const goToIndex = (index) => {
-    if (index < 0 || index >= sceneData.length) {
+    // FIX: also rejects undefined / non-numbers
+    if (typeof index !== "number" || index < 0 || index >= sceneData.length) {
       return;
     }
 
@@ -260,6 +339,63 @@ function PartRenderer(props) {
 
 
   // ===================================================
+  // GAMEPLAY SETTINGS: TEXT SPEED + AUTO PLAY
+  // Must stay above every early `return` (hooks rule).
+  // ===================================================
+
+  // Only dialogue, narrator, system messages and choice responses are typed.
+  // Scene cards, quizzes and intro screens show instantly.
+  const isTyped =
+    current &&
+    current.type !== "scene" &&
+    current.type !== "quiz" &&
+    !(current.type === "system" && current.intro === true);
+
+  let lineText = null;
+  if (isTyped) {
+    if (current.type === "choice") {
+      lineText = picked !== null ? current.choices[picked].dialogue : null;
+    } else {
+      lineText = current.text;
+    }
+  }
+
+  const { shown, done, skip } = useTypewriter(
+    lineText,
+    SPEED_MS[settings?.textSpeed] ?? 30,
+    `${sceneIdx}-${picked}`
+  );
+
+  // What "next" means on the current screen
+  const next = () => {
+    if (!current) return;
+
+    // FIX: if a choice has no nextScene, just go to the next index
+    if (current.type === "choice") {
+      return goToIndex(
+        typeof current.nextScene === "number" ? current.nextScene : sceneIdx + 1
+      );
+    }
+
+    if (current.type === "system" && current.intro) return goToNextIntro();
+    return goNext();
+  };
+
+  // First tap finishes the line, second tap moves on
+  const advance = () => (done ? next() : skip());
+
+  // Auto play: after the text finishes, wait N seconds, then advance
+  useEffect(() => {
+    if (!settings?.autoPlay || !done || !current) return;
+    if (current.type === "quiz") return; // player must answer
+    if (current.type === "choice" && picked === null) return; // player must choose
+
+    const id = setTimeout(next, settings.autoDelay * 1000);
+    return () => clearTimeout(id);
+  }, [sceneIdx, picked, done, settings?.autoPlay, settings?.autoDelay]);
+
+
+  // ===================================================
   // MENU OVERLAY
   // ===================================================
 
@@ -281,7 +417,7 @@ function PartRenderer(props) {
     return withOverlay(
       <View style={styles.container}>
 
-        <Text style={styles.dialogueText}>
+        <Text style={scaled(styles.dialogueText)}>
           Part {partNumber} complete!
         </Text>
 
@@ -324,7 +460,7 @@ function PartRenderer(props) {
           resizeMode="cover"
         >
           <View style={styles.introTextBox}>
-            <Text style={styles.introText}>{current.text}</Text>
+            <Text style={scaled(styles.introText)}>{current.text}</Text>
           </View>
         </ImageBackground>
 
@@ -341,7 +477,7 @@ function PartRenderer(props) {
               resizeMode="cover"
             >
               <View style={styles.introTextBox}>
-                <Text style={styles.introText}>{nextIntro.text}</Text>
+                <Text style={scaled(styles.introText)}>{nextIntro.text}</Text>
               </View>
             </ImageBackground>
           </Animated.View>
@@ -377,15 +513,16 @@ function PartRenderer(props) {
           <ImageBackground
             source={require("../../assets/foreground/narration_box.png")}
             style={styles.choiceParchmentBox}
+            imageStyle={boxImage}
             resizeMode="stretch"
           >
 
-            <Text style={styles.choiceQuestion}>
+            <Text style={scaled(styles.choiceQuestion)}>
               {current.question}
             </Text>
 
             {isAnswered && (
-              <Text style={styles.choicePrompt}>
+              <Text style={scaled(styles.choicePrompt)}>
                 {isCorrect ? "Correct!" : "Not quite..."}
               </Text>
             )}
@@ -418,7 +555,7 @@ function PartRenderer(props) {
                 resizeMode="stretch"
               >
 
-                <Text style={styles.quizButtonText}>
+                <Text style={scaled(styles.quizButtonText)}>
                   {option}
                 </Text>
 
@@ -461,15 +598,20 @@ function PartRenderer(props) {
           <ImageBackground
             source={require("../../assets/foreground/narration_box.png")}
             style={styles.systemParchmentBox}
+            imageStyle={boxImage}
             resizeMode="stretch"
           >
-            <Text style={styles.systemText}>{current.text}</Text>
+            <TypedText
+              style={scaled(styles.systemText)}
+              full={lineText}
+              shown={shown}
+            />
           </ImageBackground>
 
         </View>
 
 
-        <TouchableOpacity style={styles.arrowButton} onPress={goNext}>
+        <TouchableOpacity style={styles.arrowButton} onPress={advance}>
           <Image
             source={require("../../assets/icons/arrow_next.png")}
             style={styles.arrowImage}
@@ -559,19 +701,24 @@ function PartRenderer(props) {
           <ImageBackground
             source={require("../../assets/foreground/narration_box.png")}
             style={styles.narratorBox}
+            imageStyle={boxImage}
             resizeMode="stretch"
           >
 
-            <Text style={styles.narratorLabel}>Narrator:</Text>
+            <Text style={scaled(styles.narratorLabel)}>Narrator:</Text>
 
-            <Text style={styles.narratorText}>{current.text}</Text>
+            <TypedText
+              style={scaled(styles.narratorText)}
+              full={lineText}
+              shown={shown}
+            />
 
           </ImageBackground>
 
         </View>
 
 
-        <TouchableOpacity style={styles.arrowButton} onPress={goNext}>
+        <TouchableOpacity style={styles.arrowButton} onPress={advance}>
           <Image
             source={require("../../assets/icons/arrow_next.png")}
             style={styles.arrowImage}
@@ -621,12 +768,13 @@ function PartRenderer(props) {
             <ImageBackground
               source={require("../../assets/foreground/narration_box.png")}
               style={styles.choiceParchmentBox}
+              imageStyle={boxImage}
               resizeMode="stretch"
             >
 
-              <Text style={styles.choiceQuestion}>{current.question}</Text>
+              <Text style={scaled(styles.choiceQuestion)}>{current.question}</Text>
 
-              <Text style={styles.choicePrompt}>What will you choose?</Text>
+              <Text style={scaled(styles.choicePrompt)}>What will you choose?</Text>
 
             </ImageBackground>
 
@@ -652,7 +800,7 @@ function PartRenderer(props) {
                   style={styles.choiceImageButtonBg}
                   resizeMode="stretch"
                 >
-                  <Text style={styles.choiceButtonText}>{choice.text}</Text>
+                  <Text style={scaled(styles.choiceButtonText)}>{choice.text}</Text>
                 </ImageBackground>
 
               </TouchableOpacity>
@@ -701,15 +849,20 @@ function PartRenderer(props) {
           <ImageBackground
             source={require("../../assets/foreground/dialogue_box.png")}
             style={styles.dialogueBox}
+            imageStyle={boxImage}
             resizeMode="stretch"
           >
 
-            <Text style={styles.speakerName}>{selectedChoice.speaker}</Text>
+            <Text style={scaled(styles.speakerName)}>{selectedChoice.speaker}</Text>
 
-            <Text style={styles.dialogueText}>{selectedChoice.dialogue}</Text>
+            <TypedText
+              style={scaled(styles.dialogueText)}
+              full={lineText}
+              shown={shown}
+            />
 
             {selectedChoice.translation ? (
-              <Text style={styles.dialogueTranslation}>
+              <Text style={scaled(styles.dialogueTranslation)}>
                 {selectedChoice.translation}
               </Text>
             ) : null}
@@ -719,10 +872,7 @@ function PartRenderer(props) {
         </View>
 
 
-        <TouchableOpacity
-          style={styles.arrowButton}
-          onPress={() => goToIndex(current.nextScene)}
-        >
+        <TouchableOpacity style={styles.arrowButton} onPress={advance}>
           <Image
             source={require("../../assets/icons/arrow_next.png")}
             style={styles.arrowImage}
@@ -767,15 +917,20 @@ function PartRenderer(props) {
         <ImageBackground
           source={require("../../assets/foreground/dialogue_box.png")}
           style={styles.dialogueBox}
+          imageStyle={boxImage}
           resizeMode="stretch"
         >
 
-          <Text style={styles.speakerName}>{current.speaker}</Text>
+          <Text style={scaled(styles.speakerName)}>{current.speaker}</Text>
 
-          <Text style={styles.dialogueText}>{current.text}</Text>
+          <TypedText
+            style={scaled(styles.dialogueText)}
+            full={lineText}
+            shown={shown}
+          />
 
           {current.translation ? (
-            <Text style={styles.dialogueTranslation}>
+            <Text style={scaled(styles.dialogueTranslation)}>
               {current.translation}
             </Text>
           ) : null}
@@ -785,7 +940,7 @@ function PartRenderer(props) {
       </View>
 
 
-      <TouchableOpacity style={styles.arrowButton} onPress={goNext}>
+      <TouchableOpacity style={styles.arrowButton} onPress={advance}>
         <Image
           source={require("../../assets/icons/arrow_next.png")}
           style={styles.arrowImage}
@@ -959,6 +1114,14 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     backgroundColor: "#000000",
+  },
+
+  // NEW: typed text sits on top of the invisible full-text spacer
+  typedOverlay: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
   },
 
 

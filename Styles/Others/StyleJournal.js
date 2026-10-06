@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     color: '#3a2e1f',
     fontWeight: '600',
     fontSize: 6,
-    textAlign: 'center',
+     textAlign: 'center',
   },
 
   backLink: {

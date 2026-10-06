@@ -8,6 +8,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { AudioProvider } from './AudioStore';
 import { GameProgressProvider } from './GameProgress';
+import { GameplaySettingsProvider } from './Main/Others/GameplaySetting';
+import { DisplaySettingsProvider } from './Main/Others/DisplaySetting';
 
 import StartupScreen from './Main/Others/Startup';
 import MainMenuScreen from './Main/Others/Menu';
@@ -18,7 +20,10 @@ import Setting_screen from './Main/Others/Settings';
 import AudioScreen from './Main/Others/AudioScreen';
 import Journalbook from './Main/Others/Journal';
 import SaveScreen from './Main/Others/SaveScreen';
-
+import AboutScreen from './Main/Others/AboutScreen';
+import EducationalScreen from './Main/Others/EducationalScreen';
+import GameplayScreen from './Main/Others/GameplayScreen';
+import DisplayScreen from './Main/Others/DisplayScreen';
 // Chapter 1 story screens
 import {
   Chap1Part1Screen,
@@ -51,6 +56,8 @@ export default function App() {
       <StatusBar hidden={true} />
       <AudioProvider>
         <GameProgressProvider>
+          <GameplaySettingsProvider>
+            <DisplaySettingsProvider>
           <NavigationContainer>
             <Stack.Navigator initialRouteName="Startup" screenOptions={{ headerShown: false }}>
               <Stack.Screen name="Startup" component={StartupScreen} />
@@ -72,8 +79,14 @@ export default function App() {
               <Stack.Screen name="AudioScreen" component={AudioScreen} />
               <Stack.Screen name="Journal" component={Journalbook} />
               <Stack.Screen name="SaveScreen" component={SaveScreen} />
+              <Stack.Screen name="About" component={AboutScreen} />
+              <Stack.Screen name="Educational" component={EducationalScreen}/>
+              <Stack.Screen name="GameplayScreen" component={GameplayScreen}/>
+              <Stack.Screen name="DisplayScreen" component={DisplayScreen}/>
             </Stack.Navigator>
-          </NavigationContainer>
+            </NavigationContainer>
+            </DisplaySettingsProvider>
+          </GameplaySettingsProvider>
         </GameProgressProvider>
       </AudioProvider>
     </View>

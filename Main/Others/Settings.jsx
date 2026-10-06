@@ -6,15 +6,34 @@ function Setting_screen({ navigation }) {
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const settingItems = ['Saves', 'Educational', 'Gameplay', 'About', 'Audio', 'Exit', 'Display'];
 
-  const handlePress = (label) => {
-    if (label === 'Audio') {
-      navigation.navigate('AudioScreen');
-    } else if (label === 'Saves') {
-      navigation.navigate('SaveScreen');
-    } else if (label === 'Exit') {
-      setShowExitConfirm(true);
-    }
-  };
+const handlePress = (label) => {
+  if (label === 'Audio') {
+    navigation.navigate('AudioScreen');
+  } 
+  
+  else if (label === 'Saves') {
+    navigation.navigate('SaveScreen');
+  } 
+  
+  else if(label === 'Educational'){
+    navigation.navigate('Educational');
+  }
+    else if (label === 'Gameplay') {
+    navigation.navigate('GameplayScreen');
+  } 
+  
+  else if (label === 'About') {
+    navigation.navigate('About');
+  } 
+
+  else if (label === 'Display') {
+    navigation.navigate('DisplayScreen');
+  } 
+  
+  else if (label === 'Exit') {
+    setShowExitConfirm(true);
+  }
+};
 
   return (
     <ImageBackground source={require('../../assets/Settingbg.png')} style={styles.container}>
