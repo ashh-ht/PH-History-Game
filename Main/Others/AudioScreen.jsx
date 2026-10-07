@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ImageBackground, StyleSheet, Text, View, Pressable, Image } from 'react-native';
 import Slider from '@react-native-community/slider';
-import { useAudio } from '../../AudioStore';
+import { useAudio } from '../../Audiostore';
 import Sound_clicks from '../../Components/Sound_clicks';
 
 function VolumeSlider({ label, value, onValueChange, fillColor }) {

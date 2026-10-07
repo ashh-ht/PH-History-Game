@@ -17,7 +17,7 @@ export function AudioProvider({ children }) {
   useEffect(() => {
     Sound.setCategory('Playback');
 
-    const bgm = new Sound('bgm', Sound.MAIN_BUNDLE, (error) => {
+    const bgm = new Sound('somber', Sound.MAIN_BUNDLE, (error) => {
       if (error) {
         console.log('did not load', error);
         return;

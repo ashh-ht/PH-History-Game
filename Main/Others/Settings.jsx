@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ImageBackground, Pressable, Image, StyleSheet, Text, View } from "react-native";
+import { Pressable, Image, StyleSheet, Text, View } from 'react-native';
 import Sound_clicks from '../../Components/Sound_clicks';
 
 function Setting_screen({ navigation }) {
@@ -11,19 +11,27 @@ function Setting_screen({ navigation }) {
       navigation.navigate('AudioScreen');
     } else if (label === 'Saves') {
       navigation.navigate('SaveScreen');
+    } else if (label === 'Educational') {
+      navigation.navigate('Educational');
+    } else if (label === 'Gameplay') {
+      navigation.navigate('GameplayScreen');
+    } else if (label === 'About') {
+      navigation.navigate('About');
+    } else if (label === 'Display') {
+      navigation.navigate('DisplayScreen');
     } else if (label === 'Exit') {
       setShowExitConfirm(true);
     }
   };
 
   return (
-    <ImageBackground source={require('../../assets/Settingbg.png')} style={styles.container}>
+    <View style={[styles.container, styles.overlay]}>
       <View style={styles.topIcon}>
         <Sound_clicks onPress={() => navigation.goBack()}>
           <Image source={require('../../assets/return.png')} style={styles.icon} />
         </Sound_clicks>
         <Sound_clicks onPress={() => navigation.navigate('Journal')}>
-          <Image source={require('../../assets/Journal_parts/Journal_page.png')} style={styles.icon} />
+          <Image source={require('../../assets/Journal_page.png')} style={styles.icon} />
         </Sound_clicks>
       </View>
 
@@ -75,30 +83,31 @@ function Setting_screen({ navigation }) {
           </View>
         </View>
       )}
-    </ImageBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center'
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-
+  // add this — the dim layer that lets the game show through
+  overlay: {
+    backgroundColor: 'rgba(0, 0, 0, 0.55)',
+  },
   topIcon: {
-      position: 'absolute',
-      top: 12,
-      left: 20,
-      flexDirection: 'row',
-      gap: 15
+    position: 'absolute',
+    top: 12,
+    left: 20,
+    flexDirection: 'row',
+    gap: 15
   },
-
   icon: {
-      width: 40,
-      height: 40
+    width: 40,
+    height: 40
   },
-
   settingPanel: {
     backgroundColor: '#FFF2CB',
     borderRadius: 15,
@@ -108,30 +117,25 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   grid: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      justifyContent: 'space-between',
-      gap: 45
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: 45
   },
-
   cyclinderbutton: {
-      width: '46%',
-      alignItems: 'center',
-      justifyContent: 'center'
+    width: '46%',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
-
   imagepillbutton: {
-      position: 'absolute',
-      display: 'flex',
-      justifyContent: 'space-between'
+    position: 'absolute',
+    display: 'flex',
+    justifyContent: 'space-between'
   },
-
   cylindertexts: {
-      fontSize: 16,
-      fontWeight: '500'
+    fontSize: 16,
+    fontWeight: '500'
   },
-
-  // ---- Exit confirmation overlay this goes to the menu
   confirmOverlay: {
     position: 'absolute',
     top: 0,
@@ -146,7 +150,6 @@ const styles = StyleSheet.create({
     zIndex: 999,
     elevation: 10,
   },
-
   confirmPanel: {
     backgroundColor: '#FFF2CB',
     borderRadius: 15,
@@ -154,27 +157,23 @@ const styles = StyleSheet.create({
     width: '50%',
     alignItems: 'center',
   },
-
   confirmText: {
     fontSize: 18,
     fontWeight: '600',
     textAlign: 'center',
     marginBottom: 20,
   },
-
   confirmButtonsRow: {
     flexDirection: 'row',
     justifyContent: 'center',
     gap: 24,
   },
-
   confirmButton: {
     width: 110,
     height: 50,
     alignItems: 'center',
     justifyContent: 'center',
   },
-
   confirmButtonImage: {
     position: 'absolute',
     top: 0,
