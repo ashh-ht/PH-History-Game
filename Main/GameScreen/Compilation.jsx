@@ -1,4 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
+
+// MINIGAMES INSERT GHERE
+import VoyageMinigame from "./Minigames/VoyageMinigame";
+import SantoNinoMinigame from "./Minigames/SantoNinoMinigame";
+
 import {
   View,
   Text,
@@ -124,7 +129,6 @@ function PartRenderer(props) {
   const hasMoreScenes = sceneIdx < sceneData.length;
   const current = hasMoreScenes ? sceneData[sceneIdx] : null;
 
-
   // ===================================================
   // SAVE HELPERS
   // ===================================================
@@ -183,6 +187,7 @@ function PartRenderer(props) {
   };
 
 
+
   // ===================================================
   // NORMAL SCENE CHANGE
   // ===================================================
@@ -210,6 +215,22 @@ function PartRenderer(props) {
 
     goToIndex(nextIndex);
   };
+
+  if (current?.type === "voyage") {
+    return (
+      <VoyageMinigame
+        onComplete={goNext}
+      />
+    );
+  }
+
+  if (current?.type === "santoNino") {
+    return (
+      <SantoNinoMinigame
+        onComplete={goNext}
+      />
+    );
+  }
 
 
   // ===================================================
