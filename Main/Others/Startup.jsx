@@ -1,4 +1,4 @@
-import { View, Pressable, Image, ImageBackground, Animated } from 'react-native';
+import { View, Pressable, Image, ImageBackground, Animated, Text } from 'react-native';
 import { useState, useEffect, useRef } from 'react';
 import Sound_clicks from '../../Components/Sound_clicks';
 import Style from '../../Styles/Others/StyleStartup';
@@ -17,7 +17,7 @@ export default function App({ navigation }) {
     return <Disclaimer navigation={navigation} />;
   }
 
-  return <View style={Style.blackScreen}></View>;
+     return <View style={Style.blackScreen}></View>;
 }
 
 function Disclaimer({ navigation }) {

@@ -1,5 +1,5 @@
 import { Pressable } from "react-native";
-import { useAudio } from "../AudioStore";
+import { useAudio } from "../Audiostore";
 
 function Sound_clicks({ onPress, children, style }) {
   const { Playclick } = useAudio();

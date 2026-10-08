@@ -6,7 +6,7 @@ import SystemNavigationBar from 'react-native-system-navigation-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { AudioProvider } from './AudioStore';
+import { AudioProvider } from './Audiostore';
 import { GameProgressProvider } from './GameProgress';
 import { GameplaySettingsProvider } from './Main/Others/GameplaySetting';
 import { DisplaySettingsProvider } from './Main/Others/DisplaySetting';
@@ -75,9 +75,19 @@ export default function App() {
               <Stack.Screen name="Part7" component={Chap1Part7Screen} />
               <Stack.Screen name="Part8" component={Chap1Part8Screen} />
 
-              <Stack.Screen name="Second" component={Setting_screen} />
+              <Stack.Screen
+                name="Second"
+                component={Setting_screen}
+                options={{ presentation: 'transparentModal', animation: 'fade' }}
+              />
+
               <Stack.Screen name="AudioScreen" component={AudioScreen} />
-              <Stack.Screen name="Journal" component={Journalbook} />
+
+              <Stack.Screen
+                name="Journal"
+                component={Journalbook}
+                options={{ presentation: 'transparentModal' }}
+              />
               <Stack.Screen name="SaveScreen" component={SaveScreen} />
               <Stack.Screen name="About" component={AboutScreen} />
               <Stack.Screen name="Educational" component={EducationalScreen}/>

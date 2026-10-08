@@ -323,22 +323,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
   },
 
-  noBtn: { 
-    backgroundColor: "#C8A96E" 
-  },
-  
-  noText: { 
-    color: "#000000", 
-    fontWeight: "bold", 
-    fontSize: 15 
+  noBtn: {
+    backgroundColor: "#C8A96E"
   },
 
-  yesBtn: { 
-    backgroundColor: "#B5543C" 
+  noText: {
+    color: "#000000",
+    fontWeight: "bold",
+    fontSize: 15
+  },
+
+  yesBtn: {
+    backgroundColor: "#B5543C"
 
   },
-  yesText: { 
-    color: "#FFFFFF", 
-    fontWeight: "bold", 
+  yesText: {
+    color: "#FFFFFF",
+    fontWeight: "bold",
     fontSize: 15 },
 });

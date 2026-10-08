@@ -1,4 +1,4 @@
-import { ImageBackground, View, Pressable, Image, StyleSheet } from 'react-native';
+import { ImageBackground, View, Image, StyleSheet } from 'react-native';
 import { useGameProgress } from '../../GameProgress';
 import Sound_clicks from '../../Components/Sound_clicks';
 
@@ -7,23 +7,35 @@ function NewGameConfirmScreen({ navigation }) {
 
   return (
     <ImageBackground
-      source={require('../../assets/Newgame/NewGame_bg.png')}
+      source={require('../../Background Images/Intro/Restart Journey.png')}
       resizeMode="cover"
       style={styles.background}
     >
       <View style={styles.list}>
+
         <Sound_clicks
           onPress={() => {
             setPart(1);
             navigation.navigate('Home');
           }}
         >
-          <Image source={require('../../assets/Newgame/NewGame_Yes.png')} style={styles.button} />
+          <Image
+            source={require('../../assets/New Game/Restart.png')}
+            style={styles.button}
+            resizeMode="contain"
+          />
         </Sound_clicks>
 
-        <Sound_clicks onPress={() => navigation.goBack()}>
-          <Image source={require('../../assets/Newgame/NewGame_No.png')} style={styles.button} />
+        <Sound_clicks
+          onPress={() => navigation.goBack()}
+        >
+          <Image
+            source={require('../../assets/New Game/Cancel.png')}
+            style={styles.button}
+            resizeMode="contain"
+          />
         </Sound_clicks>
+
       </View>
     </ImageBackground>
   );
@@ -31,21 +43,25 @@ function NewGameConfirmScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   background: {
-    flex: 1
+    flex: 1,
   },
+
   list: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    top: '15%',
-    gap: 16
+
+    flexDirection: 'row',
+
+    gap: 45,
+
+    paddingTop: 115,
   },
 
   button: {
-    width: 200,
-    height: 70,
-    top: '20%',
-    resizeMode: 'contain' },
+    width: 245,
+    height: 85,
+  },
 });
 
 export default NewGameConfirmScreen;

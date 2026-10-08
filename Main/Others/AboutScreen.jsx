@@ -31,7 +31,7 @@ function About_screen({ navigation }) {
           <Image source={require('../../assets/return.png')} style={styles.icon} />
         </Sound_clicks>
         <Sound_clicks onPress={() => navigation.navigate('Journal')}>
-          <Image source={require('../../assets/Journal_parts/Journal_page.png')} style={styles.icon} />
+          <Image source={require('../../assets/Journal_page.png')} style={styles.icon} />
         </Sound_clicks>
       </View>
 
@@ -62,7 +62,7 @@ function About_screen({ navigation }) {
             <Text style={styles.overlayTitle}>Credits</Text>
             <ScrollView style={styles.creditsScroll}>
                 <Text style={styles.overlayBody}>
-                <Text style={{ fontWeight: 'bold' }}>Lead Developer</Text> 
+                <Text style={{ fontWeight: 'bold' }}>Lead Developer</Text>
                 {'\n'}
                 Fulgencio, John Hendrick{'\n'}
                 {'\n'}
@@ -91,7 +91,7 @@ function About_screen({ navigation }) {
                 </Text>
 
 
-                
+
             </ScrollView>
 
             <Sound_clicks style={styles.overlayClose} onPress={() => setActiveOverlay(null)}>
@@ -106,7 +106,7 @@ function About_screen({ navigation }) {
           <View style={styles.overlayPanel}>
             <Text style={styles.overlayTitle}>About the Team</Text>
             <Text style={styles.overlayBody}>
-              We're a Team 67 sikibidi a group of students who are shows interest on creating 
+              We're a Team 67 sikibidi a group of students who are shows interest on creating
               a Philippine History game that is tied to spanish colonization, The team created
               a novel like game to introduce it to people who are interest on history based games.
             </Text>

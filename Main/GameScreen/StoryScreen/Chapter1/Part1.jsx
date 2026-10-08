@@ -361,7 +361,7 @@ export const Chapter1_Part1 = [
       }
     ],
 
-    nextScene: 30
+    nextScene: 32
   },
 
   // CONTINUE
@@ -441,11 +441,15 @@ export const Chapter1_Part1 = [
   },
 
   {
+    type: "santoNino"
+  },
+
+  {
     type: "narrator",
     text: "The discovery becomes an important moment for the new Spanish settlement.",
     background: require("../../../../Background Images/Part 1/nipa hut interior santo nino discovery.png")
   },
-
+  
   {
     type: "narrator",
     text: "However, life in Cebu remains difficult due to food shortages and tensions between\nthe Spanish and local communities.",
@@ -626,7 +630,7 @@ export const Chapter1_Part1 = [
     ],
 
 
-    nextScene: 51
+    nextScene: 52
   },
 
 
@@ -652,6 +656,16 @@ export const Chapter1_Part1 = [
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
 
+  {
+    type: "scene",
+    title: "The Voyage Continues.",
+    date: "Guide the fleet safely through the waters.",
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+  },
+
+  {
+    type: "voyage"
+  },
 
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -732,7 +746,7 @@ export const Chapter1_Part1 = [
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
 
-  { 
+  {
     type: "scene",
     title: "There are still centuries of history waiting to unfold.",
     date: " ",

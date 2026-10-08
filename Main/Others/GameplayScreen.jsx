@@ -34,7 +34,7 @@ function GameplayScreen({ navigation }) {
           <Image source={require('../../assets/return.png')} style={styles.icon} />
         </Sound_clicks>
         <Sound_clicks onPress={() => navigation.navigate('Journal')}>
-          <Image source={require('../../assets/Journal_parts/Journal_page.png')} style={styles.icon} />
+          <Image source={require('../../assets/Journal_page.png')} style={styles.icon} />
         </Sound_clicks>
       </View>
 
@@ -84,18 +84,18 @@ function GameplayScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, alignItems: 'center', justifyContent: 'center' },
 
-  topIcon: { 
-    position: 'absolute', 
-    top: 12, 
-    left: 20, 
-    flexDirection: 
-    'row', 
-    gap: 15 
+  topIcon: {
+    position: 'absolute',
+    top: 12,
+    left: 20,
+    flexDirection:
+    'row',
+    gap: 15
 },
 
-  icon: { 
-    width: 40, 
-    height: 40 
+  icon: {
+    width: 40,
+    height: 40
 },
 
   panel: {
@@ -105,33 +105,33 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     width: '70%',
   },
-  title: { 
-    fontSize: 22, 
-    textAlign: 'center', 
-    marginBottom: 12 
+  title: {
+    fontSize: 22,
+    textAlign: 'center',
+    marginBottom: 12
 },
 
-  columns: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-around' 
+  columns: {
+    flexDirection: 'row',
+    justifyContent: 'space-around'
 },
-  column: { 
+  column: {
     gap: 12
 },
 
-  heading: { 
-    fontSize: 20, 
-    marginBottom: 4 
+  heading: {
+    fontSize: 20,
+    marginBottom: 4
 },
-  subheading: { 
-    fontSize: 15, 
-    marginBottom: 2 
+  subheading: {
+    fontSize: 15,
+    marginBottom: 2
 },
 
-  divider: { 
-    height: 1, 
-    backgroundColor: '#D9B98A', 
-    marginVertical: 8 
+  divider: {
+    height: 1,
+    backgroundColor: '#D9B98A',
+    marginVertical: 8
 },
 
   option: { flexDirection: 'row', alignItems: 'center', gap: 10 },
@@ -148,8 +148,8 @@ const styles = StyleSheet.create({
     gap:50,
   },
 
-  check: { 
-    color: '#fff', 
+  check: {
+    color: '#fff',
     fontSize: 12,
     transform: [{ rotate: '-45deg' }] },
 });

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+
 import {
   View,
   Text,
@@ -15,6 +16,12 @@ import { useDisplaySettings, FONT_SCALE } from "../Others/DisplaySetting";
 import { saveCheckpoint } from "../Others/saveProgress";
 import { Chapter1 } from "./StoryScreen/Chapter1";
 
+// =====================================================
+// MINIGAMES
+// =====================================================
+
+import VoyageMinigame from "./Minigames/VoyageMinigame";
+import SantoNinoMinigame from "./Minigames/SantoNinoMinigame";
 
 // =====================================================
 // TYPEWRITER
@@ -52,8 +59,9 @@ function useTypewriter(text, msPerChar, resetKey) {
   };
 }
 
-// FIX: renders the FULL text invisibly to reserve the space, and puts the
-// typed text on top. This stops the box from re-centering/jumping while typing.
+// FIX: renders the FULL text invisibly to reserve the space,
+// and puts the typed text on top.
+// This stops the box from re-centering/jumping while typing.
 function TypedText({ style, full, shown }) {
   return (
     <View>
@@ -62,7 +70,6 @@ function TypedText({ style, full, shown }) {
     </View>
   );
 }
-
 
 // =====================================================
 // MENU
@@ -87,7 +94,6 @@ function GameplayMenuOverlay({ navigation }) {
     </View>
   );
 }
-
 
 // =====================================================
 // CHARACTER LAYER
@@ -119,7 +125,6 @@ function CharacterLayer({ characters }) {
   );
 }
 
-
 // =====================================================
 // PART RENDERER
 // =====================================================
@@ -135,26 +140,41 @@ function PartRenderer(props) {
   } = props;
 
   const game = useGameProgress();
+
+  // ===================================================
+  // GAMEPLAY / DISPLAY SETTINGS
+  // ===================================================
+
   const settings = useGameplaySettings();
   const display = useDisplaySettings();
   const fontScale = FONT_SCALE[display?.fontSize] ?? 1;
 
-  // FIX: applied to every box image now (dialogue AND narration boxes)
-  const boxImage = { opacity: display?.boxOpacity ?? 1 };
+  // Applied to every box image
+  const boxImage = {
+    opacity: display?.boxOpacity ?? 1,
+  };
 
-  // FIX: safe if a style has no fontSize / lineHeight
+  // Safe scaling helper
   const scaled = (style) => {
     const s = StyleSheet.flatten(style) || {};
+
     return {
       ...s,
-      ...(s.fontSize ? { fontSize: Math.round(s.fontSize * fontScale) } : {}),
-      ...(s.lineHeight ? { lineHeight: Math.round(s.lineHeight * fontScale) } : {}),
+      ...(s.fontSize
+        ? { fontSize: Math.round(s.fontSize * fontScale) }
+        : {}),
+      ...(s.lineHeight
+        ? { lineHeight: Math.round(s.lineHeight * fontScale) }
+        : {}),
     };
   };
 
+  // ===================================================
+  // LOAD / RESTORE PART
+  // ===================================================
 
   // If the player restored a save, Saves screen passes startScene.
-  // Otherwise fall back to the normal progress.
+  // Otherwise fall back to normal progress.
   const startIdx = route?.params?.startScene ?? game.scene;
 
   const [sceneIdx, setSceneIdx] = useState(startIdx);
@@ -165,7 +185,6 @@ function PartRenderer(props) {
   const introProgress = useRef(new Animated.Value(1)).current;
   const [introChanging, setIntroChanging] = useState(false);
   const [introNextIndex, setIntroNextIndex] = useState(null);
-
 
   // ===================================================
   // LOAD PART
@@ -183,17 +202,18 @@ function PartRenderer(props) {
     };
   }, []);
 
-  // FIX: if the screen is already mounted and a save is restored later,
+  // If the screen is already mounted and a save is restored later,
   // useState's initial value is ignored, so jump to the new scene here.
   const startScene = route?.params?.startScene;
+
   useEffect(() => {
     if (startScene == null) return;
+
     setPicked(null);
     setQuizAnswer(null);
     setSceneIdx(startScene);
     game.setScene(startScene);
   }, [startScene]);
-
 
   // ===================================================
   // CURRENT SCENE
@@ -201,7 +221,6 @@ function PartRenderer(props) {
 
   const hasMoreScenes = sceneIdx < sceneData.length;
   const current = hasMoreScenes ? sceneData[sceneIdx] : null;
-
 
   // ===================================================
   // SAVE HELPERS
@@ -223,8 +242,9 @@ function PartRenderer(props) {
     return { sceneNumber, sceneTitle };
   };
 
-  // AUTOSAVE #1: whenever a scene title card appears
-  // (skips the very last card, "Their story does not end here.")
+  // AUTOSAVE #1:
+  // whenever a scene title card appears
+  // skips the very last card
   useEffect(() => {
     if (!current || current.type !== "scene") return;
     if (sceneIdx === sceneData.length - 1) return;
@@ -237,7 +257,8 @@ function PartRenderer(props) {
     });
   }, [sceneIdx]);
 
-  // AUTOSAVE #2: right after the player makes a decision.
+  // AUTOSAVE #2:
+  // right after the player makes a decision.
   // Saves at nextScene so restoring resumes AFTER the choice.
   const saveDecision = (choiceIndex) => {
     if (!current || current.type !== "choice") return;
@@ -260,14 +281,17 @@ function PartRenderer(props) {
     });
   };
 
-
   // ===================================================
   // NORMAL SCENE CHANGE
   // ===================================================
 
   const goToIndex = (index) => {
-    // FIX: also rejects undefined / non-numbers
-    if (typeof index !== "number" || index < 0 || index >= sceneData.length) {
+    // Reject undefined / invalid values
+    if (
+      typeof index !== "number" ||
+      index < 0 ||
+      index >= sceneData.length
+    ) {
       return;
     }
 
@@ -276,7 +300,6 @@ function PartRenderer(props) {
     setSceneIdx(index);
     game.setScene(index);
   };
-
 
   const goNext = () => {
     const nextIndex = sceneIdx + 1;
@@ -289,7 +312,6 @@ function PartRenderer(props) {
 
     goToIndex(nextIndex);
   };
-
 
   // ===================================================
   // INTRO CROSSFADE
@@ -337,13 +359,16 @@ function PartRenderer(props) {
     });
   };
 
-
   // ===================================================
-  // GAMEPLAY SETTINGS: TEXT SPEED + AUTO PLAY
-  // Must stay above every early `return` (hooks rule).
+  // GAMEPLAY SETTINGS
+  // TEXT SPEED + AUTO PLAY
+  //
+  // IMPORTANT:
+  // These hooks must stay above every early return.
   // ===================================================
 
-  // Only dialogue, narrator, system messages and choice responses are typed.
+  // Only dialogue, narrator, system messages and
+  // choice responses are typed.
   // Scene cards, quizzes and intro screens show instantly.
   const isTyped =
     current &&
@@ -352,9 +377,13 @@ function PartRenderer(props) {
     !(current.type === "system" && current.intro === true);
 
   let lineText = null;
+
   if (isTyped) {
     if (current.type === "choice") {
-      lineText = picked !== null ? current.choices[picked].dialogue : null;
+      lineText =
+        picked !== null
+          ? current.choices[picked].dialogue
+          : null;
     } else {
       lineText = current.text;
     }
@@ -370,30 +399,77 @@ function PartRenderer(props) {
   const next = () => {
     if (!current) return;
 
-    // FIX: if a choice has no nextScene, just go to the next index
+    // If a choice has no nextScene,
+    // just go to the next index.
     if (current.type === "choice") {
       return goToIndex(
-        typeof current.nextScene === "number" ? current.nextScene : sceneIdx + 1
+        typeof current.nextScene === "number"
+          ? current.nextScene
+          : sceneIdx + 1
       );
     }
 
-    if (current.type === "system" && current.intro) return goToNextIntro();
+    if (current.type === "system" && current.intro) {
+      return goToNextIntro();
+    }
+
     return goNext();
   };
 
-  // First tap finishes the line, second tap moves on
+  // First tap finishes the line,
+  // second tap moves on.
   const advance = () => (done ? next() : skip());
 
-  // Auto play: after the text finishes, wait N seconds, then advance
+  // ===================================================
+  // AUTO PLAY
+  // ===================================================
+
   useEffect(() => {
     if (!settings?.autoPlay || !done || !current) return;
-    if (current.type === "quiz") return; // player must answer
-    if (current.type === "choice" && picked === null) return; // player must choose
 
-    const id = setTimeout(next, settings.autoDelay * 1000);
+    // Player must answer quizzes manually
+    if (current.type === "quiz") return;
+
+    // Player must choose before choice response
+    if (current.type === "choice" && picked === null) return;
+
+    const id = setTimeout(
+      next,
+      settings.autoDelay * 1000
+    );
+
     return () => clearTimeout(id);
-  }, [sceneIdx, picked, done, settings?.autoPlay, settings?.autoDelay]);
+  }, [
+    sceneIdx,
+    picked,
+    done,
+    settings?.autoPlay,
+    settings?.autoDelay,
+  ]);
 
+  // ===================================================
+  // MINIGAMES
+  //
+  // These returns are AFTER ALL HOOKS above.
+  // This avoids the React "Rendered fewer hooks"
+  // problem.
+  // ===================================================
+
+  if (current?.type === "voyage") {
+    return (
+      <VoyageMinigame
+        onComplete={goNext}
+      />
+    );
+  }
+
+  if (current?.type === "santoNino") {
+    return (
+      <SantoNinoMinigame
+        onComplete={goNext}
+      />
+    );
+  }
 
   // ===================================================
   // MENU OVERLAY
@@ -408,7 +484,6 @@ function PartRenderer(props) {
     );
   };
 
-
   // ===================================================
   // PART COMPLETE
   // ===================================================
@@ -416,7 +491,6 @@ function PartRenderer(props) {
   if (!hasMoreScenes) {
     return withOverlay(
       <View style={styles.container}>
-
         <Text style={scaled(styles.dialogueText)}>
           Part {partNumber} complete!
         </Text>
@@ -433,26 +507,26 @@ function PartRenderer(props) {
             }
           }}
         >
-          <Text style={styles.nextButtonText}>Continue</Text>
+          <Text style={styles.nextButtonText}>
+            Continue
+          </Text>
         </TouchableOpacity>
-
       </View>
     );
   }
-
 
   // ===================================================
   // INTRO SCREENS
   // ===================================================
 
   if (current.type === "system" && current.intro === true) {
-
     const nextIntro =
-      introNextIndex !== null ? sceneData[introNextIndex] : null;
+      introNextIndex !== null
+        ? sceneData[introNextIndex]
+        : null;
 
     return withOverlay(
       <View style={styles.introScreen}>
-
         {/* CURRENT INTRO */}
         <ImageBackground
           source={current.background}
@@ -460,16 +534,20 @@ function PartRenderer(props) {
           resizeMode="cover"
         >
           <View style={styles.introTextBox}>
-            <Text style={scaled(styles.introText)}>{current.text}</Text>
+            <Text style={scaled(styles.introText)}>
+              {current.text}
+            </Text>
           </View>
         </ImageBackground>
-
 
         {/* NEXT INTRO FADES OVER CURRENT */}
         {nextIntro && (
           <Animated.View
             pointerEvents="none"
-            style={[styles.introNextLayer, { opacity: introProgress }]}
+            style={[
+              styles.introNextLayer,
+              { opacity: introProgress },
+            ]}
           >
             <ImageBackground
               source={nextIntro.background}
@@ -477,12 +555,13 @@ function PartRenderer(props) {
               resizeMode="cover"
             >
               <View style={styles.introTextBox}>
-                <Text style={scaled(styles.introText)}>{nextIntro.text}</Text>
+                <Text style={scaled(styles.introText)}>
+                  {nextIntro.text}
+                </Text>
               </View>
             </ImageBackground>
           </Animated.View>
         )}
-
 
         {/* TAP ANYWHERE */}
         <TouchableOpacity
@@ -490,54 +569,50 @@ function PartRenderer(props) {
           activeOpacity={1}
           onPress={goToNextIntro}
         />
-
       </View>
     );
   }
-
 
   // ===================================================
   // QUIZ / MINIGAME
   // ===================================================
 
   if (current.type === "quiz") {
-
     const isAnswered = quizAnswer !== null;
-    const isCorrect = quizAnswer === current.correctIndex;
+    const isCorrect =
+      quizAnswer === current.correctIndex;
 
     return withOverlay(
-      <View style={[styles.choiceScreen, { backgroundColor: "#fffca0" }]}>
-
+      <View
+        style={[
+          styles.choiceScreen,
+          { backgroundColor: "#fffca0" },
+        ]}
+      >
         <View style={styles.choiceParchmentWrapper}>
-
           <ImageBackground
             source={require("../../assets/foreground/narration_box.png")}
             style={styles.choiceParchmentBox}
             imageStyle={boxImage}
             resizeMode="stretch"
           >
-
             <Text style={scaled(styles.choiceQuestion)}>
               {current.question}
             </Text>
 
             {isAnswered && (
               <Text style={scaled(styles.choicePrompt)}>
-                {isCorrect ? "Correct!" : "Not quite..."}
+                {isCorrect
+                  ? "Correct!"
+                  : "Not quite..."}
               </Text>
             )}
-
           </ImageBackground>
-
         </View>
 
-
-        {/* QUIZ ANSWERS ONLY */}
-
+        {/* QUIZ ANSWERS */}
         <View style={styles.quizButtonsGrid}>
-
           {current.options.map((option, index) => (
-
             <TouchableOpacity
               key={index}
               style={styles.quizImageButton}
@@ -548,25 +623,18 @@ function PartRenderer(props) {
               }}
               activeOpacity={0.85}
             >
-
               <ImageBackground
                 source={require("../../assets/buttons/choice_button.png")}
                 style={styles.quizImageButtonBg}
                 resizeMode="stretch"
               >
-
                 <Text style={scaled(styles.quizButtonText)}>
                   {option}
                 </Text>
-
               </ImageBackground>
-
             </TouchableOpacity>
-
           ))}
-
         </View>
-
 
         {isAnswered && (
           <TouchableOpacity
@@ -579,22 +647,18 @@ function PartRenderer(props) {
             />
           </TouchableOpacity>
         )}
-
       </View>
     );
   }
-
 
   // ===================================================
   // SYSTEM MESSAGE
   // ===================================================
 
   if (current.type === "system") {
-
     const systemContent = (
       <>
         <View style={styles.systemParchmentWrapper}>
-
           <ImageBackground
             source={require("../../assets/foreground/narration_box.png")}
             style={styles.systemParchmentBox}
@@ -607,11 +671,12 @@ function PartRenderer(props) {
               shown={shown}
             />
           </ImageBackground>
-
         </View>
 
-
-        <TouchableOpacity style={styles.arrowButton} onPress={advance}>
+        <TouchableOpacity
+          style={styles.arrowButton}
+          onPress={advance}
+        >
           <Image
             source={require("../../assets/icons/arrow_next.png")}
             style={styles.arrowImage}
@@ -619,7 +684,6 @@ function PartRenderer(props) {
         </TouchableOpacity>
       </>
     );
-
 
     if (current.background) {
       return withOverlay(
@@ -633,40 +697,37 @@ function PartRenderer(props) {
       );
     }
 
-
     return withOverlay(
-      <View style={styles.systemScreen}>{systemContent}</View>
+      <View style={styles.systemScreen}>
+        {systemContent}
+      </View>
     );
   }
-
 
   // ===================================================
   // SCENE TITLE
   // ===================================================
 
   if (current.type === "scene") {
-
     return withOverlay(
       <ImageBackground
         source={current.background}
         style={styles.sceneScreen}
         resizeMode="cover"
       >
-
         <View style={styles.sceneDarkOverlay}>
-
           <View style={styles.sceneTitleBox}>
-
-            <Text style={styles.sceneTitle}>{current.title}</Text>
+            <Text style={styles.sceneTitle}>
+              {current.title}
+            </Text>
 
             {current.date ? (
-              <Text style={styles.sceneDate}>{current.date}</Text>
+              <Text style={styles.sceneDate}>
+                {current.date}
+              </Text>
             ) : null}
-
           </View>
-
         </View>
-
 
         <TouchableOpacity
           style={styles.arrowButton}
@@ -678,56 +739,51 @@ function PartRenderer(props) {
             style={styles.arrowImage}
           />
         </TouchableOpacity>
-
       </ImageBackground>
     );
   }
-
 
   // ===================================================
   // NARRATOR
   // ===================================================
 
   if (current.type === "narrator") {
-
     const narratorContent = (
       <>
-
-        <CharacterLayer characters={current.characters} />
-
+        <CharacterLayer
+          characters={current.characters}
+        />
 
         <View style={styles.narratorWrapper}>
-
           <ImageBackground
             source={require("../../assets/foreground/narration_box.png")}
             style={styles.narratorBox}
             imageStyle={boxImage}
             resizeMode="stretch"
           >
-
-            <Text style={scaled(styles.narratorLabel)}>Narrator:</Text>
+            <Text style={scaled(styles.narratorLabel)}>
+              Narrator:
+            </Text>
 
             <TypedText
               style={scaled(styles.narratorText)}
               full={lineText}
               shown={shown}
             />
-
           </ImageBackground>
-
         </View>
 
-
-        <TouchableOpacity style={styles.arrowButton} onPress={advance}>
+        <TouchableOpacity
+          style={styles.arrowButton}
+          onPress={advance}
+        >
           <Image
             source={require("../../assets/icons/arrow_next.png")}
             style={styles.arrowImage}
           />
         </TouchableOpacity>
-
       </>
     );
-
 
     if (current.background) {
       return withOverlay(
@@ -741,77 +797,67 @@ function PartRenderer(props) {
       );
     }
 
-
     return withOverlay(
-      <View style={styles.background}>{narratorContent}</View>
+      <View style={styles.background}>
+        {narratorContent}
+      </View>
     );
   }
-
 
   // ===================================================
   // PLAYER CHOICE
   // ===================================================
 
   if (current.type === "choice") {
-
     // -------------------------------------------------
     // QUESTION SCREEN
     // -------------------------------------------------
 
     if (picked === null) {
-
       const choiceContent = (
         <>
-
           <View style={styles.choiceParchmentWrapper}>
-
             <ImageBackground
               source={require("../../assets/foreground/narration_box.png")}
               style={styles.choiceParchmentBox}
               imageStyle={boxImage}
               resizeMode="stretch"
             >
+              <Text style={scaled(styles.choiceQuestion)}>
+                {current.question}
+              </Text>
 
-              <Text style={scaled(styles.choiceQuestion)}>{current.question}</Text>
-
-              <Text style={scaled(styles.choicePrompt)}>What will you choose?</Text>
-
+              <Text style={scaled(styles.choicePrompt)}>
+                What will you choose?
+              </Text>
             </ImageBackground>
-
           </View>
 
-
           <View style={styles.choiceButtonsColumn}>
-
             {current.choices.map((choice, index) => (
-
               <TouchableOpacity
                 key={index}
                 style={styles.choiceImageButton}
                 onPress={() => {
                   setPicked(index);
-                  saveDecision(index); // AUTOSAVE after decision
+                  saveDecision(index);
                 }}
                 activeOpacity={0.85}
               >
-
                 <ImageBackground
                   source={require("../../assets/buttons/choice_button.png")}
                   style={styles.choiceImageButtonBg}
                   resizeMode="stretch"
                 >
-                  <Text style={scaled(styles.choiceButtonText)}>{choice.text}</Text>
+                  <Text style={scaled(styles.choiceButtonText)}>
+                    {choice.text}
+                  </Text>
                 </ImageBackground>
-
               </TouchableOpacity>
-
             ))}
-
           </View>
-
         </>
       );
-
 
       if (current.background) {
         return withOverlay(
@@ -825,12 +871,12 @@ function PartRenderer(props) {
         );
       }
 
-
       return withOverlay(
-        <View style={styles.choiceScreen}>{choiceContent}</View>
+        <View style={styles.choiceScreen}>
+          {choiceContent}
+        </View>
       );
     }
-
 
     // -------------------------------------------------
     // RESPONSE SCREEN
@@ -840,20 +886,20 @@ function PartRenderer(props) {
 
     const responseContent = (
       <>
-
-        <CharacterLayer characters={selectedChoice.characters} />
-
+        <CharacterLayer
+          characters={selectedChoice.characters}
+        />
 
         <View style={styles.dialogueWrapper}>
-
           <ImageBackground
             source={require("../../assets/foreground/dialogue_box.png")}
             style={styles.dialogueBox}
             imageStyle={boxImage}
             resizeMode="stretch"
           >
-
-            <Text style={scaled(styles.speakerName)}>{selectedChoice.speaker}</Text>
+            <Text style={scaled(styles.speakerName)}>
+              {selectedChoice.speaker}
+            </Text>
 
             <TypedText
               style={scaled(styles.dialogueText)}
@@ -862,26 +908,26 @@ function PartRenderer(props) {
             />
 
             {selectedChoice.translation ? (
-              <Text style={scaled(styles.dialogueTranslation)}>
+              <Text
+                style={scaled(styles.dialogueTranslation)}
+              >
                 {selectedChoice.translation}
               </Text>
             ) : null}
-
           </ImageBackground>
-
         </View>
 
-
-        <TouchableOpacity style={styles.arrowButton} onPress={advance}>
+        <TouchableOpacity
+          style={styles.arrowButton}
+          onPress={advance}
+        >
           <Image
             source={require("../../assets/icons/arrow_next.png")}
             style={styles.arrowImage}
           />
         </TouchableOpacity>
-
       </>
     );
-
 
     if (current.background) {
       return withOverlay(
@@ -895,12 +941,12 @@ function PartRenderer(props) {
       );
     }
 
-
     return withOverlay(
-      <View style={styles.background}>{responseContent}</View>
+      <View style={styles.background}>
+        {responseContent}
+      </View>
     );
   }
-
 
   // ===================================================
   // NORMAL DIALOGUE
@@ -908,20 +954,20 @@ function PartRenderer(props) {
 
   const dialogueContent = (
     <>
-
-      <CharacterLayer characters={current.characters} />
-
+      <CharacterLayer
+        characters={current.characters}
+      />
 
       <View style={styles.dialogueWrapper}>
-
         <ImageBackground
           source={require("../../assets/foreground/dialogue_box.png")}
           style={styles.dialogueBox}
           imageStyle={boxImage}
           resizeMode="stretch"
         >
-
-          <Text style={scaled(styles.speakerName)}>{current.speaker}</Text>
+          <Text style={scaled(styles.speakerName)}>
+            {current.speaker}
+          </Text>
 
           <TypedText
             style={scaled(styles.dialogueText)}
@@ -930,26 +976,26 @@ function PartRenderer(props) {
           />
 
           {current.translation ? (
-            <Text style={scaled(styles.dialogueTranslation)}>
+            <Text
+              style={scaled(styles.dialogueTranslation)}
+            >
               {current.translation}
             </Text>
           ) : null}
-
         </ImageBackground>
-
       </View>
 
-
-      <TouchableOpacity style={styles.arrowButton} onPress={advance}>
+      <TouchableOpacity
+        style={styles.arrowButton}
+        onPress={advance}
+      >
         <Image
           source={require("../../assets/icons/arrow_next.png")}
           style={styles.arrowImage}
         />
       </TouchableOpacity>
-
     </>
   );
-
 
   if (current.background) {
     return withOverlay(
@@ -963,16 +1009,17 @@ function PartRenderer(props) {
     );
   }
 
-
   return withOverlay(
-    <View style={styles.background}>{dialogueContent}</View>
+    <View style={styles.background}>
+      {dialogueContent}
+    </View>
   );
 }
 
-
 // =====================================================
 // SCREEN EXPORTS
-// (`...props` includes `route`, so route.params.startScene reaches PartRenderer)
+// (`...props` includes `route`, so route.params.startScene
+// reaches PartRenderer)
 // =====================================================
 
 export function Chap1Part1Screen({ navigation, ...props }) {
@@ -989,7 +1036,6 @@ export function Chap1Part1Screen({ navigation, ...props }) {
   );
 }
 
-
 export function Chap1Part2Screen({ navigation, ...props }) {
   return (
     <PartRenderer
@@ -1003,7 +1049,6 @@ export function Chap1Part2Screen({ navigation, ...props }) {
     />
   );
 }
-
 
 export function Chap1Part3Screen({ navigation, ...props }) {
   return (
@@ -1019,7 +1064,6 @@ export function Chap1Part3Screen({ navigation, ...props }) {
   );
 }
 
-
 export function Chap1Part4Screen({ navigation, ...props }) {
   return (
     <PartRenderer
@@ -1033,7 +1077,6 @@ export function Chap1Part4Screen({ navigation, ...props }) {
     />
   );
 }
-
 
 export function Chap1Part5Screen({ navigation, ...props }) {
   return (
@@ -1049,7 +1092,6 @@ export function Chap1Part5Screen({ navigation, ...props }) {
   );
 }
 
-
 export function Chap1Part6Screen({ navigation, ...props }) {
   return (
     <PartRenderer
@@ -1063,7 +1105,6 @@ export function Chap1Part6Screen({ navigation, ...props }) {
     />
   );
 }
-
 
 export function Chap1Part7Screen({ navigation, ...props }) {
   return (
@@ -1079,7 +1120,6 @@ export function Chap1Part7Screen({ navigation, ...props }) {
   );
 }
 
-
 export function Chap1Part8Screen({ navigation, ...props }) {
   return (
     <PartRenderer
@@ -1087,20 +1127,20 @@ export function Chap1Part8Screen({ navigation, ...props }) {
       chapterNumber={1}
       partNumber={8}
       isLastPart={true}
-      onChapterComplete={() => navigation.navigate("ChapterSelect")}
+      onChapterComplete={() =>
+        navigation.navigate("ChapterSelect")
+      }
       navigation={navigation}
       {...props}
     />
   );
 }
 
-
 // =====================================================
 // STYLES
 // =====================================================
 
 const styles = StyleSheet.create({
-
   container: {
     flex: 1,
     backgroundColor: "#000000",
@@ -1116,14 +1156,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#000000",
   },
 
-  // NEW: typed text sits on top of the invisible full-text spacer
+  // Typed text sits on top of the invisible full-text spacer
   typedOverlay: {
     position: "absolute",
     left: 0,
     right: 0,
     top: 0,
   },
-
 
   // ===================================================
   // MENU
@@ -1143,7 +1182,6 @@ const styles = StyleSheet.create({
     height: 42,
     resizeMode: "contain",
   },
-
 
   // ===================================================
   // INTRO
@@ -1196,7 +1234,6 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
 
-
   // ===================================================
   // SCENE
   // ===================================================
@@ -1235,7 +1272,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 
-
   // ===================================================
   // ARROW
   // ===================================================
@@ -1252,7 +1288,6 @@ const styles = StyleSheet.create({
     height: 55,
     resizeMode: "contain",
   },
-
 
   // ===================================================
   // SYSTEM
@@ -1285,7 +1320,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     lineHeight: 25,
   },
-
 
   // ===================================================
   // NARRATOR
@@ -1322,7 +1356,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 
-
   // ===================================================
   // CHARACTERS
   // ===================================================
@@ -1351,7 +1384,6 @@ const styles = StyleSheet.create({
   characterRight: {
     right: "2%",
   },
-
 
   // ===================================================
   // DIALOGUE
@@ -1398,7 +1430,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontStyle: "italic",
   },
-
 
   // ===================================================
   // CHOICES
@@ -1495,7 +1526,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 
-
   // ===================================================
   // COMPLETE
   // ===================================================
@@ -1513,5 +1543,4 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
-
 });

@@ -22,19 +22,19 @@ const HANDLE = 26;
 // the box function don't touch unless needed
 function OpacitySlider({ value, onChange }) {
   const [width, setWidth] = useState(0);
- 
+
   const widthRef = useRef(0);
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
- 
+
   const setFromTouch = (locationX) => {
     const usable = widthRef.current - HANDLE;
     if (usable <= 0) return;
     const f = Math.min(1, Math.max(0, (locationX - HANDLE / 2) / usable));
     onChangeRef.current(MIN_BOX_OPACITY + f * (1 - MIN_BOX_OPACITY));
   };
-  
- 
+
+
   const pan = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
@@ -44,10 +44,10 @@ function OpacitySlider({ value, onChange }) {
       onPanResponderMove: (e) => setFromTouch(e.nativeEvent.locationX),
     })
   ).current;
- 
+
   const fraction = (value - MIN_BOX_OPACITY) / (1 - MIN_BOX_OPACITY);
   const handleLeft = fraction * Math.max(0, width - HANDLE);
- 
+
   return (
     <View
       style={styles.sliderTouchArea}
@@ -70,13 +70,13 @@ function OpacitySlider({ value, onChange }) {
     </View>
   );
 }
- 
+
 // ---------------------------------------------------
 // Screen
 // ---------------------------------------------------
 function DisplayScreen({ navigation }) {
   const { fontSize, setFontSize, boxOpacity, setBoxOpacity } = useDisplaySettings();
- 
+
   return (
     <ImageBackground source={require('../../assets/Settingbg.png')} style={styles.container}>
       {/* Top-left icons */}
@@ -85,10 +85,10 @@ function DisplayScreen({ navigation }) {
           <Image source={require('../../assets/return.png')} style={styles.icon} />
         </Sound_clicks>
         <Sound_clicks onPress={() => navigation.navigate('Journal')}>
-          <Image source={require('../../assets/Journal_parts/Journal_page.png')} style={styles.icon} />
+          <Image source={require('../../assets/Journal_page.png')} style={styles.icon} />
         </Sound_clicks>
       </View>
- 
+
       {/* Panel */}
       <View style={styles.panel}>
         <View style={styles.titleRow}>
@@ -96,7 +96,7 @@ function DisplayScreen({ navigation }) {
           <Text style={styles.title}>Display</Text>
           <View style={styles.titleLine} />
         </View>
- 
+
         <View style={styles.body}>
           {/* Left: Font Size */}
           <View style={styles.leftColumn}>
@@ -110,9 +110,9 @@ function DisplayScreen({ navigation }) {
               />
             ))}
           </View>
- 
+
           <View style={styles.verticalDivider} />
- 
+
           {/* Right: Dialogue Box Opacity */}
           <View style={styles.rightColumn}>
             <Text style={styles.heading}>Dialogue Box Opacity</Text>
@@ -123,27 +123,27 @@ function DisplayScreen({ navigation }) {
     </ImageBackground>
   );
 }
- 
+
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    alignItems: 'center', 
-    justifyContent: 'center' 
-  },
- 
-  topIcon: { 
-    position: 'absolute', 
-    top: 12, 
-    left: 20, 
-    flexDirection: 'row', 
-    gap: 15 
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
 
-  icon: { 
-    width: 40, 
-    height: 40 
+  topIcon: {
+    position: 'absolute',
+    top: 12,
+    left: 20,
+    flexDirection: 'row',
+    gap: 15
   },
- 
+
+  icon: {
+    width: 40,
+    height: 40
+  },
+
   panel: {
     backgroundColor: '#FFF2CB',
     borderRadius: 15,
@@ -151,57 +151,57 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     width: '75%',
   },
- 
+
   // title of the screen
-  titleRow: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    gap: 12, 
-    marginBottom: 14 
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+    marginBottom: 14
   },
 
-  titleLine: { 
-    height: 1, 
+  titleLine: {
+    height: 1,
     width: 70,
-     backgroundColor: '#C9A46B' 
+     backgroundColor: '#C9A46B'
     },
 
-  title: { 
-    fontSize: 22 
+  title: {
+    fontSize: 22
   },
- 
+
   body: { flexDirection: 'row', alignItems: 'stretch' },
- 
+
   leftColumn: {
-     gap: 8, 
-     paddingRight: 24 
+     gap: 8,
+     paddingRight: 24
     },
 
   verticalDivider: {
-     width: 1.5, 
+     width: 1.5,
      backgroundColor: '#C9A46B'
      },
 
-  rightColumn: { 
-    flex: 1, 
-    paddingLeft: 24 
-  },
- 
-  heading: { 
-    fontSize: 20,
-     marginBottom: 6 
-    },
- 
-  // Options
-  option: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    gap: 10 
+  rightColumn: {
+    flex: 1,
+    paddingLeft: 24
   },
 
-  optionText: { 
-    fontSize: 14 
+  heading: {
+    fontSize: 20,
+     marginBottom: 6
+    },
+
+  // Options
+  option: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10
+  },
+
+  optionText: {
+    fontSize: 14
   },
   diamond: {
     width: 20,
@@ -214,17 +214,17 @@ const styles = StyleSheet.create({
   },
 
 
-  check: { 
-    color: '#fff', 
-    fontSize: 12, 
-    transform: [{ rotate: '-45deg' }] 
+  check: {
+    color: '#fff',
+    fontSize: 12,
+    transform: [{ rotate: '-45deg' }]
   },
- 
+
   // Slider
-  sliderTouchArea: { 
-    height: 56, 
-    justifyContent: 'center', 
-    marginTop: 40 
+  sliderTouchArea: {
+    height: 56,
+    justifyContent: 'center',
+    marginTop: 40
   },
 
   sliderTrack: {
@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     backgroundColor: '#E3CFA6',
   },
-  
+
   sliderFill: {
     position: 'absolute',
     left: HANDLE / 2,
@@ -244,17 +244,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#A97F5F',
 
   },
-  handleWrap: { 
-    position: 'absolute', 
-    alignItems: 'center', 
+  handleWrap: {
+    position: 'absolute',
+    alignItems: 'center',
     width: HANDLE },
 
-  percent: { 
-    position: 'absolute', 
-    top: -18, 
-    fontSize: 11, 
+  percent: {
+    position: 'absolute',
+    top: -18,
+    fontSize: 11,
     color: '#6B5A45',
-     width: 40, 
+     width: 40,
      textAlign: 'center' },
 
   handle: {
@@ -266,5 +266,5 @@ const styles = StyleSheet.create({
     transform: [{ rotate: '45deg' }],
   },
 });
- 
+
 export default DisplayScreen;

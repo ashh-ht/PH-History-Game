@@ -32,7 +32,7 @@ const BUTTON_GAP = 12;
 const VISIBLE_COUNT = 4;
 const VIEWPORT_HEIGHT = BUTTON_HEIGHT * VISIBLE_COUNT + BUTTON_GAP * (VISIBLE_COUNT - 1);
 
-function chapter1selection({ navigation }) {
+function Chapter1Selection({ navigation }) {
   const { part } = useGameProgress();
   const [showBackBtn, setShowBackBtn] = useState(true);
 
@@ -115,4 +115,4 @@ const styles = StyleSheet.create({
       },
 });
 
-export default chapter1selection;
+export default Chapter1Selection;
