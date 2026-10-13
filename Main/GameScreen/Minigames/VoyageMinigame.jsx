@@ -19,7 +19,7 @@ const TICK_MS = 50;
 const BASE_SPEED = 3.5;
 const MAX_SPEED = 6;
 
-// NOTE: RATE TO AT WHICH NAG SSPAWN. HIGHER NUMBER = SLOWER SPAWN. LOWER NUMBER = FASTER SPAWN.
+// NOTE: RATE AT WHICH THINGS SPAWN. HIGHER NUMBER = SLOWER SPAWN. LOWER NUMBER = FASTER SPAWN.
 const ROCK_SPAWN_MS = 2000;
 const SUPPLY_SPAWN_MS = 1700;
 const WAVE_SPAWN_MS = 2200;
@@ -36,12 +36,31 @@ const SUPPLY_HEIGHT = 60;
 const WAVE_WIDTH = 120;
 const WAVE_HEIGHT = 38;
 
+// =====================================================
+// SHIP HITBOX (hull only)
+// Values are fractions of the ship sprite (0 to 1).
+// Higher number = that side of the hitbox moves further inward.
+// =====================================================
+const HIT_LEFT = 0.15;    // trim from the left edge
+const HIT_RIGHT = 0.15;   // trim from the right edge
+const HIT_TOP = 0.58;     // skip the sails and mast (top 58%)
+const HIT_BOTTOM = 0.06;  // skip the foam at the very bottom
+
+const ROCK_HIT_X = 0.12;
+const WAVE_HIT_X = 0.12;
+
+// Set to true to see the red hitbox on screen while tuning
+const DEBUG_HITBOX = false;
+
 function VoyageMinigame({ onComplete }) {
     const { width, height } = useWindowDimensions();
 
     const controlsHeight = 92;
     const playTop = 88;
     const playBottom = height - controlsHeight;
+
+    // Where the ship image is drawn (also used by the hitbox)
+    const shipTop = playBottom - SHIP_HEIGHT - 12;
 
     const [shipX, setShipX] = useState(
         Math.max(0, width / 2 - SHIP_WIDTH / 2)
@@ -61,7 +80,6 @@ function VoyageMinigame({ onComplete }) {
     //  1 = moving right
 
     const directionRef = useRef(0);
-
 
     const [shipDirection, setShipDirection] = useState(0);
 
@@ -270,26 +288,25 @@ function VoyageMinigame({ onComplete }) {
             }
 
             // =================================================
-            // SHIP COLLISION BOX
+            // SHIP COLLISION BOX (hull only)
             // =================================================
-
 
             const shipRect = {
                 left:
-                    shipXRef.current + 18,
+                    shipXRef.current +
+                    SHIP_WIDTH * HIT_LEFT,
 
                 right:
                     shipXRef.current +
-                    SHIP_WIDTH -
-                    18,
+                    SHIP_WIDTH * (1 - HIT_RIGHT),
 
                 top:
-                    playBottom -
-                    SHIP_HEIGHT -
-                    12,
+                    shipTop +
+                    SHIP_HEIGHT * HIT_TOP,
 
                 bottom:
-                    playBottom - 12,
+                    shipTop +
+                    SHIP_HEIGHT * (1 - HIT_BOTTOM),
             };
 
             // =================================================
@@ -300,12 +317,10 @@ function VoyageMinigame({ onComplete }) {
 
             nextRocks = nextRocks.filter((item) => {
                 const hit =
-                    item.x < shipRect.right &&
-                    item.x + ROCK_WIDTH >
-                    shipRect.left &&
+                    item.x + ROCK_WIDTH * ROCK_HIT_X < shipRect.right &&
+                    item.x + ROCK_WIDTH * (1 - ROCK_HIT_X) > shipRect.left &&
                     item.y < shipRect.bottom &&
-                    item.y + ROCK_HEIGHT >
-                    shipRect.top;
+                    item.y + ROCK_HEIGHT > shipRect.top;
 
                 if (hit) {
                     hitRock = true;
@@ -322,19 +337,11 @@ function VoyageMinigame({ onComplete }) {
 
             nextWaves = nextWaves.filter((item) => {
                 const hit =
-                    item.x < shipRect.right &&
-                    item.x + WAVE_WIDTH >
-                    shipRect.left &&
+                    item.x + WAVE_WIDTH * WAVE_HIT_X < shipRect.right &&
+                    item.x + WAVE_WIDTH * (1 - WAVE_HIT_X) > shipRect.left &&
                     item.y < shipRect.bottom &&
-                    item.y + WAVE_HEIGHT >
-                    shipRect.top;
-
-                if (hit) {
-                    hitWave = true;
-                }
-
-
-                return !hit;
+                    item.y + WAVE_HEIGHT > shipRect.top;
+                                return !hit;
             });
 
             // =================================================
@@ -368,7 +375,6 @@ function VoyageMinigame({ onComplete }) {
             // =================================================
             // APPLY DAMAGE
             // =================================================
-
 
             if (hitRock || hitWave) {
                 const nextHull =
@@ -429,7 +435,7 @@ function VoyageMinigame({ onComplete }) {
         }, TICK_MS);
 
         return () => clearInterval(timer);
-    }, [gameState, height, width, playBottom]);
+    }, [gameState, height, width, playBottom, shipTop]);
 
     // =====================================================
     // RESTART
@@ -478,7 +484,6 @@ function VoyageMinigame({ onComplete }) {
     // =====================================================
     // SHIP IMAGE
     // =====================================================
-
 
     const shipSource =
         shipDirection === 1
@@ -593,19 +598,43 @@ function VoyageMinigame({ onComplete }) {
                         styles.ship,
                         {
                             left: shipX,
-                            top:
-                                playBottom -
-                                SHIP_HEIGHT -
-                                12,
+                            top: shipTop,
                         },
                     ]}
                 />
 
                 {/* =================================================
+                    DEBUG HITBOX (set DEBUG_HITBOX = true at the top)
+                ================================================= */}
+
+                {DEBUG_HITBOX && (
+                    <View
+                        pointerEvents="none"
+                        style={{
+                            position: 'absolute',
+                            left: shipX + SHIP_WIDTH * HIT_LEFT,
+                            top: shipTop + SHIP_HEIGHT * HIT_TOP,
+                            width:
+                                SHIP_WIDTH *
+                                (1 - HIT_LEFT - HIT_RIGHT),
+                            height:
+                                SHIP_HEIGHT *
+                                (1 - HIT_TOP - HIT_BOTTOM),
+                            backgroundColor:
+                                'rgba(255, 0, 0, 0.35)',
+                            zIndex: 11,
+                        }}
+                    />
+                )}
+
+                {/* =================================================
                     INSTRUCTIONS
                 ================================================= */}
 
-                <View style={styles.instructions}>
+                <View
+                    pointerEvents="none"
+                    style={styles.instructions}
+                >
                     <Text style={styles.instructionText}>
                         HOLD ◀ OR ▶ TO STEER
                     </Text>
@@ -619,12 +648,7 @@ function VoyageMinigame({ onComplete }) {
                     CONTROLS
                 ================================================= */}
 
-                {/* =================================================
-    CONTROLS
-================================================= */}
-
                 <View style={styles.controls}>
-
                     <Pressable
                         style={styles.controlButton}
                         onPressIn={() => {
@@ -654,7 +678,6 @@ function VoyageMinigame({ onComplete }) {
                             ▶
                         </Text>
                     </Pressable>
-
                 </View>
 
                 {/* =================================================
@@ -794,13 +817,14 @@ const styles = StyleSheet.create({
         zIndex: 7,
     },
 
+    // zIndex is below the ship (10) so the text never covers it
     instructions: {
         position: 'absolute',
         bottom: 91,
         left: 0,
         right: 0,
         alignItems: 'center',
-        zIndex: 15,
+        zIndex: 9,
     },
 
     instructionText: {

@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { BackHandler, View, ImageBackground, Image, StyleSheet } from 'react-native';
+import { View, ImageBackground, Image, StyleSheet } from 'react-native';
 import Sound_clicks from '../../Components/Sound_clicks';
+import { useAudio } from '../../Audiostore';
 
 function MainMenuScreen({ navigation }) {
   const [selectedButton, setSelectedButton] = useState(null);
-
+  const {Quitapp} = useAudio(); 
   const menuButtons = [
     {
       id: 'newGame',
@@ -57,7 +58,7 @@ function MainMenuScreen({ navigation }) {
         <Sound_clicks
           onPress={() => {
             setSelectedButton('exit');
-            BackHandler.exitApp();
+            setTimeout(Quitapp,150)
           }}
         >
           <Image

@@ -1,9 +1,26 @@
 import { ImageBackground, View, Image, StyleSheet } from 'react-native';
 import { useGameProgress } from '../../GameProgress';
 import Sound_clicks from '../../Components/Sound_clicks';
+import { restartEverything } from '../Others/saveProgress';
 
 function NewGameConfirmScreen({ navigation }) {
-  const { setPart } = useGameProgress();
+  const { setChapter, setPart, setScene, setInGame } = useGameProgress();
+
+  const restart = async () => {
+    // Optional: also wipe the saved checkpoints (see note below)
+    await restartEverything();
+
+    setChapter(1);
+    setPart(1);
+    setScene(0);
+    setInGame(false);
+
+    // Unmount any old chapter screens so they start fresh
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Home' }],
+    });
+  };
 
   return (
     <ImageBackground
@@ -12,13 +29,7 @@ function NewGameConfirmScreen({ navigation }) {
       style={styles.background}
     >
       <View style={styles.list}>
-
-        <Sound_clicks
-          onPress={() => {
-            setPart(1);
-            navigation.navigate('Home');
-          }}
-        >
+        <Sound_clicks onPress={restart}>
           <Image
             source={require('../../assets/New Game/Restart.png')}
             style={styles.button}
@@ -26,16 +37,13 @@ function NewGameConfirmScreen({ navigation }) {
           />
         </Sound_clicks>
 
-        <Sound_clicks
-          onPress={() => navigation.goBack()}
-        >
+        <Sound_clicks onPress={() => navigation.goBack()}>
           <Image
             source={require('../../assets/New Game/Cancel.png')}
             style={styles.button}
             resizeMode="contain"
           />
         </Sound_clicks>
-
       </View>
     </ImageBackground>
   );

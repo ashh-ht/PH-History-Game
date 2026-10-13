@@ -184,7 +184,7 @@ export default StyleSheet.create({
     color: "#d5d1dc",
     fontSize: 15,
     lineHeight: 23,
-    fontStyle: "italic",
+     fontStyle: "italic",
     textAlign: "center",
   },
 

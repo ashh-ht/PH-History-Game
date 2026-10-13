@@ -367,11 +367,17 @@ function PartRenderer(props) {
   // These hooks must stay above every early return.
   // ===================================================
 
+  // Minigames handle their own flow, so they are never typed
+  // and never auto-advanced.
+  const isMinigame =
+    current?.type === "voyage" || current?.type === "santoNino";
+
   // Only dialogue, narrator, system messages and
   // choice responses are typed.
-  // Scene cards, quizzes and intro screens show instantly.
+  // Scene cards, quizzes, minigames and intro screens show instantly.
   const isTyped =
     current &&
+    !isMinigame &&
     current.type !== "scene" &&
     current.type !== "quiz" &&
     !(current.type === "system" && current.intro === true);
@@ -427,8 +433,8 @@ function PartRenderer(props) {
   useEffect(() => {
     if (!settings?.autoPlay || !done || !current) return;
 
-    // Player must answer quizzes manually
-    if (current.type === "quiz") return;
+    // Player must answer quizzes / finish minigames manually
+    if (current.type === "quiz" || isMinigame) return;
 
     // Player must choose before choice response
     if (current.type === "choice" && picked === null) return;
@@ -443,6 +449,7 @@ function PartRenderer(props) {
     sceneIdx,
     picked,
     done,
+    isMinigame,
     settings?.autoPlay,
     settings?.autoDelay,
   ]);
