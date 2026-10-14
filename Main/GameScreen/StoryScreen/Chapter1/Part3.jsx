@@ -116,6 +116,8 @@ export const Chapter1_Part3 = [
     text: "Our motto is simple: Unus Instar Omnium. One is worth all. If one of us\nis in trouble, we all stand together."
   },
 
+  //T3_3 here
+
   {
     type: "dialogue",
     speaker: "ANDRÉS BONIFACIO",
@@ -187,6 +189,7 @@ export const Chapter1_Part3 = [
 
   // CONTINUE
 
+  //Q1_3 and Q2_3 here
 
   {
     type: "narrator",
@@ -262,6 +265,7 @@ export const Chapter1_Part3 = [
     text: "Either way, nothing changes. Rizal is taken away and exiled to Dapitan in Mindanao,\nleaving La Liga without its founder."
   },
 
+  //Q3_3 here
 
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -287,6 +291,8 @@ export const Chapter1_Part3 = [
     text: "Domingo Franco and Andrés Bonifacio step forward to bring it back to life,\nbut soon, the members start to disagree about how to move forward."
   },
 
+  //T1_3 here
+  
   {
     type: "dialogue",
     speaker: "DOMINGO FRANCO",

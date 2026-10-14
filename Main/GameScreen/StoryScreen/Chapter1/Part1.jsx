@@ -139,8 +139,8 @@ export const Chapter1_Part1 = [
       {
         text: "Hear him out, but keep your guard up.",
         speaker: "CHIEFTAIN",
-        dialogue: "Makikinig kami sa sasabihin mo, pero hindi pa kami nagtitiwala sa iyo.",
-        translation: "We'll hear what you have to say, but we don't trust you yet.",
+        dialogue: "Makikinig kami sa sasabihin mo, pero hindi pa rin kami muna nagtitiwala sa iyo.",
+        translation: "We'll hear what you have to say, but we will not trust you yet.",
         characters: [
           {
             source: require("../../../../Character Images/Temporary Placeholders/Chieftan.png"),
@@ -176,9 +176,11 @@ export const Chapter1_Part1 = [
 
   {
     type: "narrator",
-    text: "Two days after leaving Samar, Legazpi and his fleet reach Leyte. He lands on shore\nand plants a cross to formally claim the territory for Spain.",
+    text: "Two days after leaving Samar, Legazpi and his fleet reached Leyte. He lands on shore\nand plants a cross to formally claim the territory for Spain.",
     background: require("../../../../Background Images/Part 1/Spanish Coast.png")
   },
+
+  //Q3_1 here
 
   {
     type: "dialogue",
@@ -240,7 +242,6 @@ export const Chapter1_Part1 = [
   },
 
 
-
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 3
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -284,7 +285,7 @@ export const Chapter1_Part1 = [
         position: "right"
       }
     ],
-    text: "Sino kayo at bakit kayo naririto sa aming isla? Hindi ako pumapayag\nsa inyong pakikipag-usap!",
+    text: "Sino kayo at bakit kayo naparito sa aming isla? Hindi ako pumapayag\nsa inyong pakikipag-usap!",
     translation: "Who are you, and why are you here on our island? I do not agree to your terms!"
   },
 
@@ -337,7 +338,7 @@ export const Chapter1_Part1 = [
       {
         text: "Refuse, and retreat to the mountains to prepare for battle.",
         speaker: "RAJAH TUPAS",
-        dialogue: "Umatras muna tayo sa kabundukan at maghanda. Hindi\nnatin basta-bastang ibibigay ang ating lupain.",
+        dialogue: "Umatras muna tayo sa kabundukan at maghanda. Hindi\nnatin basta-basta ibibigay ang ating lupain.",
         translation: "Let's retreat to the mountains and prepare. We we will not just give up our land.",
         characters: [
           {
@@ -404,6 +405,8 @@ export const Chapter1_Part1 = [
     text: "We'll build our settlement here and call it Villa de Santísimo\nNombre de Jesús."
   },
 
+  //Q2_1 here
+
   {
     type: "narrator",
     text: "As the Spanish explore the empty houses, Juan de Camus discovers something\nunexpected inside one of them.",
@@ -439,6 +442,8 @@ export const Chapter1_Part1 = [
     ],
     text: "The Santo Niño... left behind by Magellan's crew, forty-four years ago."
   },
+
+  //T1_1 here
 
   {
     type: "santoNino"
@@ -569,7 +574,7 @@ export const Chapter1_Part1 = [
       }
     ],
     text: "Aking pamangkin, tingnan mo ang kanilang mga barko at armas.",
-    translation: "My dear nephew, look at their boat and guns"
+    translation: "My dear nephew, look at their boat and guns."
   },
 
   {

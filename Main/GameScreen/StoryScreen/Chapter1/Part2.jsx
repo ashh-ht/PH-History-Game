@@ -63,7 +63,7 @@ export const Chapter1_Part2 = [
         position: "left"
       }
     ],
-    text: "Bakit ninyo siya ipinagkakait sa tamang paglilibing?",
+    text: "Bakit ninyo siya pinakakaitan ng tamang paglilibing?",
     translation: "He died doing his duty. Why are you refusing him a proper burial?"
   },
 
@@ -115,10 +115,11 @@ export const Chapter1_Part2 = [
         position: "right"
       }
     ],
-    text: "Kung wala man lang paggalang ang inyong simbahan para sa mga tapat\nna linkod, hindi na kami dapat manatiling tapat!",
+    text: "Kung wala man lang paggalang ang inyong simbahan para sa mga tapat\nna lingkod, hindi na kami dapat manatiling tapat!",
     translation: "If your church has no respect for a loyal servant, then we should not have to remain loyal."
   },
 
+  //Q2_1 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // CHOICE 2.1
@@ -170,7 +171,7 @@ export const Chapter1_Part2 = [
     background: require("../../../../Background Images/Part 2/Bohol highlands jungle pass.png")
   },
 
-
+  //Q2_2 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 2
@@ -191,7 +192,7 @@ export const Chapter1_Part2 = [
 
   {
     type: "narrator",
-    text: "There, they start anew outside of Spanish control and forced labor.",
+    text: "There, they start a new outside of Spanish control and forced labor.",
     background: require("../../../../Background Images/Part 2/Mountain settlement.png")
   },
 
@@ -219,6 +220,8 @@ export const Chapter1_Part2 = [
     text: "Spanish expeditions return again and again to regain control, but to no avail.",
     background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png")
   },
+
+  //T1_2 here
 
   {
     type: "narrator",
@@ -283,6 +286,8 @@ export const Chapter1_Part2 = [
     background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png")
   },
 
+  //T3_2 here 
+
   {
     type: "narrator",
     text: "After a difficult standoff, the expedition withdraws. The Boholanos\nsuccessfully defend their territory.",
@@ -308,6 +313,7 @@ export const Chapter1_Part2 = [
     background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png")
   },
 
+  //Q3_2 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // CHOICE 2.3

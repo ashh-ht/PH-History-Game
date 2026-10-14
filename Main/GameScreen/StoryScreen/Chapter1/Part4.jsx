@@ -72,7 +72,7 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
-    text: "They agree on its full name: Kataastaasan Kagalang-galang na\nKatipunan ng mga Anak ng Bayan. "
+    text: "They agree on its full name: Kataastaasan Kagalang-galangang\nKatipunan ng mga Anak ng Bayan. "
   },
 
   {
@@ -112,6 +112,8 @@ export const Chapter1_Part4 = [
     text: "At the time, the word Filipino was mostly used for Spaniards born in the islands."
   },
 
+  //T3_4 here
+
   {
     type: "dialogue",
     speaker: "EMILIO JACINTO",
@@ -122,7 +124,7 @@ export const Chapter1_Part4 = [
         position: "left"
       }
     ],
-    text: "If we wait for Spain to call us Filipino, Andrés, we'll wait forever.\nWe need our own word."
+    text: "If we wait for Spain to call us Filipino, Andrés, we'll wait forever.\nWe need our own words."
   },
 
   {
@@ -218,6 +220,7 @@ export const Chapter1_Part4 = [
     nextScene: 21
   },
 
+  
 
   // CONTINUE
 
@@ -233,7 +236,7 @@ export const Chapter1_Part4 = [
     text: "Open recruiting begins around October 1892, and the Katipunan's membership\ngrows to the tens of thousands by 1896."
   },
 
-
+  //T1_4 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 3
@@ -356,7 +359,7 @@ export const Chapter1_Part4 = [
       {
         text: "Ask Jacinto to help improve your Decalogue first.",
         speaker: "ANDRÉS BONIFACIO",
-        dialogue: "Tulungan mo akong pagandahin ang akin bago tayo magpasya.",
+        dialogue: "Tulungan mo akong pagandahin ang sa akin bago tayo magpasya.",
         translation: "Help me improve mine before we decide.",
         characters: [
           {
@@ -382,7 +385,7 @@ export const Chapter1_Part4 = [
     text: "Jacinto's Kartilya becomes the Katipunan's official guide, helping unite members from different parts of the archipelago under one shared set of values."
   },
 
-
+  //Q2_4 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 5
@@ -407,6 +410,8 @@ export const Chapter1_Part4 = [
     text: "Gregoria de Jesús, Bonifacio's wife and the Lakambini of the KKK,\nbecomes the keeper of the group's secret papers, seals, and supplies."
   },
 
+  //T4_4 here
+  
   {
     type: "dialogue",
     speaker: "GREGORIA DE JESÚS",
