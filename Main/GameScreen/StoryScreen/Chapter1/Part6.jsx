@@ -39,7 +39,7 @@ export const Chapter1_Part6 = [
     text: "Bonifacio's forces have suffered heavy losses, and Governor-General Ramón\nBlanco has placed eight provinces under a state of war."
   },
 
-
+  //T3_6 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 2
@@ -95,7 +95,7 @@ export const Chapter1_Part6 = [
     text: "As Spanish reinforcements arrive, the rivalry between the two factions\nmakes cooperation increasingly difficult."
   },
 
-
+  //Q1_6 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 3
@@ -146,7 +146,7 @@ export const Chapter1_Part6 = [
     text: "To this day, Rizal is remembered each year on December 30 as a national hero\nand a symbol of the Filipino people's fight for freedom."
   },
 
-
+  //T4_6 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 4
@@ -184,6 +184,8 @@ export const Chapter1_Part6 = [
     text: "Emilio, may alok daw ng amnestiya. Pero kung pagsuko ang kapalit,\nhindi natin basta matatanggap iyon.",
     translation: "Emilio, there's supposedly an offer of amnesty. But if surrender is the price,\nwe can't simply accept it."
   },
+
+  //T5_6 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // CHOICE 6.1
@@ -233,7 +235,7 @@ export const Chapter1_Part6 = [
     text: "The offer does not resolve the deeper conflict between the revolutionary factions.\nCavite's leaders continue to build separate centers of support."
   },
 
-
+  //Q2_6 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 5
@@ -262,7 +264,7 @@ export const Chapter1_Part6 = [
         position: "left"
       }
     ],
-    text: "Kailangan natin ng iisang utos, Don Mariano. Hindi tayo mananalo\nkung hati-hati tayo.",
+    text: "Kailangan natin ng iisang utos, Don Mariano. Hindi tayo mananalo\nkung magkakanya-kanya tayo.",
     translation: "We need one command, Don Mariano. We won't win if we're divided."
   },
 
@@ -280,6 +282,8 @@ export const Chapter1_Part6 = [
     translation: "My orders come from the Supremo. I can't follow two leaders at once."
   },
 
+  //T1_6 here
+  
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // CHOICE 6.2
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
