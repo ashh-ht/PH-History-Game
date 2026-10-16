@@ -60,6 +60,8 @@ export const Chapter1_Part7 = [
     background: require("../../../../Background Images/Part 7/Casa Hacienda Tejeros.png")
   },
 
+  // Q1_7 here
+  
   {
     type: "dialogue",
     speaker: "DANIEL TIRONA",
@@ -87,7 +89,7 @@ export const Chapter1_Part7 = [
       {
         text: "React strongly and declare the election invalid.",
         speaker: "ANDRÉS BONIFACIO",
-        dialogue: "Bilang Supremo ng Katipunan, ipinapawalang-bisa ko ang lahat\nng nangyari dito ngayon!",
+        dialogue: "<i>slams table</i> Bilang Supremo ng Katipunan, ipinapawalang-bisa ko ang lahat\nng nangyari dito ngayon din!",
         translation: "As Supremo of the Katipunan, I declare everything that happened here today invalid.",
         characters: [
           {
@@ -99,7 +101,7 @@ export const Chapter1_Part7 = [
       {
         text: "Demand that the issue be settled fairly.",
         speaker: "ANDRÉS BONIFACIO",
-        dialogue: "Kung hindi ako karapat-dapat, patunayan ninyo iyan sa isang tapat\nna botohan, hindi sa panunuya.",
+        dialogue: "Kung hindi ako karapat-dapat, patunayan ninyo iyan sa isang tapat\nna botohan, hindi sa pang-iinsulto.",
         translation: "If I'm not qualified, prove it through a fair vote, not through insults.",
         characters: [
           {
@@ -112,6 +114,7 @@ export const Chapter1_Part7 = [
     nextScene: 10
   },
 
+  // Q2_7 here
 
   // CONTINUE
 
@@ -149,7 +152,7 @@ export const Chapter1_Part7 = [
         position: "right"
       }
     ],
-    text: "Isulat ninyo. Hindi lehitimo ang halalan kahapon. Hindi nito kinatawan ang\ntunay na kalooban ng mga narito.",
+    text: "Isulat ninyo ito. Hindi totoo ang halalan kahapon. Hindi nito kinatawan ang\ntunay na kalooban ng mga narito.",
     translation: "Write this down. Yesterday's election was not legitimate. It did not represent the true will of those gathered here.",
     background: require("../../../../Background Images/Part 7/Aguinaldo's HQ exterior.png")
   },
@@ -159,6 +162,8 @@ export const Chapter1_Part7 = [
     text: "That same night, Aguinaldo, Mariano Trías, and Artemio Ricarte take their\noaths of office at the Tanza convent.",
     background: require("../../../../Background Images/Part 7/Tanza parish convent, night (oath-taking).png")
   },
+
+  //Q3_7 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // CHOICE 7.2 
@@ -198,6 +203,7 @@ export const Chapter1_Part7 = [
     nextScene: 16
   },
 
+  // T1_7 here
 
   // CONTINUE
 
@@ -241,7 +247,7 @@ export const Chapter1_Part7 = [
         position: "right"
       }
     ],
-    text: "Hindi ako susuko sa isang halalang hindi ko kinikilalang tapat.\nDito, ipagpapatuloy natin ang laban.",
+    text: "Hindi ko tatanggapin ang isang halalang hindi tapat.\nDito, ipagpapatuloy natin ang laban.",
     translation: "I will not accept an election I do not consider fair. Here, we will continue the fight.",
     background: require("../../../../Background Images/Part 7/Naik camp (Bonifacio addresses loyalists).png")
   },
@@ -427,6 +433,8 @@ export const Chapter1_Part7 = [
     date: "May 10, 1897",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
+
+  //Q4_7 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // QUIZ TIME
