@@ -87,7 +87,7 @@ export const Chapter1_Part1 = [
 
   {
     type: "narrator",
-    text: "They have have heard stories of foreign ships before, but don't know yet\nwhether these visitors mean peace or trouble.",
+    text: "They have heard stories of foreign ships before, but don't know yet\nwhether these visitors mean peace or trouble.",
     background: require("../../../../Background Images/Part 1/Spanish Coast.png")
   },
 
