@@ -30,7 +30,8 @@ export const Chapter1_Part5 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 5/19th century hand press printing shop ransacked.png"),
-    text: "The Katipunan has been exposed. Father Gil sends people to Diario de Manila."
+    text: "The Katipunan has been exposed. Father Gil sends people to Diario de Manila.",
+    music: "suspense"
   },
 
   {

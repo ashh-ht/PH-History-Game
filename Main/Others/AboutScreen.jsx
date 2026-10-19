@@ -82,7 +82,6 @@ function About_screen({ navigation }) {
                 {'\n'}
                 Arellano, Janell Ashtene {'\n'}
                 Catapang, Maureign Anne Christyanna M.{'\n'}
-                Solis, Markuz Andre Merek R.{'\n'}
                 Sulla, Sylvia Heart L.{'\n'}
                 {'\n'}
                 <Text style={{ fontWeight: 'bold' }}>SFX/BGM</Text>
@@ -106,9 +105,9 @@ function About_screen({ navigation }) {
           <View style={styles.overlayPanel}>
             <Text style={styles.overlayTitle}>About the Team</Text>
             <Text style={styles.overlayBody}>
-              We're a Team 67 sikibidi a group of students who are shows interest on creating
-              a Philippine History game that is tied to spanish colonization, The team created
-              a novel like game to introduce it to people who are interest on history based games.
+            The Pamana Development Team is a group of Computer Science students with different skills and talents. 
+            The team was formed to create Pamana as a school project. 
+            Together, they work to make the game fun, interesting, and educational for players.
             </Text>
             <Sound_clicks style={styles.overlayClose} onPress={() => setActiveOverlay(null)}>
               <Text style={styles.overlayCloseText}>Close</Text>

@@ -7,7 +7,6 @@ function NewGameConfirmScreen({ navigation }) {
   const { setChapter, setPart, setScene, setInGame } = useGameProgress();
 
   const restart = async () => {
-    // Optional: also wipe the saved checkpoints (see note below)
     await restartEverything();
 
     setChapter(1);
@@ -15,10 +14,9 @@ function NewGameConfirmScreen({ navigation }) {
     setScene(0);
     setInGame(false);
 
-    // Unmount any old chapter screens so they start fresh
     navigation.reset({
       index: 0,
-      routes: [{ name: 'Home' }],
+      routes: [{ name: 'Part1', params: {startScene:0} }],
     });
   };
 

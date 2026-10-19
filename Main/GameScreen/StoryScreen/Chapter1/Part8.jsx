@@ -105,7 +105,8 @@ export const Chapter1_Part8 = [
   {
     type: "narrator",
     text: "Aguinaldo quickly resumes the revolution. On May 28, Filipino forces\ndefeat Spanish troops at Alapan in Imus, Cavite.",
-    background: require("../../../../Background Images/Part 8/Alapan Cavite City HQ (first flag unfurled).png")
+    background: require("../../../../Background Images/Part 8/Alapan Cavite City HQ (first flag unfurled).png"),
+    music: "somber"
   },
 
   {
@@ -493,6 +494,8 @@ export const Chapter1_Part8 = [
     text: "The fighting spreads rapidly. Now, the Philippine-American War has begun.",
     background: require("../../../../Background Images/Part 8/San Juan Bridge Sociego Street Feb 4 1899.png")
   },
+
+  { type: "sortingtimeline" },
 
   {
     type: "system",

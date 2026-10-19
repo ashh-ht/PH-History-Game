@@ -11,10 +11,12 @@ import {
 } from "react-native";
 
 import { useGameProgress } from "../../GameProgress";
+import { useAudio } from "../../Audiostore"; // adjust path if needed
 import { useGameplaySettings } from "../Others/GameplaySetting";
 import { useDisplaySettings, FONT_SCALE } from "../Others/DisplaySetting";
 import { saveCheckpoint } from "../Others/saveProgress";
 import { Chapter1 } from "./StoryScreen/Chapter1";
+
 
 // =====================================================
 // MINIGAMES
@@ -22,6 +24,17 @@ import { Chapter1 } from "./StoryScreen/Chapter1";
 
 import VoyageMinigame from "./Minigames/VoyageMinigame";
 import SantoNinoMinigame from "./Minigames/SantoNinoMinigame";
+import TimelineSort from "./Minigames/Timelinesort";
+import { BloodTrace, OathTrace } from "./Minigames/TracingMinigame";
+
+// typewriter and by Auto Play.
+const MINIGAMES = {
+  voyage: VoyageMinigame,
+  santoNino: SantoNinoMinigame,
+  sortingtimeline: TimelineSort,
+  bloodtrace: BloodTrace,
+  oathtrace: OathTrace,
+};
 
 // =====================================================
 // TYPEWRITER
@@ -59,7 +72,7 @@ function useTypewriter(text, msPerChar, resetKey) {
   };
 }
 
-// FIX: renders the FULL text invisibly to reserve the space,
+// Renders the FULL text invisibly to reserve the space,
 // and puts the typed text on top.
 // This stops the box from re-centering/jumping while typing.
 function TypedText({ style, full, shown }) {
@@ -140,6 +153,7 @@ function PartRenderer(props) {
   } = props;
 
   const game = useGameProgress();
+  const { playMusic } = useAudio();
 
   // ===================================================
   // GAMEPLAY / DISPLAY SETTINGS
@@ -221,6 +235,26 @@ function PartRenderer(props) {
 
   const hasMoreScenes = sceneIdx < sceneData.length;
   const current = hasMoreScenes ? sceneData[sceneIdx] : null;
+
+  // ===================================================
+  // MUSIC
+  // ===================================================
+
+  // Finds the most recent track set at or before idx,
+  // so restoring a save mid-part still plays the right music.
+  // Accepts both `music` and `Music` keys.
+  const getMusicFor = (idx) => {
+    for (let i = Math.min(idx, sceneData.length - 1); i >= 0; i--) {
+      const m = sceneData[i].music ?? sceneData[i].Music;
+      if (m) return m;
+    }
+    return null;
+  };
+
+  useEffect(() => {
+    const track = getMusicFor(sceneIdx);
+    if (track) playMusic(track);
+  }, [sceneIdx]);
 
   // ===================================================
   // SAVE HELPERS
@@ -368,9 +402,9 @@ function PartRenderer(props) {
   // ===================================================
 
   // Minigames handle their own flow, so they are never typed
-  // and never auto-advanced.
-  const isMinigame =
-    current?.type === "voyage" || current?.type === "santoNino";
+  // and never auto-advanced. Any type listed in MINIGAMES
+  // (at the top of this file) counts as a minigame.
+  const isMinigame = Boolean(current && MINIGAMES[current.type]);
 
   // Only dialogue, narrator, system messages and
   // choice responses are typed.
@@ -457,25 +491,15 @@ function PartRenderer(props) {
   // ===================================================
   // MINIGAMES
   //
-  // These returns are AFTER ALL HOOKS above.
+  // This return is AFTER ALL HOOKS above.
   // This avoids the React "Rendered fewer hooks"
   // problem.
   // ===================================================
 
-  if (current?.type === "voyage") {
-    return (
-      <VoyageMinigame
-        onComplete={goNext}
-      />
-    );
-  }
+  const Minigame = current ? MINIGAMES[current.type] : null;
 
-  if (current?.type === "santoNino") {
-    return (
-      <SantoNinoMinigame
-        onComplete={goNext}
-      />
-    );
+  if (Minigame) {
+    return <Minigame onComplete={goNext} />;
   }
 
   // ===================================================
@@ -581,7 +605,7 @@ function PartRenderer(props) {
   }
 
   // ===================================================
-  // QUIZ / MINIGAME
+  // QUIZ
   // ===================================================
 
   if (current.type === "quiz") {
@@ -1135,7 +1159,7 @@ export function Chap1Part8Screen({ navigation, ...props }) {
       partNumber={8}
       isLastPart={true}
       onChapterComplete={() =>
-        navigation.navigate("ChapterSelect")
+        navigation.navigate("PartSelect")
       }
       navigation={navigation}
       {...props}
@@ -1501,7 +1525,7 @@ const styles = StyleSheet.create({
   },
 
   // ===================================================
-  // QUIZ / MINIGAME CHOICES
+  // QUIZ CHOICES
   // ===================================================
 
   quizButtonsGrid: {

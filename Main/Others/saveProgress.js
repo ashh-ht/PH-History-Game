@@ -1,7 +1,21 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SAVE_KEY = "saveHistory";
-const MAX_SAVES = 30;
+const UNLOCK_KEY = "highestPart";
+const MAX_SAVES = 50;
+
+
+// REMEMBER THE FURTHEST PART REACHED (never goes down)
+async function markPartReached(part) {
+  try {
+    const stored = parseInt(await AsyncStorage.getItem(UNLOCK_KEY), 10) || 1;
+    if (part > stored) {
+      await AsyncStorage.setItem(UNLOCK_KEY, String(part));
+    }
+  } catch (error) {
+    console.error("error marking part reached", error);
+  }
+}
 
 
 async function saveCheckpoint(data) {
@@ -13,6 +27,9 @@ async function saveCheckpoint(data) {
       choice: null,
       ...data,
     };
+
+    // unlock the part this checkpoint belongs to
+    await markPartReached(checkpoint.part);
 
     const existingData = await AsyncStorage.getItem(SAVE_KEY);
     const saves = existingData ? JSON.parse(existingData) : [];
@@ -58,6 +75,22 @@ async function getCheckpoints() {
   }
 }
 
+
+// HIGHEST UNLOCKED PART (1-based)
+// Also checks existing saves so earlier progress isn't lost
+async function getUnlockedPart() {
+  try {
+    const stored = parseInt(await AsyncStorage.getItem(UNLOCK_KEY), 10) || 1;
+    const all = await getCheckpoints();
+    const fromSaves = all.reduce((max, c) => Math.max(max, c.part || 1), 1);
+    return Math.max(stored, fromSaves);
+  } catch (error) {
+    console.error("error getting unlocked part", error);
+    return 1;
+  }
+}
+
+
 // RESTORE A CHECKPOINT
 // When to call: player taps a specific save
 async function restoreCheckpoint(id) {
@@ -73,6 +106,22 @@ async function restoreCheckpoint(id) {
   } catch (error) {
     console.error("error restoring checkpoint", error);
     // error msg here
+    return null;
+  }
+}
+
+
+// DELETE ONE CHECKPOINT
+// When to call: player taps the ✕ on a specific save
+async function deleteCheckpoint(id) {
+  try {
+    const all = await getCheckpoints();
+    const updated = all.filter((checkpoint) => checkpoint.id !== id);
+
+    await AsyncStorage.setItem(SAVE_KEY, JSON.stringify(updated));
+    return updated; // return the new list (oldest - newest)
+  } catch (error) {
+    console.error("error deleting checkpoint", error);
     return null;
   }
 }
@@ -104,11 +153,11 @@ async function clearCheckpoints() {
 }
 
 async function restartEverything() {
-  try{
+  try {
     await AsyncStorage.clear();
     return true;
-  } catch(error){
-        console.error("Error clearing AsyncStorage:", error);
+  } catch (error) {
+    console.error("Error clearing AsyncStorage:", error);
     return false;
   }
 }
@@ -119,5 +168,8 @@ export {
   restoreCheckpoint,
   continueGame,
   clearCheckpoints,
-  restartEverything
+  restartEverything,
+  deleteCheckpoint,
+  markPartReached,
+  getUnlockedPart,
 };

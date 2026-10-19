@@ -30,7 +30,8 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
-    text: "After Rizal's exile, Andrés Bonifacio and the others realize that peaceful requests\nalone have not been enough to bring change."
+    text: "After Rizal's exile, Andrés Bonifacio and the others realize that peaceful requests\nalone have not been enough to bring change.",
+    music: "suspense"
   },
 
   {
@@ -80,6 +81,8 @@ export const Chapter1_Part4 = [
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
     text: "Each man makes a small, symbolic cut on his arm and signs the founding\nregister, making a solemn promise to their new brotherhood and its cause."
   },
+
+  { type: "bloodtrace" },
 
   {
     type: "narrator",
@@ -276,6 +279,8 @@ export const Chapter1_Part4 = [
     text: "This was meant to make them reflect on the nation's past, present, and future\nbefore reading and signing the Kartilya and making their own promise to the group."
   },
 
+  { type: "oathtrace" },
+
 
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -371,7 +376,7 @@ export const Chapter1_Part4 = [
       }
     ],
 
-    nextScene: 35
+    //nextScene: 34
   },
 
   // CONTINUE
@@ -457,7 +462,7 @@ export const Chapter1_Part4 = [
       }
     ],
 
-    nextScene: 40
+    //nextScene: 40
   },
 
 

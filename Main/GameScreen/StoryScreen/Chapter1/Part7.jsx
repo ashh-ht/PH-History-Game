@@ -32,7 +32,8 @@ export const Chapter1_Part7 = [
   {
     type: "narrator",
     text: "As Spanish forces push deeper into Cavite, revolutionary leaders gather at a house\nin Tejeros, San Francisco de Malabon.",
-    background: require("../../../../Background Images/Part 7/Casa Hacienda Tejeros.png")
+    background: require("../../../../Background Images/Part 7/Casa Hacienda Tejeros.png"),
+    music: "suspense"
   },
 
   {

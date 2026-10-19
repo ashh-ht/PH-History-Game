@@ -14,7 +14,6 @@ import { DisplaySettingsProvider } from './Main/Others/DisplaySetting';
 import StartupScreen from './Main/Others/Startup';
 import MainMenuScreen from './Main/Others/Menu';
 import NewGameConfirmScreen from './Main/Others/NewGame';
-import ChapterSelectScreen from './Main/Others/ChapterSelect';
 import PartSelectScreen from './Main/Others/PartSelect';
 import Setting_screen from './Main/Others/Settings';
 import AudioScreen from './Main/Others/AudioScreen';
@@ -63,7 +62,6 @@ export default function App() {
               <Stack.Screen name="Startup" component={StartupScreen} />
               <Stack.Screen name="Home" component={MainMenuScreen} />
               <Stack.Screen name="NewGameConfirm" component={NewGameConfirmScreen} />
-              <Stack.Screen name="ChapterSelect" component={ChapterSelectScreen} />
               <Stack.Screen name="PartSelect" component={PartSelectScreen} />
 
               <Stack.Screen name="Part1" component={Chap1Part1Screen} />
