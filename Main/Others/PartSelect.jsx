@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { ImageBackground, ScrollView, View, Image, StyleSheet } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { useGameProgress } from '../../GameProgress';
+import { getUnlockedPart } from '../Others/saveProgress'; // adjust path to where your saveProgress file is
 import Sound_clicks from '../../Components/Sound_clicks';
 
 const PART_ROUTES = ['Part1', 'Part2', 'Part3', 'Part4', 'Part5', 'Part6', 'Part7', 'Part8'];
@@ -35,13 +37,20 @@ const VIEWPORT_HEIGHT = BUTTON_HEIGHT * VISIBLE_COUNT + BUTTON_GAP * (VISIBLE_CO
 function Chapter1Selection({ navigation }) {
   const { part } = useGameProgress();
   const [showBackBtn, setShowBackBtn] = useState(true);
+  const [unlockedPart, setUnlockedPart] = useState(1);
+  
+  useFocusEffect(
+    useCallback(() => {
+      getUnlockedPart().then(setUnlockedPart);
+    }, [])
+  );
 
   const handleScroll = (event) => {
     const scrollY = event.nativeEvent.contentOffset.y;
     setShowBackBtn(scrollY < 50);
   };
 
-  const isUnlocked = (i) => i === 0 || i < part;
+  const isUnlocked = (i) => i === 0 || i < Math.max(part, unlockedPart);
 
   return (
     <ImageBackground

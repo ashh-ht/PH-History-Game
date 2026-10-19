@@ -15,7 +15,6 @@ import { JournalProvider } from './Main/Others/JournalContext';
 import StartupScreen from './Main/Others/Startup';
 import MainMenuScreen from './Main/Others/Menu';
 import NewGameConfirmScreen from './Main/Others/NewGame';
-import ChapterSelectScreen from './Main/Others/ChapterSelect';
 import PartSelectScreen from './Main/Others/PartSelect';
 import Setting_screen from './Main/Others/Settings';
 import AudioScreen from './Main/Others/AudioScreen';
@@ -59,16 +58,13 @@ export default function App() {
         <GameProgressProvider>
           <GameplaySettingsProvider>
             <DisplaySettingsProvider>
-
-              {/* 2. WRAP THE NAVIGATION CONTAINER WITH THE JOURNAL PROVIDER */}
               <JournalProvider>
-                <NavigationContainer>
-                  <Stack.Navigator initialRouteName="Startup" screenOptions={{ headerShown: false }}>
-                    <Stack.Screen name="Startup" component={StartupScreen} />
-                    <Stack.Screen name="Home" component={MainMenuScreen} />
-                    <Stack.Screen name="NewGameConfirm" component={NewGameConfirmScreen} />
-                    <Stack.Screen name="ChapterSelect" component={ChapterSelectScreen} />
-                    <Stack.Screen name="PartSelect" component={PartSelectScreen} />
+          <NavigationContainer>
+            <Stack.Navigator initialRouteName="Startup" screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="Startup" component={StartupScreen} />
+              <Stack.Screen name="Home" component={MainMenuScreen} />
+              <Stack.Screen name="NewGameConfirm" component={NewGameConfirmScreen} />
+              <Stack.Screen name="PartSelect" component={PartSelectScreen} />
 
                     <Stack.Screen name="Part1" component={Chap1Part1Screen} />
                     <Stack.Screen name="Part2" component={Chap1Part2Screen} />

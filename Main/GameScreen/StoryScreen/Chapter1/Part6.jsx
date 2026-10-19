@@ -30,7 +30,8 @@ export const Chapter1_Part6 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/San Mateo Rizal 1896 revolution.png"),
-    text: "The Revolution has now begun, but its first attacks have already shown how\ndifficult the fight against Spain will be."
+    text: "The Revolution has now begun, but its first attacks have already shown how\ndifficult the fight against Spain will be.",
+    music: "war"
   },
 
   {

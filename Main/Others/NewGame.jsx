@@ -3,7 +3,21 @@ import { useGameProgress } from '../../GameProgress';
 import Sound_clicks from '../../Components/Sound_clicks';
 
 function NewGameConfirmScreen({ navigation }) {
-  const { setPart } = useGameProgress();
+  const { setChapter, setPart, setScene, setInGame } = useGameProgress();
+
+  const restart = async () => {
+    await restartEverything();
+
+    setChapter(1);
+    setPart(1);
+    setScene(0);
+    setInGame(false);
+
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Part1', params: {startScene:0} }],
+    });
+  };
 
   return (
     <ImageBackground

@@ -30,7 +30,8 @@ export const Chapter1_Part3 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 3/manila port 1890s.png"),
-    text: "After many years abroad, Dr. José Rizal returns to Manila."
+    text: "After many years abroad, Dr. José Rizal returns to Manila.",
+    music: "somber"
   },
 
   {

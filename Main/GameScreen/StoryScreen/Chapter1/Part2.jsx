@@ -31,7 +31,8 @@ export const Chapter1_Part2 = [
   {
     type: "narrator",
     text: "The afternoon air in Bohol is heavy. Outside the parish church, Francisco Dagohoy\nstands grieving for his brother, Sagarino.",
-    background: require("../../../../Background Images/Part 2/saint paul inabanga church exterior.png")
+    background: require("../../../../Background Images/Part 2/saint paul inabanga church exterior.png"),
+    music: "grief"
   },
 
   {

@@ -1,10 +1,16 @@
+// MUSIC: put `music: "trackname"` (lowercase, no spaces) on any entry where the
+// track should change. It keeps playing until another entry sets a different one.
+// Only "traditional" and "somber" are used here. Add more tags once you have the files.
+
+
 export const Chapter1_Part1 = [
 
   {
     type: "system",
     intro: true,
     text: "Before the names in our history books, there were people.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    music: "somber"
   },
 
   {
@@ -44,7 +50,8 @@ export const Chapter1_Part1 = [
     type: "scene",
     title: "Cibabao, Samar",
     date: "February 13, 1565",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    music: "traditional" 
   },
 
   {
@@ -172,7 +179,8 @@ export const Chapter1_Part1 = [
     type: "scene",
     title: "Formal Claims & Island Hopping",
     date: "February 15 – April 1565",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    music: "traditional"
   },
 
   {
@@ -251,7 +259,8 @@ export const Chapter1_Part1 = [
     type: "scene",
     title: "The Ultimatum in Cebu",
     date: "April 27, 1565",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    music: "somber"
   },
 
   {
@@ -552,7 +561,8 @@ export const Chapter1_Part1 = [
     type: "scene",
     title: "The Sandugo of Manila",
     date: "June 1571",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    music: "traditional"
   },
 
   {
@@ -680,7 +690,8 @@ export const Chapter1_Part1 = [
 
   {
     type: "voyage",
-    unlock: ["remnant-2"]
+    unlock: ["remnant-2"],
+    music: "voyage"
   },
 
 
@@ -702,9 +713,10 @@ export const Chapter1_Part1 = [
       "Cebu",
       "Cibabao, Samar",
       "Bohol",
-      "Manila"
+      "Manila",
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    music: "traditional"
   },
 
   {
@@ -759,7 +771,8 @@ export const Chapter1_Part1 = [
     type: "scene",
     title: "Chapter Complete.",
     date: "You survived the first encounters.\nBut the story doesn't end here...",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    music: "somber"
   },
 
   {

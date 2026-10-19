@@ -1,10 +1,24 @@
-import { useState } from 'react';
-import { Pressable, Image, StyleSheet, Text, View } from 'react-native';
+import { useMemo, useState } from 'react';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Sound_clicks from '../../Components/Sound_clicks';
+import useScale from '../../Components/ScreenScaler';
+
+const PILL = require('../../assets/pillbutton.png');
+
+// this is for the buttons so it won't mess up sa other biger screen
+const { width: PILL_W, height: PILL_H } = Image.resolveAssetSource(PILL);
+const PILL_RATIO = PILL_W / PILL_H;
+
+const SETTING_ITEMS = ['Saves', 'Educational', 'Gameplay', 'About', 'Audio', 'Exit', 'Display'];
 
 function Setting_screen({ navigation }) {
   const [showExitConfirm, setShowExitConfirm] = useState(false);
-  const settingItems = ['Saves', 'Educational', 'Gameplay', 'About', 'Audio', 'Exit', 'Display'];
+  const { s, height, insets } = useScale();
+
+  const styles = useMemo(
+    () => makeStyles(s, height, insets),
+    [s, height, insets.top, insets.left],
+  );
 
   const handlePress = (label) => {
     if (label === 'Audio') {
@@ -36,48 +50,53 @@ function Setting_screen({ navigation }) {
       </View>
 
       <View style={styles.settingPanel}>
-        <View style={styles.grid}>
-          {settingItems.map((label) => (
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.grid}
+          showsVerticalScrollIndicator={false}
+        >
+          {SETTING_ITEMS.map((label) => (
             <Sound_clicks
               key={label}
               style={styles.cyclinderbutton}
               onPress={() => handlePress(label)}
             >
-              <Image source={require('../../assets/pillbutton.png')} style={styles.imagepillbutton} />
-              <Text style={styles.cylindertexts}>{label}</Text>
+              <Image source={PILL} style={styles.imagepillbutton} resizeMode="stretch" />
+              <Text
+                style={styles.cylindertexts}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                allowFontScaling={false}
+              >
+                {label}
+              </Text>
             </Sound_clicks>
           ))}
-        </View>
+        </ScrollView>
       </View>
 
       {showExitConfirm && (
         <View style={styles.confirmOverlay}>
           <View style={styles.confirmPanel}>
-            <Text style={styles.confirmText}>Do you want to exit the game?</Text>
+            <Text style={styles.confirmText} allowFontScaling={false}>
+              Do you want to exit?
+            </Text>
 
             <View style={styles.confirmButtonsRow}>
               <Sound_clicks
                 style={styles.confirmButton}
                 onPress={() => setShowExitConfirm(false)}
               >
-                <Image
-                  source={require('../../assets/pillbutton.png')}
-                  style={styles.confirmButtonImage}
-                  resizeMode="stretch"
-                />
-                <Text style={styles.cylindertexts}>No</Text>
+                <Image source={PILL} style={styles.confirmButtonImage} resizeMode="stretch" />
+                <Text style={styles.cylindertexts} allowFontScaling={false}>No</Text>
               </Sound_clicks>
 
               <Sound_clicks
                 style={styles.confirmButton}
                 onPress={() => navigation.navigate('Home')}
               >
-                <Image
-                  source={require('../../assets/pillbutton.png')}
-                  style={styles.confirmButtonImage}
-                  resizeMode="stretch"
-                />
-                <Text style={styles.cylindertexts}>Yes</Text>
+                <Image source={PILL} style={styles.confirmButtonImage} resizeMode="stretch" />
+                <Text style={styles.cylindertexts} allowFontScaling={false}>Yes</Text>
               </Sound_clicks>
             </View>
           </View>
@@ -87,100 +106,112 @@ function Setting_screen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  // add this — the dim layer that lets the game show through
-  overlay: {
-    backgroundColor: 'rgba(0, 0, 0, 0.55)',
-  },
-  topIcon: {
+const makeStyles = (s, height, insets) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    overlay: {
+      backgroundColor: 'rgba(0, 0, 0, 0.55)',
+    },
+    topIcon: {
+      position: 'absolute',
+      zIndex: 10, // icons stay on top of the panel
+      top: Math.max(insets.top, 12 * s),
+      left: Math.max(insets.left, 20 * s),
+      flexDirection: 'row',
+      gap: 15 * s,
+    },
+    icon: {
+      width: 70 * s,
+      height: 70 * s,
+    },
+    settingPanel: {
+      backgroundColor: '#FFF2CB',
+      borderRadius: 15 * s,
+      padding: 20 * s,
+      width: '70%',
+      maxWidth: 700,
+      height: height * 0.55,
+      alignSelf: 'center',
+    },
+    scroll: {
+      flexGrow: 0,
+    },
+    grid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+      paddingTop: -14 * s
+    },
+    cyclinderbutton: {
+      width: '45%',
+      aspectRatio: PILL_RATIO,
+      marginBottom: 10 * s,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    imagepillbutton: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+    },
+    cylindertexts: {
+      fontSize: 23 * s,
+      fontWeight: '500',
+    },
+    // try for the setting that have problems with bigger screen
+    confirmOverlay: {
     position: 'absolute',
-    top: 12,
-    left: 20,
-    flexDirection: 'row',
-    gap: 15
-  },
-  icon: {
-    width: 40,
-    height: 40
-  },
-  settingPanel: {
-    backgroundColor: '#FFF2CB',
-    borderRadius: 15,
-    padding: 30,
-    height: 'auto',
-    width: '75%',
-    alignSelf: 'center',
-  },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    gap: 45
-  },
-  cyclinderbutton: {
-    width: '46%',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  imagepillbutton: {
-    position: 'absolute',
-    display: 'flex',
-    justifyContent: 'space-between'
-  },
-  cylindertexts: {
-    fontSize: 16,
-    fontWeight: '500'
-  },
-  confirmOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    width: '100%',
-    height: '100%',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 999,
-    elevation: 10,
-  },
-  confirmPanel: {
-    backgroundColor: '#FFF2CB',
-    borderRadius: 15,
-    padding: 30,
-    width: '50%',
-    alignItems: 'center',
-  },
-  confirmText: {
-    fontSize: 18,
-    fontWeight: '600',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  confirmButtonsRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 24,
-  },
-  confirmButton: {
-    width: 110,
-    height: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  confirmButtonImage: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-  },
-});
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 9,
+        elevation: 10,
+      },
+    confirmPanel: {
+      backgroundColor: '#FFF2CB',
+      borderRadius: 15 * s,
+      padding: 30 * s,
+      width: '45%',
+      minWidth: 280 * s,
+      maxWidth: 600,
+      alignItems: 'center',
+    },
+    confirmText: {
+      fontSize: 50 * s,
+      fontWeight: '600',
+      textAlign: 'center',
+      marginBottom: 20 * s,
+    },
+    confirmButtonsRow: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      gap: 30 * s,
+    },
+    confirmButton: {
+      width: 250 * s,
+      height: 90 * s,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    confirmButtonImage: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+    },
+  });
 
 export default Setting_screen;
