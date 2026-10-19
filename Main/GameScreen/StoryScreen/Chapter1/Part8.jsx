@@ -134,7 +134,7 @@ export const Chapter1_Part8 = [
     background: require("../../../../Background Images/Part 8/Manila Bay_mock battle.png")
   },
 
-
+  //T3_8 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 3
@@ -173,8 +173,10 @@ export const Chapter1_Part8 = [
     background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png")
   },
 
+  //Q3_8 here
+
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 8.1 
+  // CHOICE 8.1
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
@@ -221,6 +223,7 @@ export const Chapter1_Part8 = [
   },
 
 
+  //Q2_8 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 4
@@ -254,8 +257,8 @@ export const Chapter1_Part8 = [
         position: "right"
       }
     ],
-    text: "Sa ngalan ng Diyos, ipinapahayag ko at ipinapaalam na malaya\nat independiyente ang Pilipinas!",
-    translation: "In the name of God, I declare and proclaim that the Philippines is free and independent!",
+    text: "Sa ngalan ng Diyos, ipinapahayag ko at ipinapaalam na malaya\nat independiyente ang Pilipinas! <i>shouts loudly</i>",
+    translation: "In the name of God, I declare and proclaim that the Philippines is free and independent! <i>shouts loudly</i>",
     background: require("../../../../Background Images/Part 8/Aguinaldo Shrine (with crowd, cannons, bells, flag).png")
   },
 
@@ -266,6 +269,7 @@ export const Chapter1_Part8 = [
   },
 
 
+  //Q1_8 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 5
@@ -305,7 +309,7 @@ export const Chapter1_Part8 = [
   },
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 8.2 
+  // CHOICE 8.2
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
@@ -349,6 +353,7 @@ export const Chapter1_Part8 = [
   },
 
 
+  //Q4_8 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 6
@@ -374,7 +379,7 @@ export const Chapter1_Part8 = [
   },
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 8.3 
+  // CHOICE 8.3
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
@@ -464,6 +469,7 @@ export const Chapter1_Part8 = [
   },
 
 
+  //T2_8 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 8
@@ -601,7 +607,6 @@ export const Chapter1_Part8 = [
     text: "The Revolution had changed the Philippines forever. But history did not end at Kawit.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
-  
 
 
   {

@@ -59,6 +59,7 @@ export const Chapter1_Part5 = [
   },
 
 
+  //T2_5 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 2
@@ -102,9 +103,10 @@ export const Chapter1_Part5 = [
     ],
     text: "And waiting is risky too, Teodoro. They already know our names. Do we\nwait to be arrested one by one, or do we stand together and fight?"
   },
+  //T4_5 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 5.1 
+  // CHOICE 5.1
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
@@ -135,7 +137,7 @@ export const Chapter1_Part5 = [
             position: "right"
           }
         ],
-        dialogue: "Baka mas mabuting maghintay ng ilang araw, hanggang may dagdag tayong sandata.",
+        dialogue: "Baka mas mabuting maghintay tayo ng ilang araw, hanggang sa marami na tayong sandata.",
         translation: "Maybe it's better to wait a few days, until we have more weapons."
       }
     ],
@@ -191,6 +193,7 @@ export const Chapter1_Part5 = [
     text: "The exact date and location remains debated. But the significance is clear:\nthe Katipunan was no longer staying in the shadows."
   },
 
+  //T1_5 here
 
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -282,6 +285,7 @@ export const Chapter1_Part5 = [
     nextScene: 25
   },
 
+  //Q1_5 here
 
   // CONTINUE
 
@@ -416,6 +420,8 @@ export const Chapter1_Part5 = [
     date: "the Revolution has begun.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg"),
   },
+
+  //T3_5 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // QUIZ TIME

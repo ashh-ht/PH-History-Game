@@ -50,7 +50,8 @@ export const Chapter1_Part1 = [
   {
     type: "narrator",
     text: "After weeks at sea, five Spanish ships under General Miguel López de Legazpi\nanchor off Cibabao, Samar.",
-    background: require("../../../../Background Images/Part 1/Spanish Arrival.png")
+    background: require("../../../../Background Images/Part 1/Spanish Arrival.png"),
+    unlock: ["Timeline_1565_02-13"]
   },
 
   {
@@ -87,7 +88,7 @@ export const Chapter1_Part1 = [
 
   {
     type: "narrator",
-    text: "They have have heard stories of foreign ships before, but don't know yet\nwhether these visitors mean peace or trouble.",
+    text: "They have heard stories of foreign ships before, but don't know yet\nwhether these visitors mean peace or trouble.",
     background: require("../../../../Background Images/Part 1/Spanish Coast.png")
   },
 
@@ -139,8 +140,8 @@ export const Chapter1_Part1 = [
       {
         text: "Hear him out, but keep your guard up.",
         speaker: "CHIEFTAIN",
-        dialogue: "Makikinig kami sa sasabihin mo, pero hindi pa kami nagtitiwala sa iyo.",
-        translation: "We'll hear what you have to say, but we don't trust you yet.",
+        dialogue: "Makikinig kami sa sasabihin mo, pero hindi pa rin kami muna nagtitiwala sa iyo.",
+        translation: "We'll hear what you have to say, but we will not trust you yet.",
         characters: [
           {
             source: require("../../../../Character Images/Temporary Placeholders/Chieftan.png"),
@@ -176,9 +177,11 @@ export const Chapter1_Part1 = [
 
   {
     type: "narrator",
-    text: "Two days after leaving Samar, Legazpi and his fleet reach Leyte. He lands on shore\nand plants a cross to formally claim the territory for Spain.",
+    text: "Two days after leaving Samar, Legazpi and his fleet reached Leyte. He lands on shore\nand plants a cross to formally claim the territory for Spain.",
     background: require("../../../../Background Images/Part 1/Spanish Coast.png")
   },
+
+  //Q3_1 here
 
   {
     type: "dialogue",
@@ -240,7 +243,6 @@ export const Chapter1_Part1 = [
   },
 
 
-
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 3
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -267,7 +269,8 @@ export const Chapter1_Part1 = [
         position: "left"
       },
     ],
-    text: "Rajah Tupas waits on shore with more than two thousand warriors behind him."
+    text: "Rajah Tupas waits on shore with more than two thousand warriors behind him.",
+    unlock: ["tupas-1"]
   },
 
   {
@@ -284,7 +287,7 @@ export const Chapter1_Part1 = [
         position: "right"
       }
     ],
-    text: "Sino kayo at bakit kayo naririto sa aming isla? Hindi ako pumapayag\nsa inyong pakikipag-usap!",
+    text: "Sino kayo at bakit kayo naparito sa aming isla? Hindi ako pumapayag\nsa inyong pakikipag-usap!",
     translation: "Who are you, and why are you here on our island? I do not agree to your terms!"
   },
 
@@ -337,7 +340,7 @@ export const Chapter1_Part1 = [
       {
         text: "Refuse, and retreat to the mountains to prepare for battle.",
         speaker: "RAJAH TUPAS",
-        dialogue: "Umatras muna tayo sa kabundukan at maghanda. Hindi\nnatin basta-bastang ibibigay ang ating lupain.",
+        dialogue: "Umatras muna tayo sa kabundukan at maghanda. Hindi\nnatin basta-basta ibibigay ang ating lupain.",
         translation: "Let's retreat to the mountains and prepare. We we will not just give up our land.",
         characters: [
           {
@@ -361,7 +364,7 @@ export const Chapter1_Part1 = [
       }
     ],
 
-    nextScene: 32
+    nextScene: 30
   },
 
   // CONTINUE
@@ -369,7 +372,8 @@ export const Chapter1_Part1 = [
   {
     type: "narrator",
     text: "Tupas and his people leave the settlement and retreat into the hills. When\nthe Spanish arrive and re-enter Cebu, they find the village largely abandoned.",
-    background: require("../../../../Background Images/Part 1/Cebu hills Tupas's retreat.png")
+    background: require("../../../../Background Images/Part 1/Cebu hills Tupas's retreat.png"),
+    unlock: ["tupas-2", "Timeline_1565_04-27"]
   },
 
   {
@@ -388,7 +392,8 @@ export const Chapter1_Part1 = [
   {
     type: "narrator",
     text: "Construction begins on Fort San Pedro. Cebu becomes Spain's first\nlasting settlement in the islands.",
-    background: require("../../../../Background Images/Part 1/Construction.png")
+    background: require("../../../../Background Images/Part 1/Construction.png"),
+    unlock: ["Timeline_1565_05-08"]
   },
 
   {
@@ -403,6 +408,8 @@ export const Chapter1_Part1 = [
     ],
     text: "We'll build our settlement here and call it Villa de Santísimo\nNombre de Jesús."
   },
+
+  //Q2_1 here
 
   {
     type: "narrator",
@@ -440,6 +447,8 @@ export const Chapter1_Part1 = [
     text: "The Santo Niño... left behind by Magellan's crew, forty-four years ago."
   },
 
+  //T1_1 here
+
   {
     type: "santoNino"
   },
@@ -447,14 +456,16 @@ export const Chapter1_Part1 = [
   {
     type: "narrator",
     text: "The discovery becomes an important moment for the new Spanish settlement.",
-    background: require("../../../../Background Images/Part 1/nipa hut interior santo nino discovery.png")
+    background: require("../../../../Background Images/Part 1/nipa hut interior santo nino discovery.png"),
+    unlock: ["Timeline_1565_04-28"]
   },
-  
+
   {
     type: "narrator",
     text: "However, life in Cebu remains difficult due to food shortages and tensions between\nthe Spanish and local communities.",
-    background: require("../../../../Background Images/Part 1/Cebu Village.png")
-  },
+    background: require("../../../../Background Images/Part 1/Cebu Village.png"),
+    unlock: ["Timeline_1565-1569", "Timeline_1565_11-27", "Timeline_1566_10-15"]
+   },
 
   {
     type: "dialogue",
@@ -478,7 +489,8 @@ export const Chapter1_Part1 = [
   {
     type: "narrator",
     text: "The settlement moves to the Panay River, where life becomes more stable.",
-    background: require("../../../../Background Images/Part 1/Bohol Coast.png")
+    background: require("../../../../Background Images/Part 1/Bohol Coast.png"),
+    unlock: ["Timeline_1569"]
   },
 
   {
@@ -505,7 +517,8 @@ export const Chapter1_Part1 = [
         position: "right"
       }
     ],
-    text: "Martín, I want you and my grandson, Juan de Salcedo.\nI want you to sail north together."
+    text: "Martín, I want you and my grandson, Juan de Salcedo.\nI want you to sail north together.",
+    unlock: ["goiti-1", "salcedo-1", "Timeline_1570_05-03"]
   },
 
   {
@@ -545,7 +558,8 @@ export const Chapter1_Part1 = [
   {
     type: "narrator",
     text: "After early clashes with Rajah Sulayman's forces, Legazpi arrives\nin Manila Bay with a large fleet.",
-    background: require("../../../../Background Images/Part 1/Manila Shoreline.png")
+    background: require("../../../../Background Images/Part 1/Manila Shoreline.png"),
+    unlock: ["goiti-2", "salcedo-2"]
   },
 
   {
@@ -569,7 +583,7 @@ export const Chapter1_Part1 = [
       }
     ],
     text: "Aking pamangkin, tingnan mo ang kanilang mga barko at armas.",
-    translation: "My dear nephew, look at their boat and guns"
+    translation: "My dear nephew, look at their boat and guns."
   },
 
   {
@@ -646,7 +660,8 @@ export const Chapter1_Part1 = [
   {
     type: "narrator",
     text: "On June 24, 1571, Legazpi declares Manila the capital of the colony.",
-    background: require("../../../../Background Images/Part 1/Manila Shoreline.png")
+    background: require("../../../../Background Images/Part 1/Manila Shoreline.png"),
+    unlock: ["Timeline_1571_06-24"]
   },
 
   {
@@ -664,7 +679,8 @@ export const Chapter1_Part1 = [
   },
 
   {
-    type: "voyage"
+    type: "voyage",
+    unlock: ["remnant-2"]
   },
 
 
