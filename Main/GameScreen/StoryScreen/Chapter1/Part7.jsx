@@ -58,7 +58,8 @@ export const Chapter1_Part7 = [
   {
     type: "narrator",
     text: "Emilio Aguinaldo is elected President, even though he is not present.\nBonifacio is elected Director of the Interior.",
-    background: require("../../../../Background Images/Part 7/Casa Hacienda Tejeros.png")
+    background: require("../../../../Background Images/Part 7/Casa Hacienda Tejeros.png"),
+    unlock: ["Timeline_1897_03-22", "aguinaldo-3"]
   },
 
   // Q1_7 here
@@ -74,7 +75,8 @@ export const Chapter1_Part7 = [
     ],
     text: "Hindi angkop na ang isang taong walang diploma ang mamuno sa\nKagawaran ng Interior. Dapat abogado ang humawak ng puwestong iyan!",
     translation: "It isn't appropriate for someone without a diploma to lead the Department of the Interior.\nA lawyer should hold that position.",
-    background: require("../../../../Background Images/Part 7/Casa Hacienda Tejeros.png")
+    background: require("../../../../Background Images/Part 7/Casa Hacienda Tejeros.png"),
+    unlock: ["tirona-2"]
   },
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -161,7 +163,8 @@ export const Chapter1_Part7 = [
   {
     type: "narrator",
     text: "That same night, Aguinaldo, Mariano Trías, and Artemio Ricarte take their\noaths of office at the Tanza convent.",
-    background: require("../../../../Background Images/Part 7/Tanza parish convent, night (oath-taking).png")
+    background: require("../../../../Background Images/Part 7/Tanza parish convent, night (oath-taking).png"),
+    unlock: ["Timeline_1897_03-23", "trias-1", "ricarte-1"]
   },
 
   //Q3_7 here
@@ -211,7 +214,8 @@ export const Chapter1_Part7 = [
   {
     type: "narrator",
     text: "Ricarte ultimately takes the oath and later records his account of what happened.\nAguinaldo's new government continues to organize the revolution.",
-    background: require("../../../../Background Images/Part 7/Tanza parish convent, night (oath-taking).png")
+    background: require("../../../../Background Images/Part 7/Tanza parish convent, night (oath-taking).png"),
+    unlock: ["ricarte-2"]
   },
 
 
@@ -230,7 +234,8 @@ export const Chapter1_Part7 = [
   {
     type: "narrator",
     text: "Bonifacio and those who remain loyal to him move to Naic, Cavite.",
-    background: require("../../../../Background Images/Part 7/Naik camp (Bonifacio addresses loyalists).png")
+    background: require("../../../../Background Images/Part 7/Naik camp (Bonifacio addresses loyalists).png"),
+    unlock: ["Timeline_1897_03_Late", "bonifacio-6"]
   },
 
   {
@@ -281,7 +286,8 @@ export const Chapter1_Part7 = [
   {
     type: "narrator",
     text: "Bonifacio's brother, Ciriaco, is killed. Andrés is badly wounded, while he, Procopio,\nand Gregoria de Jesús are taken into custody.",
-    background: require("../../../../Background Images/Part 7/Limbon camp, Indang (Bonifacio captured).png")
+    background: require("../../../../Background Images/Part 7/Limbon camp, Indang (Bonifacio captured).png"),
+    unlock: ["Timeline_1897_04", "gregoria-3"]
   },
 
   {
@@ -301,7 +307,8 @@ export const Chapter1_Part7 = [
   {
     type: "narrator",
     text: "The conflict that began as a dispute over leadership has now turned\ninto violence between revolutionaries.",
-    background: require("../../../../Background Images/Part 7/Limbon camp, Indang (Bonifacio captured).png")
+    background: require("../../../../Background Images/Part 7/Limbon camp, Indang (Bonifacio captured).png"),
+    unlock: ["tirona-3"]
   },
 
 
@@ -326,7 +333,8 @@ export const Chapter1_Part7 = [
   {
     type: "narrator",
     text: "Both brothers are found guilty and end up sentenced to death.",
-    background: require("../../../../Background Images/Part 7/Maragondon court-martial room.png")
+    background: require("../../../../Background Images/Part 7/Maragondon court-martial room.png"),
+    unlock: ["Timeline_1897_04-05", "noriel-1"]
   },
 
   {
@@ -418,7 +426,8 @@ export const Chapter1_Part7 = [
   {
     type: "narrator",
     text: "There, Andrés Bonifacio, founder of the Katipunan,",
-    background: require("../../../../Background Images/Part 7/Mount Buntis Maragondon.png")
+    background: require("../../../../Background Images/Part 7/Mount Buntis Maragondon.png"),
+    unlock: ["Timeline_1897_05-10", "bonifacio-7"]
   },
 
   {

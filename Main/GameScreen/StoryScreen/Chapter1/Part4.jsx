@@ -37,7 +37,8 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
-    text: "With their pact made, the six men turn to the question of what their\nnew brotherhood should become."
+    text: "With their pact made, the six men turn to the question of what their\nnew brotherhood should become.",
+    unlock: ["diaz-2", "diwa-2"]
   },
 
   {
@@ -87,7 +88,8 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
-    text: "The KKK is born, dedicated to independence, mutual support,\ngood values, and education."
+    text: "The KKK is born, dedicated to independence, mutual support,\ngood values, and education.",
+    unlock: ["Timeline_1892_07-07"]
   },
 
 
@@ -106,7 +108,8 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Tondo_Caloocan street and market.png"),
-    text: "In the weeks that follow, Bonifacio and his young adviser, Emilio Jacinto, begin\nredefining who belongs to the nation."
+    text: "In the weeks that follow, Bonifacio and his young adviser, Emilio Jacinto, begin\nredefining who belongs to the nation.",
+    unlock: ["jacinto-1", "Timeline_1892_MidLate"]
   },
 
   {
@@ -168,7 +171,8 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
-    text: "The nation they imagine is called Katagalugan, a homeland\nbelonging to everyone in the archipelago."
+    text: "The nation they imagine is called Katagalugan, a homeland\nbelonging to everyone in the archipelago.",
+    unlock: ["bonifacio-3"]
   },
 
   {
@@ -236,7 +240,8 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Tondo_Caloocan street and market.png"),
-    text: "Open recruiting begins around October 1892, and the Katipunan's membership\ngrows to the tens of thousands by 1896."
+    text: "Open recruiting begins around October 1892, and the Katipunan's membership\ngrows to the tens of thousands by 1896.",
+    unlock: ["Timeline_1892_10"]
   },
 
   //T1_4 here
@@ -306,7 +311,8 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
-    text: "But Emilio Jacinto offers an alternative: the Kartilya ng Katipunan. Thirteen\nideas about honor, kindness, sacrifice, and treating people as equals."
+    text: "But Emilio Jacinto offers an alternative: the Kartilya ng Katipunan. Thirteen\nideas about honor, kindness, sacrifice, and treating people as equals.",
+    unlock: ["jacinto-2", "Timeline_1894-1896"]
   },
 
   {
@@ -412,7 +418,8 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Safe-house interior (Gregoria's scenes).png"),
-    text: "Gregoria de Jesús, Bonifacio's wife and the Lakambini of the KKK,\nbecomes the keeper of the group's secret papers, seals, and supplies."
+    text: "Gregoria de Jesús, Bonifacio's wife and the Lakambini of the KKK,\nbecomes the keeper of the group's secret papers, seals, and supplies.",
+    unlock: ["gregoria-1", "gregoria-2", "Timeline_1895-1896"]
   },
 
   //T4_4 here
@@ -432,7 +439,7 @@ export const Chapter1_Part4 = [
   },
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 4.3 
+  // CHOICE 4.3
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
@@ -492,7 +499,8 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/19th century hand press printing shop.png"),
-    text: "To spread the society's ideas, Emilio Jacinto edits a secret newspaper called\nKalayaan, meaning Freedom."
+    text: "To spread the society's ideas, Emilio Jacinto edits a secret newspaper called\nKalayaan, meaning Freedom.",
+    unlock: ["jacinto-3", "Timeline_1896_03"]
   },
 
   {
@@ -520,7 +528,8 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Tondo_Caloocan street and market.png"),
-    text: "On August 19, 1896, the Katipunan's existence is revealed to Spanish\nauthorities. Raids and arrests follow within hours."
+    text: "On August 19, 1896, the Katipunan's existence is revealed to Spanish\nauthorities. Raids and arrests follow within hours.",
+    unlock: ["Timeline_1896_08-19", "patino-1", "patino-2", "honoria-1", "teresa-1"]
   },
 
   {
@@ -540,7 +549,8 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Melchora's barn, Banlat, Kalookan.png"),
-    text: "On August 24, 1896, Bonifacio gathers Katipunan leaders in a barn in Banlat,\nKalookan, owned by Melchora Aquino."
+    text: "On August 24, 1896, Bonifacio gathers Katipunan leaders in a barn in Banlat,\nKalookan, owned by Melchora Aquino.",
+    unlock: ["Timeline_1896_08-24", "melchora-1", "melchora-2"]
   },
 
   {
@@ -566,7 +576,8 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Melchora's barn, Banlat, Kalookan.png"),
-    text: "With Bonifacio chosen as its leader, the Katipunan becomes a self-governing\nmovement and takes another major step toward the independence still to come."
+    text: "With Bonifacio chosen as its leader, the Katipunan becomes a self-governing\nmovement and takes another major step toward the independence still to come.",
+    unlock: ["bonifacio-4"]
   },
 
 

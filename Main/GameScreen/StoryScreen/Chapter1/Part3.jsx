@@ -31,7 +31,8 @@ export const Chapter1_Part3 = [
     type: "narrator",
     background: require("../../../../Background Images/Part 3/manila port 1890s.png"),
     text: "After many years abroad, Dr. José Rizal returns to Manila.",
-    music: "somber"
+    music: "somber",
+    unlock: ["Timeline_1892_06-26", "rizal-1"]
   },
 
   {
@@ -82,13 +83,15 @@ export const Chapter1_Part3 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 3/Liga Filipina founding 1892 Ongjunco.png"),
-    text: "A few days later, around thirty people gather at the home of\nDoroteo Ongjunco in Tondo."
+    text: "A few days later, around thirty people gather at the home of\nDoroteo Ongjunco in Tondo.",
+    unlock: ["Timeline_1892_07-03", "arellano-1"]
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 3/Liga Filipina founding 1892 Ongjunco.png"),
-    text: "A rare mix of wealthy reformers, professionals, and working-class merchants\nmeet to form a new organization: La Liga Filipina."
+    text: "A rare mix of wealthy reformers, professionals, and working-class merchants\nmeet to form a new organization: La Liga Filipina.",
+    unlock: ["rizal-2"]
   },
 
   {
@@ -129,7 +132,8 @@ export const Chapter1_Part3 = [
         position: "left"
       }
     ],
-    text: "But what happens if Spain decides to come after us? What can we do\nto protect ourselves?"
+    text: "But what happens if Spain decides to come after us? What can we do\nto protect ourselves?",
+    unlock: ["bonifacio-1"]
   },
 
   {
@@ -146,7 +150,8 @@ export const Chapter1_Part3 = [
         position: "right"
       }
     ],
-    text: "I trust we will build something strong among our own people. Let's sign\nthis agreement and prove that we can stand together as equals."
+    text: "I trust we will build something strong among our own people. Let's sign\nthis agreement and prove that we can stand together as equals.",
+    unlock: ["mabini-1"]
   },
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -219,7 +224,8 @@ export const Chapter1_Part3 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 3/Governor-General's office.png"),
-    text: "Governor-General Eulogio Despujol orders his arrest and exile."
+    text: "Governor-General Eulogio Despujol orders his arrest and exile.",
+    unlock: ["despujol-1", "Timeline_1892_07-06"]
   },
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -263,7 +269,8 @@ export const Chapter1_Part3 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 3/manila port 1890s.png"),
-    text: "Either way, nothing changes. Rizal is taken away and exiled to Dapitan in Mindanao,\nleaving La Liga without its founder."
+    text: "Either way, nothing changes. Rizal is taken away and exiled to Dapitan in Mindanao,\nleaving La Liga without its founder.",
+    unlock: ["rizal-3", "despujol-2", "Timeline_1892_07-07"]
   },
 
   //Q3_3 here
@@ -289,7 +296,8 @@ export const Chapter1_Part3 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 3/Reformist meeting hall, 1893 (Liga revival debate).png"),
-    text: "Domingo Franco and Andrés Bonifacio step forward to bring it back to life,\nbut soon, the members start to disagree about how to move forward."
+    text: "Domingo Franco and Andrés Bonifacio step forward to bring it back to life,\nbut soon, the members start to disagree about how to move forward.",
+    unlock: ["franco-1", "franco-2", "mabini-2", "Timeline_1893_04-03"]
   },
 
   //T1_3 here
@@ -386,13 +394,15 @@ export const Chapter1_Part3 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 3/Reformist meeting hall, 1893 (Liga revival debate).png"),
-    text: "Either way, the disagreement can't be resolved. La Liga Filipina\nofficially ends in October 1893."
+    text: "Either way, the disagreement can't be resolved. La Liga Filipina\nofficially ends in October 1893.",
+    unlock: ["Timeline_1893_10"]
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 3/Reformist meeting hall, 1893 (Liga revival debate).png"),
-    text: "Bonifacio, together with Plata, Diwa, Diaz, and Dizon, moves forward to build a new\norganization dedicated to full independence."
+    text: "Bonifacio, together with Plata, Diwa, Diaz, and Dizon, moves forward to build a new\norganization dedicated to full independence.",
+    unlock: ["diaz-1", "diwa-1", "dizon-1", "dizon-2", "plata-1", "franco-3", "dizon-3", "Timeline_1897_01-11"]
   },
 
 
@@ -411,7 +421,8 @@ export const Chapter1_Part3 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 3/Arellano house, Calle Elcano, Tondo.png"),
-    text: "Inside the small home of Deodato Arellano on Calle Elcano, Bonifacio, Plata,\nand the others gather around a single oil lamp."
+    text: "Inside the small home of Deodato Arellano on Calle Elcano, Bonifacio, Plata,\nand the others gather around a single oil lamp.",
+    unlock: ["arellano-2", "Timeline_1892_10"]
   },
 
   {
@@ -430,7 +441,8 @@ export const Chapter1_Part3 = [
         position: "left"
       }
     ],
-    text: "We are no longer just colonial subjects asking for change. We are the Anak\nng Bayan, the Children of the Nation!"
+    text: "We are no longer just colonial subjects asking for change. We are the Anak\nng Bayan, the Children of the Nation!",
+    unlock: ["bonifacio-2"]
   },
 
   {

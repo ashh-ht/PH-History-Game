@@ -115,7 +115,7 @@
       {
         "id": "Timeline_1892_07-06",
         "chapter": "1",
-        "part": "1",
+        "part": "3",
         "date": "July 6, 1892",
         "content": "Governor-General Eulogio Despujol orders Rizal's arrest and detention at Fort Santiago."
       },
@@ -206,7 +206,7 @@
       {
         "id": "Timeline_1896_08-29_30",
         "chapter": "1",
-        "part": "6",
+        "part": "5,6",
         "date": "August 29–30, 1896",
         "content": "The assault on Manila fails; the rebels, outmatched, shift to attack-and-withdraw operations. Governor-General Ramón Blanco declares a state of war across eight provinces: Manila, Bulacan, Pampanga, Nueva Ecija, Tarlac, Laguna, Cavite, and Batangas, launching mass arrests and reprisals."
       },
@@ -387,6 +387,12 @@
       }
     ]
   },
+
+
+
+
+
+
   {
     "title": "Character Profiles",
     "content": [
@@ -398,7 +404,7 @@
         "tiers": [
           { "id": "tupas-1", "content": "Chief of Cebu." },
           { "id": "tupas-2", "content": "Protected his people by evacuating them to the hills and launching a passive starvation blockade rather than accepting vassalage immediately." }
-          ]
+        ]
       },
       {
         "id": "goiti-1",
@@ -538,7 +544,7 @@
       {
         "id": "diaz-1",
         "chapter": "1",
-        "part": "3",
+        "part": "3,4,8",
         "name": "Valentin Diaz",
         "tiers": [
           { "id": "diaz-1", "content": "Founding Katipunan member, born in Paoay, Ilocos Norte; court clerk in Binondo; Liga member." },
@@ -549,7 +555,7 @@
       {
         "id": "diwa-1",
         "chapter": "1",
-        "part": "3",
+        "part": "3,4,8",
         "name": "Ladislao Diwa",
         "tiers": [
           { "id": "diwa-1", "content": "Born in San Roque, Cavite; studied at UST with Plata; worked as a court clerk." },
@@ -593,7 +599,7 @@
       {
         "id": "gregoria-1",
         "chapter": "1",
-        "part": "4",
+        "part": "4,7",
         "name": "Gregoria de Jesús",
         "tiers": [
           { "id": "gregoria-1", "content": "Wife of Bonifacio, cousin of Plata; the Katipunan's Lakambini (Muse)." },
@@ -643,7 +649,7 @@
       {
         "id": "gil-1",
         "chapter": "1",
-        "part": "4",
+        "part": "4,5",
         "name": "Father Mariano Gil",
         "tiers": [
           { "id": "gil-1", "content": "Augustinian curate and parish priest of Tondo." },
@@ -697,7 +703,7 @@
       {
         "id": "noriel-1",
         "chapter": "1",
-        "part": "",
+        "part": "7",
         "name": "General Mariano Noriel",
         "tiers": [
           { "id": "noriel-1", "content": "Senior revolutionary general who presided over the court-martial and delivered the treason and sedition verdict that led to the executions." }
@@ -706,7 +712,7 @@
       {
         "id": "trias-1",
         "chapter": "1",
-        "part": "7",
+        "part": "7,8",
         "name": "Mariano Trías",
         "tiers": [
           { "id": "trias-1", "content": "Prominent Caviteño revolutionary leader, active Freemason, general." },
@@ -766,6 +772,13 @@
       }
     ]
   },
+
+
+
+
+
+
+
   {
     "title": "Glossary",
     "content": [
@@ -807,7 +820,281 @@
       {
         "id": "glossary-colonial-caste",
         "term": "Colonial Caste System (simplified)",
-        "meaning": "Spanish colonial society was organized into layers, roughly from most to least privileged."
+        "meaning": "Spanish colonial society was organized into layers, roughly from most to least privileged.",
+        "sub-content": [
+          {
+            "id": "glossary-peninsulares",
+            "term": "Peninsulares",
+            "meaning": "Spaniards born in Spain; held the highest political and religious power."
+          },
+          {
+            "id": "glossary-insulares",
+            "term": "Insulares",
+            "meaning": "People of pure Spanish descent born in the Philippines; historically the only group the term \"Filipino\" applied to."
+          },
+          {
+            "id": "glossary-ilustrados",
+            "term": "Ilustrados",
+            "meaning": "The educated class of native, mestizo, and elite Filipino students (often university- or Europe-trained) who reclaimed the word \"Filipino\" for all Filipinos and pushed for reform."
+          },
+          {
+            "id": "glossary-mestizos",
+            "term": "Mestizos",
+            "meaning": "People of mixed Spanish-native or Chinese-native ancestry, often wealthy through trade, but without real political power."
+          },
+          {
+            "id": "glossary-principalia",
+            "term": "Principalia",
+            "meaning": "The local native elite who held town offices (like cabeza de barangay); respected locally, but mainly served as go-betweens who collected taxes and organized labor for Spain."
+          },
+          {
+            "id": "glossary-indios",
+            "term": "Indios",
+            "meaning": "The Indigenous Filipino majority, at the bottom of this system; the group most heavily burdened by tribute taxes and forced labor."
+          }
+        ]
+      },
+      {
+        "id": "glossary-cuerpo-de-compromisarios",
+        "term": "Cuerpo de Compromisarios (Junta de Compromisarios)",
+        "meaning": "The conservative reformist group formed by Mabini and others after La Liga Filipina's 1893 dissolution, to keep funding La Solidaridad. Its members chose to keep pursuing peaceful, legal reform, while radicals like Jose Dizon left to join the Katipunan instead."
+      },
+      {
+        "id": "glossary-director-of-the-interior",
+        "term": "Director of the Interior",
+        "meaning": "The government post Bonifacio was elected to at the Tejeros Convention, before Daniel Tirona's public insult over his lack of a law degree triggered Bonifacio's annulment of the entire election."
+      },
+      {
+        "id": "glossary-diwata",
+        "term": "Diwata",
+        "meaning": "A nature spirit from pre-colonial Visayan folklore, featured in local creation legends and animist spiritual traditions."
+      },
+      {
+        "id": "glossary-el-filibusterismo",
+        "term": "El Filibusterismo",
+        "meaning": "Rizal's second novel (Ghent, September 18, 1891), dedicated to the memory of the Gomburza martyrs. A darker sequel to Noli Me Tángere, it warns that an unguided, vengeful revolution risks replacing foreign oppressors with native tyrants — while still fueling the push toward armed struggle."
+      },
+      {
+        "id": "glossary-encomienda",
+        "term": "Encomienda",
+        "meaning": "The Spanish land-and-labor system: native populations reorganized into towns (reducciones) under an encomendero, who collected tribute and forced labor (polo) in exchange for (nominal) protection and religious instruction. Became highly abusive in practice."
+      },
+      {
+        "id": "glossary-encomenderos",
+        "term": "Encomenderos",
+        "meaning": "The Spanish officials or private agents granted an encomienda; entitled to collect tribute and demand labor from the population under their control."
+      },
+      {
+        "id": "glossary-gobernadorcillo",
+        "term": "Gobernadorcillo",
+        "meaning": "The native mayor of a town, drawn from the local elite; responsible for civil administration, policing, and municipal budgets."
+      },
+      {
+        "id": "glossary-governor-general",
+        "term": "Governor-General (Gobernador General)",
+        "meaning": "The highest-ranking Spanish authority in the Philippines, representing the Crown directly, with sweeping executive, military, and judicial power."
+      },
+      {
+        "id": "glossary-jesuit-parish-priest",
+        "term": "Jesuit Parish Priest (Jesuit Curate)",
+        "meaning": "A Jesuit appointed to administer a parish under royal patronage, acting as both spiritual guide and civil agent of the Crown — a dual role that often bred local resentment, as with Father Gaspar Morales."
+      },
+      {
+        "id": "glossary-kalayaan",
+        "term": "Kalayaan",
+        "meaning": "The Katipunan's clandestine newspaper (\"Freedom\"); one issue published March 1896, falsely datelined \"Yokohama\" to mislead Spanish authorities — a powerful spark for rapid membership growth."
+      },
+      {
+        "id": "glossary-kartilya",
+        "term": "Kartilya ng Katipunan",
+        "meaning": "Emilio Jacinto's official moral and civic primer for the Katipunan, containing fourteen propositions on human equality, honor, charity, and self-actualization; adopted by Bonifacio as the society's official teaching, replacing his own Dekalogo."
+      },
+      {
+        "id": "glossary-katagalugan",
+        "term": "Katagalugan",
+        "meaning": "The sovereign nation imagined by Bonifacio and Jacinto, encompassing the entire archipelago — a term meant to include Visayans, Ilocanos, Pampangos, and all other peoples as equal \"children of the nation,\" bypassing colonial and racial classifications."
+      },
+      {
+        "id": "glossary-katipunan",
+        "term": "Katipunan (KKK)",
+        "meaning": "The revolutionary secret society, full name Kataas-taasan, Kagalang-galangang Katipunan ng mga Anak ng Bayan, founded July 7, 1892, in Tondo. Patterned its structure and initiation rites on Freemasonry. On August 24, 1896, it transformed from a clandestine network into an open, de facto national government, declaring a nationwide armed revolution."
+      },
+      {
+        "id": "glossary-king-of-spain",
+        "term": "King of Spain",
+        "meaning": "The supreme ruler of the Spanish Empire; issued the royal charters and instructions that directed colonization and established sovereignty over territories like the Kingdom of New Castile."
+      },
+      {
+        "id": "glossary-kingdom-of-new-castile",
+        "term": "Kingdom of New Castile (El Reyno de Nueva Castilla)",
+        "meaning": "The official name King Philip II gave the Philippine archipelago as a Spanish crown realm (a reyno, not a mere colony), with Manila designated as its capital — formalized on the ground June 24, 1571."
+      },
+      {
+        "id": "glossary-la-liga-filipina",
+        "term": "La Liga Filipina",
+        "meaning": "Rizal's peaceful, non-violent mutual-aid society, founded July 3, 1892, aiming to unite the archipelago, provide mutual protection, and pursue reform. Suspended after Rizal's arrest, revived in April 1893, and dissolved in October 1893 due to the ideological split between wealthy reformists and working-class radicals."
+      },
+      {
+        "id": "glossary-la-solidaridad",
+        "term": "La Solidaridad",
+        "meaning": "The fortnightly reformist newspaper (Barcelona, Feb. 1889–Nov. 1895) at the heart of the Propaganda Movement, publishing critiques of colonial abuse and pushing for Filipino representation in the Spanish Cortes."
+      },
+      {
+        "id": "glossary-magdalo",
+        "term": "Magdalo",
+        "meaning": "The Cavite Katipunan council under Emilio Aguinaldo, named for his Katipunan name (itself drawn from Kawit's patron saint). Based in Kawit, expanding toward southern Manila, and presided over on paper by Baldomero Aguinaldo. Pursued a distinct republican model that ultimately bypassed Bonifacio's authority."
+      },
+      {
+        "id": "glossary-magdiwang",
+        "term": "Magdiwang",
+        "meaning": "The Cavite Katipunan council loyal to Bonifacio's central authority, covering Noveleta, San Francisco de Malabon, and territory toward Batangas."
+      },
+      {
+        "id": "glossary-naik-agreement",
+        "term": "Naik Agreement",
+        "meaning": "Bonifacio's late-March 1897 attempt to keep a separate revolutionary government and command structure alive after annulling the Tejeros Convention's results."
+      },
+      {
+        "id": "glossary-nipa-hut",
+        "term": "Nipa Hut (Bahay Kubo)",
+        "meaning": "The traditional pre-colonial Filipino dwelling: lightweight, bamboo-framed, and nipa-thatched — practical and quick to build, but highly flammable, as shown catastrophically at Cebu on April 27, 1565."
+      },
+      {
+        "id": "glossary-noli-me-tangere",
+        "term": "Noli Me Tángere",
+        "meaning": "Rizal's first novel (Berlin, March 1887); a critique of friar abuse and colonial stagnation that was quickly banned — which only fueled its influence in building a unified Filipino national consciousness."
+      },
+      {
+        "id": "glossary-pact-of-biak-na-bato",
+        "term": "Pact of Biak-na-Bato",
+        "meaning": "The truce signed December 14, 1897, between Aguinaldo's forces and Spain: Spain paid indemnity, and Aguinaldo's cabinet went into voluntary exile in Hong Kong."
+      },
+      {
+        "id": "glossary-polo-y-servicio",
+        "term": "Polo y Servicio (forced labor)",
+        "meaning": "The colonial system (established 1580) requiring native men aged 16–60 to perform 40 days of unpaid labor a year (reduced to 15 in 1884) — a major cause of labor shortages, starvation, and revolt."
+      },
+      {
+        "id": "glossary-president-in-absentia",
+        "term": "President in absentia",
+        "meaning": "The designation for how Aguinaldo was elected President at the Tejeros Convention despite not being physically present for the vote."
+      },
+      {
+        "id": "glossary-rizal-day",
+        "term": "Rizal Day",
+        "meaning": "A national holiday observed every December 30, honoring Rizal's life, literature, and execution — the moment that became the definitive rallying point for the armed revolution."
+      },
+      {
+        "id": "glossary-royal-audiencia",
+        "term": "Royal Audiencia",
+        "meaning": "The Spanish colonial high court, managing justice and administrative oversight, and serving as a check on colonial officials."
+      },
+      {
+        "id": "glossary-sandugo",
+        "term": "Sandugo",
+        "meaning": "The pre-colonial blood-compact covenant of friendship and alliance, sealed by mixing a drop of each leader's blood into shared water or wine."
+      },
+      {
+        "id": "glossary-sigaw-ng-pugad-lawin",
+        "term": "Sigaw ng Pugad Lawin (Cry of Pugad Lawin)",
+        "meaning": "The August 23, 1896 mass tearing of cédulas by the Katipuneros, marking their formal break from Spain; also called the \"Cry of Balintawak,\" depending on the historical account."
+      },
+      {
+        "id": "glossary-sistemang-patatsulok",
+        "term": "Sistemang Patatsulok (Triangle System)",
+        "meaning": "The Katipunan's early, cautious recruitment system, where each member enlisted only two others who never learned each other's identities — very secure, but too slow, and abandoned for open recruitment in October 1892."
+      },
+      {
+        "id": "glossary-tejeros-convention",
+        "term": "Tejeros Convention (Tejeros Assembly / Tejeros Congress)",
+        "meaning": "The March 22, 1897 meeting in Cavite, originally called to plan provincial defense, that instead elected a new revolutionary government — bypassing the Katipunan's Supreme Council and triggering a permanent leadership fracture."
+      },
+      {
+        "id": "glossary-thirteen-martyrs",
+        "term": "Thirteen Martyrs of Bagumbayan",
+        "meaning": "A group of thirteen prominent Filipino patriots—consisting of Freemasons and members of Dr. José Rizal’s reformist La Liga Filipina—who were publicly executed by firing squad at Bagumbayan Field (now Luneta Park) on January 11, 1897, on charges of treason and sedition. Following the unmasking of the Katipunan in August 1896 by Father Mariano Gil and the colonial Cuerpo de Vigilancia, Spanish authorities launched a campaign of mass arrests, utilizing torture to extract names and confessions. Although several of the condemned men were peaceful, moderate reformists who had explicitly refused to fund or support Andrés Bonifacio's armed revolutionary path, the colonial administration labeled all Freemasons and Liga members as dangerous subversives, sentencing them to death in a bid to crush the uprising. The thirteen executed martyrs were:",
+        "sub-content": [
+          {
+            "id": "glossary-martyr-moises-salvador",
+            "term": "Moises Salvador",
+            "meaning": "An insulare Mason and master of the second Filipino lodge, Logia Balagtas No. 149, who joined La Liga Filipina at its founding beside his father Ambrosio."
+          },
+          {
+            "id": "glossary-martyr-numeriano-adriano",
+            "term": "Numeriano Adriano",
+            "meaning": "A legal advocate and reformist writer who served as the copyist mentor to a young Apolinario Mabini and championed the Grand Regional Council of Masons."
+          },
+          {
+            "id": "glossary-martyr-faustino-villaruel",
+            "term": "Faustino Villaruel",
+            "meaning": "Founder of Logia Walana No. 158 and a key figure in La Liga Filipina, whose eighteen-year-old daughter Rosario was historically celebrated as the first female initiate in Philippine Masonry."
+          },
+          {
+            "id": "glossary-martyr-domingo-franco",
+            "term": "Domingo Franco",
+            "meaning": "A reformist merchant from Capiz, close friend of Apolinario Mabini, and the elected president of the resurrected La Liga Filipina in April 1893."
+          },
+          {
+            "id": "glossary-martyr-jose-dizon",
+            "term": "Jose Dizon",
+            "meaning": "A merchant, co-founder of the Katipunan, master of Logia Taliba, and maternal uncle to Emilio Jacinto."
+          },
+          {
+            "id": "glossary-martyr-benedicto-nijaga",
+            "term": "Benedicto Nijaga",
+            "meaning": "A second lieutenant in the Spanish infantry who acted as a secret fundraiser and collector for the Katipunan."
+          },
+          {
+            "id": "glossary-martyr-geronimo-cristobal-medina",
+            "term": "Geronimo Cristobal Medina",
+            "meaning": "A corporal in the Spanish army infantry who secretly worked as a Katipunan recruiter and officer in Bulacan."
+          },
+          {
+            "id": "glossary-martyr-francisco-luis-roxas",
+            "term": "Francisco Luis Roxas",
+            "meaning": "A wealthy creole government adviser who refused to support the Katipunan’s radical agenda, but was tragically implicated when Bonifacio drew up a fake KKK membership list containing his name to force wealthy elites to support the cause."
+          },
+          {
+            "id": "glossary-martyr-antonio-salazar",
+            "term": "Antonio Salazar y San Agustin",
+            "meaning": "Master of Logia Modestia and owner of Bazaar El Cisne, who secretly sold the printing press used by Jacinto and Bonifacio to publish the clandestine newspaper Kalayaan."
+          },
+          {
+            "id": "glossary-martyr-ramon-padilla",
+            "term": "Ramon Padilla",
+            "meaning": "A port office clerk and Katipunan member who famously apologized to Emilio Aguinaldo to resolve an intense duel of honor."
+          },
+          {
+            "id": "glossary-martyr-luis-enciso-villareal",
+            "term": "Luis Enciso Villareal",
+            "meaning": "An Albay-born reformist and abaca plantation heir educated at a Naga seminary, who was active in the Spanish Propaganda Movement."
+          },
+          {
+            "id": "glossary-martyr-braulio-rivera",
+            "term": "Braulio Rivera",
+            "meaning": "A clerk and active Katipunero who established the Balangay Gitna chapter in his birthplace of Tondo."
+          },
+          {
+            "id": "glossary-martyr-faustino-manalac",
+            "term": "Faustino Mañalac",
+            "meaning": "A port clerk, Katipunan Supreme Council member under Bonifacio, and head of the Ilog Pasig council in Binondo."
+          }
+        ]
+      },
+      {
+        "id": "glossary-treaty-of-paris",
+        "term": "Treaty of Paris",
+        "meaning": "The December 10, 1898 agreement ending the Spanish-American War: Spain ceded the Philippines, Guam, and Puerto Rico to the U.S. for $20 million, without any Filipino representation at the table."
+      },
+      {
+        "id": "glossary-tribute",
+        "term": "Tribute",
+        "meaning": "The resented colonial tax on Filipinos aged 19–60 (1565–1884), often collected through force; its abusive collection was a major catalyst for over 200 local uprisings."
+      },
+      {
+        "id": "glossary-unus-instar-omnium",
+        "term": "Unus Instar Omnium",
+        "meaning": "\"One is worth all\" — the Latin motto of La Liga Filipina, expressing the principle that collective strength and mutual defense outweigh individual self-interest."
       }
     ]
   }

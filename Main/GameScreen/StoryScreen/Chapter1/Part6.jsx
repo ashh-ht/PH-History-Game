@@ -37,7 +37,8 @@ export const Chapter1_Part6 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/San Mateo Rizal 1896 revolution.png"),
-    text: "Bonifacio's forces have suffered heavy losses, and Governor-General Ramón\nBlanco has placed eight provinces under a state of war."
+    text: "Bonifacio's forces have suffered heavy losses, and Governor-General Ramón\nBlanco has placed eight provinces under a state of war.",
+    unlock: ["Timeline_1896_08-24", "Timeline_1896_08-29_30"]
   },
 
   //T3_6 here
@@ -62,19 +63,22 @@ export const Chapter1_Part6 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Cavite revolution 1896 plaza.png"),
-    text: "Revolutionary forces capture Spanish positions and take control of several towns.\nBut their victories also bring an old problem into the open: who should lead?"
+    text: "Revolutionary forces capture Spanish positions and take control of several towns.\nBut their victories also bring an old problem into the open: who should lead?",
+    unlock: ["Timeline_1896_Autumn"]
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Magdiwang HQ (Noveleta), outside.png"),
-    text: "Two factions emerge. The Magdiwang, led by Mariano Álvarez,\nremains closely aligned with Bonifacio."
+    text: "Two factions emerge. The Magdiwang, led by Mariano Álvarez,\nremains closely aligned with Bonifacio.",
+    unlock: ["alvarez-1"]
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Magdiwang HQ (Noveleta), outside.png"),
-    text: "The Magdalo, led by Baldomero Aguinaldo, is gaining influence\nunder his cousin Emilio Aguinaldo."
+    text: "The Magdalo, led by Baldomero Aguinaldo, is gaining influence\nunder his cousin Emilio Aguinaldo.",
+    unlock: ["aguinaldo-1", "aguinaldo-2"]
   },
 
   {
@@ -87,7 +91,8 @@ export const Chapter1_Part6 = [
         position: "center"
       }
     ],
-    text: "Tell the Supremo that Cavite still stands with the Katipunan. We may have\nour own forces here, but we fight for the same cause."
+    text: "Tell the Supremo that Cavite still stands with the Katipunan. We may have\nour own forces here, but we fight for the same cause.",
+    unlock: ["alvarez-2"]
   },
 
   {
@@ -112,13 +117,15 @@ export const Chapter1_Part6 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Rizal execution.png"),
-    text: "Months earlier, José Rizal had been arrested and exiled for his\nalleged connection to the revolution."
+    text: "Months earlier, José Rizal had been arrested and exiled for his\nalleged connection to the revolution.",
+    unlock: ["rizal-4"]
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Rizal execution.png"),
-    text: "On December 30, 1896, Rizal is executed at Bagumbayan."
+    text: "On December 30, 1896, Rizal is executed at Bagumbayan.",
+    unlock: ["Timeline_1896_12-30", "rizal-5"]
   },
 
   {
@@ -163,7 +170,8 @@ export const Chapter1_Part6 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Naik camp hut interior.png"),
-    text: "By early 1897, Bonifacio is in Cavite, trying to deal with the growing\nconflict between the Magdiwang and Magdalo factions."
+    text: "By early 1897, Bonifacio is in Cavite, trying to deal with the growing\nconflict between the Magdiwang and Magdalo factions.",
+    unlock: ["Timeline_1896_12-1897_Early", "bonifacio-5"]
   },
 
   {
@@ -362,7 +370,8 @@ export const Chapter1_Part6 = [
       }
     ],
     text: "Wala na tayong sapat na armas. Kung magpapatuloy tayo, baka\nlalo lang tayong malugi.",
-    translation: "We don't have enough weapons. If we keep going, we may only lose more."
+    translation: "We don't have enough weapons. If we keep going, we may only lose more.",
+    unlock: ["tirona-1"]
   },
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

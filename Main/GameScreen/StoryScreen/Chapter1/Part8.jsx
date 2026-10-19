@@ -42,13 +42,15 @@ export const Chapter1_Part8 = [
   {
     type: "narrator",
     text: "Later that year, both sides agree to negotiate. The result is the Pact of Biak-na-Bato.",
-    background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png")
+    background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png"),
+    unlock: ["Timeline_1897_12-14", "aguinaldo-4"]
   },
 
   {
     type: "narrator",
     text: "Under the agreement, Aguinaldo and other revolutionary leaders leave for Hong\nKong in exchange for money and promises of reforms from Spain.",
-    background: require("../../../../Background Images/Part 8/Victoria Harbour, hong kong 19th century.png")
+    background: require("../../../../Background Images/Part 8/Victoria Harbour, hong kong 19th century.png"),
+    unlock: ["diaz-3"]
   },
 
   {
@@ -60,13 +62,15 @@ export const Chapter1_Part8 = [
   {
     type: "narrator",
     text: "In April 1898, while Aguinaldo was at Singapore, war breaks out between Spain\nand the United States. The situation changes almost overnight.",
-    background: require("../../../../Background Images/Part 8/colonial Singapore, exterior 1.png")
+    background: require("../../../../Background Images/Part 8/colonial Singapore, exterior 1.png"),
+    unlock: ["Timeline_1898_05-01", "dewey-1"]
   },
 
   {
     type: "narrator",
     text: "Aguinaldo meets U.S. Consul E. Spencer Pratt, who encourages him to return\nto the Philippines and resume the fight against Spain.",
-    background: require("../../../../Background Images/Part 8/U.S. Consul Pratt's office, Singapore 2.png")
+    background: require("../../../../Background Images/Part 8/U.S. Consul Pratt's office, Singapore 2.png"),
+    unlock: ["Timeline_1898_04", "pratt-1"]
   },
 
   {
@@ -80,13 +84,15 @@ export const Chapter1_Part8 = [
     ],
     text: "Bumalik kayo sa Pilipinas at ipagpatuloy ang laban sa Espanya.\nMakikipagtulungan ang Amerika laban sa kanila.",
     translation: "Return to the Philippines and continue the fight against Spain. America will cooperate against them.",
-    background: require("../../../../Background Images/Part 8/U.S. Consul Pratt's office, Singapore 2.png")
+    background: require("../../../../Background Images/Part 8/U.S. Consul Pratt's office, Singapore 2.png"),
+    unlock: ["pratt-2", "wildman-1"]
   },
 
   {
     type: "narrator",
     text: "Aguinaldo eventually returns aboard an American ship, arriving in the\nPhilippines on May 19, 1898.",
-    background: require("../../../../Background Images/Part 8/American ship deck and Cavite landing (Dewey conversation).png")
+    background: require("../../../../Background Images/Part 8/American ship deck and Cavite landing (Dewey conversation).png"),
+    unlock: ["Timeline_1898_05-19", "dewey-2"]
   },
 
 
@@ -106,13 +112,15 @@ export const Chapter1_Part8 = [
     type: "narrator",
     text: "Aguinaldo quickly resumes the revolution. On May 28, Filipino forces\ndefeat Spanish troops at Alapan in Imus, Cavite.",
     background: require("../../../../Background Images/Part 8/Alapan Cavite City HQ (first flag unfurled).png"),
-    music: "somber"
+    music: "somber",
+    unlock: ["Timeline_1898_05-24"]
   },
 
   {
     type: "narrator",
     text: "After the victory, the Filipino flag sewn in Hong Kong is publicly\nunfurled for the first time on Philippine soil.",
-    background: require("../../../../Background Images/Part 8/Alapan Cavite City HQ (first flag unfurled).png")
+    background: require("../../../../Background Images/Part 8/Alapan Cavite City HQ (first flag unfurled).png"),
+    unlock: ["Timeline_1898_05-28"]
   },
 
   {
@@ -132,7 +140,8 @@ export const Chapter1_Part8 = [
   {
     type: "narrator",
     text: "Filipino forces continue to take towns across Luzon. Spanish forces are pushed\nback toward Manila, where their remaining troops are concentrated.",
-    background: require("../../../../Background Images/Part 8/Manila Bay_mock battle.png")
+    background: require("../../../../Background Images/Part 8/Manila Bay_mock battle.png"),
+    unlock: ["trias-2", "diwa-3"]
   },
 
   //T3_8 here
@@ -157,7 +166,8 @@ export const Chapter1_Part8 = [
   {
     type: "narrator",
     text: "Ambrosio Rianzares Bautista prepares the document, including language\nexpressing friendship toward the United States.",
-    background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png")
+    background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png"),
+    unlock: ["bautista-1"]
   },
 
   {
@@ -240,13 +250,15 @@ export const Chapter1_Part8 = [
   {
     type: "narrator",
     text: "On June 12, 1898, Aguinaldo declares Philippine independence from\nthe balcony of his home in Kawit, Cavite.",
-    background: require("../../../../Background Images/Part 8/Aguinaldo Shrine (with crowd, cannons, bells, flag).png")
+    background: require("../../../../Background Images/Part 8/Aguinaldo Shrine (with crowd, cannons, bells, flag).png"),
+    unlock: ["Timeline_1898_06-12"]
   },
 
   {
     type: "narrator",
     text: "The flag is raised as the Act of the Declaration of Independence is read\nbefore the gathered crowd.",
-    background: require("../../../../Background Images/Part 8/Aguinaldo Shrine (with crowd, cannons, bells, flag).png")
+    background: require("../../../../Background Images/Part 8/Aguinaldo Shrine (with crowd, cannons, bells, flag).png"),
+    unlock: ["bautista-2"]
   },
 
   {
@@ -292,7 +304,8 @@ export const Chapter1_Part8 = [
   {
     type: "narrator",
     text: "Apolinario Mabini argues that the revolution needs a government with clear\ninstitutions and laws, not power concentrated in one person.",
-    background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png")
+    background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png"),
+    unlock: ["mabini-3"]
   },
 
   {
@@ -350,7 +363,8 @@ export const Chapter1_Part8 = [
   {
     type: "narrator",
     text: "Aguinaldo accepts the reorganization. On June 23, the Dictatorial Government is\nreplaced by a Revolutionary Government.",
-    background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png")
+    background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png"),
+    unlock: ["Timeline_1898_06-23", "aguinaldo-5"]
   },
 
 
@@ -429,7 +443,8 @@ export const Chapter1_Part8 = [
   {
     type: "narrator",
     text: "Filipino forces are kept outside the city and do not take part in the surrender negotiations.",
-    background: require("../../../../Background Images/Part 8/Siege of Manila 1898 trenches.png")
+    background: require("../../../../Background Images/Part 8/Siege of Manila 1898 trenches.png"),
+    unlock: ["Timeline_1898_08-13_14"]
   },
 
 
@@ -448,13 +463,15 @@ export const Chapter1_Part8 = [
   {
     type: "narrator",
     text: "Spain formally surrenders Manila to the United States. Filipino representatives\nare not included in the agreement.",
-    background: require("../../../../Background Images/Part 8/Treaty of Paris.png")
+    background: require("../../../../Background Images/Part 8/Treaty of Paris.png"),
+    unlock: ["mckinley-1"]
   },
 
   {
     type: "narrator",
     text: "On December 10, 1898, Spain and the United States sign the Treaty of Paris.\nSpain cedes the Philippines, Guam, and Puerto Rico to the United States.",
-    background: require("../../../../Background Images/Part 8/Treaty of Paris.png")
+    background: require("../../../../Background Images/Part 8/Treaty of Paris.png"),
+    unlock: ["Timeline_1898_12-10"]
   },
 
   {
@@ -466,7 +483,8 @@ export const Chapter1_Part8 = [
   {
     type: "narrator",
     text: "The revolution that began against Spanish rule now faces a new power claiming\nauthority over the islands.",
-    background: require("../../../../Background Images/Part 8/Treaty of Paris.png")
+    background: require("../../../../Background Images/Part 8/Treaty of Paris.png"),
+    unlock: ["Timeline_1898_12-21", "mckinley-2", "trias-3"]
   },
 
 
@@ -486,19 +504,22 @@ export const Chapter1_Part8 = [
   {
     type: "narrator",
     text: "Tensions between Filipino and American forces continue to rise around Manila.",
-    background: require("../../../../Background Images/Part 8/San Juan Bridge Sociego Street Feb 4 1899.png")
+    background: require("../../../../Background Images/Part 8/San Juan Bridge Sociego Street Feb 4 1899.png"),
+    unlock: ["Timeline_1899_01-21"]
   },
 
   {
     type: "narrator",
     text: "On the night of February 4, 1899, fighting breaks out after an encounter between\nAmerican and Filipino soldiers near Santa Mesa.",
-    background: require("../../../../Background Images/Part 8/San Juan Bridge Sociego Street Feb 4 1899.png")
+    background: require("../../../../Background Images/Part 8/San Juan Bridge Sociego Street Feb 4 1899.png"),
+    unlock: ["Timeline_1899_02-04"]
   },
 
   {
     type: "narrator",
     text: "The fighting spreads rapidly. Now, the Philippine-American War has begun.",
-    background: require("../../../../Background Images/Part 8/San Juan Bridge Sociego Street Feb 4 1899.png")
+    background: require("../../../../Background Images/Part 8/San Juan Bridge Sociego Street Feb 4 1899.png"),
+    unlock: ["mabini-4", "mckinley-3"]
   },
 
   { type: "sortingtimeline" },

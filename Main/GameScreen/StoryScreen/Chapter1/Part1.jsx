@@ -671,7 +671,7 @@ export const Chapter1_Part1 = [
     type: "narrator",
     text: "On June 24, 1571, Legazpi declares Manila the capital of the colony.",
     background: require("../../../../Background Images/Part 1/Manila Shoreline.png"),
-    unlock: ["Timeline_1571_06-24"]
+    unlock: ["Timeline_1571_06-24", "salcedo-3"]
   },
 
   {

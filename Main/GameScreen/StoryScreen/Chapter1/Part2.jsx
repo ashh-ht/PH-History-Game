@@ -32,13 +32,15 @@ export const Chapter1_Part2 = [
     type: "narrator",
     text: "The afternoon air in Bohol is heavy. Outside the parish church, Francisco Dagohoy\nstands grieving for his brother, Sagarino.",
     background: require("../../../../Background Images/Part 2/saint paul inabanga church exterior.png"),
-    music: "grief"
+    music: "grief",
+    unlock: ["dagohoy-1"]
   },
 
   {
     type: "narrator",
     text: "Sagarino died while carrying out Father Morales's orders. Yet the priest\nrefuses to give him a proper burial.",
-    background: require("../../../../Background Images/Part 2/saint paul inabanga church interior.png")
+    background: require("../../../../Background Images/Part 2/saint paul inabanga church interior.png"),
+    unlock: ["morales-1", "morales-2"]
   },
 
   {
@@ -169,7 +171,8 @@ export const Chapter1_Part2 = [
   {
     type: "narrator",
     text: "No compromise is reached. Dagohoy gathers about three thousand Boholanos\nand leads them into the mountains.",
-    background: require("../../../../Background Images/Part 2/Bohol highlands jungle pass.png")
+    background: require("../../../../Background Images/Part 2/Bohol highlands jungle pass.png"),
+    unlock: ["Timeline_1744", "dagohoy-2", "morales-3"]
   },
 
   //Q2_2 here
@@ -213,7 +216,8 @@ export const Chapter1_Part2 = [
   {
     type: "narrator",
     text: "Decades pass. The mountain community grows from a around three thousand\npeople into a population of around twenty thousand.",
-    background: require("../../../../Background Images/Part 2/Mountain settlement.png")
+    background: require("../../../../Background Images/Part 2/Mountain settlement.png"),
+    unlock: ["Timeline_1744-1828", "dagohoy-3"]
   },
 
   {
@@ -284,7 +288,8 @@ export const Chapter1_Part2 = [
   {
     type: "narrator",
     text: "In 1827, a Spanish expedition of 2,200 soldiers enters the mountains.",
-    background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png")
+    background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png"),
+    unlock: ["Timeline_1827"]
   },
 
   //T3_2 here
@@ -311,7 +316,8 @@ export const Chapter1_Part2 = [
   {
     type: "narrator",
     text: "Governor-General Mariano Ricafort sends Captain Manuel Sanz to lead 6,000\nsoldiers into Bohol as a final campaign to retake control.",
-    background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png")
+    background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png"),
+    unlock: ["sanz-1", "ricafort-1"]
   },
 
   //Q3_2 here
@@ -363,7 +369,8 @@ export const Chapter1_Part2 = [
   {
     type: "narrator",
     text: "The community ends up choosing peace. Governor-General Ricafort pardons the\n19,420 people living in the mountain state.",
-    background: require("../../../../Background Images/Part 2/bohol 19th century town plaza.png")
+    background: require("../../../../Background Images/Part 2/bohol 19th century town plaza.png"),
+    unlock: ["Timeline_1829_08-31", "ricafort-2", "sanz-2", "dagohoy-4"]
   },
 
   {
