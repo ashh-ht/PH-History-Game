@@ -1,7 +1,54 @@
-import { ImageBackground, Image, StyleSheet, Text, View } from 'react-native';
+import React, { useRef, useState } from 'react';
+import {
+  ImageBackground,
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  Animated,
+} from 'react-native';
 import Sound_clicks from '../../Components/Sound_clicks';
 import { useGameplaySettings } from './GameplaySetting';
 
+function SpringImageButton({ image, pressedImage, onPress }) {
+  const scale = useRef(new Animated.Value(1)).current;
+  const [pressed, setPressed] = useState(false);
+
+  const handlePressIn = () => {
+    setPressed(true);
+    Animated.spring(scale, {
+      toValue: 0.9,
+      useNativeDriver: true,
+      speed: 20,
+      bounciness: 10,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    setPressed(false);
+    Animated.spring(scale, {
+      toValue: 1,
+      useNativeDriver: true,
+      speed: 20,
+      bounciness: 10,
+    }).start();
+  };
+
+  return (
+    <Animated.View style={{ transform: [{ scale }] }}>
+      <Sound_clicks
+        onPress={onPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+      >
+        <Image
+          source={pressed ? pressedImage : image}
+          style={styles.icon}
+        />
+      </Sound_clicks>
+    </Animated.View>
+  );
+}
 
 function Option({ label, selected, onPress, disabled }) {
   return (
@@ -30,12 +77,16 @@ function GameplayScreen({ navigation }) {
     <ImageBackground source={require('../../assets/Settingbg.png')} style={styles.container}>
       {/* Top-left icons */}
       <View style={styles.topIcon}>
-        <Sound_clicks onPress={() => navigation.goBack()}>
-          <Image source={require('../../assets/return.png')} style={styles.icon} />
-        </Sound_clicks>
-        <Sound_clicks onPress={() => navigation.navigate('Journal')}>
-          <Image source={require('../../assets/Journal_page.png')} style={styles.icon} />
-        </Sound_clicks>
+        <SpringImageButton
+          image={require('../../assets/icons/x_button.png')}
+          pressedImage={require('../../assets/icons/x_buttonpressed.png')}
+          onPress={() => navigation.goBack()}
+        />
+        <SpringImageButton
+          image={require('../../assets/icons/journal_button.png')}
+          pressedImage={require('../../assets/icons/journal_buttonpressed.png')}
+          onPress={() => navigation.navigate('Journal')}
+        />
       </View>
 
       {/* Panel */}
@@ -89,14 +140,14 @@ const styles = StyleSheet.create({
     top: 12,
     left: 20,
     flexDirection:
-    'row',
+      'row',
     gap: 15
-},
+  },
 
   icon: {
     width: 40,
     height: 40
-},
+  },
 
   panel: {
     backgroundColor: '#FFF2CB',
@@ -109,30 +160,30 @@ const styles = StyleSheet.create({
     fontSize: 22,
     textAlign: 'center',
     marginBottom: 12
-},
+  },
 
   columns: {
     flexDirection: 'row',
     justifyContent: 'space-around'
-},
+  },
   column: {
     gap: 12
-},
+  },
 
   heading: {
     fontSize: 20,
     marginBottom: 4
-},
+  },
   subheading: {
     fontSize: 15,
     marginBottom: 2
-},
+  },
 
   divider: {
     height: 1,
     backgroundColor: '#D9B98A',
     marginVertical: 8
-},
+  },
 
   option: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   optionDisabled: { opacity: 0.4 },
@@ -145,13 +196,14 @@ const styles = StyleSheet.create({
     transform: [{ rotate: '45deg' }],
     alignItems: 'center',
     justifyContent: 'center',
-    gap:50,
+    gap: 50,
   },
 
   check: {
     color: '#fff',
     fontSize: 12,
-    transform: [{ rotate: '-45deg' }] },
+    transform: [{ rotate: '-45deg' }]
+  },
 });
 
 export default GameplayScreen;

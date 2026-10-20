@@ -69,14 +69,36 @@ export const Chapter1_Part7 = [
     speaker: "DANIEL TIRONA",
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Tirona.png"),
+        source: require("../../../../Character Images/Chapter 7/Tirona Mad.png"),
         position: "left"
+      },
+      {
+        source: require("../../../../Character Images/Chapter 7/Bonifacio Unsure.png"),
+        position: "right"
       }
     ],
-    text: "Hindi angkop na ang isang taong walang diploma ang mamuno sa\nKagawaran ng Interior. Dapat abogado ang humawak ng puwestong iyan!",
-    translation: "It isn't appropriate for someone without a diploma to lead the Department of the Interior.\nA lawyer should hold that position.",
+    text: "Hindi angkop na ang isang taong walang diploma ang mamuno sa Kagawaran ng Interior!",
+    translation: "It isn't appropriate for someone without a diploma to lead the Department of the Interior!",
     background: require("../../../../Background Images/Part 7/Casa Hacienda Tejeros.png"),
     unlock: ["tirona-2"]
+  },
+
+  {
+    type: "dialogue",
+    speaker: "DANIEL TIRONA",
+    characters: [
+      {
+        source: require("../../../../Character Images/Chapter 7/Tirona Mad.png"),
+        position: "left"
+      },
+      {
+        source: require("../../../../Character Images/Chapter 7/Bonifacio Unsure.png"),
+        position: "right"
+      }
+    ],
+    text: "Dapat abogado ang humawak ng puwestong iyan!",
+    translation: "A lawyer should hold that position!",
+    background: require("../../../../Background Images/Part 7/Casa Hacienda Tejeros.png")
   },
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -90,31 +112,39 @@ export const Chapter1_Part7 = [
     background: require("../../../../Background Images/Part 7/Casa Hacienda Tejeros.png"),
     choices: [
       {
-        text: "React strongly and declare the election invalid.",
+        text: "React strongly and declare\nthe election invalid.",
         speaker: "ANDRÉS BONIFACIO",
-        dialogue: "<i>slams table</i> Bilang Supremo ng Katipunan, ipinapawalang-bisa ko ang lahat\nng nangyari dito ngayon din!",
+        dialogue: "Bilang Supremo ng Katipunan, ipinapawalang-bisa ko ang lahat\nng nangyari dito ngayon din!",
         translation: "As Supremo of the Katipunan, I declare everything that happened here today invalid.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Bonifacio.png"),
+            source: require("../../../../Character Images/Chapter 7/Tirona Mad.png"),
+            position: "left"
+          },
+          {
+            source: require("../../../../Character Images/Chapter 6/Bonifacio Talking Mad R.png"),
             position: "right"
           }
         ]
       },
       {
-        text: "Demand that the issue be settled fairly.",
+        text: "Demand that the issue\nbe settled fairly.",
         speaker: "ANDRÉS BONIFACIO",
         dialogue: "Kung hindi ako karapat-dapat, patunayan ninyo iyan sa isang tapat\nna botohan, hindi sa pang-iinsulto.",
         translation: "If I'm not qualified, prove it through a fair vote, not through insults.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Bonifacio.png"),
+            source: require("../../../../Character Images/Chapter 7/Tirona Mad.png"),
+            position: "left"
+          },
+          {
+            source: require("../../../../Character Images/Chapter 6/Bonifacio Talking Mad R.png"),
             position: "right"
           }
         ]
       }
     ],
-    nextScene: 10
+    nextScene: 11
   },
 
   // Q2_7 here
@@ -151,12 +181,12 @@ export const Chapter1_Part7 = [
     speaker: "ANDRÉS BONIFACIO",
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Bonifacio.png"),
-        position: "right"
+        source: require("../../../../Character Images/Chapter 6/Bonifacio Talking.png"),
+        position: "center"
       }
     ],
-    text: "Isulat ninyo ito. Hindi totoo ang halalan kahapon. Hindi nito kinatawan ang\ntunay na kalooban ng mga narito.",
-    translation: "Write this down. Yesterday's election was not legitimate. It did not represent the true will of those gathered here.",
+    text: "Isulat ninyo ito. Hindi totoo ang halalan kahapon. Hindi nito kinatawan\nang tunay na kalooban ng mga narito.",
+    translation: "Write this down. Yesterday's election was not legitimate. It did not represent the truth of those gathered here.",
     background: require("../../../../Background Images/Part 7/Aguinaldo's HQ exterior.png")
   },
 
@@ -170,7 +200,7 @@ export const Chapter1_Part7 = [
   //Q3_7 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 7.2
+  // CHOICE 7.2 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
@@ -180,11 +210,15 @@ export const Chapter1_Part7 = [
     background: require("../../../../Background Images/Part 7/Tanza parish convent, night (oath-taking).png"),
     choices: [
       {
-        text: "Take the oath, but record your concerns.",
+        text: "Take the oath, but record\nyour concerns.",
         speaker: "ARTEMIO RICARTE",
         dialogue: "Susumpa ako dahil kinakailangan. Ngunit isusulat ko ang\naking mga nakita at narinig.",
         translation: "I will take the oath because it is necessary. But I will write down what I saw and heard.",
         characters: [
+          {
+            source: require("../../../../Character Images/Chapter 7/Emilio Serious R.png"),
+            position: "left"
+          },
           {
             source: require("../../../../Character Images/Temporary Placeholders/Ricarte.png"),
             position: "right"
@@ -192,11 +226,15 @@ export const Chapter1_Part7 = [
         ]
       },
       {
-        text: "Refuse the oath and stand with Bonifacio.",
+        text: "Refuse the oath and stand\nwith Bonifacio.",
         speaker: "ARTEMIO RICARTE",
         dialogue: "Hindi ko masusuportahan ang halalang may ganitong mga pagdududa.",
         translation: "I cannot support an election surrounded by these doubts.",
         characters: [
+          {
+            source: require("../../../../Character Images/Chapter 7/Emilio Serious R.png"),
+            position: "left"
+          },
           {
             source: require("../../../../Character Images/Temporary Placeholders/Ricarte.png"),
             position: "right"
@@ -204,7 +242,7 @@ export const Chapter1_Part7 = [
         ]
       }
     ],
-    nextScene: 16
+    nextScene: 17
   },
 
   // T1_7 here
@@ -249,8 +287,8 @@ export const Chapter1_Part7 = [
     speaker: "ANDRÉS BONIFACIO",
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Bonifacio.png"),
-        position: "right"
+        source: require("../../../../Character Images/Chapter 6/Bonifacio Talking Mad.png"),
+        position: "center"
       }
     ],
     text: "Hindi ko tatanggapin ang isang halalang hindi tapat.\nDito, ipagpapatuloy natin ang laban.",
@@ -295,8 +333,8 @@ export const Chapter1_Part7 = [
     speaker: "ANDRÉS BONIFACIO",
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Bonifacio.png"),
-        position: "right"
+        source: require("../../../../Character Images/Chapter 6/Bonifacio Sad.png"),
+        position: "center"
       }
     ],
     text: "Mga Pilipino... kayo mismo ang gumawa nito sa akin.",
@@ -339,7 +377,7 @@ export const Chapter1_Part7 = [
 
   {
     type: "narrator",
-    text: "Aguinaldo initially changes the sentence to exile, hoping to prevent another execution\nwithin the revolutionary movement.",
+    text: "Aguinaldo initially changes the sentence to exile, hoping to prevent another\nexecution within the revolutionary movement.",
     background: require("../../../../Background Images/Part 7/Aguinaldo's HQ interior.png")
   },
 
@@ -348,8 +386,8 @@ export const Chapter1_Part7 = [
     speaker: "EMILIO AGUINALDO",
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Aguinaldo.png"),
-        position: "left"
+        source: require("../../../../Character Images/Chapter 7/Emilio Serious R.png"),
+        position: "center"
       }
     ],
     text: "Sila ay mga anak din ng bayan. Hindi ko kayang dagdagan pa ang dugong\nPilipinong ibinubuhos natin.",
@@ -368,31 +406,31 @@ export const Chapter1_Part7 = [
     background: require("../../../../Background Images/Part 7/Aguinaldo's HQ interior.png"),
     choices: [
       {
-        text: "Give in to the pressure and allow the execution to proceed",
+        text: "Give in to the pressure and\nallow the execution to proceed",
         speaker: "EMILIO AGUINALDO",
         dialogue: "...Sige.",
         translation: "...Very well.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Aguinaldo.png"),
-            position: "right"
+            source: require("../../../../Character Images/Chapter 7/Emilio Serious R.png"),
+            position: "center"
           }
         ]
       },
       {
-        text: "Hold firm and insist that the exile order remain.",
+        text: "Hold firm and insist that\nthe exile order remain.",
         speaker: "EMILIO AGUINALDO",
         dialogue: "Hindi. Ipapadala natin siya sa malayo. Ayaw kong madagdagan pa\nang dugo ng ating mga kababayan.",
         translation: "No. We will send him away. I do not want more bloodshed among our own people.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Aguinaldo.png"),
-            position: "right"
+            source: require("../../../../Character Images/Chapter 7/Emilio Serious R.png"),
+            position: "center"
           }
         ]
       }
     ],
-    nextScene: 33
+    nextScene: 34
   },
 
 
@@ -412,7 +450,7 @@ export const Chapter1_Part7 = [
 
   {
     type: "scene",
-    title: "The Mount Buntis Incident",
+    title: "The Mount Buntis Maragondon Incident",
     date: "May 10, 1897",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg")
   },
@@ -445,6 +483,11 @@ export const Chapter1_Part7 = [
   },
 
   //Q4_7 here
+
+  {
+    type: "whoSaidIt",
+  },
+
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // QUIZ TIME
@@ -520,14 +563,7 @@ export const Chapter1_Part7 = [
   {
     type: "scene",
     title: "Chapter Complete.",
-    date: "Bonifacio is gone, but the Revolution will continue.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
-  },
-
-  {
-    type: "scene",
-    title: "The Revolution has now entered a new chapter.",
-    date: " ",
+    date: "The Revolution has now entered a new chapter.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   }
 

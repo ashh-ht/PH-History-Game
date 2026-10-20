@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,8 @@ import {
   ScrollView,
   StyleSheet,
   Modal,
+  Image,
+  Animated,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 
@@ -30,6 +32,50 @@ const timeAgo = (ts) => {
 
   return new Date(ts).toLocaleDateString();
 };
+
+
+// Spring image button
+function SpringImageButton({ onPress, image, pressedImage }) {
+  const scale = useRef(new Animated.Value(1)).current;
+  const [pressed, setPressed] = useState(false);
+
+  const handlePressIn = () => {
+    setPressed(true);
+    Animated.spring(scale, {
+      toValue: 0.9,
+      useNativeDriver: true,
+      speed: 20,
+      bounciness: 10,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    setPressed(false);
+    Animated.spring(scale, {
+      toValue: 1,
+      useNativeDriver: true,
+      speed: 20,
+      bounciness: 10,
+    }).start();
+  };
+
+  return (
+    <Animated.View style={{ transform: [{ scale }] }}>
+      <TouchableOpacity
+        onPress={onPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        activeOpacity={1}
+      >
+        <Image
+          source={pressed ? pressedImage : image}
+          style={styles.icon}
+          resizeMode="contain"
+        />
+      </TouchableOpacity>
+    </Animated.View>
+  );
+}
 
 
 export default function SavesScreen({ navigation }) {
@@ -102,6 +148,30 @@ export default function SavesScreen({ navigation }) {
 
   return (
     <View style={styles.screen}>
+
+      <View
+        style={{
+          position: "absolute",
+          top: 12,
+          left: 20,
+          flexDirection: "row",
+          gap: 15,
+          zIndex: 1,
+        }}
+      >
+        <SpringImageButton
+          onPress={() => navigation.goBack()}
+          image={require('../../assets/icons/x_button.png')}
+          pressedImage={require('../../assets/icons/x_buttonpressed.png')}
+        />
+
+        <SpringImageButton
+          onPress={() => navigation.navigate("Journal")}
+          image={require('../../assets/icons/journal_button.png')}
+          pressedImage={require('../../assets/icons/journal_buttonpressed.png')}
+        />
+      </View>
+
       <View style={styles.panel}>
 
         <Text style={styles.heading}>Saves</Text>
@@ -147,13 +217,6 @@ export default function SavesScreen({ navigation }) {
         </ScrollView>
 
         <View style={styles.footer}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-          >
-            <Text style={styles.backText}>↩</Text>
-          </TouchableOpacity>
-
           {saves.length > 0 && (
             <TouchableOpacity
               style={styles.deleteButton}
@@ -308,6 +371,11 @@ const styles = StyleSheet.create({
     color: "#7A5C48",
   },
 
+  icon: {
+    width: 40,
+    height: 40,
+  },
+
   deleteButton: {
     backgroundColor: "#B5543C",
     borderRadius: 6,
@@ -318,7 +386,7 @@ const styles = StyleSheet.create({
   deleteText: {
     color: "#FFFFFF",
     fontWeight: "bold",
-    fontSize: 14,
+    fontSize: 14
   },
 
 
@@ -385,6 +453,10 @@ const styles = StyleSheet.create({
   yesText: {
     color: "#FFFFFF",
     fontWeight: "bold",
+<<<<<<< HEAD
     fontSize: 15,
+=======
+    fontSize: 15
+>>>>>>> origin/maui-90-percent
   },
 });

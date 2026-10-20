@@ -1,8 +1,49 @@
-import { useRef, useState } from 'react';
-import { ImageBackground, Image, PanResponder, StyleSheet, Text, View } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { ImageBackground, Image, PanResponder, StyleSheet, Text, View, Animated } from 'react-native';
 import Sound_clicks from '../../Components/Sound_clicks';
 import { useDisplaySettings, MIN_BOX_OPACITY } from './DisplaySetting';
 
+// Added spring-animated image button
+function SpringImageButton({ image, pressedImage, onPress }) {
+  const scale = useRef(new Animated.Value(1)).current;
+  const [pressed, setPressed] = useState(false);
+
+  const handlePressIn = () => {
+    setPressed(true);
+    Animated.spring(scale, {
+      toValue: 0.9,
+      useNativeDriver: true,
+      speed: 20,
+      bounciness: 10,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    setPressed(false);
+    Animated.spring(scale, {
+      toValue: 1,
+      useNativeDriver: true,
+      speed: 20,
+      bounciness: 10,
+    }).start();
+  };
+
+  return (
+    <Animated.View style={{ transform: [{ scale }] }}>
+      <Sound_clicks
+        onPress={onPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+      >
+        <Image
+          source={pressed ? pressedImage : image}
+          style={styles.icon}
+          resizeMode="contain"
+        />
+      </Sound_clicks>
+    </Animated.View>
+  );
+}
 
 function Option({label, selected, onPress}){
     return(
@@ -81,12 +122,16 @@ function DisplayScreen({ navigation }) {
     <ImageBackground source={require('../../assets/Settingbg.png')} style={styles.container}>
       {/* Top-left icons */}
       <View style={styles.topIcon}>
-        <Sound_clicks onPress={() => navigation.goBack()}>
-          <Image source={require('../../assets/return.png')} style={styles.icon} />
-        </Sound_clicks>
-        <Sound_clicks onPress={() => navigation.navigate('Journal')}>
-          <Image source={require('../../assets/Journal_page.png')} style={styles.icon} />
-        </Sound_clicks>
+        <SpringImageButton
+          image={require('../../assets/icons/x_button.png')}
+          pressedImage={require('../../assets/icons/x_buttonpressed.png')}
+          onPress={() => navigation.goBack()}
+        />
+        <SpringImageButton
+          image={require('../../assets/icons/journal_button.png')}
+          pressedImage={require('../../assets/icons/journal_buttonpressed.png')}
+          onPress={() => navigation.navigate('Journal')}
+        />
       </View>
 
       {/* Panel */}

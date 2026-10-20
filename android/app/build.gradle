@@ -57,8 +57,4 @@ dependencies {
     } else {
         implementation jscFlavor
     }
-
-    // GIF support
-    // MUST match the Fresco version React Native uses (see ReactAndroid/gradle.properties)
-    implementation("com.facebook.fresco:animated-gif:3.6.0")
 }

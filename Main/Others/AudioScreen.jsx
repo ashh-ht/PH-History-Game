@@ -1,8 +1,49 @@
-import { useState } from 'react';
-import { ImageBackground, StyleSheet, Text, View, Pressable, Image } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { ImageBackground, StyleSheet, Text, View, Image, Animated } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { useAudio } from '../../Audiostore';
 import Sound_clicks from '../../Components/Sound_clicks';
+
+function SpringImageButton({ image, pressedImage, onPress }) {
+  const scale = useRef(new Animated.Value(1)).current;
+  const [pressed, setPressed] = useState(false);
+
+  const handlePressIn = () => {
+    setPressed(true);
+    Animated.spring(scale, {
+      toValue: 0.9,
+      useNativeDriver: true,
+      speed: 20,
+      bounciness: 10,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    setPressed(false);
+    Animated.spring(scale, {
+      toValue: 1,
+      useNativeDriver: true,
+      speed: 20,
+      bounciness: 10,
+    }).start();
+  };
+
+  return (
+    <Animated.View style={{ transform: [{ scale }] }}>
+      <Sound_clicks
+        onPress={onPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+      >
+        <Image
+          source={pressed ? pressedImage : image}
+          style={styles.icon}
+          resizeMode="contain"
+        />
+      </Sound_clicks>
+    </Animated.View>
+  );
+}
 
 function VolumeSlider({ label, value, onValueChange, fillColor }) {
   return (
@@ -31,6 +72,19 @@ function AudioScreen({ navigation }) {
 
   return (
     <ImageBackground source={require('../../assets/Settingbg.png')} style={styles.container}>
+      <View style={styles.topIcon}>
+        <SpringImageButton
+          image={require('../../assets/icons/x_button.png')}
+          pressedImage={require('../../assets/icons/x_buttonpressed.png')}
+          onPress={() => navigation.goBack()}
+        />
+        <SpringImageButton
+          image={require('../../assets/icons/journal_button.png')}
+          pressedImage={require('../../assets/icons/journal_buttonpressed.png')}
+          onPress={() => navigation.navigate('Journal')}
+        />
+      </View>
+
       <Sound_clicks
         onPress={() => navigation.goBack()} style={styles.backButton}>
         <Image source={require('../../assets/return.png')} style={styles.icon} />
@@ -74,6 +128,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 12,
     left: 20
+  },
+  topIcon: {
+    position: 'absolute',
+    top: 12,
+    left: 20,
+    flexDirection: 'row',
+    gap: 15,
+    zIndex: 1,
   },
   icon: {
     width: 40,

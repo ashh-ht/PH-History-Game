@@ -1,5 +1,11 @@
 import React, { useState, useCallback } from 'react';
-import { BackHandler, View, ImageBackground, Image, StyleSheet } from 'react-native';
+import {
+  BackHandler,
+  View,
+  ImageBackground,
+  Image,
+  StyleSheet,
+} from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import Sound_clicks from '../../Components/Sound_clicks';
 import { useGameProgress } from '../../GameProgress';
@@ -7,52 +13,38 @@ import { getCheckpoints } from '../Others/saveProgress';
 
 function MainMenuScreen({ navigation }) {
   const [selectedButton, setSelectedButton] = useState(null);
-  const [hasSave, setHasSave] = useState(false);
-  const { Quitapp, playMusic } = useAudio();
-  const { setChapter, setPart, setScene, setInGame } = useGameProgress();
-
 
   useFocusEffect(
     useCallback(() => {
-      getCheckpoints().then((all) => setHasSave(all.length > 0));
-      playMusic('somber');
+      setSelectedButton(null);
     }, [])
   );
-
-  const startFresh = () => {
-    setChapter(1);
-    setPart(1);
-    setScene(0);
-    setInGame(false);
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Part1', params: { startScene: 0 } }],
-    });
-  };
 
   const menuButtons = [
     {
       id: 'newGame',
       white: require('../../Menu Images/New Game White.png'),
       gold: require('../../Menu Images/New Game Gold.png'),
-      onPress: () => (hasSave ? navigation.navigate('NewGameConfirm') : startFresh()),
+      screen: 'NewGameConfirm',
     },
-    // Continue only pops if nakalaro na yung player like the title 
-    ...(hasSave
-      ? [{
-          id: 'continue',
-          white: require('../../Menu Images/Continue White.png'),
-          gold: require('../../Menu Images/Continue Gold.png'),
-          onPress: () => navigation.navigate('PartSelect'),
-        }]
-      : []),
+    {
+      id: 'continue',
+      white: require('../../Menu Images/Continue White.png'),
+      gold: require('../../Menu Images/Continue Gold.png'),
+      screen: 'PartSelect',
+    },
     {
       id: 'settings',
       white: require('../../Menu Images/Settings White.png'),
       gold: require('../../Menu Images/Settings Gold.png'),
-      onPress: () => navigation.navigate('Second'),
+      screen: 'Second',
     },
   ];
+
+  const handleMenuPress = (button) => {
+    setSelectedButton(button.id);
+    navigation.navigate(button.screen);
+  };
 
   return (
     <ImageBackground
@@ -64,13 +56,14 @@ function MainMenuScreen({ navigation }) {
         {menuButtons.map((button) => (
           <Sound_clicks
             key={button.id}
-            onPress={() => {
-              setSelectedButton(button.id);
-              button.onPress();
-            }}
+            onPress={() => handleMenuPress(button)}
           >
             <Image
-              source={selectedButton === button.id ? button.gold : button.white}
+              source={
+                selectedButton === button.id
+                  ? button.gold
+                  : button.white
+              }
               style={styles.menuButton}
               resizeMode="contain"
             />
@@ -80,7 +73,7 @@ function MainMenuScreen({ navigation }) {
         <Sound_clicks
           onPress={() => {
             setSelectedButton('exit');
-            setTimeout(Quitapp, 150);
+            BackHandler.exitApp();
           }}
         >
           <Image
@@ -102,15 +95,18 @@ const styles = StyleSheet.create({
 
   menuContainer: {
     position: 'absolute',
-    left: '8%',
-    top: '43%',
+    left: '3%', // actual left
+    top: '37%', // pababa
     alignItems: 'flex-start',
-    gap: 14,
+
+    // Note: keep the spacing even without spreading buttons too far apart.
+    gap: 1,
   },
 
   menuButton: {
-    width: 200,
-    height: 40,
+    // Note: increase the button size while preserving image proportions.
+    width: 260,
+    height: 58,
   },
 });
 

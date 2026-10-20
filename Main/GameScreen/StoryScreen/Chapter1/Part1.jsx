@@ -46,6 +46,7 @@ export const Chapter1_Part1 = [
   // SCENE 1
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+
   {
     type: "scene",
     title: "Cibabao, Samar",
@@ -54,11 +55,20 @@ export const Chapter1_Part1 = [
     music: "traditional" 
   },
 
+  // scratched. 
+  // {
+  // type: "chapterIntro",
+  // background: require("../../../../Background Images/Intro/Chapter 1.png"),
+  // titleImage: require("../../../../Background Images/Intro/Chapter 1_Title.png"),
+  // },
+
+
   {
     type: "narrator",
     text: "After weeks at sea, five Spanish ships under General Miguel López de Legazpi\nanchor off Cibabao, Samar.",
-    background: require("../../../../Background Images/Part 1/Spanish Arrival.png"),
+    background: require("../../../../Background Images/Intro/Intro 4.png"),
     unlock: ["Timeline_1565_02-13"]
+    
   },
 
   {
@@ -74,18 +84,21 @@ export const Chapter1_Part1 = [
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
 
+
   {
     type: "dialogue",
     speaker: "MIGUEL LÓPEZ DE LEGAZPI",
     background: require("../../../../Background Images/Part 1/Spanish Shipdeck.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Legazpi.png"),
-        position: "center"
+        source: require("../../../../Character Images/Chapter 1/Legazpi Neutral.png"),
+        position: "right"
       }
     ],
     text: "We have finally arrived. Remember our orders. We speak with\nthe locals peacefully first."
   },
+
+  
 
   {
     type: "narrator",
@@ -105,7 +118,7 @@ export const Chapter1_Part1 = [
     background: require("../../../../Background Images/Part 1/Spanish Coast.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Gomez.png"),
+        source: require("../../../../Character Images/Chapter 1/Gomez Talking.png"),
         position: "left"
       }
     ],
@@ -165,7 +178,7 @@ export const Chapter1_Part1 = [
 
   {
     type: "narrator",
-    text: "No Spanish settlement is established in Samar.\nLegazpi's fleet continues toward Leyte and Bohol.",
+    text: "No Spanish settlement is established in Samar. Legazpi's\nfleet continues toward Leyte and Bohol.",
     background: require("../../../../Background Images/Part 1/Spanish Coast.png")
   },
 
@@ -197,7 +210,7 @@ export const Chapter1_Part1 = [
     background: require("../../../../Background Images/Part 1/Spanish Coast.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Legazpi.png"),
+        source: require("../../../../Character Images/Chapter 1/Legazpi Neutral.png"),
         position: "right"
       }
     ],
@@ -222,12 +235,12 @@ export const Chapter1_Part1 = [
     background: require("../../../../Background Images/Part 1/Bohol Coast.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Sikatuna.png"),
-        position: "right"
+        source: require("../../../../Character Images/Chapter 1/Sikatuna Talk.png"),
+        position: "left"
       },
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Legazpi.png"),
-        position: "left"
+        source: require("../../../../Character Images/Chapter 1/Legazpi Neutral.png"),
+        position: "right"
       }
     ],
     text: "Legazpi, take this cup. From this moment, our blood is one."
@@ -239,12 +252,12 @@ export const Chapter1_Part1 = [
     background: require("../../../../Background Images/Part 1/Bohol Coast.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Sikatuna.png"),
-        position: "right"
+        source: require("../../../../Character Images/Chapter 1/Sikatuna Solemn.png"),
+        position: "left"
       },
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Legazpi.png"),
-        position: "left"
+        source: require("../../../../Character Images/Chapter 1/Legazpi Neutral.png"),
+        position: "right"
       }
     ],
     text: "If you're looking for Cebu, sail west. But be careful. Rajah Tupas is proud.\nHe guards his shores fiercely."
@@ -274,8 +287,8 @@ export const Chapter1_Part1 = [
     background: require("../../../../Background Images/Part 1/Cebu Village.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Tupas.png"),
-        position: "left"
+        source: require("../../../../Character Images/Chapter 1/Tupas Upset R.png"),
+        position: "right"
       },
     ],
     text: "Rajah Tupas waits on shore with more than two thousand warriors behind him.",
@@ -288,11 +301,11 @@ export const Chapter1_Part1 = [
     background: require("../../../../Background Images/Part 1/Cebu Village.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Legazpi.png"),
+        source: require("../../../../Character Images/Chapter 1/Legazpi Neutral R.png"),
         position: "left"
       },
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Tupas.png"),
+        source: require("../../../../Character Images/Chapter 1/Tupas Talking R.png"),
         position: "right"
       }
     ],
@@ -306,11 +319,11 @@ export const Chapter1_Part1 = [
     background: require("../../../../Background Images/Part 1/Cebu Village.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Legazpi.png"),
+        source: require("../../../../Character Images/Chapter 1/Legazpi Neutral R.png"),
         position: "left"
       },
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Tupas.png"),
+        source: require("../../../../Character Images/Chapter 1/Tupas Mad R.png"),
         position: "right"
       }
     ],
@@ -323,11 +336,11 @@ export const Chapter1_Part1 = [
     background: require("../../../../Background Images/Part 1/Cebu Village.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Legazpi.png"),
+        source: require("../../../../Character Images/Chapter 1/Legazpi Mad R.png"),
         position: "left"
       },
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Tupas.png"),
+        source: require("../../../../Character Images/Chapter 1/Tupas Upset R.png"),
         position: "right"
       }
     ],
@@ -347,26 +360,26 @@ export const Chapter1_Part1 = [
 
     choices: [
       {
-        text: "Refuse, and retreat to the mountains to prepare for battle.",
+        text: "Refuse, and retreat to the\nmountains to prepare for battle.",
         speaker: "RAJAH TUPAS",
-        dialogue: "Umatras muna tayo sa kabundukan at maghanda. Hindi\nnatin basta-basta ibibigay ang ating lupain.",
+        dialogue: "Umatras muna tayo sa kabundukan at maghanda. Hindi natin\nbasta-basta ibibigay ang ating lupain.",
         translation: "Let's retreat to the mountains and prepare. We we will not just give up our land.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Tupas.png"),
+            source: require("../../../../Character Images/Chapter 1/Tupas Talking.png"),
             position: "left"
           }
         ]
       },
 
       {
-        text: "Send a messenger to ask for more time first.",
+        text: "Send a messenger to ask for\nmore time first.",
         speaker: "RAJAH TUPAS",
-        dialogue: "Sabihin mo sa kanila na kailangan pa natin ng panahon.",
-        translation: "Tell them we need more time.",
+        dialogue: "Kailangan pa natin ng panahon para magdesisyon.",
+        translation: "We need more time to decide.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Tupas.png"),
+            source: require("../../../../Character Images/Chapter 1/Tupas Talking.png"),
             position: "left"
           }
         ]
@@ -391,7 +404,7 @@ export const Chapter1_Part1 = [
     background: require("../../../../Background Images/Part 1/Cebu Burned.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Legazpi.png"),
+        source: require("../../../../Character Images/Chapter 1/Legazpi Mad.png"),
         position: "right"
       }
     ],
@@ -411,8 +424,8 @@ export const Chapter1_Part1 = [
     background: require("../../../../Background Images/Part 1/Construction.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Legazpi.png"),
-        position: "center"
+        source: require("../../../../Character Images/Chapter 1/Legazpi Neutral.png"),
+        position: "right"
       }
     ],
     text: "We'll build our settlement here and call it Villa de Santísimo\nNombre de Jesús."
@@ -432,8 +445,12 @@ export const Chapter1_Part1 = [
     background: require("../../../../Background Images/Part 1/nipa hut interior santo nino discovery.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Camus.png"),
+        source: require("../../../../Character Images/Chapter 1/Camus Talking.png"),
         position: "left"
+      },
+      {
+        source: require("../../../../Character Images/Chapter 1/Legazpi Neutral.png"),
+        position: "right"
       }
     ],
     text: "Señor General! Look what I found!"
@@ -445,11 +462,11 @@ export const Chapter1_Part1 = [
     background: require("../../../../Background Images/Part 1/nipa hut interior santo nino discovery.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Camus.png"),
+        source: require("../../../../Character Images/Chapter 1/Camus Happy.png"),
         position: "left"
       },
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Legazpi.png"),
+        source: require("../../../../Character Images/Chapter 1/Legazpi Neutral.png"),
         position: "right"
       }
     ],
@@ -482,8 +499,8 @@ export const Chapter1_Part1 = [
     background: require("../../../../Background Images/Part 1/Cebu Village.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Legazpi.png"),
-        position: "center"
+        source: require("../../../../Character Images/Chapter 1/Legazpi Neutral.png"),
+        position: "right"
       }
     ],
     text: "We cannot keep surviving on so little. Panay has more food. We will\nmove the settlement somewhere else."
@@ -514,16 +531,16 @@ export const Chapter1_Part1 = [
     background: require("../../../../Background Images/Part 1/Spanish Shipdeck.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Goiti.png"),
-        position: "left"
+        source: require("../../../../Character Images/Chapter 1/Goiti Neutral.png"),
+        position: "right"
       },
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Legazpi.png"),
+        source: require("../../../../Character Images/Chapter 1/Legazpi Neutral R.png"),
         position: "center"
       },
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Salcedo.png"),
-        position: "right"
+        source: require("../../../../Character Images/Chapter 1/Salcedo Neutral.png"),
+        position: "left"
       }
     ],
     text: "Martín, I want you and my grandson, Juan de Salcedo.\nI want you to sail north together.",
@@ -536,16 +553,16 @@ export const Chapter1_Part1 = [
     background: require("../../../../Background Images/Part 1/Spanish Shipdeck.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Goiti.png"),
-        position: "left"
+        source: require("../../../../Character Images/Chapter 1/Goiti Salute.png"),
+        position: "right"
       },
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Legazpi.png"),
+        source: require("../../../../Character Images/Chapter 1/Legazpi Neutral R.png"),
         position: "center"
       },
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Salcedo.png"),
-        position: "right"
+        source: require("../../../../Character Images/Chapter 1/Salcedo Neutral.png"),
+        position: "left"
       }
     ],
     text: "Offer peace and friendship first. If we can avoid a fight, we will."
@@ -584,11 +601,11 @@ export const Chapter1_Part1 = [
     background: require("../../../../Background Images/Part 1/Sulayman's council space.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Dula.png"),
+        source: require("../../../../Character Images/Chapter 1/Dula Neutral.png"),
         position: "left"
       },
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Sulayman.png"),
+        source: require("../../../../Character Images/Chapter 1/Sulayman Neutral R.png"),
         position: "right"
       }
     ],
@@ -602,16 +619,16 @@ export const Chapter1_Part1 = [
     background: require("../../../../Background Images/Part 1/Sulayman's council space.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Dula.png"),
+        source: require("../../../../Character Images/Chapter 1/Dula Unsure.png"),
         position: "left"
       },
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Sulayman.png"),
+        source: require("../../../../Character Images/Chapter 1/Sulayman Neutral R.png"),
         position: "right"
       }
     ],
     text: "Kung lalabanan natin sila nang tuwiran, mawawala ang lahat sa atin.\nMakipag-usap muna tayo.",
-    translation: "My nephew, look at their ships and weapons. If we fight them head-on, we could lose\neverything. Let's talk first."
+    translation: "My nephew, look at their ships and weapons. If we fight them head-on, we could lose everything."
   },
 
 
@@ -627,27 +644,35 @@ export const Chapter1_Part1 = [
 
     choices: [
       {
-        text: "Agree right away and go speak with Legazpi.",
+        text: "Agree right away and go\nspeak with Legazpi.",
         speaker: "RAJAH SULAYMAN",
         dialogue: "Sige, tito. Susubukan nating makipag-usap.",
         translation: "Alright, uncle. Let's try talking.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Sulayman.png"),
+            source: require("../../../../Character Images/Chapter 1/Sulayman Talking R.png"),
             position: "right"
+          },
+          {
+            source: require("../../../../Character Images/Chapter 1/Dula Neutral.png"),
+            position: "left"
           }
         ]
       },
 
       {
-        text: "Hesitate, but let your uncle explain his plan.",
+        text: "Hesitate, but let your uncle\nexplain his plan.",
         speaker: "RAJAH SULAYMAN",
         dialogue: "Hindi ako sigurado, tito... pero makikinig muna ako.\nAno ba ang plano mo?",
         translation: "I'm not sure, uncle... but I'll hear you out. What's your plan?",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Sulayman.png"),
+            source: require("../../../../Character Images/Chapter 1/Sulayman Talking R.png"),
             position: "right"
+          },
+          {
+            source: require("../../../../Character Images/Chapter 1/Dula Neutral.png"),
+            position: "left"
           }
         ]
       }
