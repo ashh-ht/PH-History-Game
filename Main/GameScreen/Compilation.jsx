@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from "react";
 
 import {
@@ -22,19 +23,231 @@ import { Chapter1 } from "./StoryScreen/Chapter1";
 
 import VoyageMinigame from "./Minigames/VoyageMinigame";
 import SantoNinoMinigame from "./Minigames/SantoNinoMinigame";
+import CedulaMinigame from "./Minigames/CedulaMinigame";
+import DecipherMinigame from "./Minigames/DecipherMinigame";
+import CharacterMatchingMinigame from "./Minigames/CharacterMatchingMinigame";
+import ChronologicalOrderMinigame from "./Minigames/ChronologicalOrderMinigame";
+import WhoSaidItMinigame from "./Minigames/WhoSaidItMinigame";
+
+
+// =====================================================
+// ANIMATED NEXT BUTTON
+// =====================================================
+
+function AnimatedNextButton({ onPress }) {
+  const [pressed, setPressed] = useState(false);
+  const scale = useRef(new Animated.Value(1)).current;
+  const translateY = useRef(new Animated.Value(0)).current;
+
+  const animatePress = (isPressed) => {
+    setPressed(isPressed);
+
+    Animated.parallel([
+      Animated.spring(scale, {
+        toValue: isPressed ? 0.88 : 1,
+        speed: isPressed ? 24 : 18,
+        bounciness: isPressed ? 8 : 12,
+        useNativeDriver: true,
+      }),
+      Animated.spring(translateY, {
+        toValue: isPressed ? 4 : 0,
+        speed: isPressed ? 24 : 18,
+        bounciness: isPressed ? 4 : 12,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  return (
+    <Animated.View
+      style={[
+        styles.arrowButton,
+        {
+          transform: [{ scale }, { translateY }],
+        },
+      ]}
+    >
+      <TouchableOpacity
+        activeOpacity={1}
+        onPressIn={() => animatePress(true)}
+        onPressOut={() => animatePress(false)}
+        onPress={onPress}
+      >
+        <Image
+          source={
+            pressed
+              ? require("../../assets/icons/arrow_nextpressed.png")
+              : require("../../assets/icons/arrow_next.png")
+          }
+          style={styles.arrowImage}
+          resizeMode="contain"
+        />
+      </TouchableOpacity>
+    </Animated.View>
+  );
+}
+
+// =====================================================
+// ANIMATED STORY CHOICE BUTTON
+// =====================================================
+
+function AnimatedChoiceButton({ children, onPress, style }) {
+  const scale = useRef(new Animated.Value(1)).current;
+  const translateY = useRef(new Animated.Value(0)).current;
+
+  const animate = (isPressed) => {
+    Animated.parallel([
+      Animated.spring(scale, {
+        toValue: isPressed ? 0.94 : 1,
+        speed: 20,
+        bounciness: 12,
+        useNativeDriver: true,
+      }),
+      Animated.spring(translateY, {
+        toValue: isPressed ? 3 : 0,
+        speed: 20,
+        bounciness: 10,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  return (
+    <Animated.View
+      style={[
+        style,
+        {
+          transform: [{ scale }, { translateY }],
+        },
+      ]}
+    >
+      <TouchableOpacity
+        activeOpacity={1}
+        onPressIn={() => animate(true)}
+        onPressOut={() => animate(false)}
+        onPress={onPress}
+      >
+        {children}
+      </TouchableOpacity>
+    </Animated.View>
+  );
+}
+
+// =====================================================
+// ANIMATED QUIZ ANSWER BUTTON
+// =====================================================
+
+function AnimatedQuizButton({ children, onPress, style }) {
+  const scale = useRef(new Animated.Value(1)).current;
+  const translateY = useRef(new Animated.Value(0)).current;
+
+  const animate = (isPressed) => {
+    Animated.parallel([
+      Animated.spring(scale, {
+        toValue: isPressed ? 0.93 : 1,
+        speed: 22,
+        bounciness: 10,
+        useNativeDriver: true,
+      }),
+      Animated.spring(translateY, {
+        toValue: isPressed ? 3 : 0,
+        speed: 22,
+        bounciness: 8,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  return (
+    <Animated.View
+      style={[
+        style,
+        {
+          transform: [{ scale }, { translateY }],
+        },
+      ]}
+    >
+      <TouchableOpacity
+        activeOpacity={1}
+        onPressIn={() => animate(true)}
+        onPressOut={() => animate(false)}
+        onPress={onPress}
+      >
+        {children}
+      </TouchableOpacity>
+    </Animated.View>
+  );
+}
+
+// =====================================================
+// ANIMATED IMAGE BUTTON — MENU AND JOURNAL
+// =====================================================
+
+function AnimatedImageButton({
+  normalSource,
+  pressedSource,
+  onPress,
+  style,
+  imageStyle,
+}) {
+  const [pressed, setPressed] = useState(false);
+  const scale = useRef(new Animated.Value(1)).current;
+  const translateY = useRef(new Animated.Value(0)).current;
+
+  const animate = (isPressed) => {
+    setPressed(isPressed);
+
+    Animated.parallel([
+      Animated.spring(scale, {
+        toValue: isPressed ? 0.90 : 1,
+        speed: isPressed ? 22 : 18,
+        bounciness: isPressed ? 6 : 12,
+        useNativeDriver: true,
+      }),
+      Animated.spring(translateY, {
+        toValue: isPressed ? 3 : 0,
+        speed: isPressed ? 22 : 18,
+        bounciness: isPressed ? 4 : 10,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  return (
+    <Animated.View
+      style={[
+        style,
+        {
+          transform: [{ scale }, { translateY }],
+        },
+      ]}
+    >
+      <TouchableOpacity
+        activeOpacity={1}
+        onPressIn={() => animate(true)}
+        onPressOut={() => animate(false)}
+        onPress={onPress}
+      >
+        <Image
+          source={pressed ? pressedSource : normalSource}
+          style={imageStyle}
+          resizeMode="contain"
+        />
+      </TouchableOpacity>
+    </Animated.View>
+  );
+}
 
 // =====================================================
 // TYPEWRITER
 // =====================================================
 
-// Milliseconds per character for each Text Speed option
 const SPEED_MS = { Slow: 60, Normal: 30, Fast: 12 };
 
 function useTypewriter(text, msPerChar, resetKey) {
   const [state, setState] = useState({ key: resetKey, count: 0 });
   const length = text ? text.length : 0;
 
-  // If the line changed but state hasn't reset yet, show 0 characters
   const count = state.key === resetKey ? state.count : 0;
 
   useEffect(() => {
@@ -59,9 +272,6 @@ function useTypewriter(text, msPerChar, resetKey) {
   };
 }
 
-// FIX: renders the FULL text invisibly to reserve the space,
-// and puts the typed text on top.
-// This stops the box from re-centering/jumping while typing.
 function TypedText({ style, full, shown }) {
   return (
     <View>
@@ -72,25 +282,29 @@ function TypedText({ style, full, shown }) {
 }
 
 // =====================================================
-// MENU
+// MENU OVERLAY
 // =====================================================
 
 function GameplayMenuOverlay({ navigation }) {
   return (
     <View style={styles.menuOverlay}>
-      <TouchableOpacity onPress={() => navigation.navigate("Second")}>
-        <Image
-          source={require("../../assets/icons/Menu_icon.png")}
-          style={styles.menuIcon}
-        />
-      </TouchableOpacity>
+      {/* MENU BUTTON */}
+      <AnimatedImageButton
+        normalSource={require("../../assets/icons/menu_button.png")}
+        pressedSource={require("../../assets/icons/menu_buttonpressed.png")}
+        style={styles.menuButton}
+        imageStyle={styles.menuButtonImage}
+        onPress={() => navigation.navigate("Second")}
+      />
 
-      <TouchableOpacity onPress={() => navigation.navigate("Journal")}>
-        <Image
-          source={require("../../assets/icons/journal_closed.png")}
-          style={styles.menuIcon}
-        />
-      </TouchableOpacity>
+      {/* JOURNAL BUTTON */}
+      <AnimatedImageButton
+        normalSource={require("../../assets/icons/journal_button.png")}
+        pressedSource={require("../../assets/icons/journal_buttonpressed.png")}
+        style={styles.menuButton}
+        imageStyle={styles.menuButtonImage}
+        onPress={() => navigation.navigate("Journal")}
+      />
     </View>
   );
 }
@@ -108,6 +322,7 @@ function CharacterLayer({ characters }) {
         if (!char?.source) return null;
 
         const isLeft = char.position === "left";
+        const isCenter = char.position === "center";
 
         return (
           <Image
@@ -116,7 +331,11 @@ function CharacterLayer({ characters }) {
             resizeMode="contain"
             style={[
               styles.characterImage,
-              isLeft ? styles.characterLeft : styles.characterRight,
+              isLeft
+                ? styles.characterLeft
+                : isCenter
+                  ? styles.characterCenter
+                  : styles.characterRight,
             ]}
           />
         );
@@ -149,12 +368,10 @@ function PartRenderer(props) {
   const display = useDisplaySettings();
   const fontScale = FONT_SCALE[display?.fontSize] ?? 1;
 
-  // Applied to every box image
   const boxImage = {
     opacity: display?.boxOpacity ?? 1,
   };
 
-  // Safe scaling helper
   const scaled = (style) => {
     const s = StyleSheet.flatten(style) || {};
 
@@ -173,18 +390,16 @@ function PartRenderer(props) {
   // LOAD / RESTORE PART
   // ===================================================
 
-  // If the player restored a save, Saves screen passes startScene.
-  // Otherwise fall back to normal progress.
   const startIdx = route?.params?.startScene ?? game.scene;
 
   const [sceneIdx, setSceneIdx] = useState(startIdx);
   const [picked, setPicked] = useState(null);
   const [quizAnswer, setQuizAnswer] = useState(null);
 
-  // Intro crossfade
   const introProgress = useRef(new Animated.Value(1)).current;
   const [introChanging, setIntroChanging] = useState(false);
   const [introNextIndex, setIntroNextIndex] = useState(null);
+  const chapterTitleOpacity = useRef(new Animated.Value(0)).current;
 
   // ===================================================
   // LOAD PART
@@ -202,8 +417,6 @@ function PartRenderer(props) {
     };
   }, []);
 
-  // If the screen is already mounted and a save is restored later,
-  // useState's initial value is ignored, so jump to the new scene here.
   const startScene = route?.params?.startScene;
 
   useEffect(() => {
@@ -222,12 +435,35 @@ function PartRenderer(props) {
   const hasMoreScenes = sceneIdx < sceneData.length;
   const current = hasMoreScenes ? sceneData[sceneIdx] : null;
 
+
+  useEffect(() => {
+    if (current?.type !== "chapterIntro") {
+      return;
+    }
+
+    chapterTitleOpacity.setValue(0);
+
+    const animation = Animated.sequence([
+      Animated.delay(500),
+      Animated.timing(chapterTitleOpacity, {
+        toValue: 1,
+        duration: 1800,
+        useNativeDriver: true,
+      }),
+    ]);
+
+    animation.start();
+
+    return () => {
+      animation.stop();
+    };
+  }, [sceneIdx]);
+
+
   // ===================================================
   // SAVE HELPERS
   // ===================================================
 
-  // Counts how many "scene" title cards exist up to idx,
-  // and returns the latest scene's title.
   const getSceneInfo = (idx) => {
     let sceneNumber = 0;
     let sceneTitle = "";
@@ -242,9 +478,6 @@ function PartRenderer(props) {
     return { sceneNumber, sceneTitle };
   };
 
-  // AUTOSAVE #1:
-  // whenever a scene title card appears
-  // skips the very last card
   useEffect(() => {
     if (!current || current.type !== "scene") return;
     if (sceneIdx === sceneData.length - 1) return;
@@ -257,9 +490,6 @@ function PartRenderer(props) {
     });
   }, [sceneIdx]);
 
-  // AUTOSAVE #2:
-  // right after the player makes a decision.
-  // Saves at nextScene so restoring resumes AFTER the choice.
   const saveDecision = (choiceIndex) => {
     if (!current || current.type !== "choice") return;
 
@@ -286,7 +516,6 @@ function PartRenderer(props) {
   // ===================================================
 
   const goToIndex = (index) => {
-    // Reject undefined / invalid values
     if (
       typeof index !== "number" ||
       index < 0 ||
@@ -361,15 +590,8 @@ function PartRenderer(props) {
 
   // ===================================================
   // GAMEPLAY SETTINGS
-  // TEXT SPEED + AUTO PLAY
-  //
-  // IMPORTANT:
-  // These hooks must stay above every early return.
   // ===================================================
 
-  // Only dialogue, narrator, system messages and
-  // choice responses are typed.
-  // Scene cards, quizzes and intro screens show instantly.
   const isTyped =
     current &&
     current.type !== "scene" &&
@@ -395,12 +617,9 @@ function PartRenderer(props) {
     `${sceneIdx}-${picked}`
   );
 
-  // What "next" means on the current screen
   const next = () => {
     if (!current) return;
 
-    // If a choice has no nextScene,
-    // just go to the next index.
     if (current.type === "choice") {
       return goToIndex(
         typeof current.nextScene === "number"
@@ -416,8 +635,6 @@ function PartRenderer(props) {
     return goNext();
   };
 
-  // First tap finishes the line,
-  // second tap moves on.
   const advance = () => (done ? next() : skip());
 
   // ===================================================
@@ -427,10 +644,7 @@ function PartRenderer(props) {
   useEffect(() => {
     if (!settings?.autoPlay || !done || !current) return;
 
-    // Player must answer quizzes manually
     if (current.type === "quiz") return;
-
-    // Player must choose before choice response
     if (current.type === "choice" && picked === null) return;
 
     const id = setTimeout(
@@ -448,41 +662,103 @@ function PartRenderer(props) {
   ]);
 
   // ===================================================
-  // MINIGAMES
-  //
-  // These returns are AFTER ALL HOOKS above.
-  // This avoids the React "Rendered fewer hooks"
-  // problem.
+  // MINIGAMES UNDER PART RENDERER
   // ===================================================
 
   if (current?.type === "voyage") {
-    return (
-      <VoyageMinigame
-        onComplete={goNext}
-      />
-    );
+    return <VoyageMinigame onComplete={goNext} />; // 1
   }
 
   if (current?.type === "santoNino") {
+    return <SantoNinoMinigame onComplete={goNext} />; //1
+  }
+
+  // SCRATCHED FOR NOW.
+  // if (current?.type === "shooter") {
+  //   return (
+  //     <ShooterMinigame
+  //       key={`shooter-${sceneIdx}`}
+  //       onComplete={() => goToIndex(sceneIdx + 1)}
+  //       variant={current.variant || "bohol"}
+  //     />
+  //   );
+  // }
+
+  if (current?.type === "cedula") {
     return (
-      <SantoNinoMinigame
+      <CedulaMinigame
+        key={`cedula-${sceneIdx}`}
         onComplete={goNext}
       />
     );
-  }
+  } // 5
+
+  if (current?.type === "decipher") {
+    return (
+      <DecipherMinigame
+        key={`decipher-${chapterNumber}-${partNumber}-${sceneIdx}`}
+        onComplete={goNext}
+      />
+    );
+  } // 2
+
+  if (current?.type === "matching") {
+    return (
+      <CharacterMatchingMinigame
+        key={`matching-${chapterNumber}-${partNumber}-${sceneIdx}`}
+        characters={current.characters}
+        onComplete={goNext}
+      />
+    );
+  } // 3
+
+  if (current?.type === "chronological") {
+    return (
+      <ChronologicalOrderMinigame
+        key={`chronological-${chapterNumber}-${partNumber}-${sceneIdx}`}
+        events={current.events}
+        onComplete={goNext}
+      />
+    );
+  } // 6
+
+
+  if (current?.type === "whoSaidIt") {
+    return (
+      <WhoSaidItMinigame
+        key={`who-said-it-${chapterNumber}-${partNumber}-${sceneIdx}`}
+        onComplete={(results) => {
+          console.log("Who Said It results:", results);
+          goNext();
+        }}
+      />
+    );
+  } // 7
+
+
+  // Maureign
+  // 1 / Puzzle + Voyage
+  // 2 / Decipher
+  // 3 / Matching
+  // 5 / Cedula
+  // 6 / Chronological
+  // 7 / Who said it?
+
+  // Hendrick
+  // 4 / Trace
+  // 8 / Final Timeline
+
 
   // ===================================================
   // MENU OVERLAY
   // ===================================================
 
-  const withOverlay = (node) => {
-    return (
-      <>
-        {node}
-        <GameplayMenuOverlay navigation={navigation} />
-      </>
-    );
-  };
+  const withOverlay = (node) => (
+    <>
+      {node}
+      <GameplayMenuOverlay navigation={navigation} />
+    </>
+  );
 
   // ===================================================
   // PART COMPLETE
@@ -507,9 +783,7 @@ function PartRenderer(props) {
             }
           }}
         >
-          <Text style={styles.nextButtonText}>
-            Continue
-          </Text>
+          <Text style={styles.nextButtonText}>Continue</Text>
         </TouchableOpacity>
       </View>
     );
@@ -519,6 +793,35 @@ function PartRenderer(props) {
   // INTRO SCREENS
   // ===================================================
 
+
+  // ===================================================
+  // CHAPTER TITLE INTRO
+  // ===================================================
+
+  if (current.type === "chapterIntro") {
+    return withOverlay(
+      <ImageBackground
+        source={current.background}
+        style={styles.chapterIntroScreen}
+        resizeMode="cover"
+      >
+        <Animated.Image
+          source={current.titleImage}
+          resizeMode="contain"
+          style={[
+            styles.chapterIntroTitle,
+            {
+              opacity: chapterTitleOpacity,
+            },
+          ]}
+        />
+
+        <AnimatedNextButton onPress={goNext} />
+      </ImageBackground>
+    );
+  }
+
+
   if (current.type === "system" && current.intro === true) {
     const nextIntro =
       introNextIndex !== null
@@ -527,7 +830,6 @@ function PartRenderer(props) {
 
     return withOverlay(
       <View style={styles.introScreen}>
-        {/* CURRENT INTRO */}
         <ImageBackground
           source={current.background}
           style={styles.introBackground}
@@ -540,7 +842,6 @@ function PartRenderer(props) {
           </View>
         </ImageBackground>
 
-        {/* NEXT INTRO FADES OVER CURRENT */}
         {nextIntro && (
           <Animated.View
             pointerEvents="none"
@@ -563,7 +864,6 @@ function PartRenderer(props) {
           </Animated.View>
         )}
 
-        {/* TAP ANYWHERE */}
         <TouchableOpacity
           style={styles.introTouchable}
           activeOpacity={1}
@@ -591,7 +891,7 @@ function PartRenderer(props) {
       >
         <View style={styles.choiceParchmentWrapper}>
           <ImageBackground
-            source={require("../../assets/foreground/narration_box.png")}
+            source={require("../../assets/foreground/quizzing_box.png")}
             style={styles.choiceParchmentBox}
             imageStyle={boxImage}
             resizeMode="stretch"
@@ -601,19 +901,23 @@ function PartRenderer(props) {
             </Text>
 
             {isAnswered && (
-              <Text style={scaled(styles.choicePrompt)}>
-                {isCorrect
-                  ? "Correct!"
-                  : "Not quite..."}
+              <Text
+                style={scaled(
+                  isCorrect
+                    ? styles.quizCorrectPrompt
+                    : styles.quizIncorrectPrompt
+                )}
+              >
+                {isCorrect ? "Correct!" : "Not quite..."}
               </Text>
             )}
           </ImageBackground>
         </View>
 
-        {/* QUIZ ANSWERS */}
+        {/* QUIZ ANSWERS WITH SPRING ANIMATION */}
         <View style={styles.quizButtonsGrid}>
           {current.options.map((option, index) => (
-            <TouchableOpacity
+            <AnimatedQuizButton
               key={index}
               style={styles.quizImageButton}
               onPress={() => {
@@ -621,7 +925,6 @@ function PartRenderer(props) {
                   setQuizAnswer(index);
                 }
               }}
-              activeOpacity={0.85}
             >
               <ImageBackground
                 source={require("../../assets/buttons/choice_button.png")}
@@ -632,20 +935,12 @@ function PartRenderer(props) {
                   {option}
                 </Text>
               </ImageBackground>
-            </TouchableOpacity>
+            </AnimatedQuizButton>
           ))}
         </View>
 
         {isAnswered && (
-          <TouchableOpacity
-            style={styles.arrowButton}
-            onPress={goNext}
-          >
-            <Image
-              source={require("../../assets/icons/arrow_next.png")}
-              style={styles.arrowImage}
-            />
-          </TouchableOpacity>
+          <AnimatedNextButton onPress={goNext} />
         )}
       </View>
     );
@@ -673,15 +968,7 @@ function PartRenderer(props) {
           </ImageBackground>
         </View>
 
-        <TouchableOpacity
-          style={styles.arrowButton}
-          onPress={advance}
-        >
-          <Image
-            source={require("../../assets/icons/arrow_next.png")}
-            style={styles.arrowImage}
-          />
-        </TouchableOpacity>
+        <AnimatedNextButton onPress={advance} />
       </>
     );
 
@@ -729,16 +1016,7 @@ function PartRenderer(props) {
           </View>
         </View>
 
-        <TouchableOpacity
-          style={styles.arrowButton}
-          onPress={goNext}
-          activeOpacity={0.8}
-        >
-          <Image
-            source={require("../../assets/icons/arrow_next.png")}
-            style={styles.arrowImage}
-          />
-        </TouchableOpacity>
+        <AnimatedNextButton onPress={goNext} />
       </ImageBackground>
     );
   }
@@ -750,9 +1028,7 @@ function PartRenderer(props) {
   if (current.type === "narrator") {
     const narratorContent = (
       <>
-        <CharacterLayer
-          characters={current.characters}
-        />
+        <CharacterLayer characters={current.characters} />
 
         <View style={styles.narratorWrapper}>
           <ImageBackground
@@ -773,15 +1049,7 @@ function PartRenderer(props) {
           </ImageBackground>
         </View>
 
-        <TouchableOpacity
-          style={styles.arrowButton}
-          onPress={advance}
-        >
-          <Image
-            source={require("../../assets/icons/arrow_next.png")}
-            style={styles.arrowImage}
-          />
-        </TouchableOpacity>
+        <AnimatedNextButton onPress={advance} />
       </>
     );
 
@@ -806,19 +1074,16 @@ function PartRenderer(props) {
 
   // ===================================================
   // PLAYER CHOICE
+  // Story choices display in two columns.
   // ===================================================
 
   if (current.type === "choice") {
-    // -------------------------------------------------
-    // QUESTION SCREEN
-    // -------------------------------------------------
-
     if (picked === null) {
       const choiceContent = (
         <>
           <View style={styles.choiceParchmentWrapper}>
             <ImageBackground
-              source={require("../../assets/foreground/narration_box.png")}
+              source={require("../../assets/foreground/quizzing_box.png")}
               style={styles.choiceParchmentBox}
               imageStyle={boxImage}
               resizeMode="stretch"
@@ -833,16 +1098,15 @@ function PartRenderer(props) {
             </ImageBackground>
           </View>
 
-          <View style={styles.choiceButtonsColumn}>
+          <View style={styles.choiceButtonsGrid}>
             {current.choices.map((choice, index) => (
-              <TouchableOpacity
+              <AnimatedChoiceButton
                 key={index}
                 style={styles.choiceImageButton}
                 onPress={() => {
                   setPicked(index);
                   saveDecision(index);
                 }}
-                activeOpacity={0.85}
               >
                 <ImageBackground
                   source={require("../../assets/buttons/choice_button.png")}
@@ -853,7 +1117,7 @@ function PartRenderer(props) {
                     {choice.text}
                   </Text>
                 </ImageBackground>
-              </TouchableOpacity>
+              </AnimatedChoiceButton>
             ))}
           </View>
         </>
@@ -878,17 +1142,12 @@ function PartRenderer(props) {
       );
     }
 
-    // -------------------------------------------------
     // RESPONSE SCREEN
-    // -------------------------------------------------
-
     const selectedChoice = current.choices[picked];
 
     const responseContent = (
       <>
-        <CharacterLayer
-          characters={selectedChoice.characters}
-        />
+        <CharacterLayer characters={selectedChoice.characters} />
 
         <View style={styles.dialogueWrapper}>
           <ImageBackground
@@ -908,24 +1167,14 @@ function PartRenderer(props) {
             />
 
             {selectedChoice.translation ? (
-              <Text
-                style={scaled(styles.dialogueTranslation)}
-              >
+              <Text style={scaled(styles.dialogueTranslation)}>
                 {selectedChoice.translation}
               </Text>
             ) : null}
           </ImageBackground>
         </View>
 
-        <TouchableOpacity
-          style={styles.arrowButton}
-          onPress={advance}
-        >
-          <Image
-            source={require("../../assets/icons/arrow_next.png")}
-            style={styles.arrowImage}
-          />
-        </TouchableOpacity>
+        <AnimatedNextButton onPress={advance} />
       </>
     );
 
@@ -954,9 +1203,7 @@ function PartRenderer(props) {
 
   const dialogueContent = (
     <>
-      <CharacterLayer
-        characters={current.characters}
-      />
+      <CharacterLayer characters={current.characters} />
 
       <View style={styles.dialogueWrapper}>
         <ImageBackground
@@ -976,24 +1223,14 @@ function PartRenderer(props) {
           />
 
           {current.translation ? (
-            <Text
-              style={scaled(styles.dialogueTranslation)}
-            >
+            <Text style={scaled(styles.dialogueTranslation)}>
               {current.translation}
             </Text>
           ) : null}
         </ImageBackground>
       </View>
 
-      <TouchableOpacity
-        style={styles.arrowButton}
-        onPress={advance}
-      >
-        <Image
-          source={require("../../assets/icons/arrow_next.png")}
-          style={styles.arrowImage}
-        />
-      </TouchableOpacity>
+      <AnimatedNextButton onPress={advance} />
     </>
   );
 
@@ -1018,8 +1255,6 @@ function PartRenderer(props) {
 
 // =====================================================
 // SCREEN EXPORTS
-// (`...props` includes `route`, so route.params.startScene
-// reaches PartRenderer)
 // =====================================================
 
 export function Chap1Part1Screen({ navigation, ...props }) {
@@ -1128,7 +1363,7 @@ export function Chap1Part8Screen({ navigation, ...props }) {
       partNumber={8}
       isLastPart={true}
       onChapterComplete={() =>
-        navigation.navigate("ChapterSelect")
+        navigation.navigate("MainMenu")
       }
       navigation={navigation}
       {...props}
@@ -1141,6 +1376,22 @@ export function Chap1Part8Screen({ navigation, ...props }) {
 // =====================================================
 
 const styles = StyleSheet.create({
+
+  // CHAPTER TITLE INTRO
+  chapterIntroScreen: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "#000000",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  chapterIntroTitle: {
+    width: "60%",
+    height: "45%",
+  },
+
   container: {
     flex: 1,
     backgroundColor: "#000000",
@@ -1156,7 +1407,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#000000",
   },
 
-  // Typed text sits on top of the invisible full-text spacer
   typedOverlay: {
     position: "absolute",
     left: 0,
@@ -1164,29 +1414,29 @@ const styles = StyleSheet.create({
     top: 0,
   },
 
-  // ===================================================
   // MENU
-  // ===================================================
-
   menuOverlay: {
     position: "absolute",
     top: 20,
     right: 20,
     zIndex: 100,
     flexDirection: "row",
+    alignItems: "center",
     gap: 10,
   },
 
-  menuIcon: {
+  menuButton: {
     width: 42,
     height: 42,
+  },
+
+  menuButtonImage: {
+    width: "100%",
+    height: "100%",
     resizeMode: "contain",
   },
 
-  // ===================================================
   // INTRO
-  // ===================================================
-
   introScreen: {
     flex: 1,
     width: "100%",
@@ -1234,10 +1484,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
 
-  // ===================================================
   // SCENE
-  // ===================================================
-
   sceneScreen: {
     flex: 1,
     width: "100%",
@@ -1272,27 +1519,21 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 
-  // ===================================================
   // ARROW
-  // ===================================================
-
   arrowButton: {
     position: "absolute",
-    right: 25,
+    right: 50,
     bottom: 25,
     zIndex: 50,
   },
 
   arrowImage: {
-    width: 55,
-    height: 55,
+    width: 35,
+    height: 35,
     resizeMode: "contain",
   },
 
-  // ===================================================
   // SYSTEM
-  // ===================================================
-
   systemScreen: {
     flex: 1,
     width: "100%",
@@ -1321,59 +1562,61 @@ const styles = StyleSheet.create({
     lineHeight: 25,
   },
 
-  // ===================================================
   // NARRATOR
-  // ===================================================
-
   narratorWrapper: {
     position: "absolute",
     left: 20,
-    right: 20,
-    top: "65%",
-    transform: [{ translateY: -20 }],
+    right: 5,
+    bottom: 5,
     zIndex: 20,
   },
 
   narratorBox: {
     width: "100%",
-    minHeight: 150,
+    minHeight: 160,
     justifyContent: "center",
-    padding: 30,
+    paddingTop: 40,
+    paddingBottom: 25,
+    paddingLeft: 30,
+    paddingRight: -120,
   },
 
   narratorLabel: {
-    color: "#000000",
+    position: "absolute",
+    top: -1,
+    left: -10,
+    width: 300,
+    height: 45,
+    color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "bold",
-    marginBottom: 8,
-    marginLeft: 25,
+    textAlign: "center",
+    textAlignVertical: "center",
+    includeFontPadding: false,
   },
 
   narratorText: {
-    color: "#000000",
+    color: "#FFFFFF",
     fontSize: 17,
     lineHeight: 24,
     textAlign: "center",
   },
 
-  // ===================================================
   // CHARACTERS
-  // ===================================================
-
   characterLayer: {
     position: "absolute",
     left: 0,
     right: 0,
     bottom: 0,
-    height: "65%",
+    height: "100%",
     zIndex: 10,
   },
 
   characterImage: {
     position: "absolute",
-    bottom: 0,
-    width: "42%",
-    height: "100%",
+    bottom: 100,
+    width: "35%",
+    height: "72%",
     resizeMode: "contain",
   },
 
@@ -1385,10 +1628,11 @@ const styles = StyleSheet.create({
     right: "2%",
   },
 
-  // ===================================================
-  // DIALOGUE
-  // ===================================================
+  characterCenter: {
+    left: "30%",
+  },
 
+  // DIALOGUE
   dialogueWrapper: {
     position: "absolute",
     left: 20,
@@ -1401,29 +1645,35 @@ const styles = StyleSheet.create({
     width: "100%",
     minHeight: 160,
     justifyContent: "center",
-    paddingTop: 28,
+    paddingTop: 40,
     paddingBottom: 25,
-    paddingLeft: 30,
-    paddingRight: 30,
+    paddingLeft: 10,
+    paddingRight: -30,
   },
 
   speakerName: {
-    color: "#000000",
+    position: "absolute",
+    top: -1,
+    left: 25,
+    width: 300,
+    height: 45,
+    color: "#352313",
     fontSize: 16,
     fontWeight: "bold",
-    marginBottom: 8,
-    marginLeft: 35,
+    textAlign: "center",
+    textAlignVertical: "center",
+    includeFontPadding: false,
   },
 
   dialogueText: {
-    color: "#000000",
+    color: "#0f0f0f",
     fontSize: 17,
     lineHeight: 24,
     textAlign: "center",
   },
 
   dialogueTranslation: {
-    color: "#555555",
+    color: "#141414",
     fontSize: 14,
     lineHeight: 20,
     textAlign: "center",
@@ -1432,12 +1682,12 @@ const styles = StyleSheet.create({
   },
 
   // ===================================================
-  // CHOICES
+  // STORY CHOICES — TWO COLUMNS
   // ===================================================
 
   choiceScreen: {
     flex: 1,
-    backgroundColor: "#000000",
+    backgroundColor: "#fafafa",
     justifyContent: "center",
   },
 
@@ -1454,35 +1704,40 @@ const styles = StyleSheet.create({
   },
 
   choiceQuestion: {
-    color: "#000000",
+    color: "#fdfdfd",
     fontSize: 18,
     lineHeight: 25,
     textAlign: "center",
   },
 
   choicePrompt: {
-    color: "#000000",
+    color: "#d7cfbe",
     fontSize: 16,
     textAlign: "center",
     marginTop: 15,
     fontWeight: "bold",
   },
 
-  choiceButtonsColumn: {
+  choiceButtonsGrid: {
     paddingHorizontal: 20,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    alignItems: "stretch",
     gap: 12,
+    transform: [{ translateX: -15 }],
   },
 
   choiceImageButton: {
-    width: "100%",
+    width: "47%",
   },
 
   choiceImageButtonBg: {
     width: "100%",
-    minHeight: 65,
+    minHeight: 90,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 20,
+    paddingHorizontal: 12,
     paddingVertical: 12,
   },
 
@@ -1519,17 +1774,31 @@ const styles = StyleSheet.create({
   },
 
   quizButtonText: {
-    color: "#000000",
+    color: "#371f10",
     fontSize: 15,
     lineHeight: 20,
     textAlign: "center",
     fontWeight: "bold",
   },
 
-  // ===================================================
-  // COMPLETE
-  // ===================================================
+  // QUIZ FEEDBACK COLORS
+  quizCorrectPrompt: {
+    color: "#218838",
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 15,
+    fontWeight: "bold",
+  },
 
+  quizIncorrectPrompt: {
+    color: "#dc3545",
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 15,
+    fontWeight: "bold",
+  },
+
+  // COMPLETE
   nextButton: {
     marginTop: 20,
     paddingHorizontal: 30,

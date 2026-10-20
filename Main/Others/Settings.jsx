@@ -1,6 +1,70 @@
-import { useState } from 'react';
-import { Pressable, Image, StyleSheet, Text, View } from 'react-native';
+import { useState, useRef } from 'react';
+import {
+  Pressable,
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  Animated,
+} from 'react-native';
 import Sound_clicks from '../../Components/Sound_clicks';
+
+// =====================================================
+// ANIMATED TOP BUTTON
+// =====================================================
+
+function AnimatedTopButton({
+  normalSource,
+  pressedSource,
+  onPress,
+}) {
+  const [pressed, setPressed] = useState(false);
+  const scale = useRef(new Animated.Value(1)).current;
+  const translateY = useRef(new Animated.Value(0)).current;
+
+  const animate = (isPressed) => {
+    setPressed(isPressed);
+
+    Animated.parallel([
+      Animated.spring(scale, {
+        toValue: isPressed ? 0.9 : 1,
+        speed: isPressed ? 22 : 18,
+        bounciness: isPressed ? 6 : 12,
+        useNativeDriver: true,
+      }),
+      Animated.spring(translateY, {
+        toValue: isPressed ? 3 : 0,
+        speed: isPressed ? 22 : 18,
+        bounciness: isPressed ? 4 : 10,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  return (
+    <Animated.View
+      style={{
+        transform: [{ scale }, { translateY }],
+      }}
+    >
+      <Pressable
+        onPressIn={() => animate(true)}
+        onPressOut={() => animate(false)}
+        onPress={onPress}
+      >
+        <Image
+          source={pressed ? pressedSource : normalSource}
+          style={styles.icon}
+          resizeMode="contain"
+        />
+      </Pressable>
+    </Animated.View>
+  );
+}
+
+// =====================================================
+// SETTINGS SCREEN
+// =====================================================
 
 function Setting_screen({ navigation }) {
   const [showExitConfirm, setShowExitConfirm] = useState(false);
@@ -27,12 +91,21 @@ function Setting_screen({ navigation }) {
   return (
     <View style={[styles.container, styles.overlay]}>
       <View style={styles.topIcon}>
-        <Sound_clicks onPress={() => navigation.goBack()}>
-          <Image source={require('../../assets/return.png')} style={styles.icon} />
-        </Sound_clicks>
-        <Sound_clicks onPress={() => navigation.navigate('Journal')}>
-          <Image source={require('../../assets/Journal_page.png')} style={styles.icon} />
-        </Sound_clicks>
+
+        {/* X / RETURN BUTTON */}
+        <AnimatedTopButton
+          normalSource={require('../../assets/icons/x_button.png')}
+          pressedSource={require('../../assets/icons/x_buttonpressed.png')}
+          onPress={() => navigation.goBack()}
+        />
+
+        {/* JOURNAL BUTTON */}
+        <AnimatedTopButton
+          normalSource={require('../../assets/icons/journal_button.png')}
+          pressedSource={require('../../assets/icons/journal_buttonpressed.png')}
+          onPress={() => navigation.navigate('Journal')}
+        />
+
       </View>
 
       <View style={styles.settingPanel}>
@@ -93,21 +166,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  // add this — the dim layer that lets the game show through
+
   overlay: {
     backgroundColor: 'rgba(0, 0, 0, 0.55)',
   },
+
   topIcon: {
     position: 'absolute',
     top: 12,
     left: 20,
     flexDirection: 'row',
-    gap: 15
+    gap: 15,
   },
+
   icon: {
     width: 40,
-    height: 40
+    height: 40,
   },
+
   settingPanel: {
     backgroundColor: '#FFF2CB',
     borderRadius: 15,
@@ -116,26 +192,31 @@ const styles = StyleSheet.create({
     width: '75%',
     alignSelf: 'center',
   },
+
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    gap: 45
+    gap: 45,
   },
+
   cyclinderbutton: {
     width: '46%',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
+
   imagepillbutton: {
     position: 'absolute',
     display: 'flex',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
+
   cylindertexts: {
     fontSize: 16,
-    fontWeight: '500'
+    fontWeight: '500',
   },
+
   confirmOverlay: {
     position: 'absolute',
     top: 0,
@@ -150,6 +231,7 @@ const styles = StyleSheet.create({
     zIndex: 999,
     elevation: 10,
   },
+
   confirmPanel: {
     backgroundColor: '#FFF2CB',
     borderRadius: 15,
@@ -157,23 +239,27 @@ const styles = StyleSheet.create({
     width: '50%',
     alignItems: 'center',
   },
+
   confirmText: {
     fontSize: 18,
     fontWeight: '600',
     textAlign: 'center',
     marginBottom: 20,
   },
+
   confirmButtonsRow: {
     flexDirection: 'row',
     justifyContent: 'center',
     gap: 24,
   },
+
   confirmButton: {
     width: 110,
     height: 50,
     alignItems: 'center',
     justifyContent: 'center',
   },
+
   confirmButtonImage: {
     position: 'absolute',
     top: 0,

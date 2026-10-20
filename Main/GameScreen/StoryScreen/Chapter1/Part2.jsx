@@ -15,7 +15,11 @@ export const Chapter1_Part2 = [
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
 
-
+  // GAME ENTRY
+  
+  {
+    type: "decipher",
+  },
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 1 
@@ -46,8 +50,12 @@ export const Chapter1_Part2 = [
     background: require("../../../../Background Images/Part 2/saint paul inabanga church interior.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Dagohoy.png"),
+        source: require("../../../../Character Images/Chapter 2/Dagohoy Mad.png"),
         position: "left"
+      },
+      {
+        source: require("../../../../Character Images/Chapter 2/Morales.png"),
+        position: "right"
       }
     ],
     text: "Padre, pinatay po ang aking kapatid habang tinutupad ang inyong utos."
@@ -59,11 +67,15 @@ export const Chapter1_Part2 = [
     background: require("../../../../Background Images/Part 2/saint paul inabanga church interior.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Dagohoy.png"),
+        source: require("../../../../Character Images/Chapter 2/Dagohoy Mad.png"),
         position: "left"
+      },
+      {
+        source: require("../../../../Character Images/Chapter 2/Morales.png"),
+        position: "right"
       }
     ],
-    text: "Bakit ninyo siya ipinagkakait sa tamang paglilibing?",
+    text: "Bakit ninyo siya pinakakaitan ng tamang paglilibing?",
     translation: "He died doing his duty. Why are you refusing him a proper burial?"
   },
 
@@ -73,11 +85,11 @@ export const Chapter1_Part2 = [
     background: require("../../../../Background Images/Part 2/saint paul inabanga church interior.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Morales.png"),
+        source: require("../../../../Character Images/Chapter 2/Morales Talking.png"),
         position: "right"
       },
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Dagohoy.png"),
+        source: require("../../../../Character Images/Chapter 2/Dagohoy Done.png"),
         position: "left"
       }
     ],
@@ -90,11 +102,11 @@ export const Chapter1_Part2 = [
     background: require("../../../../Background Images/Part 2/saint paul inabanga church interior.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Dagohoy.png"),
+        source: require("../../../../Character Images/Chapter 2/Dagohoy Mad.png"),
         position: "left"
       },
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Morales.png"),
+        source: require("../../../../Character Images/Chapter 2/Morales.png"),
         position: "right"
       }
     ],
@@ -107,18 +119,19 @@ export const Chapter1_Part2 = [
     background: require("../../../../Background Images/Part 2/saint paul inabanga church interior.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Dagohoy.png"),
+        source: require("../../../../Character Images/Chapter 2/Dagohoy Mad.png"),
         position: "left"
       },
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Morales.png"),
+        source: require("../../../../Character Images/Chapter 2/Morales.png"),
         position: "right"
       }
     ],
-    text: "Kung wala man lang paggalang ang inyong simbahan para sa mga tapat\nna linkod, hindi na kami dapat manatiling tapat!",
+    text: "Kung wala man lang paggalang ang inyong simbahan para sa mga tapat\nna lingkod, hindi na kami dapat manatiling tapat!",
     translation: "If your church has no respect for a loyal servant, then we should not have to remain loyal."
   },
 
+  //Q2_1 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // CHOICE 2.1
@@ -132,26 +145,26 @@ export const Chapter1_Part2 = [
 
     choices: [
       {
-        text: "Speak out and lead your people to the mountains.",
+        text: "Speak out and lead your people\nto the mountains.",
         speaker: "FRANCISCO DAGOHOY",
-        dialogue: "Sobra na ang ginawa nila sa ating mga pamilya. Panahon na para umalis\ntayo at magsimula sa kabundukan.",
+        dialogue: "Sobra na ang ginawa nila sa ating mga pamilya! Panahon na para umalis\ntayo at magsimula sa kabundukan.",
         translation: "They've done enough to our families. It's time for us to leave and start anew in the mountains.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Dagohoy.png"),
+            source: require("../../../../Character Images/Chapter 2/Dagohoy Mad.png"),
             position: "left"
           }
         ]
       },
 
       {
-        text: "Appeal to a higher church authority first.",
+        text: "Appeal to a higher church\nauthority first.",
         speaker: "FRANCISCO DAGOHOY",
         dialogue: "Makikipag-usap muna ako sa Obispo. Baka may magawa pa\nsiya tungkol dito.",
         translation: "I'll speak to the Bishop first. Maybe he can still do something about this.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Dagohoy.png"),
+            source: require("../../../../Character Images/Chapter 2/Dagohoy Done.png"),
             position: "left"
           }
         ]
@@ -170,7 +183,7 @@ export const Chapter1_Part2 = [
     background: require("../../../../Background Images/Part 2/Bohol highlands jungle pass.png")
   },
 
-
+  //Q2_2 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 2
@@ -191,7 +204,7 @@ export const Chapter1_Part2 = [
 
   {
     type: "narrator",
-    text: "There, they start anew outside of Spanish control and forced labor.",
+    text: "There, they start a new outside of Spanish control and forced labor.",
     background: require("../../../../Background Images/Part 2/Mountain settlement.png")
   },
 
@@ -220,6 +233,8 @@ export const Chapter1_Part2 = [
     background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png")
   },
 
+  //T1_2 here
+
   {
     type: "narrator",
     text: "Officials begin to make attempts to negotiate with the community.",
@@ -239,26 +254,26 @@ export const Chapter1_Part2 = [
 
     choices: [
       {
-        text: "Stay focused on protecting your mountain community.",
+        text: "Stay focused on protecting your\nmountain community.",
         speaker: "FRANCISCO DAGOHOY",
         dialogue: "Hindi pa panahon para lumabas. Bantayan muna natin ang\nating komunidad.",
         translation: "It's not time to move yet. Let's protect our community first.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Dagohoy.png"),
+            source: require("../../../../Character Images/Chapter 2/Dagohoy Talking.png"),
             position: "left"
           }
         ]
       },
 
       {
-        text: "Send scouts to see if other islands want to join you.",
+        text: "Send scouts to see if other islands\nwant to join you.",
         speaker: "FRANCISCO DAGOHOY",
         dialogue: "Magpadala tayo ng mga tagamasid sa Leyte at Cebu. Alamin natin\nkung handa silang sumama sa atin.",
         translation: "Let's send scouts to Leyte and Cebu. Let's see if they're willing to join us.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Dagohoy.png"),
+            source: require("../../../../Character Images/Chapter 2/Dagohoy Talking.png"),
             position: "left"
           }
         ]
@@ -282,6 +297,8 @@ export const Chapter1_Part2 = [
     text: "In 1827, a Spanish expedition of 2,200 soldiers enters the mountains.",
     background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png")
   },
+
+  //T3_2 here 
 
   {
     type: "narrator",
@@ -308,6 +325,7 @@ export const Chapter1_Part2 = [
     background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png")
   },
 
+  //Q3_2 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // CHOICE 2.3
@@ -321,9 +339,9 @@ export const Chapter1_Part2 = [
 
     choices: [
       {
-        text: "Accept the offer to spare your people from more fighting.",
+        text: "Accept the offer to spare your people\nfrom more fighting.",
         speaker: "REBEL LEADER",
-        dialogue: "Tama na ang labanan. Tanggapin natin ang alok nila para wala ng buhay\nang mawawala.",
+        dialogue: "Tama na ang labanan. Tanggapin natin ang alok nila para wala\nng buhay ang mawawala.",
         translation: "Enough of the fighting. Let's accept their offer so no more lives are lost.",
         characters: [
           {
@@ -334,9 +352,9 @@ export const Chapter1_Part2 = [
       },
 
       {
-        text: "Ask for time to discuss the offer with the community.",
+        text: "Ask for time to discuss the offer\nwith the community.",
         speaker: "REBEL LEADER",
-        dialogue: "Bigyan ninyo kami ng panahon para pag-usapan muna ito bilang\nisang komunidad.",
+        dialogue: "Bigyan ninyo kami ng panahon para pag-usapan muna ito\nbilang isang komunidad.",
         translation: "Give us time to discuss this as a community.",
         characters: [
           {
@@ -443,7 +461,7 @@ export const Chapter1_Part2 = [
     correctIndex: 1
   },
 
-  
+
   {
     type: "scene",
     title: "Chapter Complete.",

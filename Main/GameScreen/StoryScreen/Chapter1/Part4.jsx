@@ -30,7 +30,7 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
-    text: "After Rizal's exile, Andrés Bonifacio and the others realize that peaceful requests\nalone have not been enough to bring change."
+    text: "After Rizal's exile, Andrés Bonifacio and the others realize that peaceful\nrequests alone have not been enough to bring change."
   },
 
   {
@@ -45,11 +45,16 @@ export const Chapter1_Part4 = [
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Arellano.png"),
+        source: require("../../../../Character Images/Chapter 4/Arellano Talking.png"),
         position: "left"
+      },
+      {
+        source: require("../../../../Character Images/Chapter 4/Bonifacio Neutral R.png"),
+        position: "right"
       }
+
     ],
-    text: "Let's give this brotherhood a name. Not a league. Not another reform\ngroup. A Katipunan."
+    text: "Let's give this brotherhood a name. Not a league. Not\nanother reform group. A Katipunan."
   },
 
   {
@@ -58,11 +63,11 @@ export const Chapter1_Part4 = [
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Arellano.png"),
+        source: require("../../../../Character Images/Chapter 4/Arellano Neutral.png"),
         position: "left"
       },
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Bonifacio.png"),
+        source: require("../../../../Character Images/Chapter 4/Bonifacio Neutral R.png"),
         position: "right"
       }
     ],
@@ -72,19 +77,19 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
-    text: "They agree on its full name: Kataastaasan Kagalang-galang na\nKatipunan ng mga Anak ng Bayan. "
+    text: "They agree on its full name: \"Kataastaasan Kagalang-galangang\nKatipunan ng mga Anak ng Bayan.\""
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
-    text: "Each man makes a small, symbolic cut on his arm and signs the founding\nregister, making a solemn promise to their new brotherhood and its cause."
+    text: "Each man makes a small, symbolic cut on his arm and signs the founding register,\nmaking a solemn promise to their new brotherhood and its cause."
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
-    text: "The KKK is born, dedicated to independence, mutual support,\ngood values, and education."
+    text: "The KKK is born. Dedicated to independence, mutual support,\ngood values, and education."
   },
 
 
@@ -103,7 +108,7 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Tondo_Caloocan street and market.png"),
-    text: "In the weeks that follow, Bonifacio and his young adviser, Emilio Jacinto, begin\nredefining who belongs to the nation."
+    text: "In the weeks that follow, Bonifacio and his young adviser, Emilio Jacinto,\nbegin redefining who belongs to the nation."
   },
 
   {
@@ -112,17 +117,23 @@ export const Chapter1_Part4 = [
     text: "At the time, the word Filipino was mostly used for Spaniards born in the islands."
   },
 
+  //T3_4 here
+
   {
     type: "dialogue",
     speaker: "EMILIO JACINTO",
     background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Jacinto.png"),
+        source: require("../../../../Character Images/Chapter 4/Jacinto Talking.png"),
+        position: "right"
+      },
+      {
+        source: require("../../../../Character Images/Chapter 4/Bonifacio Neutral.png"),
         position: "left"
       }
     ],
-    text: "If we wait for Spain to call us Filipino, Andrés, we'll wait forever.\nWe need our own word."
+    text: "If we wait for Spain to call us Filipino, Andrés, we'll wait forever.\nWe need our own words."
   },
 
   {
@@ -131,12 +142,12 @@ export const Chapter1_Part4 = [
     background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Jacinto.png"),
-        position: "left"
+        source: require("../../../../Character Images/Chapter 4/Jacinto Neutral.png"),
+        position: "right"
       },
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Bonifacio.png"),
-        position: "right"
+        source: require("../../../../Character Images/Chapter 4/Bonifacio Unsure.png"),
+        position: "left"
       }
     ],
     text: "Tagalog, then. Not the language of one province, but the name for\neveryone born on this soil."
@@ -148,15 +159,15 @@ export const Chapter1_Part4 = [
     background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Jacinto.png"),
-        position: "left"
+        source: require("../../../../Character Images/Chapter 4/Jacinto Neutral.png"),
+        position: "right"
       },
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Bonifacio.png"),
-        position: "right"
+        source: require("../../../../Character Images/Chapter 4/Bonifacio Unsure.png"),
+        position: "left"
       }
     ],
-    text: "Mula ngayon, bisaya man, Iloko man, Kapampangan man,\nat iba pa ay Tagalog din.",
+    text: "Mula ngayon, bisaya man, Iloko man, Kapampangan man, at iba pa ay Tagalog din.",
     translation: "Whether Bisaya, Ilocano, Kapampangan, and so on, all are Tagalog too."
   },
 
@@ -175,7 +186,7 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
-    text: "Each member brings in only two others, who never learn each other's names.\nThis system was slow but kept it difficult for Spanish spies to discover the alliance"
+    text: "Each member brings in only two others, who never learn each other's names. This\nsystem was slow but kept it difficult for Spanish spies to discover the alliance"
   },
 
 
@@ -186,7 +197,7 @@ export const Chapter1_Part4 = [
   {
     type: "choice",
     title: "Choice 4.1: You are Andrés Bonifacio",
-    question: "The Triangle System keeps the Katipunan safe, but it is too slow to\nbuild a large movement.",
+    question: "The Triangle System keeps the Katipunan safe, but it is too\nslow to build a large movement.",
     background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
     choices: [
       {
@@ -196,19 +207,19 @@ export const Chapter1_Part4 = [
         translation: "Groups of three won't be enough. We need thousands.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Bonifacio.png"),
+            source: require("../../../../Character Images/Chapter 4/Bonifacio Unsure R.png"),
             position: "right"
           }
         ]
       },
       {
-        text: "Keep the system a while longer and weigh the risks.",
+        text: "Keep the system a while longer\nand weigh the risks.",
         speaker: "ANDRÉS BONIFACIO",
         dialogue: "Mabagal man, ligtas naman. Mag-isip pa tayo bago magbago.",
         translation: "It's slow, but it's safe. Let's think it over before we change it.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Bonifacio.png"),
+            source: require("../../../../Character Images/Chapter 4/Bonifacio Unsure R.png"),
             position: "right"
           }
         ]
@@ -217,6 +228,7 @@ export const Chapter1_Part4 = [
 
     nextScene: 21
   },
+
 
 
   // CONTINUE
@@ -230,10 +242,10 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Tondo_Caloocan street and market.png"),
-    text: "Open recruiting begins around October 1892, and the Katipunan's membership\ngrows to the tens of thousands by 1896."
+    text: "Open recruiting begins around October 1892, and the Katipunan's\nmembership grows to the tens of thousands by 1896."
   },
 
-
+  //T1_4 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 3
@@ -249,7 +261,7 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
-    text: "Because many of the founders belonged to Masonic groups, the Katipunan borrows\nsome of the same style of ceremony and structure."
+    text: "Because many of the founders belonged to Masonic groups, the Katipunan\nborrows some of the same style of ceremony and structure."
   },
 
   {
@@ -273,7 +285,7 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
-    text: "This was meant to make them reflect on the nation's past, present, and future\nbefore reading and signing the Kartilya and making their own promise to the group."
+    text: "This was meant to make them reflect on the nation's past, present, and future before\nreading and signing the Kartilya and making their own promise to the group."
   },
 
 
@@ -307,11 +319,15 @@ export const Chapter1_Part4 = [
     background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Jacinto.png"),
+        source: require("../../../../Character Images/Chapter 4/Jacinto Talking R.png"),
         position: "left"
+      },
+      {
+        source: require("../../../../Character Images/Chapter 4/Bonifacio Happy.png"),
+        position: "right"
       }
     ],
-    text: "Read this line, Andrés: 'All people are equal, whether their skin is light or dark."
+    text: "Read this line, Andrés: \"All people are equal, whether their skin is light or dark.\""
   },
 
   {
@@ -320,11 +336,15 @@ export const Chapter1_Part4 = [
     background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Jacinto.png"),
+        source: require("../../../../Character Images/Chapter 4/Jacinto Talking R.png"),
         position: "left"
+      },
+      {
+        source: require("../../../../Character Images/Chapter 4/Bonifacio Happy.png"),
+        position: "right"
       }
     ],
-    text: "One person may be wiser, richer, or more skilled than another, but that\ndoesn't make them more human. This is what should guide every member."
+    text: "One person may be wiser, richer, or more skilled than another, but that doesn't\nmake them more human. This is what should guide every member."
   },
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -338,40 +358,40 @@ export const Chapter1_Part4 = [
     background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
     choices: [
       {
-        text: "Set your Decalogue aside and adopt Jacinto's Kartilya.",
+        text: "Set your Decalogue aside and\nadopt Jacinto's Kartilya.",
         speaker: "ANDRÉS BONIFACIO",
         dialogue: "Mas malalim ang isinulat mo kaysa sa akin, Emilio. Ito na ang gagamitin natin.",
         translation: "What you wrote goes deeper than mine, Emilio. This is what we'll use.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Jacinto.png"),
+            source: require("../../../../Character Images/Chapter 4/Jacinto Neutral R.png"),
             position: "left"
           },
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Bonifacio.png"),
+            source: require("../../../../Character Images/Chapter 4/Bonifacio Talking R.png"),
             position: "right"
           }
         ]
       },
       {
-        text: "Ask Jacinto to help improve your Decalogue first.",
+        text: "Ask Jacinto to help improve your\nDecalogue first.",
         speaker: "ANDRÉS BONIFACIO",
-        dialogue: "Tulungan mo akong pagandahin ang akin bago tayo magpasya.",
+        dialogue: "Tulungan mo akong pagandahin ang sa akin bago tayo magpasya.",
         translation: "Help me improve mine before we decide.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Jacinto.png"),
+            source: require("../../../../Character Images/Chapter 4/Jacinto Neutral R.png"),
             position: "left"
           },
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Bonifacio.png"),
+            source: require("../../../../Character Images/Chapter 4/Bonifacio Talking R.png"),
             position: "right"
           }
         ]
       }
     ],
 
-    nextScene: 35
+    nextScene: 34
   },
 
   // CONTINUE
@@ -382,7 +402,7 @@ export const Chapter1_Part4 = [
     text: "Jacinto's Kartilya becomes the Katipunan's official guide, helping unite members from different parts of the archipelago under one shared set of values."
   },
 
-
+  //Q2_4 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 5
@@ -404,8 +424,10 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Safe-house interior (Gregoria's scenes).png"),
-    text: "Gregoria de Jesús, Bonifacio's wife and the Lakambini of the KKK,\nbecomes the keeper of the group's secret papers, seals, and supplies."
+    text: "Gregoria de Jesús, Bonifacio's wife and the Lakambini of the KKK, becomes\nthe keeper of the group's secret papers, seals, and supplies."
   },
+
+  //T4_4 here
 
   {
     type: "dialogue",
@@ -413,8 +435,8 @@ export const Chapter1_Part4 = [
     background: require("../../../../Background Images/Part 4/Safe-house interior (Gregoria's scenes).png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Gregoria.png"),
-        position: "right"
+        source: require("../../../../Character Images/Chapter 4/Gregoria Neutral.png"),
+        position: "left"
       }
     ],
     text: "Kung mahuli ako, mahuhuli ang buong Katipunan kasama ko.",
@@ -432,26 +454,26 @@ export const Chapter1_Part4 = [
     background: require("../../../../Background Images/Part 4/Safe-house interior (Gregoria's scenes).png"),
     choices: [
       {
-        text: "Keep moving the documents and supplies from house to house.",
+        text: "Keep moving the documents and\nsupplies from house to house.",
         speaker: "GREGORIA DE JESÚS",
         dialogue: "Isa pang bahay. Isa pa.",
         translation: "One more house. Just one more.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Gregoria.png"),
-            position: "right"
+            source: require("../../../../Character Images/Chapter 4/Gregoria Neutral.png"),
+            position: "left"
           }
         ]
       },
       {
-        text: "Hide everything in one well-concealed place.",
+        text: "Hide everything in one\nwell-concealed place.",
         speaker: "GREGORIA DE JESÚS",
         dialogue: "Kung may isang lugar na talagang ligtas, doon ko na lang itatago lahat.",
         translation: "If there's one truly safe place, I'll hide everything there.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Gregoria.png"),
-            position: "right"
+            source: require("../../../../Character Images/Chapter 4/Gregoria Neutral.png"),
+            position: "left"
           }
         ]
       }
@@ -482,7 +504,7 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/19th century hand press printing shop.png"),
-    text: "To spread the society's ideas, Emilio Jacinto edits a secret newspaper called\nKalayaan, meaning Freedom."
+    text: "To spread the society's ideas, Emilio Jacinto edits a\nsecret newspaper called: \"Kalayaan.\""
   },
 
   {
@@ -519,8 +541,8 @@ export const Chapter1_Part4 = [
     background: require("../../../../Background Images/Part 4/Tondo_Caloocan street and market.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Bonifacio.png"),
-        position: "center"
+        source: require("../../../../Character Images/Chapter 4/Bonifacio Talking Mad.png"),
+        position: "left"
       }
     ],
     text: "Nahanap na tayo. Wala nang panahon para sa mas maraming pagpaplano.",
@@ -530,7 +552,7 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Melchora's barn, Banlat, Kalookan.png"),
-    text: "On August 24, 1896, Bonifacio gathers Katipunan leaders in a barn in Banlat,\nKalookan, owned by Melchora Aquino."
+    text: "On August 24, 1896, Bonifacio gathers Katipunan leaders in a barn in\nBanlat, Kalookan, owned by Melchora Aquino."
   },
 
   {
@@ -545,18 +567,18 @@ export const Chapter1_Part4 = [
     background: require("../../../../Background Images/Part 4/Melchora's barn, Banlat, Kalookan.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Bonifacio.png"),
-        position: "right"
+        source: require("../../../../Character Images/Chapter 4/Bonifacio Talking.png"),
+        position: "left"
       }
     ],
-    text: "Mula ngayon, hindi na tayo lihim na samahan lamang. Tayo na ang\npamahalaan ng Katagalugan.",
+    text: "Mula ngayon, hindi na tayo lihim na samahan lamang.\nTayo na ang pamahalaan ng Katagalugan.",
     translation: "From now on, we are no longer just a secret society. We are the government of Katagalugan."
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Melchora's barn, Banlat, Kalookan.png"),
-    text: "With Bonifacio chosen as its leader, the Katipunan becomes a self-governing\nmovement and takes another major step toward the independence still to come."
+    text: "With Bonifacio chosen as its leader, the Katipunan becomes a self-governing movement\nand takes another major step toward the independence still to come."
   },
 
 
@@ -642,13 +664,6 @@ export const Chapter1_Part4 = [
     type: "scene",
     title: "Chapter Complete.",
     date: "The secret is out.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
-  },
-
-  {
-    type: "scene",
-    title: "What began in secret would soon shake the entire country.",
-    date: " ",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   }
 

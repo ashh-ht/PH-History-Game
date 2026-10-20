@@ -1,8 +1,7 @@
-import { useState } from 'react';
-import { ImageBackground, ScrollView, Image, StyleSheet, Text, View, Linking, Pressable } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { ImageBackground, ScrollView, Image, StyleSheet, Text, View, Linking, Pressable, Animated } from 'react-native';
 import Sound_clicks from '../../Components/Sound_clicks';
 import styles from '../../Styles/Others/StyleAbout';
-
 
 const SOURCES = [
   { label: 'Emilio Aguinaldo', url: 'https://www.philippinemasonry.org/emilio-aguinaldo.html' },
@@ -34,6 +33,48 @@ function openLink(url) {
   });
 }
 
+// Animated image button for X and Journal
+function SpringImageButton({ image, pressedImage, onPress }) {
+  const scale = useRef(new Animated.Value(1)).current;
+  const [pressed, setPressed] = useState(false);
+
+  const handlePressIn = () => {
+    setPressed(true);
+    Animated.spring(scale, {
+      toValue: 0.9,
+      useNativeDriver: true,
+      speed: 20,
+      bounciness: 10,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    setPressed(false);
+    Animated.spring(scale, {
+      toValue: 1,
+      useNativeDriver: true,
+      speed: 20,
+      bounciness: 10,
+    }).start();
+  };
+
+  return (
+    <Animated.View style={{ transform: [{ scale }] }}>
+      <Sound_clicks
+        onPress={onPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+      >
+        <Image
+          source={pressed ? pressedImage : image}
+          style={styles.icon}
+          resizeMode="contain"
+        />
+      </Sound_clicks>
+    </Animated.View>
+  );
+}
+
 function educational_screen({ navigation }) {
   const [activeOverlay, setActiveOverlay] = useState(null);
 
@@ -55,14 +96,18 @@ function educational_screen({ navigation }) {
 
   return (
     <ImageBackground source={require('../../assets/Settingbg.png')} style={styles.container}>
-      {/* Top-left icons: same as the Settings screen */}
+      {/* Top-left icons */}
       <View style={styles.topIcon}>
-        <Sound_clicks onPress={() => navigation.navigate('Home')}>
-          <Image source={require('../../assets/return.png')} style={styles.icon} />
-        </Sound_clicks>
-        <Sound_clicks onPress={() => navigation.navigate('Journal')}>
-          <Image source={require('../../assets/Journal_page.png')} style={styles.icon} />
-        </Sound_clicks>
+        <SpringImageButton
+          image={require('../../assets/icons/x_button.png')}
+          pressedImage={require('../../assets/icons/x_buttonpressed.png')}
+          onPress={() => navigation.goBack()}
+        />
+        <SpringImageButton
+          image={require('../../assets/icons/journal_button.png')}
+          pressedImage={require('../../assets/icons/journal_buttonpressed.png')}
+          onPress={() => navigation.navigate('Journal')}
+        />
       </View>
 
       <View style={styles.panel}>
@@ -78,11 +123,6 @@ function educational_screen({ navigation }) {
           <PillButton label="Historical" />
           <PillButton label="Sources" />
         </View>
-
-        {/* return arrow */}
-        <Sound_clicks style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Image source={require('../../assets/returnarrow.png')} style={styles.icon} />
-        </Sound_clicks>
       </View>
 
       {/* overlays */}

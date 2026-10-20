@@ -1,18 +1,18 @@
 export const Chapter1_Part8 = [
 
   {
-  type: "system",
-  intro: true,
-  text: "Spain's power in the Philippines was weakening, but the Revolution was not yet over.",
-  background: require("../../../../Background Images/Usuals/Black Background.jpg")
-},
+    type: "system",
+    intro: true,
+    text: "Spain's power in the Philippines was weakening, but the Revolution was not yet over.",
+    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+  },
 
-{
-  type: "system",
-  intro: true,
-  text: "As the struggle against Spain continued, a new power entered the story\nand the meaning of independence became more uncertain.",
-  background: require("../../../../Background Images/Usuals/Black Background.jpg")
-},
+  {
+    type: "system",
+    intro: true,
+    text: "As the struggle against Spain continued, a new power entered the story\nand the meaning of independence became more uncertain.",
+    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+  },
 
 
 
@@ -35,7 +35,13 @@ export const Chapter1_Part8 = [
 
   {
     type: "narrator",
-    text: "By the second half of 1897, Aguinaldo and his forces retreat to Biak-na-Bato in\nBulacan, where they establish a revolutionary government and continue fighting Spain.",
+    text: "By the second half of 1897, Aguinaldo and his forces retreat\nto Biak-na-Bato in Bulacan.",
+    background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png")
+  },
+
+  {
+    type: "narrator",
+    text: "There, they establish a revolutionary government and continue fighting Spain.",
     background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png")
   },
 
@@ -76,6 +82,10 @@ export const Chapter1_Part8 = [
       {
         source: require("../../../../Character Images/Temporary Placeholders/Pratt.png"),
         position: "left"
+      },
+      {
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
+        position: "right"
       }
     ],
     text: "Bumalik kayo sa Pilipinas at ipagpatuloy ang laban sa Espanya.\nMakikipagtulungan ang Amerika laban sa kanila.",
@@ -119,8 +129,8 @@ export const Chapter1_Part8 = [
     speaker: "EMILIO AGUINALDO",
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Aguinaldo.png"),
-        position: "right"
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
+        position: "center"
       }
     ],
     text: "Ito na. Ito ang unang beses na lalantad ang watawat na ito sa\nhangin ng ating sariling bayan.",
@@ -134,7 +144,7 @@ export const Chapter1_Part8 = [
     background: require("../../../../Background Images/Part 8/Manila Bay_mock battle.png")
   },
 
-
+  //T3_8 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 3
@@ -164,14 +174,16 @@ export const Chapter1_Part8 = [
     speaker: "AMBROSIO RIANZARES BAUTISTA",
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Bautista.png"),
-        position: "left"
+        source: require("../../../../Character Images/Chapter 8/Rianzares.png"),
+        position: "center"
       }
     ],
     text: "...sa ilalim ng pangangalaga ng makapangyarihan at makataong bansang\nHilagang Amerika, ating kaibigan at tagapagtanggol...",
     translation: "...under the protection of the mighty and humane North American nation, our friend and protector...",
     background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png")
   },
+
+  //Q3_8 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // CHOICE 8.1 
@@ -184,31 +196,39 @@ export const Chapter1_Part8 = [
     background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png"),
     choices: [
       {
-        text: "Approve the Acta as written to secure American goodwill.",
+        text: "Approve the Acta as written to\nsecure American goodwill.",
         speaker: "EMILIO AGUINALDO",
         dialogue: "Panatiliin muna natin ang mga salitang ito. Kailangan natin ang\nkanilang suporta sa ngayon.",
         translation: "Let's keep these words. We need their support for now.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Aguinaldo.png"),
+            source: require("../../../../Character Images/Chapter 8/Rianzares.png"),
+            position: "left"
+          },
+          {
+            source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
             position: "right"
           }
         ]
       },
       {
-        text: "Ask Bautista to soften the pro-American language.",
+        text: "Ask Bautista to soften the\npro-American language.",
         speaker: "EMILIO AGUINALDO",
-        dialogue: "Bawasan natin ang papuri. Dapat malinaw na para sa atin\nang kalayaan.",
+        dialogue: "Bawasan natin ang papuri. Dapat malinaw na para sa\natin ang kalayaan.",
         translation: "Let's tone down the praise. It should be clear that this independence belongs to us.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Aguinaldo.png"),
+            source: require("../../../../Character Images/Chapter 8/Rianzares.png"),
+            position: "left"
+          },
+          {
+            source: require("../../../../Character Images/Chapter 8/Emilio Reading.png"),
             position: "right"
           }
         ]
       }
     ],
-    nextScene: 22
+    nextScene: 23
   },
 
 
@@ -221,6 +241,7 @@ export const Chapter1_Part8 = [
   },
 
 
+  //Q2_8 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 4
@@ -250,8 +271,8 @@ export const Chapter1_Part8 = [
     speaker: "EMILIO AGUINALDO",
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Aguinaldo.png"),
-        position: "right"
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious R.png"),
+        position: "center"
       }
     ],
     text: "Sa ngalan ng Diyos, ipinapahayag ko at ipinapaalam na malaya\nat independiyente ang Pilipinas!",
@@ -266,6 +287,7 @@ export const Chapter1_Part8 = [
   },
 
 
+  //Q1_8 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 5
@@ -295,12 +317,33 @@ export const Chapter1_Part8 = [
     speaker: "APOLINARIO MABINI",
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Mabini.png"),
+        source: require("../../../../Character Images/Chapter 8/Mabini.png"),
         position: "left"
+      },
+      {
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
+        position: "right"
       }
     ],
-    text: "Kung gusto nating kilalanin tayo bilang isang tunay na bansa, kailangan natin ng\npamahalaang may malinaw na saligan, hindi kapangyarihang nasa isang tao lamang.",
-    translation: "If we want to be recognized as a true nation, we need a government with a clear foundation, not power resting in one person.",
+    text: "Kung gusto nating kilalanin tayo bilang isang tunay na bansa, kailangan natin ng\npamahalaang may malinaw na saligan.",
+    translation: "If we want to be recognized as a true nation, we need a government with a clear foundation.",
+    background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png")
+  },
+   {
+    type: "dialogue",
+    speaker: "APOLINARIO MABINI",
+    characters: [
+      {
+        source: require("../../../../Character Images/Chapter 8/Mabini.png"),
+        position: "left"
+      },
+      {
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
+        position: "right"
+      }
+    ],
+    text: "Hindi dapat nasa isang tao lamang ang kapangyarihan.",
+    translation: "We should not have power resting in one person.",
     background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png")
   },
 
@@ -321,7 +364,11 @@ export const Chapter1_Part8 = [
         translation: "We'll do this properly, Apolinario. We need a government with a clear foundation.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Aguinaldo.png"),
+            source: require("../../../../Character Images/Chapter 8/Mabini.png"),
+            position: "left"
+          },
+          {
+            source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
             position: "right"
           }
         ]
@@ -333,13 +380,17 @@ export const Chapter1_Part8 = [
         translation: "Explain the whole plan to me first before we decide.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Aguinaldo.png"),
+            source: require("../../../../Character Images/Chapter 8/Mabini.png"),
+            position: "left"
+          },
+          {
+            source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
             position: "right"
           }
         ]
       }
     ],
-    nextScene: 34
+    nextScene: 35
   },
 
   {
@@ -349,6 +400,7 @@ export const Chapter1_Part8 = [
   },
 
 
+  //Q4_8 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 6
@@ -384,31 +436,31 @@ export const Chapter1_Part8 = [
     background: require("../../../../Background Images/Part 8/Siege of Manila 1898 trenches.png"),
     choices: [
       {
-        text: "Wait and coordinate with the Americans.",
+        text: "Wait and coordinate with\nthe Americans.",
         speaker: "EMILIO AGUINALDO",
         dialogue: "Maghintay tayo. Ayaw kong mauwi ito sa labanan sa\npagitan ng magkakampi.",
         translation: "Let's wait. I don't want this to turn into a fight between allies.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Aguinaldo.png"),
-            position: "right"
+            source: require("../../../../Character Images/Chapter 8/Emilio Serious R.png"),
+            position: "center"
           }
         ]
       },
       {
-        text: "Push forward carefully while still keeping communication open with the Americans",
+        text: "Push forward carefully while still keeping\ncommunication open with the Americans",
         speaker: "EMILIO AGUINALDO",
         dialogue: "Ipagpatuloy natin ang pagkubkob, pero panatilihin nating\nbukas ang usapan sa mga Amerikano.",
         translation: "Let's continue the siege, but keep communication open with the Americans.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Aguinaldo.png"),
-            position: "right"
+            source: require("../../../../Character Images/Chapter 8/Emilio Serious R.png"),
+            position: "center"
           }
         ]
       }
     ],
-    nextScene: 38
+    nextScene: 40
   },
 
 
@@ -464,6 +516,7 @@ export const Chapter1_Part8 = [
   },
 
 
+  //T2_8 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 8
@@ -490,7 +543,7 @@ export const Chapter1_Part8 = [
 
   {
     type: "narrator",
-    text: "The fighting spreads rapidly. Now, the Philippine-American War has begun.",
+    text: "The fighting spreads rapidly",
     background: require("../../../../Background Images/Part 8/San Juan Bridge Sociego Street Feb 4 1899.png")
   },
 
@@ -601,7 +654,7 @@ export const Chapter1_Part8 = [
     text: "The Revolution had changed the Philippines forever. But history did not end at Kawit.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
-  
+
 
   {
     type: "system",

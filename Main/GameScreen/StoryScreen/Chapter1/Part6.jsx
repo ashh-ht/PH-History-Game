@@ -15,7 +15,6 @@ export const Chapter1_Part6 = [
   },
 
 
-
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 1
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -39,7 +38,7 @@ export const Chapter1_Part6 = [
     text: "Bonifacio's forces have suffered heavy losses, and Governor-General Ramón\nBlanco has placed eight provinces under a state of war."
   },
 
-
+  //T3_6 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 2
@@ -79,11 +78,11 @@ export const Chapter1_Part6 = [
   {
     type: "dialogue",
     speaker: "MARIANO ÁLVAREZ",
-    background: require("../../../../Background Images/Part 6/Magdiwang HQ (Noveleta), inside.png"),
+    background: require("../../../../Background Images/Part 3/Governor-General's office.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Alvarez.png"),
-        position: "center"
+        source: require("../../../../Character Images/Chapter 6/Alvarez Firm.png"),
+        position: "right"
       }
     ],
     text: "Tell the Supremo that Cavite still stands with the Katipunan. We may have\nour own forces here, but we fight for the same cause."
@@ -95,7 +94,7 @@ export const Chapter1_Part6 = [
     text: "As Spanish reinforcements arrive, the rivalry between the two factions\nmakes cooperation increasingly difficult."
   },
 
-
+  //Q1_6 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 3
@@ -126,8 +125,8 @@ export const Chapter1_Part6 = [
     background: require("../../../../Background Images/Part 6/Rizal execution.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Rizal.png"),
-        position: "center"
+        source: require("../../../../Character Images/Chapter 6/Rizal Sad.png"),
+        position: "left"
       }
     ],
     text: "Consummatum est.",
@@ -146,7 +145,11 @@ export const Chapter1_Part6 = [
     text: "To this day, Rizal is remembered each year on December 30 as a national hero\nand a symbol of the Filipino people's fight for freedom."
   },
 
-
+  //T4_6 here
+  // MINIGAME
+  {
+    type: "chronological",
+  },
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 4
@@ -177,13 +180,15 @@ export const Chapter1_Part6 = [
     background: require("../../../../Background Images/Part 6/Naik camp hut interior.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Bonifacio.png"),
+        source: require("../../../../Character Images/Chapter 6/Bonifacio Neutral R.png"),
         position: "right"
       }
     ],
-    text: "Emilio, may alok daw ng amnestiya. Pero kung pagsuko ang kapalit,\nhindi natin basta matatanggap iyon.",
-    translation: "Emilio, there's supposedly an offer of amnesty. But if surrender is the price,\nwe can't simply accept it."
+    text: "Emilio, may alok daw ng amnestiya. Pero kung pagsuko ang\nkapalit, hindi natin basta matatanggap iyon.",
+    translation: "Emilio, there's supposedly an offer of amnesty. But if surrender is the price, we can't simply accept it."
   },
+
+  //T5_6 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // CHOICE 6.1
@@ -196,28 +201,28 @@ export const Chapter1_Part6 = [
     question: "Father Pio Pi offers a full pardon if you surrender, but you want to know\nwhether real terms can be negotiated.",
     choices: [
       {
-        text: "Contact the Magdiwang leaders first without telling Bonifacio.",
+        text: "Contact the Magdiwang leaders first\nwithout telling Bonifacio.",
         speaker: "EMILIO AGUINALDO",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Aguinaldo.png"),
+            source: require("../../../../Character Images/Chapter 6/Emilio Reading.png"),
             position: "right"
           }
         ],
-        dialogue: "Huwag munang sabihin kay Bonifacio. Kailangan nating maghanda,\nhindi lamang siya.",
+        dialogue: "Huwag munang sabihin kay Bonifacio. Kailangan nating\nmaghanda, hindi lamang siya.",
         translation: "Don't tell Bonifacio yet. We need to prepare too, not just him."
       },
 
       {
-        text: "Bring the offer to Bonifacio and discuss it openly.",
+        text: "Bring the offer to Bonifacio\nand discuss it openly.",
         speaker: "EMILIO AGUINALDO",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Aguinaldo.png"),
+            source: require("../../../../Character Images/Chapter 6/Emilio Serious.png"),
             position: "right"
           }
         ],
-        dialogue: "Hindi ako makikipagkasundo nang lihim, Supremo. Ito ang alok nila.\nPag-usapan natin.",
+        dialogue: "Hindi ako makikipagkasundo nang lihim, Supremo. Ito ang alok\nnila. Pag-usapan natin.",
         translation: "I won't make a secret deal, Supremo. Here's their offer. Let's discuss it."
       }
     ],
@@ -233,7 +238,7 @@ export const Chapter1_Part6 = [
     text: "The offer does not resolve the deeper conflict between the revolutionary factions.\nCavite's leaders continue to build separate centers of support."
   },
 
-
+  //Q2_6 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 5
@@ -255,30 +260,40 @@ export const Chapter1_Part6 = [
   {
     type: "dialogue",
     speaker: "EMILIO AGUINALDO",
-    background: require("../../../../Background Images/Part 6/Magdiwang HQ (Noveleta), inside.png"),
+    background: require("../../../../Background Images/Part 3/Governor-General's office.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Aguinaldo.png"),
+        source: require("../../../../Character Images/Chapter 6/Emilio Serious.png"),
+        position: "right"
+      },
+      {
+        source: require("../../../../Character Images/Chapter 6/Alvarez Thoughtful.png"),
         position: "left"
       }
     ],
-    text: "Kailangan natin ng iisang utos, Don Mariano. Hindi tayo mananalo\nkung hati-hati tayo.",
+    text: "Kailangan natin ng iisang utos, Don Mariano. Hindi tayo mananalo\nkung magkakanya-kanya tayo.",
     translation: "We need one command, Don Mariano. We won't win if we're divided."
   },
 
   {
     type: "dialogue",
     speaker: "MARIANO ÁLVAREZ",
-    background: require("../../../../Background Images/Part 6/Magdiwang HQ (Noveleta), inside.png"),
+    background: require("../../../../Background Images/Part 3/Governor-General's office.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Alvarez.png"),
+        source: require("../../../../Character Images/Chapter 6/Alvarez Firm.png"),
+        position: "left"
+      },
+      {
+        source: require("../../../../Character Images/Chapter 6/Emilio Serious.png"),
         position: "right"
       }
     ],
     text: "Ang aking utos ay galing sa Supremo. Hindi ako maaaring sumunod sa\ndalawang pinuno nang sabay.",
     translation: "My orders come from the Supremo. I can't follow two leaders at once."
   },
+
+  //T1_6 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // CHOICE 6.2
@@ -287,15 +302,19 @@ export const Chapter1_Part6 = [
   {
     type: "choice",
     title: "Choice 6.2: You are Mariano Álvarez",
-    background: require("../../../../Background Images/Part 6/Magdiwang HQ (Noveleta), inside.png"),
+    background: require("../../../../Background Images/Part 3/Governor-General's office.png"),
     question: "Aguinaldo wants a unified command in Cavite, but you remain loyal to Bonifacio.",
     choices: [
       {
-        text: "Keep your forces under Bonifacio's authority.",
+        text: "Keep your forces under\nBonifacio's authority.",
         speaker: "MARIANO ÁLVAREZ",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Alvarez.png"),
+            source: require("../../../../Character Images/Chapter 6/Alvarez Firm.png"),
+            position: "left"
+          },
+          {
+            source: require("../../../../Character Images/Chapter 6/Emilio Serious.png"),
             position: "right"
           }
         ],
@@ -304,15 +323,19 @@ export const Chapter1_Part6 = [
       },
 
       {
-        text: "Agree to cooperate in battle without giving up your command.",
+        text: "Agree to cooperate in battle\nwithout giving up your command.",
         speaker: "MARIANO ÁLVAREZ",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Alvarez.png"),
+            source: require("../../../../Character Images/Chapter 6/Alvarez Firm.png"),
+            position: "left"
+          },
+          {
+            source: require("../../../../Character Images/Chapter 6/Emilio Serious.png"),
             position: "right"
           }
         ],
-        dialogue: "Maaari tayong magtulungan sa labanan, pero mananatili sa akin\nang aking mga tauhan.",
+        dialogue: "Maaari tayong magtulungan sa labanan, pero mananatili\nsa akin ang aking mga tauhan.",
         translation: "We can fight together, but my men will remain under my command."
       }
     ],
@@ -324,7 +347,7 @@ export const Chapter1_Part6 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Magdiwang HQ (Noveleta), outside.png"),
-    text: "The two factions continue working side by side when necessary, but the\nrivalry between them remains."
+    text: "The two factions continue working side by side when necessary,\nbut the rivalry between them remains."
   },
 
 
@@ -352,8 +375,8 @@ export const Chapter1_Part6 = [
     background: require("../../../../Background Images/Part 6/st augustine church tanza (surrender scene).png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Tirona.png"),
-        position: "left"
+        source: require("../../../../Character Images/Chapter 6/Tirona R.png"),
+        position: "right"
       }
     ],
     text: "Wala na tayong sapat na armas. Kung magpapatuloy tayo, baka\nlalo lang tayong malugi.",
@@ -368,14 +391,14 @@ export const Chapter1_Part6 = [
     type: "choice",
     title: "Choice 6.3: You are Daniel Tirona",
     background: require("../../../../Background Images/Part 6/st augustine church tanza (surrender scene).png"),
-    question: "Spanish forces are pushing deeper into Cavite.\nYour men are exhausted and short on weapons.",
+    question: "Spanish forces are pushing deeper into Cavite. Your men\nare exhausted and short on weapons.",
     choices: [
       {
-        text: "Surrender and save the men who are left.",
+        text: "Surrender and save the\nmen who are left.",
         speaker: "DANIEL TIRONA",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Tirona.png"),
+            source: require("../../../../Character Images/Chapter 6/Tirona Mad.png"),
             position: "right"
           }
         ],
@@ -384,11 +407,11 @@ export const Chapter1_Part6 = [
       },
 
       {
-        text: "Hold your position a little longer and look for a way out.",
+        text: "Hold your position a little longer\nand look for a way out.",
         speaker: "DANIEL TIRONA",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Tirona.png"),
+            source: require("../../../../Character Images/Chapter 6/Tirona Mad.png"),
             position: "right"
           }
         ],
@@ -493,15 +516,7 @@ export const Chapter1_Part6 = [
   {
     type: "scene",
     title: "Chapter Complete.",
-    date: "The Revolution was under pressure from within and without.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
-  },
-
-  {
-    type: "scene",
-    title: "Soon, the question of leadership would be decided.",
-    date: " ",
+    date: "The Revolution is now under pressure from within and without.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   }
-
 ];

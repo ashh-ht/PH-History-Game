@@ -1,9 +1,22 @@
-import React, { useState } from 'react';
-import { BackHandler, View, ImageBackground, Image, StyleSheet } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import {
+  BackHandler,
+  View,
+  ImageBackground,
+  Image,
+  StyleSheet,
+} from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import Sound_clicks from '../../Components/Sound_clicks';
 
 function MainMenuScreen({ navigation }) {
   const [selectedButton, setSelectedButton] = useState(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      setSelectedButton(null);
+    }, [])
+  );
 
   const menuButtons = [
     {
@@ -26,6 +39,11 @@ function MainMenuScreen({ navigation }) {
     },
   ];
 
+  const handleMenuPress = (button) => {
+    setSelectedButton(button.id);
+    navigation.navigate(button.screen);
+  };
+
   return (
     <ImageBackground
       source={require('../../Menu Images/Main Menu.png')}
@@ -33,14 +51,10 @@ function MainMenuScreen({ navigation }) {
       style={styles.background}
     >
       <View style={styles.menuContainer}>
-
         {menuButtons.map((button) => (
           <Sound_clicks
             key={button.id}
-            onPress={() => {
-              setSelectedButton(button.id);
-              navigation.navigate(button.screen);
-            }}
+            onPress={() => handleMenuPress(button)}
           >
             <Image
               source={
@@ -66,7 +80,6 @@ function MainMenuScreen({ navigation }) {
             resizeMode="contain"
           />
         </Sound_clicks>
-
       </View>
     </ImageBackground>
   );
@@ -79,15 +92,18 @@ const styles = StyleSheet.create({
 
   menuContainer: {
     position: 'absolute',
-    left: '8%',
-    top: '43%',
+    left: '3%', // actual left
+    top: '37%', // pababa
     alignItems: 'flex-start',
-    gap: 14,
+
+    // Note: keep the spacing even without spreading buttons too far apart.
+    gap: 1,
   },
 
   menuButton: {
-    width: 200,
-    height: 40,
+    // Note: increase the button size while preserving image proportions.
+    width: 260,
+    height: 58,
   },
 });
 

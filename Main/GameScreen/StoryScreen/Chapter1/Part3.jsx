@@ -45,7 +45,7 @@ export const Chapter1_Part3 = [
     background: require("../../../../Background Images/Part 3/Rizal's home.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Rizal.png"),
+        source: require("../../../../Character Images/Chapter 3/Rizal Arrival.png"),
         position: "left"
       }
     ],
@@ -58,7 +58,7 @@ export const Chapter1_Part3 = [
     background: require("../../../../Background Images/Part 3/Rizal's home.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Rizal.png"),
+        source: require("../../../../Character Images/Chapter 3/Rizal.png"),
         position: "left"
       }
     ],
@@ -96,7 +96,7 @@ export const Chapter1_Part3 = [
     background: require("../../../../Background Images/Part 3/Liga Filipina founding 1892 Ongjunco.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Rizal.png"),
+        source: require("../../../../Character Images/Chapter 3/Rizal.png"),
         position: "left"
       }
     ],
@@ -109,12 +109,14 @@ export const Chapter1_Part3 = [
     background: require("../../../../Background Images/Part 3/Liga Filipina founding 1892 Ongjunco.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Rizal.png"),
+        source: require("../../../../Character Images/Chapter 3/Rizal.png"),
         position: "left"
       }
     ],
     text: "Our motto is simple: Unus Instar Omnium. One is worth all. If one of us\nis in trouble, we all stand together."
   },
+
+  //T3_3 here
 
   {
     type: "dialogue",
@@ -122,8 +124,12 @@ export const Chapter1_Part3 = [
     background: require("../../../../Background Images/Part 3/Liga Filipina founding 1892 Ongjunco.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Bonifacio.png"),
+        source: require("../../../../Character Images/Chapter 3/Bonifacio Unsure.png"),
         position: "left"
+      },
+      {
+        source: require("../../../../Character Images/Chapter 3/Mabini R.png"),
+        position: "right"
       }
     ],
     text: "But what happens if Spain decides to come after us? What can we do\nto protect ourselves?"
@@ -135,11 +141,11 @@ export const Chapter1_Part3 = [
     background: require("../../../../Background Images/Part 3/Liga Filipina founding 1892 Ongjunco.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Bonifacio.png"),
+        source: require("../../../../Character Images/Chapter 3/Bonifacio Neutral.png"),
         position: "left"
       },
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Mabini.png"),
+        source: require("../../../../Character Images/Chapter 3/Mabini R.png"),
         position: "right"
       }
     ],
@@ -157,26 +163,26 @@ export const Chapter1_Part3 = [
     background: require("../../../../Background Images/Part 3/Liga Filipina founding 1892 Ongjunco.png"),
     choices: [
       {
-        text: "Insist that the Liga must remain peaceful and legal.",
+        text: "Insist that the Liga must remain\npeaceful and legal.",
         speaker: "DR. JOSÉ RIZAL",
         dialogue: "Mananatiling mapayapa ang Liga, Andrés. Huwag nating bigyan ang\npamahalaan ng dahilan para tawagin tayong mga rebelde.",
         translation: "The Liga will remain peaceful, Andrés. We must not give the government a reason to call us rebels.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Rizal.png"),
-            position: "right"
+            source: require("../../../../Character Images/Chapter 3/Rizal.png"),
+            position: "left"
           }
         ]
       },
 
       {
-        text: "Admit that his concern is worth considering.",
+        text: "Acknowledge that his concern is\nworth considering.",
         speaker: "DR. JOSÉ RIZAL",
         dialogue: "May punto ka, Andrés. Pag-isipan natin kung paano tayo haharap\nkung dumating ang araw na iyon.",
         translation: "You have a point, Andrés. Let's think about how we'll respond if that day comes.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Rizal.png"),
+            source: require("../../../../Character Images/Chapter 3/Rizal.png"),
             position: "right"
           }
         ]
@@ -187,6 +193,7 @@ export const Chapter1_Part3 = [
 
   // CONTINUE
 
+  //Q1_3 and Q2_3 here
 
   {
     type: "narrator",
@@ -233,19 +240,19 @@ export const Chapter1_Part3 = [
         dialogue: "I'll go quietly. My family and friends should not suffer because of me.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Rizal.png"),
+            source: require("../../../../Character Images/Chapter 3/Rizal Sad.png"),
             position: "left"
           }
         ]
       },
 
       {
-        text: "Ask to speak with an official about the charges.",
+        text: "Ask to speak with an official\nabout the charges.",
         speaker: "DR. JOSÉ RIZAL",
         dialogue: "I would like the chance to explain myself before I am taken away.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Rizal.png"),
+            source: require("../../../../Character Images/Chapter 3/Rizal Talking.png"),
             position: "left"
           }
         ]
@@ -262,6 +269,7 @@ export const Chapter1_Part3 = [
     text: "Either way, nothing changes. Rizal is taken away and exiled to Dapitan in Mindanao,\nleaving La Liga without its founder."
   },
 
+  //Q3_3 here
 
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -287,13 +295,15 @@ export const Chapter1_Part3 = [
     text: "Domingo Franco and Andrés Bonifacio step forward to bring it back to life,\nbut soon, the members start to disagree about how to move forward."
   },
 
+  //T1_3 here
+
   {
     type: "dialogue",
     speaker: "DOMINGO FRANCO",
     background: require("../../../../Background Images/Part 3/Reformist meeting hall, 1893 (Liga revival debate).png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Franco.png"),
+        source: require("../../../../Character Images/Chapter 3/Franco Talking.png"),
         position: "left"
       }
     ],
@@ -306,11 +316,11 @@ export const Chapter1_Part3 = [
     background: require("../../../../Background Images/Part 3/Reformist meeting hall, 1893 (Liga revival debate).png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Franco.png"),
+        source: require("../../../../Character Images/Chapter 3/Franco Neutral.png"),
         position: "left"
       },
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Bonifacio.png"),
+        source: require("../../../../Character Images/Chapter 3/Bonifacio Unsure R.png"),
         position: "right"
       }
     ],
@@ -323,11 +333,11 @@ export const Chapter1_Part3 = [
     background: require("../../../../Background Images/Part 3/Reformist meeting hall, 1893 (Liga revival debate).png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Franco.png"),
+        source: require("../../../../Character Images/Chapter 3/Franco Neutral.png"),
         position: "left"
       },
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Bonifacio.png"),
+        source: require("../../../../Character Images/Chapter 3/Bonifacio Unsure R.png"),
         position: "right"
       }
     ],
@@ -345,26 +355,34 @@ export const Chapter1_Part3 = [
     background: require("../../../../Background Images/Part 3/Reformist meeting hall, 1893 (Liga revival debate).png"),
     choices: [
       {
-        text: "Leave the Liga and start building a new, secret group.",
+        text: "Leave the Liga and start building a\nnew, secret group.",
         speaker: "ANDRÉS BONIFACIO",
         dialogue: "Sawa na ako sa mga liham na walang kasagutan. Kung hindi sapat ang\nmga salita, kailangan nating gumawa ng ibang paraan.",
-        translation: "I've had enough of letters that go unanswered. If words alone aren't enough, we need to\nfind another way.",
+        translation: "I've had enough of letters that go unanswered. If words alone aren't enough, we need to find another way.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Bonifacio.png"),
+            source: require("../../../../Character Images/Chapter 3/Franco Neutral.png"),
+            position: "left"
+          },
+          {
+            source: require("../../../../Character Images/Chapter 3/Bonifacio Unsure R.png"),
             position: "right"
           }
         ]
       },
 
       {
-        text: "Try one more time to bring everyone together.",
+        text: "Try one more time to bring\neveryone together.",
         speaker: "ANDRÉS BONIFACIO",
-        dialogue: "Pakiusap, subukan muna nating magkasundo sa isang plano bago tayo\ntuluyang magkahiwalay.",
-        translation: "Please, let's try to agree on one plan before we go our separate ways.",
+        dialogue: "Subukan muna nating magkasundo sa isang plano bago tayo\ntuluyang magkahiwalay.",
+        translation: "Let's try to agree on one plan before we go our separate ways.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Bonifacio.png"),
+            source: require("../../../../Character Images/Chapter 3/Franco Neutral.png"),
+            position: "left"
+          },
+          {
+            source: require("../../../../Character Images/Chapter 3/Bonifacio Neutral R.png"),
             position: "right"
           }
         ]
@@ -379,13 +397,13 @@ export const Chapter1_Part3 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 3/Reformist meeting hall, 1893 (Liga revival debate).png"),
-    text: "Either way, the disagreement can't be resolved. La Liga Filipina\nofficially ends in October 1893."
+    text: "The disagreement could not be resolved. La Liga Filipina\nofficially ends in October 1893."
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 3/Reformist meeting hall, 1893 (Liga revival debate).png"),
-    text: "Bonifacio, together with Plata, Diwa, Diaz, and Dizon, moves forward to build a new\norganization dedicated to full independence."
+    text: "Bonifacio, together with Plata, Diwa, Diaz, and Dizon, moves forward to build\na new organization dedicated to full independence."
   },
 
 
@@ -419,7 +437,7 @@ export const Chapter1_Part3 = [
     background: require("../../../../Background Images/Part 3/Arellano house, Calle Elcano, Tondo.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Bonifacio.png"),
+        source: require("../../../../Character Images/Chapter 3/Bonifacio Unsure.png"),
         position: "left"
       }
     ],
@@ -427,11 +445,66 @@ export const Chapter1_Part3 = [
   },
 
   {
-    type: "scene",
-    intro: true,
-    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    type: "dialogue",
+    speaker: "ANDRÉS BONIFACIO",
+    background: require("../../../../Background Images/Part 3/Arellano house, Calle Elcano, Tondo.png"),
+    characters: [
+      {
+        source: require("../../../../Character Images/Chapter 3/Bonifacio Unsure.png"),
+        position: "left"
+      }
+    ],
     text: "From today, we work only for the freedom of our country."
   },
+
+  // QUIZ INSERT HERE
+  {
+    type: "matching",
+    characters: [
+      {
+        id: "rizal",
+        name: "Dr. José Rizal",
+        image: require("../../../../Character Images/Chapter 3/Rizal.png"),
+      },
+      {
+        id: "bonifacio",
+        name: "Andrés Bonifacio",
+        image: require("../../../../Character Images/Chapter 3/Bonifacio Neutral.png"),
+      },
+      {
+        id: "mabini",
+        name: "Apolinario Mabini",
+        image: require("../../../../Character Images/Chapter 3/Mabini R.png"),
+      },
+      {
+        id: "franco",
+        name: "Domingo Franco",
+        image: require("../../../../Character Images/Chapter 3/Franco Neutral.png"),
+      },
+      {
+        id: "dagohoy",
+        name: "Francisco Dagohoy",
+        image: require("../../../../Character Images/Chapter 2/Dagohoy Mad.png"),
+      },
+      {
+        id: "legazpi",
+        name: "Miguel López de Legazpi",
+        image: require("../../../../Character Images/Chapter 1/Legazpi Neutral.png"),
+      },
+      {
+        id: "dula",
+        name: "Lakan Dula",
+        image: require("../../../../Character Images/Chapter 1/Dula Neutral.png"),
+      },
+      {
+        id: "sulayman",
+        name: "Rajah Sulayman",
+        image: require("../../../../Character Images/Chapter 1/Sulayman Neutral R.png"),
+      },
+    ],
+  },
+
+
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // QUIZ TIME
@@ -446,7 +519,7 @@ export const Chapter1_Part3 = [
 
   {
     type: "quiz",
-    question: "What did José Rizal hope to accomplish after returning to the Philippines in 1892?",
+    question: "What did José Rizal hope to accomplish after returning to\nthe Philippines in 1892?",
     options: [
       "Become a Spanish government official",
       "Work with Filipinos to improve their country",
@@ -494,7 +567,7 @@ export const Chapter1_Part3 = [
 
   {
     type: "quiz",
-    question: "What secret organization was founded by Andrés Bonifacio and his companions?",
+    question: "What secret organization was founded by Andrés\nBonifacio and his companions?",
     options: [
       "La Liga Filipina",
       "The Propaganda Movement",
@@ -507,15 +580,8 @@ export const Chapter1_Part3 = [
   {
     type: "scene",
     title: "Chapter Complete.",
-    date: "The call for change had become a call for freedom.",
+    date: "The call for change has now become a call for freedom.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
-  
-  {
-    type: "scene",
-    title: "And soon, that call would no longer remain in secret.",
-    date: " ",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
-  }
 
 ];
