@@ -25,7 +25,7 @@ export const Chapter1_Part5 = [
     title: "The Catalyst",
     date: "August 19, 1896",
     background: require("../../../../Background Images/Usuals/Black Background.jpg"),
-    sfx:'running'
+    sfx: 'running'
   },
 
   {
@@ -42,8 +42,8 @@ export const Chapter1_Part5 = [
     background: require("../../../../Background Images/Part 5/19th century hand press printing shop ransacked.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/geel.png"),
-        position: "left"
+        source: require("../../../../Character Images/Chapter 5/Gil.png"),
+        position: "center"
       }
     ],
     text: "Search the Diario de Manila press right away. There may be evidence\nthere. Find names, plans, everything.",
@@ -74,8 +74,8 @@ export const Chapter1_Part5 = [
     title: "The Emergency Council",
     date: "August 1896",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx:'chairSit'
-    
+    sfx: 'chairSit'
+
   },
 
   {
@@ -116,7 +116,7 @@ export const Chapter1_Part5 = [
         position: "right"
       }
     ],
-    text: "And waiting is risky too, Teodoro. They already know our names. Do we\nwait to be arrested one by one, or do we stand together and fight?"
+    text: "And waiting is risky too, Teodoro! They already know our names. Do we\nwait to be arrested one by one, or do we stand together and fight?"
   },
   //T4_5 here
 
@@ -160,7 +160,7 @@ export const Chapter1_Part5 = [
             position: "right"
           }
         ],
-        dialogue: "Baka mas mabuting maghintay tayo ng ilang araw, hanggang sa marami na tayong sandata.",
+        dialogue: "Baka mas mabuti nga na maghintay tayo ng ilang araw, hanggang sa marami na tayong sandata.",
         translation: "Maybe it's better to wait a few days, until we have more weapons."
       }
     ],
@@ -183,9 +183,8 @@ export const Chapter1_Part5 = [
   {
     type: "scene",
     title: "The Historian's Interlude",
-    // FIXED: Removed merge conflict markers and kept Stashed changes
     background: require("../../../../Background Images/Part 5/Map of the eight provinces under martial law.png"),
-    sfx:'singlePageFlip'
+    sfx: 'singlePageFlip'
   },
 
   {
@@ -217,7 +216,7 @@ export const Chapter1_Part5 = [
   {
     type: "scene",
     background: require("../../../../Background Images/Usuals/Black Background.jpg"),
-    title: "The exact date and location remains debated. But the significance is clear.",
+    title: "The exact date and location remains\ndebated. But the significance is clear.",
     date: "The Katipunan was no longer staying in the shadows."
   },
 
@@ -233,7 +232,7 @@ export const Chapter1_Part5 = [
     title: "The Tearing of the Cédulas",
     date: "August 23, 1896",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx:'footstepsGround'
+    sfx: 'footstepsGround'
 
   },
 
@@ -274,12 +273,17 @@ export const Chapter1_Part5 = [
     characters: [
       {
         source: require("../../../../Character Images/Chapter 5/Bonifacio Cedula.png"),
+        position: "center"
+      },
+      {
+        source: require("../../../../Character Images/Chapter 5/cheeringcrowd.png"),
         position: "left"
       },
       {
-        source: require("../../../../Character Images/Chapter 5/Tandang Sora.png"),
+        source: require("../../../../Character Images/Chapter 5/cheeringcrowd.png"),
         position: "right"
       }
+
     ],
     text: "Show me your cédulas!"
   },
@@ -301,10 +305,15 @@ export const Chapter1_Part5 = [
         characters: [
           {
             source: require("../../../../Character Images/Chapter 5/Bonifacio Cedula.png"),
+            position: "center"
+          },
+          ,
+          {
+            source: require("../../../../Character Images/Chapter 5/cheeringcrowd.png"),
             position: "left"
           },
           {
-            source: require("../../../../Character Images/Temporary Placeholders/katips.png"),
+            source: require("../../../../Character Images/Chapter 5/cheeringcrowd.png"),
             position: "right"
           }
         ],
@@ -318,10 +327,14 @@ export const Chapter1_Part5 = [
         characters: [
           {
             source: require("../../../../Character Images/Chapter 5/Bonifacio Cedula.png"),
+            position: "center"
+          },
+          {
+            source: require("../../../../Character Images/Chapter 5/cheeringcrowd.png"),
             position: "left"
           },
           {
-            source: require("../../../../Character Images/Temporary Placeholders/katips.png"),
+            source: require("../../../../Character Images/Chapter 5/cheeringcrowd.png"),
             position: "right"
           }
         ],
@@ -343,9 +356,8 @@ export const Chapter1_Part5 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Safe-house interior (Gregoria's scenes).png"),
-    // FIXED: Added missing comma after the text property
     text: "You tear your cédula along with the others. The act becomes a powerful\nsymbol of their decision to rise against Spanish rule.",
-    sfx:'paperRip'
+    sfx: 'paperRip'
   },
 
 
@@ -359,7 +371,7 @@ export const Chapter1_Part5 = [
     title: "The First Battle: San Juan del Monte",
     date: "August 30, 1896",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx:'footstepsGround'
+    sfx: 'footstepsGround'
   },
 
   {
@@ -375,8 +387,8 @@ export const Chapter1_Part5 = [
     background: require("../../../../Background Images/Part 5/Battle of San Juan del Monte 1896.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Chapter 5/Bonifacio Talking Mad R.png"),
-        position: "right"
+        source: require("../../../../Character Images/Chapter 5/Bonifacio Talking Mad.png"),
+        position: "center"
       }
     ],
     text: "Kunin natin ang mga baril nila. Kung wala tayong sandata\nngayon, may sandata na tayo bukas.",
@@ -398,8 +410,8 @@ export const Chapter1_Part5 = [
         speaker: "ANDRÉS BONIFACIO",
         characters: [
           {
-            source: require("../../../../Character Images/Chapter 5/Bonifacio Talking R.png"),
-            position: "right"
+            source: require("../../../../Character Images/Chapter 5/Bonifacio Talking Mad.png"),
+            position: "center"
           }
         ],
         dialogue: "Sugod! Kunin natin ang Polvorín!",
@@ -411,8 +423,8 @@ export const Chapter1_Part5 = [
         speaker: "ANDRÉS BONIFACIO",
         characters: [
           {
-            source: require("../../../../Character Images/Chapter 5/Bonifacio Talking R.png"),
-            position: "right"
+            source: require("../../../../Character Images/Chapter 5/Bonifacio Talking.png"),
+            position: "center"
           }
         ],
         dialogue: "Hintayin muna natin sila. Palilibutan natin ang Polvorín.",
@@ -444,8 +456,8 @@ export const Chapter1_Part5 = [
     background: require("../../../../Background Images/Part 5/Battle of San Juan del Monte 1896.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Chapter 5/Bonifacio Talking Mad R.png"),
-        position: "right"
+        source: require("../../../../Character Images/Chapter 5/Bonifacio Talking.png"),
+        position: "center"
       }
     ],
     text: "Tatlong daan. Tatlong direksyon. Kung sabay tayong tatama sa Maynila,\nhindi nila kayang ipagtanggol ang lahat.",

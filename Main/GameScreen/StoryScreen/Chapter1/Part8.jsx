@@ -84,7 +84,7 @@ export const Chapter1_Part8 = [
     speaker: "E. SPENCER PRATT",
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Pratter.png"),
+        source: require("../../../../Character Images/Chapter 8/Pratt.png"),
         position: "left"
       },
       {
@@ -263,7 +263,7 @@ export const Chapter1_Part8 = [
     title: "The Declaration at Kawit",
     date: "June 12, 1898",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx:'windyFlag'
+    sfx: 'windyFlag'
   },
 
   {
@@ -287,10 +287,18 @@ export const Chapter1_Part8 = [
       {
         source: require("../../../../Character Images/Chapter 8/Emilio Serious R.png"),
         position: "center"
+      },
+      {
+        source: require("../../../../Character Images/Chapter 5/cheeringcrowd.png"),
+        position: "left"
+      },
+      {
+        source: require("../../../../Character Images/Chapter 5/cheeringcrowd.png"),
+        position: "right"
       }
     ],
-    text: "Sa ngalan ng Diyos, ipinapahayag ko at ipinapaalam na malaya\nat independiyente ang Pilipinas! <i>shouts loudly</i>",
-    translation: "In the name of God, I declare and proclaim that the Philippines is free and independent! <i>shouts loudly</i>",
+    text: "Sa ngalan ng Diyos, ipinapahayag ko at ipinapaalam na malaya\nat independiyente ang Pilipinas!",
+    translation: "In the name of God, I declare and proclaim that the Philippines is free and independent!",
     background: require("../../../../Background Images/Part 8/Aguinaldo Shrine (with crowd, cannons, bells, flag).png")
   },
 
@@ -344,7 +352,7 @@ export const Chapter1_Part8 = [
     translation: "If we want to be recognized as a true nation, we need a government with a clear foundation.",
     background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png")
   },
-   {
+  {
     type: "dialogue",
     speaker: "APOLINARIO MABINI",
     characters: [
@@ -427,7 +435,7 @@ export const Chapter1_Part8 = [
     title: "The Siege of Manila",
     date: "July – August 1898",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx:'marching'
+    sfx: 'marching'
   },
 
   {
@@ -531,7 +539,7 @@ export const Chapter1_Part8 = [
 
   {
     type: "narrator",
-    text: "The revolution that began against Spanish rule now faces a new power claiming\nauthority over the islands.",
+    text: "The revolution that began against Spanish rule now faces a new\npower claiming authority over the islands.",
     background: require("../../../../Background Images/Part 8/Treaty of Paris.png"),
     unlock: ["Timeline_1898_12-21", "mckinley-2", "trias-3"]
   },
@@ -548,7 +556,7 @@ export const Chapter1_Part8 = [
     title: "Santa Mesa",
     date: "February 4, 1899",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx:'cannonFire'
+    sfx: 'cannonFire'
   },
 
   {
@@ -572,13 +580,15 @@ export const Chapter1_Part8 = [
     unlock: ["mabini-4", "mckinley-3"]
   },
 
-  { type: "sortingtimeline" },
-
   {
     type: "system",
     intro: true,
     text: "Now, the Philippine-American War has begun.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
+  },
+
+  { 
+    type: "sortingtimeline" 
   },
 
   // END YAH

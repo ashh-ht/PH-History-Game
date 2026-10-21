@@ -52,7 +52,7 @@ export const Chapter1_Part1 = [
     title: "Cibabao, Samar",
     date: "February 13, 1565",
     background: require("../../../../Background Images/Usuals/Black Background.jpg"),
-    music: "traditional" 
+    music: "traditional"
   },
 
   // scratched. 
@@ -68,7 +68,7 @@ export const Chapter1_Part1 = [
     text: "After weeks at sea, five Spanish ships under General Miguel López de Legazpi\nanchor off Cibabao, Samar.",
     background: require("../../../../Background Images/Intro/Intro 4.png"),
     unlock: ["Timeline_1565_02-13"]
-    
+
   },
 
   {
@@ -98,13 +98,12 @@ export const Chapter1_Part1 = [
     text: "We have finally arrived. Remember our orders. We speak with\nthe locals peacefully first."
   },
 
-  
+
 
   {
     type: "narrator",
     text: "The people of Samar remain near the trees.",
-    background: require("../../../../Background Images/Part 1/Spanish Coast.png")
-    
+    background: require("../../../../Background Images/Part 1/Spanish Coast.png"),
   },
 
   {
@@ -120,7 +119,7 @@ export const Chapter1_Part1 = [
     characters: [
       {
         source: require("../../../../Character Images/Chapter 1/Gomez Talking.png"),
-        position: "left"
+        position: "center"
       }
     ],
     text: "We come in peace! We'd like to offer a sandugo, a blood compact,\nas a sign of friendship."
@@ -153,6 +152,10 @@ export const Chapter1_Part1 = [
         translation: "We are not ready yet. Please leave for now.",
         characters: [
           {
+            source: require("../../../../Character Images/Chapter 1/Gomez Unsure.png"),
+            position: "left"
+          },
+          {
             source: require("../../../../Character Images/Temporary Placeholders/Chieftain.png"),
             position: "right"
           }
@@ -166,7 +169,11 @@ export const Chapter1_Part1 = [
         translation: "We'll hear what you have to say, but we will not trust you yet.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Chieftain.png"),
+            source: require("../../../../Character Images/Chapter 1/Gomez Unsure.png"),
+            position: "left"
+          },
+          {
+            source: require("../../../../Character Images/Chapter 1/Chieftain.png"),
             position: "right"
           }
         ]
@@ -200,13 +207,10 @@ export const Chapter1_Part1 = [
 
   {
     type: "narrator",
-    // FIXED: Merged conflict and kept Stashed changes
     text: "Two days after leaving Samar, Legazpi and his fleet reached Leyte. He lands on shore\nand plants a cross to formally claim the territory for Spain.",
     background: require("../../../../Background Images/Part 1/Spanish Coast.png"),
     sfx: "sandThud"
   },
-
-  //Q3_1 here
 
   {
     type: "dialogue",
@@ -215,7 +219,7 @@ export const Chapter1_Part1 = [
     characters: [
       {
         source: require("../../../../Character Images/Chapter 1/Legazpi Neutral.png"),
-        position: "right"
+        position: "center"
       }
     ],
     text: "Let this cross mark the start of our mission here, in the name of King Philip II."
@@ -371,7 +375,7 @@ export const Chapter1_Part1 = [
         characters: [
           {
             source: require("../../../../Character Images/Chapter 1/Tupas Talking.png"),
-            position: "left"
+            position: "center"
           }
         ]
       },
@@ -384,7 +388,7 @@ export const Chapter1_Part1 = [
         characters: [
           {
             source: require("../../../../Character Images/Chapter 1/Tupas Talking.png"),
-            position: "left"
+            position: "center"
           }
         ]
       }
@@ -409,7 +413,7 @@ export const Chapter1_Part1 = [
     characters: [
       {
         source: require("../../../../Character Images/Chapter 1/Legazpi Mad.png"),
-        position: "right"
+        position: "center"
       }
     ],
     text: "We offered peace, and I wish this could have gone differently.\nStill, we must persevere and survive."
@@ -430,8 +434,8 @@ export const Chapter1_Part1 = [
     background: require("../../../../Background Images/Part 1/Construction.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Chapter 1/Legazpi Neutral.png"),
-        position: "right"
+        source: require("../../../../Character Images/Chapter 1/Legazpi Neutral R.png"),
+        position: "center"
       }
     ],
     text: "We'll build our settlement here and call it Villa de Santísimo\nNombre de Jesús."
@@ -472,7 +476,7 @@ export const Chapter1_Part1 = [
         position: "left"
       },
       {
-        source: require("../../../../Character Images/Chapter 1/Legazpi Neutral.png"),
+        source: require("../../../../Character Images/Chapter 1/Legazpi Surprised.png"),
         position: "right"
       }
     ],
@@ -497,7 +501,7 @@ export const Chapter1_Part1 = [
     text: "However, life in Cebu remains difficult due to food shortages and tensions between\nthe Spanish and local communities.",
     background: require("../../../../Background Images/Part 1/Cebu Village.png"),
     unlock: ["Timeline_1565-1569", "Timeline_1565_11-27", "Timeline_1566_10-15"]
-   },
+  },
 
   {
     type: "dialogue",
@@ -505,8 +509,8 @@ export const Chapter1_Part1 = [
     background: require("../../../../Background Images/Part 1/Cebu Village.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Chapter 1/Legazpi Neutral.png"),
-        position: "right"
+        source: require("../../../../Character Images/Chapter 1/Legazpi Tired.png"),
+        position: "center"
       }
     ],
     text: "We cannot keep surviving on so little. Panay has more food. We will\nmove the settlement somewhere else."
@@ -745,7 +749,6 @@ export const Chapter1_Part1 = [
       "Cebu",
       "Cibabao, Samar",
       "Bohol",
-      "Manila",
       "Manila",
     ],
     // FIXED: Removed duplicate correctIndex and music keys

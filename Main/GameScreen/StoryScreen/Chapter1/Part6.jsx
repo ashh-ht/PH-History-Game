@@ -136,7 +136,7 @@ export const Chapter1_Part6 = [
     characters: [
       {
         source: require("../../../../Character Images/Chapter 6/Rizal Sad.png"),
-        position: "left"
+        position: "center"
       }
     ],
     text: "Consummatum est.",
@@ -192,7 +192,7 @@ export const Chapter1_Part6 = [
     characters: [
       {
         source: require("../../../../Character Images/Chapter 6/Bonifacio Neutral R.png"),
-        position: "right"
+        position: "center"
       }
     ],
     text: "Emilio, may alok daw ng amnestiya. Pero kung pagsuko ang\nkapalit, hindi natin basta matatanggap iyon.",
@@ -217,7 +217,7 @@ export const Chapter1_Part6 = [
         characters: [
           {
             source: require("../../../../Character Images/Chapter 6/Emilio Reading.png"),
-            position: "right"
+            position: "center"
           }
         ],
         dialogue: "Huwag munang sabihin kay Bonifacio. Kailangan nating\nmaghanda, hindi lamang siya.",
@@ -230,7 +230,7 @@ export const Chapter1_Part6 = [
         characters: [
           {
             source: require("../../../../Character Images/Chapter 6/Emilio Serious.png"),
-            position: "right"
+            position: "center"
           }
         ],
         dialogue: "Hindi ako makikipagkasundo nang lihim, Supremo. Ito ang alok\nnila. Pag-usapan natin.",
@@ -385,7 +385,7 @@ export const Chapter1_Part6 = [
     characters: [
       {
         source: require("../../../../Character Images/Chapter 6/Tirona R.png"),
-        position: "right"
+        position: "center"
       }
     ],
     text: "Wala na tayong sapat na armas. Kung magpapatuloy tayo, baka\nlalo lang tayong malugi.",
@@ -409,7 +409,7 @@ export const Chapter1_Part6 = [
         characters: [
           {
             source: require("../../../../Character Images/Chapter 6/Tirona Mad.png"),
-            position: "right"
+            position: "center"
           }
         ],
         dialogue: "Ibaba na natin ang mga armas. Hindi ko hahayaang mamatay\npa ang mga natitira.",
@@ -422,7 +422,7 @@ export const Chapter1_Part6 = [
         characters: [
           {
             source: require("../../../../Character Images/Chapter 6/Tirona Mad.png"),
-            position: "right"
+            position: "center"
           }
         ],
         dialogue: "Maghintay pa tayo nang kaunti. Baka makahanap pa tayo\nng paraan para makaalis.",

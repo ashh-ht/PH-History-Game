@@ -526,8 +526,7 @@ function PartRenderer(props) {
     current &&
     !isMinigame &&
     current.type !== "scene" &&
-    current.type !== "quiz" &&
-    !(current.type === "system" && current.intro === true);
+    current.type !== "quiz";
 
   let lineText = null;
 
@@ -569,7 +568,11 @@ function PartRenderer(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sceneIdx, picked, done, settings?.autoPlay, settings?.autoDelay, current]);
 
+
+  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // MINIGAMES
+  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   if (current?.type === "voyage") return <VoyageMinigame onComplete={goNext} />;
   if (current?.type === "santoNino") return <SantoNinoMinigame onComplete={goNext} />;
 
@@ -643,19 +646,22 @@ function PartRenderer(props) {
       <View style={styles.introScreen}>
         <ImageBackground source={current.background} style={styles.introBackground} resizeMode="cover">
           <View style={styles.introTextBox}>
-            <Text style={scaled(styles.introText)}>{current.text}</Text>
+            {/* CHANGED: typewriter instead of plain Text */}
+            <TypedText style={scaled(styles.introText)} full={lineText} shown={shown} />
           </View>
         </ImageBackground>
         {nextIntro && (
           <Animated.View pointerEvents="none" style={[styles.introNextLayer, { opacity: introProgress }]}>
             <ImageBackground source={nextIntro.background} style={styles.introBackground} resizeMode="cover">
               <View style={styles.introTextBox}>
-                <Text style={scaled(styles.introText)}>{nextIntro.text}</Text>
+                {/* CHANGED: keep the box size but hide the text so the next line types in after the crossfade */}
+                <TypedText style={scaled(styles.introText)} full={nextIntro.text} shown="" />
               </View>
             </ImageBackground>
           </Animated.View>
         )}
-        <TouchableOpacity style={styles.introTouchable} activeOpacity={1} onPress={goToNextIntro} />
+        {/* CHANGED: first tap completes the typing, next tap continues */}
+        <TouchableOpacity style={styles.introTouchable} activeOpacity={1} onPress={advance} />
       </View>
     );
   }
@@ -843,7 +849,7 @@ export function Chap1Part7Screen({ navigation, ...props }) {
 }
 
 export function Chap1Part8Screen({ navigation, ...props }) {
-  return <PartRenderer sceneData={Chapter1.part8} chapterNumber={1} partNumber={8} isLastPart={true} onChapterComplete={() => navigation.navigate("MainMenu")} navigation={navigation} {...props} />;
+  return <PartRenderer sceneData={Chapter1.part8} chapterNumber={1} partNumber={8} isLastPart={true} onChapterComplete={() => navigation.navigate("Menu")} navigation={navigation} {...props} />;
 }
 
 // =====================================================
@@ -928,13 +934,13 @@ const styles = StyleSheet.create({
   },
   introTextBox: {
     position: "absolute",
-    bottom: 10,
-    left: 30,
-    right: 30,
+    bottom: 0,
+    left: 0,
+    right: 0,
     backgroundColor: "rgba(0, 0, 0, 0.78)",
     paddingVertical: 12,
-    paddingHorizontal: 18,
-    borderRadius: 4,
+    paddingHorizontal: 48,
+    borderRadius: 0,
   },
   introText: {
     color: "#FFFFFF",

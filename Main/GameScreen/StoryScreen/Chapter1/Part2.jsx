@@ -16,10 +16,6 @@ export const Chapter1_Part2 = [
   },
 
   // GAME ENTRY
-  
-  {
-    type: "decipher",
-  },
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 1 
@@ -156,7 +152,7 @@ export const Chapter1_Part2 = [
         characters: [
           {
             source: require("../../../../Character Images/Chapter 2/Dagohoy Mad.png"),
-            position: "left"
+            position: "center"
           }
         ]
       },
@@ -169,7 +165,7 @@ export const Chapter1_Part2 = [
         characters: [
           {
             source: require("../../../../Character Images/Chapter 2/Dagohoy Done.png"),
-            position: "left"
+            position: "center"
           }
         ]
       }
@@ -269,7 +265,7 @@ export const Chapter1_Part2 = [
         characters: [
           {
             source: require("../../../../Character Images/Chapter 2/Dagohoy Talking.png"),
-            position: "left"
+            position: "center"
           }
         ]
       },
@@ -282,7 +278,7 @@ export const Chapter1_Part2 = [
         characters: [
           {
             source: require("../../../../Character Images/Chapter 2/Dagohoy Talking.png"),
-            position: "left"
+            position: "center"
           }
         ]
       }
@@ -356,8 +352,8 @@ export const Chapter1_Part2 = [
         translation: "Enough of the fighting. Let's accept their offer so no more lives are lost.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/BoholRebelLeader.png"),
-            position: "left"
+            source: require("../../../../Character Images/Chapter 2/BoholanoRebelLeader.png"),
+            position: "center"
           }
         ]
       },
@@ -369,8 +365,8 @@ export const Chapter1_Part2 = [
         translation: "Give us time to discuss this as a community.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/BoholRebelLeader.png"),
-            position: "left"
+            source: require("../../../../Character Images/Chapter 2/BoholanoRebelLeader.png"),
+            position: "center"
           }
         ]
       }
@@ -399,6 +395,10 @@ export const Chapter1_Part2 = [
     title: "After 85 years,",
     date: "the Dagohoy rebellion comes to an end.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+  },
+
+  {
+    type: "decipher",
   },
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

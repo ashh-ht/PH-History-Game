@@ -72,7 +72,7 @@ export const Chapter1_Part7 = [
         position: "left"
       },
       {
-        source: require("../../../../Character Images/Chapter 7/Bonifacio Unsure.png"),
+        source: require("../../../../Character Images/Chapter 7/Bonifacio Neutral R.png"),
         position: "right"
       }
     ],
@@ -91,7 +91,7 @@ export const Chapter1_Part7 = [
         position: "left"
       },
       {
-        source: require("../../../../Character Images/Chapter 7/Bonifacio Unsure.png"),
+        source: require("../../../../Character Images/Chapter 7/Bonifacio Unsure R.png"),
         position: "right"
       }
     ],
@@ -137,7 +137,7 @@ export const Chapter1_Part7 = [
             position: "left"
           },
           {
-            source: require("../../../../Character Images/Chapter 6/Bonifacio Talking Mad R.png"),
+            source: require("../../../../Character Images/Chapter 6/Bonifacio Talking R.png"),
             position: "right"
           }
         ]
@@ -220,7 +220,7 @@ export const Chapter1_Part7 = [
           },
           // FIXED: Removed duplicated Emilio character
           {
-            source: require("../../../../Character Images/Temporary Placeholders/carte.png"),
+            source: require("../../../../Character Images/Chapter 7/Ricarte.png"),
             position: "right"
           }
         ]
@@ -235,9 +235,8 @@ export const Chapter1_Part7 = [
             source: require("../../../../Character Images/Chapter 7/Emilio Serious R.png"),
             position: "left"
           },
-          // FIXED: Removed duplicated Emilio character
           {
-            source: require("../../../../Character Images/Temporary Placeholders/carte.png"),
+            source: require("../../../../Character Images/Chapter 7/Ricarte.png"),
             position: "right"
           }
         ]

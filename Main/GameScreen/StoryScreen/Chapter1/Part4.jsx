@@ -53,7 +53,7 @@ export const Chapter1_Part4 = [
         position: "left"
       },
       {
-        source: require("../../../../Character Images/Chapter 4/Bonifacio Neutral R.png"),
+        source: require("../../../../Character Images/Chapter 4/Bonifacio Unsure R.png"),
         position: "right"
       }
 
@@ -71,7 +71,7 @@ export const Chapter1_Part4 = [
         position: "left"
       },
       {
-        source: require("../../../../Character Images/Chapter 4/Bonifacio Neutral R.png"),
+        source: require("../../../../Character Images/Chapter 4/Bonifacio Talking R.png"),
         position: "right"
       }
     ],
@@ -140,7 +140,7 @@ export const Chapter1_Part4 = [
         position: "right"
       },
       {
-        source: require("../../../../Character Images/Chapter 4/Bonifacio Neutral.png"),
+        source: require("../../../../Character Images/Chapter 4/Bonifacio Unsure.png"),
         position: "left"
       }
     ],
@@ -157,7 +157,7 @@ export const Chapter1_Part4 = [
         position: "right"
       },
       {
-        source: require("../../../../Character Images/Chapter 4/Bonifacio Unsure.png"),
+        source: require("../../../../Character Images/Chapter 4/Bonifacio Talking.png"),
         position: "left"
       }
     ],
@@ -174,7 +174,7 @@ export const Chapter1_Part4 = [
         position: "right"
       },
       {
-        source: require("../../../../Character Images/Chapter 4/Bonifacio Unsure.png"),
+        source: require("../../../../Character Images/Chapter 4/Bonifacio Talking.png"),
         position: "left"
       }
     ],
@@ -219,8 +219,8 @@ export const Chapter1_Part4 = [
         translation: "Groups of three won't be enough. We need thousands.",
         characters: [
           {
-            source: require("../../../../Character Images/Chapter 4/Bonifacio Unsure R.png"),
-            position: "right"
+            source: require("../../../../Character Images/Chapter 4/Bonifacio Talking.png"),
+            position: "center"
           }
         ]
       },
@@ -231,14 +231,14 @@ export const Chapter1_Part4 = [
         translation: "It's slow, but it's safe. Let's think it over before we change it.",
         characters: [
           {
-            source: require("../../../../Character Images/Chapter 4/Bonifacio Unsure R.png"),
-            position: "right"
+            source: require("../../../../Character Images/Chapter 4/Bonifacio Talking.png"),
+            position: "center"
           }
         ]
       }
     ],
 
-    nextScene: 21
+    nextScene: 22
   },
 
 
@@ -411,7 +411,7 @@ export const Chapter1_Part4 = [
       }
     ],
 
-    nextScene: 34
+    nextScene: 38
   },
 
   // CONTINUE
@@ -458,7 +458,7 @@ export const Chapter1_Part4 = [
     characters: [
       {
         source: require("../../../../Character Images/Chapter 4/Gregoria Neutral.png"),
-        position: "left"
+        position: "center"
       }
     ],
     text: "Kung mahuli ako, mahuhuli ang buong Katipunan kasama ko.",
@@ -483,7 +483,7 @@ export const Chapter1_Part4 = [
         characters: [
           {
             source: require("../../../../Character Images/Chapter 4/Gregoria Neutral.png"),
-            position: "left"
+            position: "center"
           }
         ]
       },
@@ -495,7 +495,7 @@ export const Chapter1_Part4 = [
         characters: [
           {
             source: require("../../../../Character Images/Chapter 4/Gregoria Neutral.png"),
-            position: "left"
+            position: "center"
           }
         ]
       }
@@ -568,7 +568,7 @@ export const Chapter1_Part4 = [
     characters: [
       {
         source: require("../../../../Character Images/Chapter 4/Bonifacio Talking Mad.png"),
-        position: "left"
+        position: "center"
       }
     ],
     text: "Nahanap na tayo. Wala nang panahon para sa mas maraming pagpaplano.",
@@ -594,11 +594,11 @@ export const Chapter1_Part4 = [
     background: require("../../../../Background Images/Part 4/Melchora's barn, Banlat, Kalookan.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Chapter 4/Bonifacio Talking.png"),
-        position: "left"
+        source: require("../../../../Character Images/Chapter 4/Bonifacio Talking Mad.png"),
+        position: "center"
       }
     ],
-    text: "Mula ngayon, hindi na tayo lihim na samahan lamang.\nTayo na ang pamahalaan ng Katagalugan.",
+    text: "Mula ngayon, hindi na tayo lihim na samahan lamang.\nTayo na ang pamahalaan ng Katagalugan!",
     translation: "From now on, we are no longer just a secret society. We are the government of Katagalugan."
   },
 
@@ -691,7 +691,7 @@ export const Chapter1_Part4 = [
   {
     type: "scene",
     title: "Chapter Complete.",
-    date: "The secret is out.",
+    date: "The secret of the Katipunan is now out.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   }
 

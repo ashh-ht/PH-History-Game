@@ -17,6 +17,8 @@ const CEDULA_TORN = require("../../../assets/Minigames/Part1/Part5/Cedula Torn.j
 
 const REQUIRED_TEARS = 5;
 const GAME_TIME = 30;
+const START_MESSAGE =
+    "Swipe across the cédula to tear it. The clock starts on your first swipe.";
 
 const CEDULA_SOURCE = Image.resolveAssetSource(CEDULA);
 const CEDULA_RATIO =
@@ -61,13 +63,12 @@ export default function CedulaMinigame({ onComplete }) {
     const narrow = width < 360;
     const horizontalPadding = narrow ? 12 : 16;
 
-    const [screen, setScreen] = useState("intro");
+    // The minigame now starts directly in gameplay (no intro screen).
+    const [screen, setScreen] = useState("playing");
     const [timeLeft, setTimeLeft] = useState(GAME_TIME);
     const [tears, setTears] = useState([]);
     const [slash, setSlash] = useState(null);
-    const [message, setMessage] = useState(
-        "Swipe across the document to tear it."
-    );
+    const [message, setMessage] = useState(START_MESSAGE);
 
     const [paperArea, setPaperArea] = useState({
         width: 0,
@@ -78,10 +79,11 @@ export default function CedulaMinigame({ onComplete }) {
         height: 1,
     });
 
-    const screenRef = useRef("intro");
+    const screenRef = useRef("playing");
     const startRef = useRef(null);
     const tearCountRef = useRef(0);
     const finishingRef = useRef(false);
+    // null until the player's first swipe; the clock only runs once it is set.
     const deadlineRef = useRef(null);
     const finishTimerRef = useRef(null);
 
@@ -159,6 +161,7 @@ export default function CedulaMinigame({ onComplete }) {
     }, [fittedPaper]);
 
     // Deadline-based timer avoids accumulated interval drift.
+    // It does nothing until the first swipe sets deadlineRef.
     useEffect(() => {
         if (screen !== "playing") return;
 
@@ -207,12 +210,12 @@ export default function CedulaMinigame({ onComplete }) {
         tearCountRef.current = 0;
         finishingRef.current = false;
         startRef.current = null;
-        deadlineRef.current = Date.now() + GAME_TIME * 1000;
+        deadlineRef.current = null; // clock starts on the first swipe
 
         setTears([]);
         setSlash(null);
         setTimeLeft(GAME_TIME);
-        setMessage("Swipe across the document to tear it.");
+        setMessage(START_MESSAGE);
 
         shake.stopAnimation();
         flash.stopAnimation();
@@ -223,95 +226,96 @@ export default function CedulaMinigame({ onComplete }) {
         changeScreen("playing");
     };
 
-  const animateTear = useCallback(() => {
-    shake.stopAnimation();
-    flash.stopAnimation();
-    shake.setValue(0);
-    flash.setValue(0);
+    const animateTear = useCallback(() => {
+        shake.stopAnimation();
+        flash.stopAnimation();
+        shake.setValue(0);
+        flash.setValue(0);
 
-    Animated.parallel([
-      Animated.sequence([
-        Animated.timing(shake, { toValue: 1, duration: 45, useNativeDriver: true }),
-        Animated.timing(shake, { toValue: -1, duration: 55, useNativeDriver: true }),
-        Animated.spring(shake, { toValue: 0, speed: 22, bounciness: 5, useNativeDriver: true }),
-      ]),
-      Animated.sequence([
-        Animated.timing(flash, { toValue: 0.18, duration: 65, useNativeDriver: true }),
-        Animated.timing(flash, { toValue: 0, duration: 230, useNativeDriver: true }),
-      ]),
-    ]).start();
-  }, [shake, flash]);
+        Animated.parallel([
+            Animated.sequence([
+                Animated.timing(shake, { toValue: 1, duration: 45, useNativeDriver: true }),
+                Animated.timing(shake, { toValue: -1, duration: 55, useNativeDriver: true }),
+                Animated.spring(shake, { toValue: 0, speed: 22, bounciness: 5, useNativeDriver: true }),
+            ]),
+            Animated.sequence([
+                Animated.timing(flash, { toValue: 0.18, duration: 65, useNativeDriver: true }),
+                Animated.timing(flash, { toValue: 0, duration: 230, useNativeDriver: true }),
+            ]),
+        ]).start();
+    }, [shake, flash]);
 
+    const finishSwipe = useCallback(
+        (start, end) => {
+            if (
+                screenRef.current !== "playing" ||
+                finishingRef.current ||
+                !start ||
+                !end
+            ) {
+                return;
+            }
 
-    const finishSwipe = useCallback((start, end) => {
-        if (
-            screenRef.current !== "playing" ||
-            finishingRef.current ||
-            !start ||
-            !end
-        ) {
-            return;
-         }
+            const dx = end.x - start.x;
+            const dy = end.y - start.y;
+            const absX = Math.abs(dx);
+            const absY = Math.abs(dy);
 
-              const dx = end.x - start.x;
-              const dy = end.y - start.y;
-              const absX = Math.abs(dx);
-              const absY = Math.abs(dy);
+            const horizontal = absX > absY * 1.2;
+            const vertical = absY > absX * 1.2;
 
-              const horizontal = absX > absY * 1.2;
-              const vertical = absY > absX * 1.2;
-
-              const longEnough = horizontal
+            const longEnough = horizontal
                 ? absX >= paperSize.width * 0.22
                 : vertical && absY >= paperSize.height * 0.18;
 
-              if ((!horizontal && !vertical) || !longEnough) {
+            if ((!horizontal && !vertical) || !longEnough) {
                 setSlash(null);
                 setMessage("Swipe farther across the paper.");
                 startRef.current = null;
                 return;
-              }
+            }
 
-              const clampX = (x) => Math.max(0, Math.min(paperSize.width, x));
-              const clampY = (y) => Math.max(0, Math.min(paperSize.height, y));
+            const clampX = (x) => Math.max(0, Math.min(paperSize.width, x));
+            const clampY = (y) => Math.max(0, Math.min(paperSize.height, y));
 
-              const newTear = {
+            const newTear = {
                 id: `${Date.now()}-${tearCountRef.current}`,
                 x1: clampX(start.x),
                 y1: clampY(start.y),
                 x2: clampX(end.x),
                 y2: clampY(end.y),
-              };
+            };
 
-              const nextCount = tearCountRef.current + 1;
-              tearCountRef.current = nextCount;
+            const nextCount = tearCountRef.current + 1;
+            tearCountRef.current = nextCount;
 
-              setTears((previous) => [...previous, newTear]);
-              setSlash(null);
-              startRef.current = null;
-              animateTear();
+            setTears((previous) => [...previous, newTear]);
+            setSlash(null);
+            startRef.current = null;
+            animateTear();
 
-              if (nextCount >= REQUIRED_TEARS) {
+            if (nextCount >= REQUIRED_TEARS) {
                 finishingRef.current = true;
                 setMessage("The cédula has been torn.");
                 clearFinishTimer();
 
                 finishTimerRef.current = setTimeout(() => {
-                  if (screenRef.current === "playing") {
-                    deadlineRef.current = null;
-                    changeScreen("won");
-                  }
-                  finishTimerRef.current = null;
+                    if (screenRef.current === "playing") {
+                        deadlineRef.current = null;
+                        changeScreen("won");
+                    }
+                    finishTimerRef.current = null;
                 }, 450);
-              } else {
+            } else {
                 setMessage(
-                  nextCount === REQUIRED_TEARS - 1
-                    ? "One more tear."
-                    : `${nextCount} of ${REQUIRED_TEARS} tears completed.`
+                    nextCount === REQUIRED_TEARS - 1
+                        ? "One more tear."
+                        : `${nextCount} of ${REQUIRED_TEARS} tears completed.`
                 );
-              }
-            }, [paperSize.width, paperSize.height, animateTear]);
-
+            }
+        },
+        [paperSize.width, paperSize.height, animateTear]
+    );
 
     const responder = useMemo(
         () =>
@@ -340,6 +344,11 @@ export default function CedulaMinigame({ onComplete }) {
                         finishingRef.current
                     ) {
                         return;
+                    }
+
+                    // First touch starts the 30-second clock.
+                    if (deadlineRef.current == null) {
+                        deadlineRef.current = Date.now() + GAME_TIME * 1000;
                     }
 
                     const start = {
@@ -546,138 +555,6 @@ export default function CedulaMinigame({ onComplete }) {
         </Pressable>
     );
 
-    // INTRODUCTION
-    if (screen === "intro") {
-        return (
-            <SafeAreaView style={styles.safeScreen}>
-                <ScrollView
-                    style={styles.scrollScreen}
-                    contentContainerStyle={[
-                        styles.introScreen,
-                        { paddingTop: compact ? 8 : 14 },
-                    ]}
-                    showsVerticalScrollIndicator={false}
-                    alwaysBounceVertical={false}
-                >
-                    <View style={styles.introHeader}>
-                        <View style={styles.chapterLine}>
-                            <View style={styles.chapterRule} />
-                            <Eyebrow />
-                            <View style={styles.chapterRule} />
-                        </View>
-
-                        <Text style={styles.introTitle}>
-                            Tear the Cédula
-                        </Text>
-
-                        <Text style={styles.introSubtitle}>
-                            A small act of defiance.
-                            {"\n"}
-                            A symbol of freedom.
-                        </Text>
-                    </View>
-
-                    <View style={styles.documentFeature}>
-                        <View style={styles.featureTopline}>
-                            <Text style={styles.featureLabel}>
-                                HISTORICAL ARTIFACT
-                            </Text>
-                            <Text style={styles.featureNumber}>01 / 01</Text>
-                        </View>
-
-                        <View style={styles.introImage}>
-                            <Image
-                                source={CEDULA}
-                                resizeMode="contain"
-                                style={styles.introImageContent}
-                            />
-                        </View>
-
-                        <View style={styles.featureCaptionRow}>
-                            <View style={styles.captionRule} />
-                            <Text style={styles.featureCaption}>
-                                THE CÉDULA PERSONAL
-                            </Text>
-                            <View style={styles.captionRule} />
-                        </View>
-                    </View>
-
-                    <View style={styles.historyCard}>
-                        <View style={styles.cardHeadingRow}>
-                            <View style={styles.cardIndex}>
-                                <Text style={styles.cardIndexText}>01</Text>
-                            </View>
-                            <View style={styles.cardHeadingCopy}>
-                                <Text style={styles.sectionLabel}>
-                                    HISTORICAL CONTEXT
-                                </Text>
-                                <Text style={styles.cardHeading}>
-                                    A document of colonial rule
-                                </Text>
-                            </View>
-                        </View>
-
-                        <Text style={styles.cardText}>
-                            Under Spanish rule, the cédula served as an
-                            identification document and tax certificate.
-                            During the Philippine Revolution, tearing it
-                            became a symbol of rejecting colonial authority.
-                        </Text>
-                    </View>
-
-                    <View style={styles.instructionsCard}>
-                        <View style={styles.cardHeadingRow}>
-                            <View style={styles.cardIndex}>
-                                <Text style={styles.cardIndexText}>02</Text>
-                            </View>
-                            <View style={styles.cardHeadingCopy}>
-                                <Text style={styles.sectionLabel}>
-                                    YOUR TASK
-                                </Text>
-                                <Text style={styles.cardHeading}>
-                                    Make your mark
-                                </Text>
-                            </View>
-                        </View>
-
-                        <Text style={styles.cardText}>
-                            Make five long swipes across the document within
-                            30 seconds. Horizontal and vertical swipes count.
-                        </Text>
-
-                        <View style={styles.challengeMeta}>
-                            <View style={styles.metaItem}>
-                                <Text style={styles.metaValue}>05</Text>
-                                <Text style={styles.metaLabel}>TEARS</Text>
-                            </View>
-                            <View style={styles.metaDivider} />
-                            <View style={styles.metaItem}>
-                                <Text style={styles.metaValue}>30</Text>
-                                <Text style={styles.metaLabel}>SECONDS</Text>
-                            </View>
-                            <View style={styles.metaDivider} />
-                            <View style={styles.metaItem}>
-                                <Text style={styles.metaValue}>↔</Text>
-                                <Text style={styles.metaLabel}>SWIPE</Text>
-                            </View>
-                        </View>
-                    </View>
-
-                    <View style={styles.introAction}>
-                        <ActionButton
-                            label="BEGIN CHALLENGE"
-                            onPress={startGame}
-                            accessibilityLabel="Begin the cédula challenge"
-                        />
-                        <Text style={styles.bottomHint}>
-                            THE NEXT MOVE IS YOURS
-                        </Text>
-                    </View>
-                </ScrollView>
-            </SafeAreaView>
-        );
-    }
-
     // COMPLETION
     if (screen === "won") {
         return (
@@ -707,7 +584,7 @@ export default function CedulaMinigame({ onComplete }) {
                         </Text>
 
                         <Text style={styles.completionSubtitle}>
-                            An act of defiance.
+                            There is no turning back.
                         </Text>
                     </View>
 
@@ -743,15 +620,17 @@ export default function CedulaMinigame({ onComplete }) {
 
                     <View style={styles.completionCard}>
                         <Text style={styles.sectionLabel}>
-                            MORE THAN A PIECE OF PAPER
+                            A DOCUMENT OF COLONIAL RULE
                         </Text>
                         <Text style={styles.completionCardTitle}>
-                            An act of resistance.
+                            More than a piece of paper.
                         </Text>
                         <Text style={styles.cardText}>
-                            Tearing the cédula became a rejection of colonial
-                            rule—and a declaration that freedom was worth
-                            fighting for.
+                            Under Spanish rule, the cédula served as an
+                            identification document and tax certificate.
+                            Tearing it became a rejection of colonial
+                            authority, and a declaration that freedom was
+                            worth fighting for.
                         </Text>
                     </View>
 
@@ -795,14 +674,14 @@ export default function CedulaMinigame({ onComplete }) {
 
                         <View style={styles.failureCard}>
                             <Text style={styles.sectionLabel}>
-                                THE CHALLENGE REMAINS
+                                THE MOMENT IS STILL YOURS
                             </Text>
                             <Text style={styles.failureCardTitle}>
-                                There is still time to try again.
+                                Tear it before the crowd moves on.
                             </Text>
                             <Text style={styles.cardText}>
                                 Start anywhere on the document. Make five
-                                long swipes before time runs out.
+                                long swipes within 30 seconds.
                             </Text>
                         </View>
                     </View>
@@ -812,25 +691,12 @@ export default function CedulaMinigame({ onComplete }) {
                         onPress={startGame}
                         symbol="↻"
                     />
-
-                    <Pressable
-                        onPress={() => changeScreen("intro")}
-                        style={({ pressed }) => [
-                            styles.backButton,
-                            pressed && styles.backButtonPressed,
-                        ]}
-                        accessibilityRole="button"
-                    >
-                        <Text style={styles.backText}>
-                            Back to introduction
-                        </Text>
-                    </Pressable>
                 </View>
             </SafeAreaView>
         );
     }
 
-    // GAMEPLAY — preserved
+    // GAMEPLAY
     return (
         <SafeAreaView style={styles.safeScreen}>
             <View
@@ -845,7 +711,7 @@ export default function CedulaMinigame({ onComplete }) {
                     <View style={styles.gameHeading}>
                         <Eyebrow />
                         <Text style={styles.gameTitle}>
-                            Tear the Cédula
+                            Tear Your Cédula
                         </Text>
                     </View>
 
@@ -938,17 +804,6 @@ const styles = StyleSheet.create({
         paddingBottom: 5,
     },
 
-    introScreen: {
-        flexGrow: 1,
-        paddingHorizontal: 18,
-        paddingBottom: 18,
-    },
-
-    introHeader: {
-        alignItems: "center",
-        paddingBottom: 10,
-    },
-
     chapterLine: {
         width: "100%",
         flexDirection: "row",
@@ -974,35 +829,6 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
 
-    introTitle: {
-        color: C.ink,
-        fontSize: 31,
-        lineHeight: 38,
-        fontWeight: "800",
-        textAlign: "center",
-        marginTop: 7,
-        letterSpacing: -0.5,
-        flexShrink: 1,
-    },
-
-    introSubtitle: {
-        color: C.body,
-        fontSize: 13,
-        lineHeight: 20,
-        marginTop: 8,
-        textAlign: "center",
-    },
-
-    documentFeature: {
-        backgroundColor: "transparent",
-        borderRadius: 0,
-        borderWidth: 0,
-        paddingHorizontal: 0,
-        paddingTop: 4,
-        paddingBottom: 6,
-        marginBottom: 12,
-    },
-
     featureTopline: {
         flexDirection: "row",
         alignItems: "center",
@@ -1024,19 +850,6 @@ const styles = StyleSheet.create({
         fontSize: 8,
         fontWeight: "700",
         letterSpacing: 0.7,
-    },
-
-    introImage: {
-        width: "100%",
-        height: 155,
-        alignItems: "center",
-        justifyContent: "center",
-        marginVertical: 5,
-    },
-
-    introImageContent: {
-        width: "100%",
-        height: "100%",
     },
 
     featureCaptionRow: {
@@ -1063,58 +876,6 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
 
-    historyCard: {
-        backgroundColor: "transparent",
-        borderWidth: 0,
-        borderColor: "transparent",
-        borderRadius: 0,
-        borderTopWidth: 1,
-        borderTopColor: C.border,
-        paddingHorizontal: 0,
-        paddingVertical: 13,
-    },
-
-    instructionsCard: {
-        marginTop: 8,
-        backgroundColor: "transparent",
-        borderWidth: 0,
-        borderColor: "transparent",
-        borderRadius: 0,
-        borderTopWidth: 1,
-        borderTopColor: C.border,
-        paddingHorizontal: 0,
-        paddingVertical: 13,
-    },
-
-    cardHeadingRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginBottom: 8,
-    },
-
-    cardIndex: {
-        width: 25,
-        height: 25,
-        borderRadius: 13,
-        borderWidth: 1,
-        borderColor: C.goldLight,
-        backgroundColor: C.creamDark,
-        alignItems: "center",
-        justifyContent: "center",
-        marginRight: 10,
-    },
-
-    cardIndexText: {
-        color: C.gold,
-        fontSize: 11,
-        fontWeight: "900",
-        letterSpacing: 0.3,
-    },
-
-    cardHeadingCopy: {
-        flex: 1,
-    },
-
     sectionLabel: {
         color: C.forest,
         fontSize: 9,
@@ -1124,61 +885,10 @@ const styles = StyleSheet.create({
         marginBottom: 3,
     },
 
-    cardHeading: {
-        color: C.ink,
-        fontSize: 16,
-        lineHeight: 21,
-        fontWeight: "700",
-    },
-
     cardText: {
         color: C.body,
         fontSize: 13,
         lineHeight: 20,
-    },
-
-    challengeMeta: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-around",
-        backgroundColor: "transparent",
-        borderTopWidth: 1,
-        borderBottomWidth: 1,
-        borderColor: C.border,
-        borderRadius: 0,
-        paddingVertical: 10,
-        marginTop: 12,
-    },
-
-    metaItem: {
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-
-    metaValue: {
-        color: C.ink,
-        fontSize: 18,
-        lineHeight: 22,
-        fontWeight: "900",
-    },
-
-    metaLabel: {
-        color: C.forest,
-        fontSize: 8,
-        fontWeight: "900",
-        letterSpacing: 1.1,
-        marginTop: 3,
-    },
-
-    metaDivider: {
-        width: 1,
-        height: 28,
-        backgroundColor: C.border,
-    },
-
-    introAction: {
-        marginTop: 13,
     },
 
     primaryButton: {
@@ -1605,24 +1315,5 @@ const styles = StyleSheet.create({
         fontWeight: "800",
         lineHeight: 21,
         marginBottom: 6,
-    },
-
-    backButton: {
-        flexShrink: 0,
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: 44,
-        paddingHorizontal: 12,
-        marginTop: 2,
-    },
-
-    backButtonPressed: {
-        opacity: 0.65,
-    },
-
-    backText: {
-        color: "#77715F",
-        fontSize: 11,
-        textDecorationLine: "underline",
     },
 });

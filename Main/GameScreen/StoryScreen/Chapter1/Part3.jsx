@@ -49,7 +49,7 @@ export const Chapter1_Part3 = [
     characters: [
       {
         source: require("../../../../Character Images/Chapter 3/Rizal Arrival.png"),
-        position: "left"
+        position: "center"
       }
     ],
     text: "Writing from Spain was only the beginning. Now I want to work for\nour people here, in our own country."
@@ -61,8 +61,8 @@ export const Chapter1_Part3 = [
     background: require("../../../../Background Images/Part 3/Rizal's home.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Chapter 3/Rizal.png"),
-        position: "left"
+        source: require("../../../../Character Images/Chapter 3/Rizal Arrival.png"),
+        position: "center"
       }
     ],
     text: "If we want a better future for our people, we cannot wait for the government\nto change. We must build it ourselves."
@@ -102,7 +102,7 @@ export const Chapter1_Part3 = [
     characters: [
       {
         source: require("../../../../Character Images/Chapter 3/Rizal.png"),
-        position: "left"
+        position: "center"
       }
     ],
     text: "My friends, we've lived as separate individuals for too long. It is time we\nunite into one strong group."
@@ -115,10 +115,10 @@ export const Chapter1_Part3 = [
     characters: [
       {
         source: require("../../../../Character Images/Chapter 3/Rizal.png"),
-        position: "left"
+        position: "center"
       }
     ],
-    text: "Our motto is simple: Unus Instar Omnium. One is worth all. If one of us\nis in trouble, we all stand together."
+    text: "Our motto is simple: \"Unus Instar Omnium\". One is worth all. If one of us\nis in trouble, we all stand together."
   },
 
   //T3_3 here
@@ -129,7 +129,7 @@ export const Chapter1_Part3 = [
     background: require("../../../../Background Images/Part 3/Liga Filipina founding 1892 Ongjunco.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Chapter 3/Bonifacio Unsure.png"),
+        source: require("../../../../Character Images/Chapter 3/Bonifacio Talking Mad.png"),
         position: "left"
       },
       {
@@ -147,7 +147,7 @@ export const Chapter1_Part3 = [
     background: require("../../../../Background Images/Part 3/Liga Filipina founding 1892 Ongjunco.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Chapter 3/Bonifacio Neutral.png"),
+        source: require("../../../../Character Images/Chapter 3/Bonifacio Unsure.png"),
         position: "left"
       },
       {
@@ -178,6 +178,10 @@ export const Chapter1_Part3 = [
           {
             source: require("../../../../Character Images/Chapter 3/Rizal.png"),
             position: "left"
+          },
+          {
+            source: require("../../../../Character Images/Chapter 3/Bonifacio Unsure R.png"),
+            position: "right"
           }
         ]
       },
@@ -190,6 +194,10 @@ export const Chapter1_Part3 = [
         characters: [
           {
             source: require("../../../../Character Images/Chapter 3/Rizal.png"),
+            position: "left"
+          },
+          {
+            source: require("../../../../Character Images/Chapter 3/Bonifacio Neutral R.png"),
             position: "right"
           }
         ]
@@ -249,7 +257,7 @@ export const Chapter1_Part3 = [
         characters: [
           {
             source: require("../../../../Character Images/Chapter 3/Rizal Sad.png"),
-            position: "left"
+            position: "center"
           }
         ]
       },
@@ -261,7 +269,7 @@ export const Chapter1_Part3 = [
         characters: [
           {
             source: require("../../../../Character Images/Chapter 3/Rizal Talking.png"),
-            position: "left"
+            position: "center"
           }
         ]
       }
@@ -314,7 +322,7 @@ export const Chapter1_Part3 = [
     characters: [
       {
         source: require("../../../../Character Images/Chapter 3/Franco Talking.png"),
-        position: "left"
+        position: "center"
       }
     ],
     text: "We should keep working peacefully. We can collect funds to support our\nwriters in Spain and keep pushing for fair treatment through legal means."
@@ -330,7 +338,7 @@ export const Chapter1_Part3 = [
         position: "left"
       },
       {
-        source: require("../../../../Character Images/Chapter 3/Bonifacio Unsure R.png"),
+        source: require("../../../../Character Images/Chapter 3/Bonifacio Talking Mad R.png"),
         position: "right"
       }
     ],
@@ -347,7 +355,7 @@ export const Chapter1_Part3 = [
         position: "left"
       },
       {
-        source: require("../../../../Character Images/Chapter 3/Bonifacio Unsure R.png"),
+        source: require("../../../../Character Images/Chapter 3/Bonifacio Talking R.png"),
         position: "right"
       }
     ],
@@ -367,7 +375,7 @@ export const Chapter1_Part3 = [
       {
         text: "Leave the Liga and start building a\nnew, secret group.",
         speaker: "ANDRÉS BONIFACIO",
-        dialogue: "Sawa na ako sa mga liham na walang kasagutan. Kung hindi sapat ang\nmga salita, kailangan nating gumawa ng ibang paraan.",
+        dialogue: "Sawa na ako sa mga liham na walang kasagutan! Kung hindi sapat ang\nmga salita, kailangan nating gumawa ng ibang paraan.",
         translation: "I've had enough of letters that go unanswered. If words alone aren't enough, we need to find another way.",
         characters: [
           {
@@ -375,7 +383,7 @@ export const Chapter1_Part3 = [
             position: "left"
           },
           {
-            source: require("../../../../Character Images/Chapter 3/Bonifacio Unsure R.png"),
+            source: require("../../../../Character Images/Chapter 3/Bonifacio Talking Mad R.png"),
             position: "right"
           }
         ]
@@ -392,7 +400,7 @@ export const Chapter1_Part3 = [
             position: "left"
           },
           {
-            source: require("../../../../Character Images/Chapter 3/Bonifacio Neutral R.png"),
+            source: require("../../../../Character Images/Chapter 3/Bonifacio Talking R.png"),
             position: "right"
           }
         ]
@@ -409,7 +417,7 @@ export const Chapter1_Part3 = [
     background: require("../../../../Background Images/Part 3/Reformist meeting hall, 1893 (Liga revival debate).png"),
     text: "The disagreement could not be resolved. La Liga Filipina\nofficially ends in October 1893.",
     unlock: ["Timeline_1893_10"]
-    
+
   },
 
   {
@@ -417,7 +425,7 @@ export const Chapter1_Part3 = [
     background: require("../../../../Background Images/Part 3/Reformist meeting hall, 1893 (Liga revival debate).png"),
     text: "Bonifacio, together with Plata, Diwa, Diaz, and Dizon, moves forward to build\na new organization dedicated to full independence.",
     unlock: ["diaz-1", "diwa-1", "dizon-1", "dizon-2", "plata-1", "franco-3", "dizon-3", "Timeline_1897_01-11"]
-    
+
   },
 
 
@@ -431,7 +439,7 @@ export const Chapter1_Part3 = [
     title: "The Founding of the KKK",
     date: "July 7, 1892",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx:'oilLamp'
+    sfx: 'oilLamp'
   },
 
   {
@@ -453,8 +461,8 @@ export const Chapter1_Part3 = [
     background: require("../../../../Background Images/Part 3/Arellano house, Calle Elcano, Tondo.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Chapter 3/Bonifacio Unsure.png"),
-        position: "left"
+        source: require("../../../../Character Images/Chapter 3/Bonifacio Talking Mad.png"),
+        position: "center"
       }
     ],
     text: "We are no longer just colonial subjects asking for change. We are the Anak\nng Bayan, the Children of the Nation!",
@@ -467,8 +475,8 @@ export const Chapter1_Part3 = [
     background: require("../../../../Background Images/Part 3/Arellano house, Calle Elcano, Tondo.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Chapter 3/Bonifacio Unsure.png"),
-        position: "left"
+        source: require("../../../../Character Images/Chapter 3/Bonifacio Talking.png"),
+        position: "center"
       }
     ],
     text: "From today, we work only for the freedom of our country."
@@ -600,7 +608,7 @@ export const Chapter1_Part3 = [
     date: "The call for change has now become a call for freedom.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
-  
+
   {
     type: "scene",
     title: "And soon, that call would no longer remain in secret.",
