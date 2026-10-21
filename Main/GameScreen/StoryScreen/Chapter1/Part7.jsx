@@ -1,6 +1,5 @@
 export const Chapter1_Part7 = [
 
-
   {
     type: "system",
     intro: true,
@@ -19,7 +18,7 @@ export const Chapter1_Part7 = [
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 1
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
   {
@@ -32,8 +31,6 @@ export const Chapter1_Part7 = [
   {
     type: "narrator",
     text: "As Spanish forces push deeper into Cavite, revolutionary leaders gather at a house\nin Tejeros, San Francisco de Malabon.",
-    background: require("../../../../Background Images/Part 7/Casa Hacienda Tejeros.png"),
-    music: "suspense"
     background: require("../../../../Background Images/Part 7/Casa Hacienda Tejeros.png"),
     music: "suspense"
   },
@@ -202,7 +199,7 @@ export const Chapter1_Part7 = [
   //Q3_7 here
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 7.2 
+  // CHOICE 7.2
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
@@ -221,10 +218,7 @@ export const Chapter1_Part7 = [
             source: require("../../../../Character Images/Chapter 7/Emilio Serious R.png"),
             position: "left"
           },
-          {
-            source: require("../../../../Character Images/Chapter 7/Emilio Serious R.png"),
-            position: "left"
-          },
+          // FIXED: Removed duplicated Emilio character
           {
             source: require("../../../../Character Images/Temporary Placeholders/carte.png"),
             position: "right"
@@ -241,10 +235,7 @@ export const Chapter1_Part7 = [
             source: require("../../../../Character Images/Chapter 7/Emilio Serious R.png"),
             position: "left"
           },
-          {
-            source: require("../../../../Character Images/Chapter 7/Emilio Serious R.png"),
-            position: "left"
-          },
+          // FIXED: Removed duplicated Emilio character
           {
             source: require("../../../../Character Images/Temporary Placeholders/carte.png"),
             position: "right"
@@ -308,7 +299,7 @@ export const Chapter1_Part7 = [
 
   {
     type: "narrator",
-    text: "However, Auinaldo and his supporters see Bonifacio's separate\ncommand as a threat to the unity of the revolution.",
+    text: "However, Aguinaldo and his supporters see Bonifacio's separate\ncommand as a threat to the unity of the revolution.",
     background: require("../../../../Background Images/Part 7/Naik camp (Bonifacio addresses loyalists).png")
   },
 

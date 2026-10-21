@@ -183,12 +183,9 @@ export const Chapter1_Part5 = [
   {
     type: "scene",
     title: "The Historian's Interlude",
-<<<<<<< Updated upstream
-    background: require("../../../../Background Images/Part 5/Map of the eight provinces under martial law.png")
-=======
+    // FIXED: Removed merge conflict markers and kept Stashed changes
     background: require("../../../../Background Images/Part 5/Map of the eight provinces under martial law.png"),
     sfx:'singlePageFlip'
->>>>>>> Stashed changes
   },
 
   {
@@ -346,7 +343,8 @@ export const Chapter1_Part5 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Safe-house interior (Gregoria's scenes).png"),
-    text: "You tear your cédula along with the others. The act becomes a powerful\nsymbol of their decision to rise against Spanish rule."
+    // FIXED: Added missing comma after the text property
+    text: "You tear your cédula along with the others. The act becomes a powerful\nsymbol of their decision to rise against Spanish rule.",
     sfx:'paperRip'
   },
 

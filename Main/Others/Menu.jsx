@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react';
 import {
-  BackHandler,
   View,
   ImageBackground,
   Image,
@@ -9,16 +8,33 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import Sound_clicks from '../../Components/Sound_clicks';
 import { useGameProgress } from '../../GameProgress';
-import { getCheckpoints } from '../Others/saveProgress'; 
+import { getCheckpoints, clearCheckpoints } from '../Others/saveProgress';
+import { useAudio } from '../../Audiostore'; // Added for Quitapp
 
 function MainMenuScreen({ navigation }) {
   const [selectedButton, setSelectedButton] = useState(null);
+  const [hasSave, setHasSave] = useState(false); // Added state for saving
+  const game = useGameProgress();
+  const { Quitapp } = useAudio(); // Extracted Quitapp
 
   useFocusEffect(
     useCallback(() => {
       setSelectedButton(null);
+      // FIXED: Fetch checkpoints to determine if "Continue" should show
+      getCheckpoints().then((saves) => {
+        setHasSave(saves.length > 0);
+      });
     }, [])
   );
+
+  // FIXED: Defined startFresh to wipe data and start at Part 1
+  const startFresh = async () => {
+    await clearCheckpoints();
+    game.setChapter(1);
+    game.setPart(1);
+    game.setScene(0);
+    navigation.navigate('Part1', { startScene: 0 });
+  };
 
   const menuButtons = [
     {
@@ -27,7 +43,7 @@ function MainMenuScreen({ navigation }) {
       gold: require('../../Menu Images/New Game Gold.png'),
       onPress: () => (hasSave ? navigation.navigate('NewGameConfirm') : startFresh()),
     },
-    // Continue only pops if nakalaro na yung player like the title 
+    // Continue only pops if nakalaro na yung player like the title
     ...(hasSave
       ? [{
           id: 'continue',
@@ -44,11 +60,6 @@ function MainMenuScreen({ navigation }) {
     },
   ];
 
-  const handleMenuPress = (button) => {
-    setSelectedButton(button.id);
-    navigation.navigate(button.screen);
-  };
-
   return (
     <ImageBackground
       source={require('../../Menu Images/Main Menu.png')}
@@ -59,7 +70,11 @@ function MainMenuScreen({ navigation }) {
         {menuButtons.map((button) => (
           <Sound_clicks
             key={button.id}
-            onPress={() => handleMenuPress(button)}
+            // FIXED: Now correctly calls the button's specific onPress function
+            onPress={() => {
+              setSelectedButton(button.id);
+              button.onPress();
+            }}
           >
             <Image
               source={selectedButton === button.id ? button.gold : button.white}
@@ -85,8 +100,6 @@ function MainMenuScreen({ navigation }) {
     </ImageBackground>
   );
 }
-
-
 
 const styles = StyleSheet.create({
   background: {

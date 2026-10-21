@@ -11,8 +11,7 @@ import {
 } from "react-native";
 
 import { useGameProgress } from "../../GameProgress";
-import { useAudio } from "../../Audiostore"; // adjust path if needed
-import { useAudio } from "../../Audiostore"; 
+import { useAudio } from "../../Audiostore"; // FIXED: Removed duplicate import
 import { useGameplaySettings } from "../Others/GameplaySetting";
 import { useDisplaySettings, FONT_SCALE } from "../Others/DisplaySetting";
 import { saveCheckpoint } from "../Others/saveProgress";
@@ -331,8 +330,9 @@ function PartRenderer(props) {
   const { sceneData, chapterNumber, partNumber, isLastPart, navigation, route } = props;
 
   const game = useGameProgress();
-  const { playMusic } = useAudio(); // FIXED: Properly extract playMusic
-  
+  // FIXED: Destructured stopLoops so it doesn't crash on unmount
+  const { playMusic, stopLoops } = useAudio();
+
   const settings = useGameplaySettings();
   const display = useDisplaySettings();
   const fontScale = FONT_SCALE[display?.fontSize] ?? 1;
@@ -370,10 +370,10 @@ function PartRenderer(props) {
 
     return () => {
       game.setInGame(false);
-      stopLoops();
+      stopLoops(); // FIXED: Now works correctly
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // FIXED: Disabled rule for mount-only effect
+  }, []);
 
   const startScene = route?.params?.startScene;
 
@@ -384,10 +384,13 @@ function PartRenderer(props) {
     setQuizAnswer(null);
     setSceneIdx(startScene);
     game.setScene(startScene);
-  }, [startScene, game]); // FIXED: Added game
+  }, [startScene, game]);
 
   const hasMoreScenes = sceneIdx < sceneData.length;
   const current = hasMoreScenes ? sceneData[sceneIdx] : null;
+
+  // FIXED: Define isMinigame so it doesn't crash below
+  const isMinigame = current ? !!MINIGAMES[current.type] : false;
 
   const { unlock } = useJournal();
 
@@ -401,7 +404,7 @@ function PartRenderer(props) {
   useEffect(() => {
     const track = getMusicFor(sceneData, sceneIdx);
     if (track) playMusic(track);
-  }, [sceneIdx, sceneData, playMusic]); // FIXED: Added missing deps
+  }, [sceneIdx, sceneData, playMusic]);
 
   // Chapter Title Effect
   useEffect(() => {
@@ -424,7 +427,7 @@ function PartRenderer(props) {
     return () => {
       animation.stop();
     };
-  }, [sceneIdx, current?.type, chapterTitleOpacity]); // FIXED: Added missing deps
+  }, [sceneIdx, current?.type, chapterTitleOpacity]);
 
   const getSceneInfo = useCallback((idx) => {
     let sceneNumber = 0;
@@ -437,7 +440,7 @@ function PartRenderer(props) {
       }
     }
     return { sceneNumber, sceneTitle };
-  }, [sceneData]); // FIXED: Wrapped in useCallback
+  }, [sceneData]);
 
   useEffect(() => {
     if (!current || current.type !== "scene") return;
@@ -449,7 +452,7 @@ function PartRenderer(props) {
       sceneIdx,
       ...getSceneInfo(sceneIdx),
     });
-  }, [sceneIdx, current, chapterNumber, partNumber, sceneData.length, getSceneInfo]); // FIXED: Added missing deps
+  }, [sceneIdx, current, chapterNumber, partNumber, sceneData.length, getSceneInfo]);
 
   const saveDecision = (choiceIndex) => {
     if (!current || current.type !== "choice") return;
@@ -519,7 +522,7 @@ function PartRenderer(props) {
 
   const isTyped =
     current &&
-    !isMinigame &&
+    !isMinigame && // FIXED: Now correctly checks if it's a minigame
     current.type !== "scene" &&
     current.type !== "quiz" &&
     !(current.type === "system" && current.intro === true);
@@ -562,31 +565,31 @@ function PartRenderer(props) {
     const id = setTimeout(next, settings.autoDelay * 1000);
     return () => clearTimeout(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sceneIdx, picked, done, settings?.autoPlay, settings?.autoDelay, current]); // FIXED: Added current, ignored next to prevent infinite loops
+  }, [sceneIdx, picked, done, settings?.autoPlay, settings?.autoDelay, current]);
 
   // MINIGAMES
-  if (current?.type === "voyage") return <VoyageMinigame onComplete={goNext} />; 
-  if (current?.type === "santoNino") return <SantoNinoMinigame onComplete={goNext} />; 
+  if (current?.type === "voyage") return <VoyageMinigame onComplete={goNext} />;
+  if (current?.type === "santoNino") return <SantoNinoMinigame onComplete={goNext} />;
 
   if (current?.type === "cedula") {
     return <CedulaMinigame key={`cedula-${sceneIdx}`} onComplete={goNext} />;
-  } 
+  }
 
   if (current?.type === "decipher") {
     return <DecipherMinigame key={`decipher-${chapterNumber}-${partNumber}-${sceneIdx}`} onComplete={goNext} />;
-  } 
+  }
 
   if (current?.type === "matching") {
     return <CharacterMatchingMinigame key={`matching-${chapterNumber}-${partNumber}-${sceneIdx}`} characters={current.characters} onComplete={goNext} />;
-  } 
+  }
 
   if (current?.type === "chronological") {
     return <ChronologicalOrderMinigame key={`chronological-${chapterNumber}-${partNumber}-${sceneIdx}`} events={current.events} onComplete={goNext} />;
-  } 
+  }
 
   if (current?.type === "whoSaidIt") {
     return <WhoSaidItMinigame key={`who-said-it-${chapterNumber}-${partNumber}-${sceneIdx}`} onComplete={(results) => { console.log("Who Said It results:", results); goNext(); }} />;
-  } 
+  }
 
   const Minigame = current ? MINIGAMES[current.type] : null;
   if (Minigame) return <Minigame onComplete={goNext} />;
@@ -660,7 +663,7 @@ function PartRenderer(props) {
     const isCorrect = quizAnswer === current.correctIndex;
 
     return withOverlay(
-      <View style={[styles.choiceScreen, styles.quizBackground]}> 
+      <View style={[styles.choiceScreen, styles.quizBackground]}>
         <View style={styles.choiceParchmentWrapper}>
           <ImageBackground source={require("../../assets/foreground/quizzing_box.png")} style={styles.choiceParchmentBox} imageStyle={boxImage} resizeMode="stretch">
             <Text style={scaled(styles.choiceQuestion)}>{current.question}</Text>
@@ -845,8 +848,8 @@ export function Chap1Part8Screen({ navigation, ...props }) {
 // STYLES
 // =====================================================
 const styles = StyleSheet.create({
-  opacityZero: { opacity: 0 }, // FIXED: Extracted inline style
-  quizBackground: { backgroundColor: "#fffca0" }, // FIXED: Extracted inline style
+  opacityZero: { opacity: 0 },
+  quizBackground: { backgroundColor: "#fffca0" },
   chapterIntroScreen: {
     flex: 1,
     width: "100%",

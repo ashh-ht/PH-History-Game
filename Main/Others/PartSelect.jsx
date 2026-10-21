@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from 'react';
 import {
   Animated,
@@ -11,8 +10,7 @@ import {
   Pressable,
 } from 'react-native';
 import { useGameProgress } from '../../GameProgress';
-import { getUnlockedPart } from '../Others/saveProgress'; // adjust path to where your saveProgress file is
-import { getUnlockedPart } from '../Others/saveProgress'; // adjust path to where your saveProgress file is
+// FIXED: Removed duplicate and unused getUnlockedPart import
 import Sound_clicks from '../../Components/Sound_clicks';
 
 const PART_ROUTES = [

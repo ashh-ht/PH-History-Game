@@ -22,10 +22,10 @@ const BG_GAME_OVERLAY = require('../../assets/Settings_Assets/AboutGame_Base.png
 const PANEL_ASPECT = 1205 / 630;
 
 // --- BUTTON LAYOUT MATH ---
-const BTN_W = 0.55;       // 34% of the panel width per button
-const BTN_ASPECT = 1.45;  // Width / Height ratio (makes them nice and chunky)
-const BTN_TOP = 0.16;     // 36% down from the top (vertically centered)
-const COLS = [0.02, 0.42]; // Left button starts at 12%, Right button starts at 54%
+const BTN_W = 0.55;
+const BTN_ASPECT = 1.45;
+const BTN_TOP = 0.16;
+const COLS = [0.02, 0.42];
 
 function SpringImageButton({ image, pressedImage, onPress, imageStyle }) {
   const scale = useRef(new Animated.Value(1)).current;
@@ -114,66 +114,74 @@ export default function AboutScreen({ navigation }) {
 
       </ImageBackground>
 
-        {/* overlays  */}
-      {activeOverlay === 'Credits' && (
-        <View style={styles.overlay}>
-          <View style={styles.overlayPanel}>
-            <Text style={styles.overlayTitle}>Credits</Text>
-            <ScrollView style={styles.creditsScroll}>
+      {/* ================= GAME OVERLAY (Credits) ================= */}
+      {activeOverlay === 'Game' && (
+        <View style={styles.absoluteOverlayContainer}>
+          <ImageBackground
+            source={BG_GAME_OVERLAY}
+            style={{ width: panelW, height: panelH, justifyContent: "center", alignItems: "center" }}
+            resizeMode="stretch"
+          >
+            <View style={styles.overlayWrapper}>
+              <ScrollView style={styles.creditsScroll} showsVerticalScrollIndicator={false}>
                 <Text style={styles.overlayBody}>
-                <Text style={{ fontWeight: 'bold' }}>Lead Developer</Text>
-                {'\n'}
-                Fulgencio, John Hendrick{'\n'}
-                {'\n'}
-                <Text style={{ fontWeight: 'bold' }}>Game Design</Text>
-                {'\n'}
-                Sulla, Sylvia Heart{'\n'}
-                Arellano, Janell Ashtene R.{'\n'}
-                {'\n'}
-                <Text style={{ fontWeight: 'bold' }}>Programmer</Text>
-                {'\n'}
-                Arellano, Janell Ashtene {'\n'}
-                Catapang, Maureign Anne Christyanna M.{'\n'}
-                Solis, Markuz Andre Merek R.{'\n'}
-                Sulla, Sylvia Heart L.{'\n'}
-                {'\n'}
-                <Text style={{ fontWeight: 'bold' }}>Scriptwriter</Text>
-                {'\n'}
-                Arellano, Janell Ashtene {'\n'}
-                Catapang, Maureign Anne Christyanna M.{'\n'}
-                Solis, Markuz Andre Merek R.{'\n'}
-                Sulla, Sylvia Heart L.{'\n'}
-                {'\n'}
-                <Text style={{ fontWeight: 'bold' }}>SFX/BGM</Text>
-                {'\n'}
-                Solis, Markuz Andre Merek R.{'\n'}
+                  <Text style={styles.boldText}>Lead Developer</Text>
+                  {'\n'}Fulgencio, John Hendrick{'\n\n'}
+
+                  <Text style={styles.boldText}>Game Design</Text>
+                  {'\n'}Sulla, Sylvia Heart{'\n'}
+                  Arellano, Janell Ashtene R.{'\n\n'}
+
+                  <Text style={styles.boldText}>Programmer</Text>
+                  {'\n'}Arellano, Janell Ashtene {'\n'}
+                  Catapang, Maureign Anne Christyanna M.{'\n'}
+                  Solis, Markuz Andre Merek R.{'\n'}
+                  Sulla, Sylvia Heart L.{'\n\n'}
+
+                  <Text style={styles.boldText}>Scriptwriter</Text>
+                  {'\n'}Arellano, Janell Ashtene {'\n'}
+                  Catapang, Maureign Anne Christyanna M.{'\n'}
+                  Solis, Markuz Andre Merek R.{'\n'}
+                  Sulla, Sylvia Heart L.{'\n\n'}
+
+                  <Text style={styles.boldText}>SFX/BGM</Text>
+                  {'\n'}Solis, Markuz Andre Merek R.{'\n'}
                 </Text>
-
-
-
-            </ScrollView>
-            <Sound_clicks style={styles.closeButton} onPress={() => setActiveOverlay(null)}>
-              <Text style={styles.closeButtonText}>CLOSE</Text>
-            </Sound_clicks>
-          </View>
-        </ImageBackground>
+              </ScrollView>
+              <Sound_clicks style={styles.closeButton} onPress={() => setActiveOverlay(null)}>
+                <Text style={styles.closeButtonText}>CLOSE</Text>
+              </Sound_clicks>
+            </View>
+          </ImageBackground>
+        </View>
       )}
 
-      {activeOverlay === 'AboutTeam' && (
-        <View style={styles.overlay}>
-          <View style={styles.overlayPanel}>
-            <Text style={styles.overlayTitle}>About the Team</Text>
-            <Text style={styles.overlayBody}>
-              We're a Team 67 sikibidi a group of students who are shows interest on creating
-              a Philippine History game that is tied to spanish colonization, The team created
-              a novel like game to introduce it to people who are interest on history based games.
-            </Text>
-            <Sound_clicks style={styles.overlayClose} onPress={() => setActiveOverlay(null)}>
-              <Text style={styles.overlayCloseText}>Close</Text>
-            </Sound_clicks>
-          </View>
-        </ImageBackground>
+      {/* ================= TEAM OVERLAY (About Team) ================= */}
+      {activeOverlay === 'Team' && (
+        <View style={styles.absoluteOverlayContainer}>
+          <ImageBackground
+            source={BG_TEAM_OVERLAY}
+            style={{ width: panelW, height: panelH, justifyContent: "center", alignItems: "center" }}
+            resizeMode="stretch"
+          >
+            <View style={styles.overlayWrapper}>
+              <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+                <Text style={styles.overlayBody}>
+                  We're a Team 67 sikibidi, a group of students who are interested in creating
+                  a Philippine History game that is tied to Spanish colonization.
+                  {'\n\n'}
+                  The team created a novel-like game to introduce it to people who are interested
+                  in history-based games.
+                </Text>
+              </ScrollView>
+              <Sound_clicks style={styles.closeButton} onPress={() => setActiveOverlay(null)}>
+                <Text style={styles.closeButtonText}>CLOSE</Text>
+              </Sound_clicks>
+            </View>
+          </ImageBackground>
+        </View>
       )}
+
     </View>
   );
 }
@@ -194,22 +202,29 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-
-  // Overlay Styles
+  absoluteOverlayContainer: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 100, // Keeps overlay on top of the main panel
+  },
   overlayWrapper: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingTop: "15%",
-    paddingBottom: "5%",
+    paddingTop: "20%", // Pushes content below the baked-in title of the overlay
+    paddingBottom: "10%",
+    width: "100%",
   },
   scrollView: {
     width: "70%",
     maxHeight: "65%",
     marginBottom: 20,
   },
-  scrollContent: {
-    paddingVertical: 10,
+  creditsScroll: {
+    width: "70%",
+    maxHeight: "60%",
+    marginBottom: 10,
   },
   overlayBody: {
     fontSize: 22,

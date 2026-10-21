@@ -242,14 +242,17 @@ export default function SavesScreen({ navigation }) {
           style={{ width: panelW, height: panelH }}
           resizeMode="stretch"
         >
+          {/* FIXED: Extracted position: 'absolute' to StyleSheet to clear warning */}
           <View
-            style={{
-              position: 'absolute',
-              left: listLeft,
-              top: listTop,
-              width: listW,
-              height: listH,
-            }}
+            style={[
+              styles.absolute,
+              {
+                left: listLeft,
+                top: listTop,
+                width: listW,
+                height: listH,
+              }
+            ]}
           >
             <ScrollView
               style={styles.scrollList}
@@ -278,13 +281,16 @@ export default function SavesScreen({ navigation }) {
 
           {saves.length > 0 && (
             <Sound_clicks
-              style={{
-                position: 'absolute',
-                left: delLeft,
-                top: delTop,
-                width: delW,
-                height: delH,
-              }}
+              // FIXED: Extracted position: 'absolute' to StyleSheet to clear warning
+              style={[
+                styles.absolute,
+                {
+                  left: delLeft,
+                  top: delTop,
+                  width: delW,
+                  height: delH,
+                }
+              ]}
               onPress={() => setConfirm({ type: "all" })}
             >
               <Image source={BTN_DELETE_ALL} style={styles.deleteAllImage} resizeMode="contain" />
@@ -296,21 +302,18 @@ export default function SavesScreen({ navigation }) {
       {/* Confirmation Modal */}
       <Modal
         visible={confirm !== null}
-        visible={confirm !== null}
         transparent
         animationType="fade"
         statusBarTranslucent
         supportedOrientations={["landscape", "portrait"]}
         onRequestClose={() => setConfirm(null)}
-        onRequestClose={() => setConfirm(null)}
+        // FIXED: Removed duplicate visible and onRequestClose props
       >
         <View style={styles.modalOverlay}>
           <View style={styles.confirmBox}>
             <Text style={styles.confirmTitle}>Are you sure?</Text>
             <Text style={styles.confirmText}>
-              {confirm?.type === "one"
-                ? "This will delete this save."
-                : "This will erase all your saves and progress."}
+              {/* FIXED: Removed duplicated text rendering */}
               {confirm?.type === "one"
                 ? "This will delete this save."
                 : "This will erase all your saves and progress."}
@@ -320,7 +323,7 @@ export default function SavesScreen({ navigation }) {
               <Sound_clicks
                 style={[styles.confirmBtn, styles.noBtn]}
                 onPress={() => setConfirm(null)}
-                onPress={() => setConfirm(null)}
+                // FIXED: Removed duplicate onPress
               >
                 <Text style={styles.noText}>No</Text>
               </Sound_clicks>
@@ -328,7 +331,7 @@ export default function SavesScreen({ navigation }) {
               <Sound_clicks
                 style={[styles.confirmBtn, styles.yesBtn]}
                 onPress={onConfirmYes}
-                onPress={onConfirmYes}
+                // FIXED: Removed duplicate onPress
               >
                 <Text style={styles.yesText}>Yes</Text>
               </Sound_clicks>
@@ -352,6 +355,10 @@ const styles = StyleSheet.create({
     position: "absolute",
     zIndex: 10,
     flexDirection: "row",
+  },
+  // FIXED: Added this reusable style to fix the ESLint warnings
+  absolute: {
+    position: 'absolute',
   },
   scrollList: {
     flex: 1,
@@ -459,7 +466,6 @@ const styles = StyleSheet.create({
   yesBtn: {
     backgroundColor: "#A74C39",
   },
-
   yesText: {
     color: "#FFFFFF",
     fontFamily: 'serif',

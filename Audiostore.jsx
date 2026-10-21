@@ -134,9 +134,10 @@ export function AudioProvider({ children }) {
     };
   }, []);
 
+  // FIXED: Dependency array changed to [musicEffectiveVolume]
   useEffect(() => {
     bgmRef.current?.setVolume(musicEffectiveVolume);
-  }, [masterVolume, musicVolume]);
+  }, [musicEffectiveVolume]);
 
   // ---------------------------------------------------
   // SOUND EFFECTS (loaded the first time they are used)

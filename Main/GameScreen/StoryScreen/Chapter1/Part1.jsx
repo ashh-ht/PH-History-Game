@@ -200,14 +200,10 @@ export const Chapter1_Part1 = [
 
   {
     type: "narrator",
-<<<<<<< Updated upstream
-    text: "Two days after leaving Samar, Legazpi and his fleet reach Leyte. He lands on shore\nand plants a cross to formally claim the territory for Spain.",
-    background: require("../../../../Background Images/Part 1/Spanish Coast.png")
-=======
+    // FIXED: Merged conflict and kept Stashed changes
     text: "Two days after leaving Samar, Legazpi and his fleet reached Leyte. He lands on shore\nand plants a cross to formally claim the territory for Spain.",
     background: require("../../../../Background Images/Part 1/Spanish Coast.png"),
     sfx: "sandThud"
->>>>>>> Stashed changes
   },
 
   //Q3_1 here
@@ -422,13 +418,10 @@ export const Chapter1_Part1 = [
   {
     type: "narrator",
     text: "Construction begins on Fort San Pedro. Cebu becomes Spain's first\nlasting settlement in the islands.",
-<<<<<<< Updated upstream
-    background: require("../../../../Background Images/Part 1/Construction.png")
-=======
+    // FIXED: Merged conflict and kept Stashed changes
     background: require("../../../../Background Images/Part 1/Construction.png"),
-    sfx:'construction',
+    sfx: 'construction',
     unlock: ["Timeline_1565_05-08"]
->>>>>>> Stashed changes
   },
 
   {
@@ -755,8 +748,7 @@ export const Chapter1_Part1 = [
       "Manila",
       "Manila",
     ],
-    correctIndex: 1,
-    music: "traditional"
+    // FIXED: Removed duplicate correctIndex and music keys
     correctIndex: 1,
     music: "traditional"
   },

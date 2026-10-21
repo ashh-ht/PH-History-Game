@@ -1,5 +1,3 @@
-// This is probably going to be added into the end of our part 1-7...
-
 import React, { useEffect, useRef, useState } from 'react';
 import {
     Image,
@@ -37,23 +35,6 @@ const WAVE_WIDTH = 120;
 const WAVE_HEIGHT = 38;
 
 // =====================================================
-<<<<<<< Updated upstream
-// SHIP HITBOX (hull only)
-// Values are fractions of the ship sprite (0 to 1).
-// Higher number = that side of the hitbox moves further inward.
-// =====================================================
-const HIT_LEFT = 0.15;    // trim from the left edge
-const HIT_RIGHT = 0.15;   // trim from the right edge
-const HIT_TOP = 0.58;     // skip the sails and mast (top 58%)
-const HIT_BOTTOM = 0.06;  // skip the foam at the very bottom
-
-const ROCK_HIT_X = 0.12;
-const WAVE_HIT_X = 0.12;
-
-// Set to true to see the red hitbox on screen while tuning
-const DEBUG_HITBOX = false;
-
-=======
 // HITBOXES
 // All values are fractions (0 to 1) of the sprite size.
 // Higher number = that side moves further INWARD (smaller hitbox).
@@ -96,7 +77,6 @@ const overlaps = (a, b) =>
     a.top < b.bottom &&
     a.bottom > b.top;
 
->>>>>>> Stashed changes
 function VoyageMinigame({ onComplete }) {
     const { width, height } = useWindowDimensions();
 
@@ -264,28 +244,6 @@ function VoyageMinigame({ onComplete }) {
             }
 
             // =================================================
-<<<<<<< Updated upstream
-            // SHIP COLLISION BOX (hull only)
-            // =================================================
-
-            const shipRect = {
-                left:
-                    shipXRef.current +
-                    SHIP_WIDTH * HIT_LEFT,
-
-                right:
-                    shipXRef.current +
-                    SHIP_WIDTH * (1 - HIT_RIGHT),
-
-                top:
-                    shipTop +
-                    SHIP_HEIGHT * HIT_TOP,
-
-                bottom:
-                    shipTop +
-                    SHIP_HEIGHT * (1 - HIT_BOTTOM),
-            };
-=======
             // SHIP COLLISION BOXES
             // =================================================
 
@@ -298,7 +256,6 @@ function VoyageMinigame({ onComplete }) {
                 shipXRef.current, shipTop, SHIP_WIDTH, SHIP_HEIGHT,
                 PICK_LEFT, PICK_RIGHT, PICK_TOP, PICK_BOTTOM
             );
->>>>>>> Stashed changes
 
             // =================================================
             // ROCK COLLISION
@@ -307,24 +264,11 @@ function VoyageMinigame({ onComplete }) {
             let hitRock = false;
 
             nextRocks = nextRocks.filter((item) => {
-<<<<<<< Updated upstream
-                const hit =
-                    item.x + ROCK_WIDTH * ROCK_HIT_X < shipRect.right &&
-                    item.x + ROCK_WIDTH * (1 - ROCK_HIT_X) > shipRect.left &&
-                    item.y < shipRect.bottom &&
-                    item.y + ROCK_HEIGHT > shipRect.top;
-
-                if (hit) {
-                    hitRock = true;
-                }
-
-=======
                 const hit = overlaps(
                     shipRect,
                     objectRect(item, ROCK_WIDTH, ROCK_HEIGHT, ROCK_HIT)
                 );
                 if (hit) hitRock = true;
->>>>>>> Stashed changes
                 return !hit;
             });
 
@@ -335,21 +279,12 @@ function VoyageMinigame({ onComplete }) {
             let hitWave = false;
 
             nextWaves = nextWaves.filter((item) => {
-<<<<<<< Updated upstream
-                const hit =
-                    item.x + WAVE_WIDTH * WAVE_HIT_X < shipRect.right &&
-                    item.x + WAVE_WIDTH * (1 - WAVE_HIT_X) > shipRect.left &&
-                    item.y < shipRect.bottom &&
-                    item.y + WAVE_HEIGHT > shipRect.top;
-                                return !hit;
-=======
                 const hit = overlaps(
                     shipRect,
                     objectRect(item, WAVE_WIDTH, WAVE_HEIGHT, WAVE_HIT)
                 );
                 if (hit) hitWave = true;
                 return !hit;
->>>>>>> Stashed changes
             });
 
             // =================================================
@@ -612,30 +547,6 @@ function VoyageMinigame({ onComplete }) {
                 />
 
                 {/* =================================================
-<<<<<<< Updated upstream
-                    DEBUG HITBOX (set DEBUG_HITBOX = true at the top)
-                ================================================= */}
-
-                {DEBUG_HITBOX && (
-                    <View
-                        pointerEvents="none"
-                        style={{
-                            position: 'absolute',
-                            left: shipX + SHIP_WIDTH * HIT_LEFT,
-                            top: shipTop + SHIP_HEIGHT * HIT_TOP,
-                            width:
-                                SHIP_WIDTH *
-                                (1 - HIT_LEFT - HIT_RIGHT),
-                            height:
-                                SHIP_HEIGHT *
-                                (1 - HIT_TOP - HIT_BOTTOM),
-                            backgroundColor:
-                                'rgba(255, 0, 0, 0.35)',
-                            zIndex: 11,
-                        }}
-                    />
-                )}
-=======
                     DEBUG HITBOXES (set DEBUG_HITBOX = true at the top)
                     red = ship hull, green = pickup area, orange = rocks,
                     blue = waves, yellow = supplies
@@ -656,20 +567,12 @@ function VoyageMinigame({ onComplete }) {
                         }}
                     />
                 ))}
->>>>>>> Stashed changes
 
                 {/* =================================================
                     INSTRUCTIONS
                 ================================================= */}
 
-<<<<<<< Updated upstream
-                <View
-                    pointerEvents="none"
-                    style={styles.instructions}
-                >
-=======
                 <View pointerEvents="none" style={styles.instructions}>
->>>>>>> Stashed changes
                     <Text style={styles.instructionText}>
                         HOLD ◀ OR ▶ TO STEER
                     </Text>
