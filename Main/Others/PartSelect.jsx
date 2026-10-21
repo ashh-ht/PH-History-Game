@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { useGameProgress } from '../../GameProgress';
 import { getUnlockedPart } from '../Others/saveProgress'; // adjust path to where your saveProgress file is
+import { getUnlockedPart } from '../Others/saveProgress'; // adjust path to where your saveProgress file is
 import Sound_clicks from '../../Components/Sound_clicks';
 
 const PART_ROUTES = [
@@ -143,6 +144,7 @@ function PolaroidItem({ image, unlocked, onPress }) {
 
 function Chapter1Selection({ navigation }) {
   const { part } = useGameProgress();
+  const [savedPart, setSavedPart] = useState(1);
   const [showBackBtn, setShowBackBtn] = useState(true);
   const [selectedIndex, setSelectedIndex] = useState(null);
   const { width } = useWindowDimensions();

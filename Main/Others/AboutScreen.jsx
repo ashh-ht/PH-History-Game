@@ -114,33 +114,43 @@ export default function AboutScreen({ navigation }) {
 
       </ImageBackground>
 
-      {activeOverlay === 'Team' && (
-        <ImageBackground source={BG_TEAM_OVERLAY} style={StyleSheet.absoluteFillObject} resizeMode="cover">
-          <View style={styles.overlayWrapper}>
-            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-              <Text style={styles.overlayBody}>
-                <Text style={styles.boldText}>Lead Developer</Text>
-                {'\n'}Fulgencio, John Hendrick
-                {'\n\n'}
-                <Text style={styles.boldText}>Game Design</Text>
-                {'\n'}Sulla, Sylvia Heart
-                {'\n'}Arellano, Janell Ashtene R.
-                {'\n\n'}
-                <Text style={styles.boldText}>Programmer</Text>
-                {'\n'}Arellano, Janell Ashtene
-                {'\n'}Catapang, Maureign Anne Christyanna M.
-                {'\n'}Solis, Markuz Andre Merek R.
-                {'\n'}Sulla, Sylvia Heart L.
-                {'\n\n'}
-                <Text style={styles.boldText}>Scriptwriter</Text>
-                {'\n'}Arellano, Janell Ashtene
-                {'\n'}Catapang, Maureign Anne Christyanna M.
-                {'\n'}Solis, Markuz Andre Merek R.
-                {'\n'}Sulla, Sylvia Heart L.
-                {'\n\n'}
-                <Text style={styles.boldText}>SFX/BGM</Text>
-                {'\n'}Solis, Markuz Andre Merek R.
-              </Text>
+        {/* overlays  */}
+      {activeOverlay === 'Credits' && (
+        <View style={styles.overlay}>
+          <View style={styles.overlayPanel}>
+            <Text style={styles.overlayTitle}>Credits</Text>
+            <ScrollView style={styles.creditsScroll}>
+                <Text style={styles.overlayBody}>
+                <Text style={{ fontWeight: 'bold' }}>Lead Developer</Text>
+                {'\n'}
+                Fulgencio, John Hendrick{'\n'}
+                {'\n'}
+                <Text style={{ fontWeight: 'bold' }}>Game Design</Text>
+                {'\n'}
+                Sulla, Sylvia Heart{'\n'}
+                Arellano, Janell Ashtene R.{'\n'}
+                {'\n'}
+                <Text style={{ fontWeight: 'bold' }}>Programmer</Text>
+                {'\n'}
+                Arellano, Janell Ashtene {'\n'}
+                Catapang, Maureign Anne Christyanna M.{'\n'}
+                Solis, Markuz Andre Merek R.{'\n'}
+                Sulla, Sylvia Heart L.{'\n'}
+                {'\n'}
+                <Text style={{ fontWeight: 'bold' }}>Scriptwriter</Text>
+                {'\n'}
+                Arellano, Janell Ashtene {'\n'}
+                Catapang, Maureign Anne Christyanna M.{'\n'}
+                Solis, Markuz Andre Merek R.{'\n'}
+                Sulla, Sylvia Heart L.{'\n'}
+                {'\n'}
+                <Text style={{ fontWeight: 'bold' }}>SFX/BGM</Text>
+                {'\n'}
+                Solis, Markuz Andre Merek R.{'\n'}
+                </Text>
+
+
+
             </ScrollView>
             <Sound_clicks style={styles.closeButton} onPress={() => setActiveOverlay(null)}>
               <Text style={styles.closeButtonText}>CLOSE</Text>
@@ -149,18 +159,17 @@ export default function AboutScreen({ navigation }) {
         </ImageBackground>
       )}
 
-      {activeOverlay === 'Game' && (
-        <ImageBackground source={BG_GAME_OVERLAY} style={StyleSheet.absoluteFillObject} resizeMode="cover">
-          <View style={styles.overlayWrapper}>
-            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-              <Text style={styles.overlayBody}>
-                We're Team 67 sikibidi, a group of students interested in creating a Philippine history game tied to Spanish colonization.
-                {'\n\n'}
-                The team created a novel-like game to introduce it to people interested in history-based games, blending narrative storytelling with interactive decisions that reflect the struggles and triumphs of the era.
-              </Text>
-            </ScrollView>
-            <Sound_clicks style={styles.closeButton} onPress={() => setActiveOverlay(null)}>
-              <Text style={styles.closeButtonText}>CLOSE</Text>
+      {activeOverlay === 'AboutTeam' && (
+        <View style={styles.overlay}>
+          <View style={styles.overlayPanel}>
+            <Text style={styles.overlayTitle}>About the Team</Text>
+            <Text style={styles.overlayBody}>
+              We're a Team 67 sikibidi a group of students who are shows interest on creating
+              a Philippine History game that is tied to spanish colonization, The team created
+              a novel like game to introduce it to people who are interest on history based games.
+            </Text>
+            <Sound_clicks style={styles.overlayClose} onPress={() => setActiveOverlay(null)}>
+              <Text style={styles.overlayCloseText}>Close</Text>
             </Sound_clicks>
           </View>
         </ImageBackground>

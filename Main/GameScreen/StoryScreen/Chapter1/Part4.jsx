@@ -24,7 +24,8 @@ export const Chapter1_Part4 = [
     type: "scene",
     title: "The Founding Night",
     date: "July 7, 1892",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    sfx:'oilLamp'
   },
 
   {
@@ -91,6 +92,8 @@ export const Chapter1_Part4 = [
 
   { type: "bloodtrace" },
 
+  { type: "bloodtrace" },
+
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
@@ -108,7 +111,8 @@ export const Chapter1_Part4 = [
     type: "scene",
     title: "Redefining a Nation",
     date: "Mid-to-Late 1892",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx: 'stampPapers'
   },
 
   {
@@ -264,7 +268,8 @@ export const Chapter1_Part4 = [
     type: "scene",
     title: "Degrees, Passwords, and the Chamber of Reflection",
     date: "1892–1894",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'quillWriting'
   },
 
   {
@@ -299,6 +304,8 @@ export const Chapter1_Part4 = [
 
   { type: "oathtrace" },
 
+  { type: "oathtrace" },
+
 
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -309,7 +316,8 @@ export const Chapter1_Part4 = [
     type: "scene",
     title: "The Kartilya and the Decalogue",
     date: "1892–1893",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'quillWriting'
   },
 
   {
@@ -411,7 +419,7 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
-    text: "Jacinto's Kartilya becomes the Katipunan's official guide, helping unite members from different parts of the archipelago under one shared set of values."
+    text: "Jacinto's Kartilya becomes the Katipunan's official guide, helping unite members \nfrom different parts of the archipelago under one shared set of values."
   },
 
   //Q2_4 here
@@ -424,7 +432,8 @@ export const Chapter1_Part4 = [
     type: "scene",
     title: "The Lakambini and the Raids",
     date: "1895–1896",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx: 'doorOpen'
   },
 
   {
@@ -493,6 +502,7 @@ export const Chapter1_Part4 = [
     ],
 
     //nextScene: 40
+    //nextScene: 40
   },
 
 
@@ -511,7 +521,8 @@ export const Chapter1_Part4 = [
     type: "scene",
     title: "Kalayaan and the Surge",
     date: "March 1896",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'newspaper'
   },
 
   {

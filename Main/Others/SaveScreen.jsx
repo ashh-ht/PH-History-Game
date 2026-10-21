@@ -296,10 +296,12 @@ export default function SavesScreen({ navigation }) {
       {/* Confirmation Modal */}
       <Modal
         visible={confirm !== null}
+        visible={confirm !== null}
         transparent
         animationType="fade"
         statusBarTranslucent
         supportedOrientations={["landscape", "portrait"]}
+        onRequestClose={() => setConfirm(null)}
         onRequestClose={() => setConfirm(null)}
       >
         <View style={styles.modalOverlay}>
@@ -309,11 +311,15 @@ export default function SavesScreen({ navigation }) {
               {confirm?.type === "one"
                 ? "This will delete this save."
                 : "This will erase all your saves and progress."}
+              {confirm?.type === "one"
+                ? "This will delete this save."
+                : "This will erase all your saves and progress."}
             </Text>
 
             <View style={styles.confirmButtons}>
               <Sound_clicks
                 style={[styles.confirmBtn, styles.noBtn]}
+                onPress={() => setConfirm(null)}
                 onPress={() => setConfirm(null)}
               >
                 <Text style={styles.noText}>No</Text>
@@ -321,6 +327,7 @@ export default function SavesScreen({ navigation }) {
 
               <Sound_clicks
                 style={[styles.confirmBtn, styles.yesBtn]}
+                onPress={onConfirmYes}
                 onPress={onConfirmYes}
               >
                 <Text style={styles.yesText}>Yes</Text>
@@ -452,6 +459,7 @@ const styles = StyleSheet.create({
   yesBtn: {
     backgroundColor: "#A74C39",
   },
+
   yesText: {
     color: "#FFFFFF",
     fontFamily: 'serif',

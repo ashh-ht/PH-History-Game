@@ -23,7 +23,8 @@ export const Chapter1_Part6 = [
     type: "scene",
     title: "The Sword of War",
     date: "August 24–30, 1896",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    sfx:'tar'
   },
 
   {
@@ -50,7 +51,8 @@ export const Chapter1_Part6 = [
     type: "scene",
     title: "The Rise of Cavite",
     date: "Autumn 1896",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'tar'
   },
 
   {
@@ -235,7 +237,6 @@ export const Chapter1_Part6 = [
         translation: "I won't make a secret deal, Supremo. Here's their offer. Let's discuss it."
       }
     ],
-    nextScene: 23
   },
 
 
@@ -348,7 +349,6 @@ export const Chapter1_Part6 = [
         translation: "We can fight together, but my men will remain under my command."
       }
     ],
-    nextScene: 29
   },
 
   // CONTINUE
@@ -429,7 +429,7 @@ export const Chapter1_Part6 = [
         translation: "Let's hold on a little longer. We may still find a way out."
       }
     ],
-    nextScene: 34
+
   },
 
   {

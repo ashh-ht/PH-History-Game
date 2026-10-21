@@ -104,6 +104,7 @@ export const Chapter1_Part1 = [
     type: "narrator",
     text: "The people of Samar remain near the trees.",
     background: require("../../../../Background Images/Part 1/Spanish Coast.png")
+    
   },
 
   {
@@ -128,7 +129,8 @@ export const Chapter1_Part1 = [
   {
     type: "narrator",
     text: "A warrior steps from the trees and blocks Gomez's path with his spear.\nHe does not attack. He simply refuses to let him pass.",
-    background: require("../../../../Background Images/Part 1/Spanish Coast.png")
+    background: require("../../../../Background Images/Part 1/Spanish Coast.png"),
+    sfx: "footstepsSand"
   },
 
 
@@ -151,7 +153,7 @@ export const Chapter1_Part1 = [
         translation: "We are not ready yet. Please leave for now.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Chieftan.png"),
+            source: require("../../../../Character Images/Temporary Placeholders/Chieftain.png"),
             position: "right"
           }
         ]
@@ -164,7 +166,7 @@ export const Chapter1_Part1 = [
         translation: "We'll hear what you have to say, but we will not trust you yet.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Chieftan.png"),
+            source: require("../../../../Character Images/Temporary Placeholders/Chieftain.png"),
             position: "right"
           }
         ]
@@ -198,8 +200,14 @@ export const Chapter1_Part1 = [
 
   {
     type: "narrator",
-    text: "Two days after leaving Samar, Legazpi and his fleet reached Leyte. He lands on shore\nand plants a cross to formally claim the territory for Spain.",
+<<<<<<< Updated upstream
+    text: "Two days after leaving Samar, Legazpi and his fleet reach Leyte. He lands on shore\nand plants a cross to formally claim the territory for Spain.",
     background: require("../../../../Background Images/Part 1/Spanish Coast.png")
+=======
+    text: "Two days after leaving Samar, Legazpi and his fleet reached Leyte. He lands on shore\nand plants a cross to formally claim the territory for Spain.",
+    background: require("../../../../Background Images/Part 1/Spanish Coast.png"),
+    sfx: "sandThud"
+>>>>>>> Stashed changes
   },
 
   //Q3_1 here
@@ -414,8 +422,13 @@ export const Chapter1_Part1 = [
   {
     type: "narrator",
     text: "Construction begins on Fort San Pedro. Cebu becomes Spain's first\nlasting settlement in the islands.",
+<<<<<<< Updated upstream
+    background: require("../../../../Background Images/Part 1/Construction.png")
+=======
     background: require("../../../../Background Images/Part 1/Construction.png"),
+    sfx:'construction',
     unlock: ["Timeline_1565_05-08"]
+>>>>>>> Stashed changes
   },
 
   {
@@ -579,6 +592,7 @@ export const Chapter1_Part1 = [
     title: "The Sandugo of Manila",
     date: "June 1571",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx: 'footstepsSand',
     music: "traditional"
   },
 
@@ -739,7 +753,10 @@ export const Chapter1_Part1 = [
       "Cibabao, Samar",
       "Bohol",
       "Manila",
+      "Manila",
     ],
+    correctIndex: 1,
+    music: "traditional"
     correctIndex: 1,
     music: "traditional"
   },

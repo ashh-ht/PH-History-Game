@@ -24,7 +24,8 @@ export const Chapter1_Part3 = [
     type: "scene",
     title: "The Novelist's Return",
     date: "June 26, 1892",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    sfx: 'shipArrival'
   },
 
   {
@@ -194,7 +195,6 @@ export const Chapter1_Part3 = [
         ]
       }
     ],
-    nextScene: 15
   },
 
   // CONTINUE
@@ -216,7 +216,8 @@ export const Chapter1_Part3 = [
     type: "scene",
     title: "The Blow of Banishment",
     date: "July 6, 1892",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx: 'doorKnock'
   },
 
   {
@@ -429,7 +430,8 @@ export const Chapter1_Part3 = [
     type: "scene",
     title: "The Founding of the KKK",
     date: "July 7, 1892",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'oilLamp'
   },
 
   {

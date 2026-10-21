@@ -11,6 +11,7 @@ import {
 } from "react-native";
 
 import { useGameProgress } from "../../GameProgress";
+import { useAudio } from "../../Audiostore"; // adjust path if needed
 import { useAudio } from "../../Audiostore"; 
 import { useGameplaySettings } from "../Others/GameplaySetting";
 import { useDisplaySettings, FONT_SCALE } from "../Others/DisplaySetting";
@@ -369,6 +370,7 @@ function PartRenderer(props) {
 
     return () => {
       game.setInGame(false);
+      stopLoops();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // FIXED: Disabled rule for mount-only effect
@@ -517,6 +519,7 @@ function PartRenderer(props) {
 
   const isTyped =
     current &&
+    !isMinigame &&
     current.type !== "scene" &&
     current.type !== "quiz" &&
     !(current.type === "system" && current.intro === true);

@@ -19,7 +19,7 @@ export const Chapter1_Part7 = [
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 1
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  
 
 
   {
@@ -32,6 +32,8 @@ export const Chapter1_Part7 = [
   {
     type: "narrator",
     text: "As Spanish forces push deeper into Cavite, revolutionary leaders gather at a house\nin Tejeros, San Francisco de Malabon.",
+    background: require("../../../../Background Images/Part 7/Casa Hacienda Tejeros.png"),
+    music: "suspense"
     background: require("../../../../Background Images/Part 7/Casa Hacienda Tejeros.png"),
     music: "suspense"
   },
@@ -220,7 +222,11 @@ export const Chapter1_Part7 = [
             position: "left"
           },
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Ricarte.png"),
+            source: require("../../../../Character Images/Chapter 7/Emilio Serious R.png"),
+            position: "left"
+          },
+          {
+            source: require("../../../../Character Images/Temporary Placeholders/carte.png"),
             position: "right"
           }
         ]
@@ -236,7 +242,11 @@ export const Chapter1_Part7 = [
             position: "left"
           },
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Ricarte.png"),
+            source: require("../../../../Character Images/Chapter 7/Emilio Serious R.png"),
+            position: "left"
+          },
+          {
+            source: require("../../../../Character Images/Temporary Placeholders/carte.png"),
             position: "right"
           }
         ]
@@ -312,7 +322,8 @@ export const Chapter1_Part7 = [
     type: "scene",
     title: "The Limbon Confrontation",
     date: "April 1897",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'marching'
   },
 
   {
@@ -452,7 +463,8 @@ export const Chapter1_Part7 = [
     type: "scene",
     title: "The Mount Buntis Maragondon Incident",
     date: "May 10, 1897",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'groundThud'
   },
 
   {
@@ -472,7 +484,9 @@ export const Chapter1_Part7 = [
     type: "system",
     intro: true,
     text: "is executed alongside his brother.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    sfx:'gunShot'
+    
   },
 
   {

@@ -29,7 +29,8 @@ export const Chapter1_Part2 = [
     type: "scene",
     title: "The Refusal at Inabanga",
     date: "1744",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    sfx: 'churchBell',
   },
 
   {
@@ -174,7 +175,7 @@ export const Chapter1_Part2 = [
       }
     ],
 
-    nextScene: 11
+
   },
 
 
@@ -222,7 +223,9 @@ export const Chapter1_Part2 = [
     type: "scene",
     title: "The Unbroken Stronghold",
     date: "Late 18th Century – 1827",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx: 'pagesFlipping',
+    
   },
 
   {
@@ -285,7 +288,6 @@ export const Chapter1_Part2 = [
       }
     ],
 
-    nextScene: 20
   },
 
   // CONTINUE
@@ -322,7 +324,9 @@ export const Chapter1_Part2 = [
     type: "scene",
     title: "The Sanz Campaign & The Clemency",
     date: "1828–1829",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx: 'marching',
+    
   },
 
   {
@@ -352,7 +356,7 @@ export const Chapter1_Part2 = [
         translation: "Enough of the fighting. Let's accept their offer so no more lives are lost.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/BoholanoRebelLeader.png"),
+            source: require("../../../../Character Images/Temporary Placeholders/BoholRebelLeader.png"),
             position: "left"
           }
         ]
@@ -365,14 +369,13 @@ export const Chapter1_Part2 = [
         translation: "Give us time to discuss this as a community.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/BoholanoRebelLeader.png"),
+            source: require("../../../../Character Images/Temporary Placeholders/BoholRebelLeader.png"),
             position: "left"
           }
         ]
       }
     ],
 
-    nextScene: 26
   },
 
   // CONTINUE
