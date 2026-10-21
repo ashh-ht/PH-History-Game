@@ -1,6 +1,4 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
-import { AppState } from 'react-native';
-import RNExitApp from 'react-native-exit-app';
 import Sound from 'react-native-sound';
 
 const Audiostore = createContext(null);
@@ -13,7 +11,6 @@ export function AudioProvider({ children }) {
   const bgmRef = useRef(null);
   const clickref = useRef(null);
   const currentTrackRef = useRef(null); // name of the track that SHOULD be playing
-  const appPausedRef = useRef(false);   // true while app is in background
   const heldByGameRef = useRef(false);  // true while a minigame holds the music
 
   const musicEffectiveVolume = masterVolume * musicVolume;
@@ -28,7 +25,6 @@ export function AudioProvider({ children }) {
   const loadIdRef = useRef(0);
 
   // Switch background music. Same track = do nothing (no restart).
-  // Names are lowercased because Android raw resources must be lowercase.
   const playMusic = (rawName) => {
     if (!rawName) return;
     const name = String(rawName).toLowerCase();
@@ -61,7 +57,7 @@ export function AudioProvider({ children }) {
       track.setNumberOfLoops(-1);
       bgmRef.current = track;
 
-      if (!appPausedRef.current && !heldByGameRef.current) {
+      if (!heldByGameRef.current) {
         track.play((ok) => {
           if (!ok) console.log('[audio] playback failed', name);
         });
@@ -77,8 +73,7 @@ export function AudioProvider({ children }) {
     const clicks = new Sound('click', Sound.MAIN_BUNDLE, (error) => {
       if (error) console.log('did not load', error);
     });
-      clickref.current= clicks;
-
+    clickref.current= clicks;
 
     return () => {
       loadIdRef.current += 1; // cancel any pending load
@@ -88,25 +83,15 @@ export function AudioProvider({ children }) {
       if (bgm) bgm.stop(() => bgm.release());
       clicks.release();
     };
-  }, []);
+  }, []); // runs once
 
   useEffect(() => {
     bgmRef.current?.setVolume(musicEffectiveVolume);
-  }, [masterVolume, musicVolume]);
+  }, [musicEffectiveVolume]);
 
-  // Pause when app goes to background, resume when it comes back
-  useEffect(() => {
-    const sub = AppState.addEventListener('change', (state) => {
-      if (state === 'active') {
-        appPausedRef.current = false;
-        if (!heldByGameRef.current) bgmRef.current?.play();
-      } else {
-        appPausedRef.current = true;
-        bgmRef.current?.pause();
-      }
-    });
-    return () => sub.remove();
-  }, []);
+  const changeMasterVolume = (value) => setMasterVolume(value);
+  const changeMusicVolume = (value) => setMusicVolume(value);
+  const changeSoundVolume = (value) => setSoundVolume(value);
 
   const Playclick = () => {
     if (clickref.current) {
@@ -124,25 +109,7 @@ export function AudioProvider({ children }) {
 
   const resumeMusic = () => {
     heldByGameRef.current = false;
-    if (!appPausedRef.current) bgmRef.current?.play();
-  };
-
-  // stop audio, then close the app
-  const Quitapp = () => {
-    try {
-      bgmRef.current?.stop();
-      bgmRef.current?.release();
-      clickref.current?.release();
-    } catch (e) {
-      console.log('audio cleanup error', e);
-    }
-
-    loadIdRef.current += 1;
-    bgmRef.current = null;
-    clickref.current = null;
-    currentTrackRef.current = null;
-
-    RNExitApp.exitApp();
+    bgmRef.current?.play();
   };
 
   return (
@@ -151,11 +118,10 @@ export function AudioProvider({ children }) {
         masterVolume,
         musicVolume,
         soundVolume,
-        changeMasterVolume: setMasterVolume,
-        changeMusicVolume: setMusicVolume,
-        changeSoundVolume: setSoundVolume,
+        changeMasterVolume,
+        changeMusicVolume,
+        changeSoundVolume,
         Playclick,
-        Quitapp,
         pauseMusic,
         resumeMusic,
         playMusic,
@@ -168,4 +134,4 @@ export function AudioProvider({ children }) {
 
 export function useAudio() {
   return useContext(Audiostore);
-} 
+}

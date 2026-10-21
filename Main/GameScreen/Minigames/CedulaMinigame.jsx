@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import {
     Animated,
     Image,
@@ -223,47 +223,27 @@ export default function CedulaMinigame({ onComplete }) {
         changeScreen("playing");
     };
 
-    const animateTear = () => {
-        shake.stopAnimation();
-        flash.stopAnimation();
-        shake.setValue(0);
-        flash.setValue(0);
+  const animateTear = useCallback(() => {
+    shake.stopAnimation();
+    flash.stopAnimation();
+    shake.setValue(0);
+    flash.setValue(0);
 
-        Animated.parallel([
-            Animated.sequence([
-                Animated.timing(shake, {
-                    toValue: 1,
-                    duration: 45,
-                    useNativeDriver: true,
-                }),
-                Animated.timing(shake, {
-                    toValue: -1,
-                    duration: 55,
-                    useNativeDriver: true,
-                }),
-                Animated.spring(shake, {
-                    toValue: 0,
-                    speed: 22,
-                    bounciness: 5,
-                    useNativeDriver: true,
-                }),
-            ]),
-            Animated.sequence([
-                Animated.timing(flash, {
-                    toValue: 0.18,
-                    duration: 65,
-                    useNativeDriver: true,
-                }),
-                Animated.timing(flash, {
-                    toValue: 0,
-                    duration: 230,
-                    useNativeDriver: true,
-                }),
-            ]),
-        ]).start();
-    };
+    Animated.parallel([
+      Animated.sequence([
+        Animated.timing(shake, { toValue: 1, duration: 45, useNativeDriver: true }),
+        Animated.timing(shake, { toValue: -1, duration: 55, useNativeDriver: true }),
+        Animated.spring(shake, { toValue: 0, speed: 22, bounciness: 5, useNativeDriver: true }),
+      ]),
+      Animated.sequence([
+        Animated.timing(flash, { toValue: 0.18, duration: 65, useNativeDriver: true }),
+        Animated.timing(flash, { toValue: 0, duration: 230, useNativeDriver: true }),
+      ]),
+    ]).start();
+  }, [shake, flash]);
 
-    const finishSwipe = (start, end) => {
+
+    const finishSwipe = useCallback((start, end) => {
         if (
             screenRef.current !== "playing" ||
             finishingRef.current ||
@@ -271,71 +251,67 @@ export default function CedulaMinigame({ onComplete }) {
             !end
         ) {
             return;
-        }
+         }
 
-        const dx = end.x - start.x;
-        const dy = end.y - start.y;
-        const absX = Math.abs(dx);
-        const absY = Math.abs(dy);
+              const dx = end.x - start.x;
+              const dy = end.y - start.y;
+              const absX = Math.abs(dx);
+              const absY = Math.abs(dy);
 
-        const horizontal = absX > absY * 1.2;
-        const vertical = absY > absX * 1.2;
+              const horizontal = absX > absY * 1.2;
+              const vertical = absY > absX * 1.2;
 
-        const longEnough = horizontal
-            ? absX >= paperSize.width * 0.22
-            : vertical && absY >= paperSize.height * 0.18;
+              const longEnough = horizontal
+                ? absX >= paperSize.width * 0.22
+                : vertical && absY >= paperSize.height * 0.18;
 
-        if ((!horizontal && !vertical) || !longEnough) {
-            setSlash(null);
-            setMessage("Swipe farther across the paper.");
-            startRef.current = null;
-            return;
-        }
+              if ((!horizontal && !vertical) || !longEnough) {
+                setSlash(null);
+                setMessage("Swipe farther across the paper.");
+                startRef.current = null;
+                return;
+              }
 
-        const clampX = (x) =>
-            Math.max(0, Math.min(paperSize.width, x));
+              const clampX = (x) => Math.max(0, Math.min(paperSize.width, x));
+              const clampY = (y) => Math.max(0, Math.min(paperSize.height, y));
 
-        const clampY = (y) =>
-            Math.max(0, Math.min(paperSize.height, y));
+              const newTear = {
+                id: `${Date.now()}-${tearCountRef.current}`,
+                x1: clampX(start.x),
+                y1: clampY(start.y),
+                x2: clampX(end.x),
+                y2: clampY(end.y),
+              };
 
-        const newTear = {
-            id: `${Date.now()}-${tearCountRef.current}`,
-            x1: clampX(start.x),
-            y1: clampY(start.y),
-            x2: clampX(end.x),
-            y2: clampY(end.y),
-        };
+              const nextCount = tearCountRef.current + 1;
+              tearCountRef.current = nextCount;
 
-        const nextCount = tearCountRef.current + 1;
-        tearCountRef.current = nextCount;
+              setTears((previous) => [...previous, newTear]);
+              setSlash(null);
+              startRef.current = null;
+              animateTear();
 
-        setTears((previous) => [...previous, newTear]);
-        setSlash(null);
-        startRef.current = null;
-        animateTear();
+              if (nextCount >= REQUIRED_TEARS) {
+                finishingRef.current = true;
+                setMessage("The cédula has been torn.");
+                clearFinishTimer();
 
-        if (nextCount >= REQUIRED_TEARS) {
-            finishingRef.current = true;
-            setMessage("The cédula has been torn.");
-
-            clearFinishTimer();
-
-            finishTimerRef.current = setTimeout(() => {
-                if (screenRef.current === "playing") {
+                finishTimerRef.current = setTimeout(() => {
+                  if (screenRef.current === "playing") {
                     deadlineRef.current = null;
                     changeScreen("won");
-                }
-
-                finishTimerRef.current = null;
-            }, 450);
-        } else {
-            setMessage(
-                nextCount === REQUIRED_TEARS - 1
+                  }
+                  finishTimerRef.current = null;
+                }, 450);
+              } else {
+                setMessage(
+                  nextCount === REQUIRED_TEARS - 1
                     ? "One more tear."
                     : `${nextCount} of ${REQUIRED_TEARS} tears completed.`
-            );
-        }
-    };
+                );
+              }
+            }, [paperSize.width, paperSize.height, animateTear]);
+
 
     const responder = useMemo(
         () =>
@@ -428,7 +404,7 @@ export default function CedulaMinigame({ onComplete }) {
                     setSlash(null);
                 },
             }),
-        [paperSize.width, paperSize.height]
+        [finishSwipe]
     );
 
     const renderSlash = (line, isLive = false) => {
