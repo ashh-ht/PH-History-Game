@@ -231,7 +231,8 @@ export const Chapter1_Part8 = [
     type: "scene",
     title: "The Declaration at Kawit",
     date: "June 12, 1898",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'windyFlag'
   },
 
   {
@@ -359,7 +360,8 @@ export const Chapter1_Part8 = [
     type: "scene",
     title: "The Siege of Manila",
     date: "July – August 1898",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'marching'
   },
 
   {
@@ -474,7 +476,8 @@ export const Chapter1_Part8 = [
     type: "scene",
     title: "Santa Mesa",
     date: "February 4, 1899",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'cannonFire'
   },
 
   {

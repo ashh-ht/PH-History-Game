@@ -8,13 +8,8 @@ import {
   Modal,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
+import { getCheckpoints, restoreCheckpoint, restartEverything, deleteCheckpoint } from "../Others/saveProgress";
 
-import {
-  getCheckpoints,
-  restoreCheckpoint,
-  restartEverything,
-  deleteCheckpoint,
-} from "../Others/saveProgress";
 import { useGameProgress } from "../../GameProgress";
 
 

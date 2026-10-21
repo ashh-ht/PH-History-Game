@@ -1,5 +1,18 @@
+<<<<<<< Updated upstream
 import { useMemo, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+=======
+import { useMemo, useRef, useState } from 'react';
+import {
+  Animated,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+>>>>>>> Stashed changes
 import Sound_clicks from '../../Components/Sound_clicks';
 import useScale from '../../Components/ScreenScaler';
 
@@ -11,6 +24,67 @@ const PILL_RATIO = PILL_W / PILL_H;
 
 const SETTING_ITEMS = ['Saves', 'Educational', 'Gameplay', 'About', 'Audio', 'Exit', 'Display'];
 
+<<<<<<< Updated upstream
+=======
+// =====================================================
+// ANIMATED TOP BUTTON
+// =====================================================
+
+function AnimatedTopButton({
+  normalSource,
+  pressedSource,
+  onPress,
+  iconStyle,
+}) {
+  const [pressed, setPressed] = useState(false);
+  const scale = useRef(new Animated.Value(1)).current;
+  const translateY = useRef(new Animated.Value(0)).current;
+
+  const animate = (isPressed) => {
+    setPressed(isPressed);
+
+    Animated.parallel([
+      Animated.spring(scale, {
+        toValue: isPressed ? 0.9 : 1,
+        speed: isPressed ? 22 : 18,
+        bounciness: isPressed ? 6 : 12,
+        useNativeDriver: true,
+      }),
+      Animated.spring(translateY, {
+        toValue: isPressed ? 3 : 0,
+        speed: isPressed ? 22 : 18,
+        bounciness: isPressed ? 4 : 10,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  return (
+    <Animated.View
+      style={{
+        transform: [{ scale }, { translateY }],
+      }}
+    >
+      <Pressable
+        onPressIn={() => animate(true)}
+        onPressOut={() => animate(false)}
+        onPress={onPress}
+      >
+        <Image
+          source={pressed ? pressedSource : normalSource}
+          style={iconStyle}
+          resizeMode="contain"
+        />
+      </Pressable>
+    </Animated.View>
+  );
+}
+
+// =====================================================
+// SETTINGS SCREEN
+// =====================================================
+
+>>>>>>> Stashed changes
 function Setting_screen({ navigation }) {
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const { s, height, insets } = useScale();
@@ -41,12 +115,32 @@ function Setting_screen({ navigation }) {
   return (
     <View style={[styles.container, styles.overlay]}>
       <View style={styles.topIcon}>
+<<<<<<< Updated upstream
         <Sound_clicks onPress={() => navigation.goBack()}>
           <Image source={require('../../assets/return.png')} style={styles.icon} />
         </Sound_clicks>
         <Sound_clicks onPress={() => navigation.navigate('Journal')}>
           <Image source={require('../../assets/Journal_page.png')} style={styles.icon} />
         </Sound_clicks>
+=======
+
+        {/* X / RETURN BUTTON */}
+        <AnimatedTopButton
+          normalSource={require('../../assets/icons/x_button.png')}
+          pressedSource={require('../../assets/icons/x_buttonpressed.png')}
+          onPress={() => navigation.goBack()}
+          iconStyle={styles.icon}
+        />
+
+        {/* JOURNAL BUTTON */}
+        <AnimatedTopButton
+          normalSource={require('../../assets/icons/journal_button.png')}
+          pressedSource={require('../../assets/icons/journal_buttonpressed.png')}
+          onPress={() => navigation.navigate('Journal')}
+          iconStyle={styles.icon}
+        />
+
+>>>>>>> Stashed changes
       </View>
 
       <View style={styles.settingPanel}>

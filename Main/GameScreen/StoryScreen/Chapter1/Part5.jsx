@@ -24,7 +24,8 @@ export const Chapter1_Part5 = [
     type: "scene",
     title: "The Catalyst",
     date: "August 19, 1896",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    sfx:'running'
   },
 
   {
@@ -69,7 +70,9 @@ export const Chapter1_Part5 = [
     type: "scene",
     title: "The Emergency Council",
     date: "August 1896",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'chairSit'
+    
   },
 
   {
@@ -158,7 +161,12 @@ export const Chapter1_Part5 = [
   {
     type: "scene",
     title: "The Historian's Interlude",
+<<<<<<< Updated upstream
     background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+=======
+    background: require("../../../../Background Images/Part 5/Map of the eight provinces under martial law.png"),
+    sfx:'singlePageFlip'
+>>>>>>> Stashed changes
   },
 
   {
@@ -202,7 +210,9 @@ export const Chapter1_Part5 = [
     type: "scene",
     title: "The Tearing of the Cédulas",
     date: "August 23, 1896",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'footstepsGround'
+
   },
 
   {
@@ -288,8 +298,15 @@ export const Chapter1_Part5 = [
 
   {
     type: "narrator",
+<<<<<<< Updated upstream
     background: require("../../../../Background Images/Part 5/Cry of Pugad Lawin.png"),
     text: "You tear your cédula along with the others. The act becomes a powerful symbol of\ntheir decision to rise against Spanish rule."
+=======
+    background: require("../../../../Background Images/Part 4/Safe-house interior (Gregoria's scenes).png"),
+    text: "You tear your cédula along with the others. The act becomes a powerful\nsymbol of their decision to rise against Spanish rule.",
+    sfx:'paperRip'
+    
+>>>>>>> Stashed changes
   },
 
 
@@ -302,7 +319,8 @@ export const Chapter1_Part5 = [
     type: "scene",
     title: "The First Battle: San Juan del Monte",
     date: "August 30, 1896",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'footstepsGround'
   },
 
   {
@@ -361,7 +379,7 @@ export const Chapter1_Part5 = [
         translation: "Let's wait for them. We'll surround the Polvorín."
       }
     ],
-    nextScene: 30
+
   },
 
 

@@ -19,7 +19,7 @@ export const Chapter1_Part7 = [
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 1
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  
 
 
   {
@@ -263,7 +263,8 @@ export const Chapter1_Part7 = [
     type: "scene",
     title: "The Limbon Confrontation",
     date: "April 1897",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'marching'
   },
 
   {
@@ -400,7 +401,8 @@ export const Chapter1_Part7 = [
     type: "scene",
     title: "The Mount Buntis Incident",
     date: "May 10, 1897",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'groundThud'
   },
 
   {
@@ -419,7 +421,9 @@ export const Chapter1_Part7 = [
     type: "system",
     intro: true,
     text: "is executed alongside his brother.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    sfx:'gunShot'
+    
   },
 
   {

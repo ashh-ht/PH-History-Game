@@ -16,6 +16,11 @@ import { useGameplaySettings } from "../Others/GameplaySetting";
 import { useDisplaySettings, FONT_SCALE } from "../Others/DisplaySetting";
 import { saveCheckpoint } from "../Others/saveProgress";
 import { Chapter1 } from "./StoryScreen/Chapter1";
+<<<<<<< Updated upstream
+
+=======
+import { useJournal } from "../Others/JournalContext";
+
 
 
 // =====================================================
@@ -24,16 +29,247 @@ import { Chapter1 } from "./StoryScreen/Chapter1";
 
 import VoyageMinigame from "./Minigames/VoyageMinigame";
 import SantoNinoMinigame from "./Minigames/SantoNinoMinigame";
+import CedulaMinigame from "./Minigames/CedulaMinigame";
+import DecipherMinigame from "./Minigames/DecipherMinigame";
+import CharacterMatchingMinigame from "./Minigames/CharacterMatchingMinigame";
+import ChronologicalOrderMinigame from "./Minigames/ChronologicalOrderMinigame";
+import WhoSaidItMinigame from "./Minigames/WhoSaidItMinigame";
 import TimelineSort from "./Minigames/Timelinesort";
 import { BloodTrace, OathTrace } from "./Minigames/TracingMinigame";
 
-// typewriter and by Auto Play.
+
+// =====================================================
+// ANIMATED NEXT BUTTON
+// =====================================================
+
+function AnimatedNextButton({ onPress }) {
+  const [pressed, setPressed] = useState(false);
+  const scale = useRef(new Animated.Value(1)).current;
+  const translateY = useRef(new Animated.Value(0)).current;
+
+  const animatePress = (isPressed) => {
+    setPressed(isPressed);
+
+    Animated.parallel([
+      Animated.spring(scale, {
+        toValue: isPressed ? 0.88 : 1,
+        speed: isPressed ? 24 : 18,
+        bounciness: isPressed ? 8 : 12,
+        useNativeDriver: true,
+      }),
+      Animated.spring(translateY, {
+        toValue: isPressed ? 4 : 0,
+        speed: isPressed ? 24 : 18,
+        bounciness: isPressed ? 4 : 12,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  return (
+    <Animated.View
+      style={[
+        styles.arrowButton,
+        {
+          transform: [{ scale }, { translateY }],
+        },
+      ]}
+    >
+      <TouchableOpacity
+        activeOpacity={1}
+        onPressIn={() => animatePress(true)}
+        onPressOut={() => animatePress(false)}
+        onPress={onPress}
+      >
+        <Image
+          source={
+            pressed
+              ? require("../../assets/icons/arrow_nextpressed.png")
+              : require("../../assets/icons/arrow_next.png")
+          }
+          style={styles.arrowImage}
+          resizeMode="contain"
+        />
+      </TouchableOpacity>
+    </Animated.View>
+  );
+}
+
+// =====================================================
+// ANIMATED STORY CHOICE BUTTON
+// =====================================================
+
+function AnimatedChoiceButton({ children, onPress, style }) {
+  const scale = useRef(new Animated.Value(1)).current;
+  const translateY = useRef(new Animated.Value(0)).current;
+
+  const animate = (isPressed) => {
+    Animated.parallel([
+      Animated.spring(scale, {
+        toValue: isPressed ? 0.94 : 1,
+        speed: 20,
+        bounciness: 12,
+        useNativeDriver: true,
+      }),
+      Animated.spring(translateY, {
+        toValue: isPressed ? 3 : 0,
+        speed: 20,
+        bounciness: 10,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  return (
+    <Animated.View
+      style={[
+        style,
+        {
+          transform: [{ scale }, { translateY }],
+        },
+      ]}
+    >
+      <TouchableOpacity
+        activeOpacity={1}
+        onPressIn={() => animate(true)}
+        onPressOut={() => animate(false)}
+        onPress={onPress}
+      >
+        {children}
+      </TouchableOpacity>
+    </Animated.View>
+  );
+}
+
+// =====================================================
+// ANIMATED QUIZ ANSWER BUTTON
+// =====================================================
+
+function AnimatedQuizButton({ children, onPress, style }) {
+  const scale = useRef(new Animated.Value(1)).current;
+  const translateY = useRef(new Animated.Value(0)).current;
+
+  const animate = (isPressed) => {
+    Animated.parallel([
+      Animated.spring(scale, {
+        toValue: isPressed ? 0.93 : 1,
+        speed: 22,
+        bounciness: 10,
+        useNativeDriver: true,
+      }),
+      Animated.spring(translateY, {
+        toValue: isPressed ? 3 : 0,
+        speed: 22,
+        bounciness: 8,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  return (
+    <Animated.View
+      style={[
+        style,
+        {
+          transform: [{ scale }, { translateY }],
+        },
+      ]}
+    >
+      <TouchableOpacity
+        activeOpacity={1}
+        onPressIn={() => animate(true)}
+        onPressOut={() => animate(false)}
+        onPress={onPress}
+      >
+        {children}
+      </TouchableOpacity>
+    </Animated.View>
+  );
+}
+
+// =====================================================
+// ANIMATED IMAGE BUTTON — MENU AND JOURNAL
+// =====================================================
+
+function AnimatedImageButton({
+  normalSource,
+  pressedSource,
+  onPress,
+  style,
+  imageStyle,
+}) {
+  const [pressed, setPressed] = useState(false);
+  const scale = useRef(new Animated.Value(1)).current;
+  const translateY = useRef(new Animated.Value(0)).current;
+
+  const animate = (isPressed) => {
+    setPressed(isPressed);
+
+    Animated.parallel([
+      Animated.spring(scale, {
+        toValue: isPressed ? 0.90 : 1,
+        speed: isPressed ? 22 : 18,
+        bounciness: isPressed ? 6 : 12,
+        useNativeDriver: true,
+      }),
+      Animated.spring(translateY, {
+        toValue: isPressed ? 3 : 0,
+        speed: isPressed ? 22 : 18,
+        bounciness: isPressed ? 4 : 10,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  return (
+    <Animated.View
+      style={[
+        style,
+        {
+          transform: [{ scale }, { translateY }],
+        },
+      ]}
+    >
+      <TouchableOpacity
+        activeOpacity={1}
+        onPressIn={() => animate(true)}
+        onPressOut={() => animate(false)}
+        onPress={onPress}
+      >
+        <Image
+          source={pressed ? pressedSource : normalSource}
+          style={imageStyle}
+          resizeMode="contain"
+        />
+      </TouchableOpacity>
+    </Animated.View>
+  );
+}
+>>>>>>> Stashed changes
+
+// Minigames that are looked up by scene type.
+// (voyage and santoNino are handled by the explicit checks in PartRenderer.)
 const MINIGAMES = {
-  voyage: VoyageMinigame,
-  santoNino: SantoNinoMinigame,
   sortingtimeline: TimelineSort,
   bloodtrace: BloodTrace,
   oathtrace: OathTrace,
+};
+
+// =====================================================
+// SCENE SOUND EFFECTS
+// Maps a scene card's title to a key from the SFX table in Audiostore.
+// Titles must match exactly (including trailing periods).
+// Scenes not listed here simply play no title sound.
+// =====================================================
+
+const SCENE_SFX = {
+  "Cibabao, Samar": "shipArrival",
+  "Formal Claims & Island Hopping": "windyFlag",
+  "The Ultimatum in Cebu": "marching",
+  "The Sandugo of Manila": "footstepsGround",
+  "The Voyage Continues.": "steamboat",
+  "Test Your Knowledge!": "pagesFlipping",
+  "Chapter Complete.": "churchBell",
 };
 
 // =====================================================
@@ -153,7 +389,11 @@ function PartRenderer(props) {
   } = props;
 
   const game = useGameProgress();
+<<<<<<< Updated upstream
   const { playMusic } = useAudio();
+=======
+  const { playMusic, playSfx, stopLoops } = useAudio();
+>>>>>>> Stashed changes
 
   // ===================================================
   // GAMEPLAY / DISPLAY SETTINGS
@@ -213,6 +453,7 @@ function PartRenderer(props) {
 
     return () => {
       game.setInGame(false);
+      stopLoops();
     };
   }, []);
 
@@ -236,6 +477,21 @@ function PartRenderer(props) {
   const hasMoreScenes = sceneIdx < sceneData.length;
   const current = hasMoreScenes ? sceneData[sceneIdx] : null;
 
+<<<<<<< Updated upstream
+=======
+  // ===================================================
+  // JOURNAL UNLOCK SYSTEM
+  // ===================================================
+
+  const { unlock } = useJournal();
+
+  useEffect(() => {
+    if (current && current.unlock) {
+      unlock(current.unlock);
+    }
+  }, [current, unlock]);
+
+>>>>>>> Stashed changes
   // ===================================================
   // MUSIC
   // ===================================================
@@ -256,6 +512,51 @@ function PartRenderer(props) {
     if (track) playMusic(track);
   }, [sceneIdx]);
 
+<<<<<<< Updated upstream
+=======
+  useEffect(() => {
+    if (current?.type !== "chapterIntro") {
+      return;
+    }
+
+    chapterTitleOpacity.setValue(0);
+
+    const animation = Animated.sequence([
+      Animated.delay(500),
+      Animated.timing(chapterTitleOpacity, {
+        toValue: 1,
+        duration: 1800,
+        useNativeDriver: true,
+      }),
+    ]);
+
+    animation.start();
+
+    return () => {
+      animation.stop();
+    };
+  }, [sceneIdx]);
+
+  // ===================================================
+  // SCENE SOUND EFFECTS
+  // ===================================================
+
+  useEffect(() => {
+    if (!current) return;
+
+    if (current.type === "scene") {
+      stopLoops(); // end war / oil lamp from the previous scene
+      const key = SCENE_SFX[current.title];
+      if (key) playSfx(key);
+    }
+
+    if (current.sfx) playSfx(current.sfx);
+
+    // "choose" sound when the A/B screen appears
+    if (current.type === "choice") playSfx("choose");
+  }, [sceneIdx]);
+
+>>>>>>> Stashed changes
   // ===================================================
   // SAVE HELPERS
   // ===================================================
@@ -456,9 +757,20 @@ function PartRenderer(props) {
     return goNext();
   };
 
+<<<<<<< Updated upstream
   // First tap finishes the line,
   // second tap moves on.
   const advance = () => (done ? next() : skip());
+=======
+  const advance = () => {
+    if (done) {
+      playSfx("dialogueClick");
+      next();
+    } else {
+      skip();
+    }
+  };
+>>>>>>> Stashed changes
 
   // ===================================================
   // AUTO PLAY
@@ -467,10 +779,14 @@ function PartRenderer(props) {
   useEffect(() => {
     if (!settings?.autoPlay || !done || !current) return;
 
+<<<<<<< Updated upstream
     // Player must answer quizzes / finish minigames manually
     if (current.type === "quiz" || isMinigame) return;
 
     // Player must choose before choice response
+=======
+    if (MANUAL_TYPES.has(current.type)) return;
+>>>>>>> Stashed changes
     if (current.type === "choice" && picked === null) return;
 
     const id = setTimeout(
@@ -547,6 +863,36 @@ function PartRenderer(props) {
   }
 
   // ===================================================
+<<<<<<< Updated upstream
+=======
+  // CHAPTER TITLE INTRO
+  // ===================================================
+
+  if (current.type === "chapterIntro") {
+    return withOverlay(
+      <ImageBackground
+        source={current.background}
+        style={styles.chapterIntroScreen}
+        resizeMode="cover"
+      >
+        <Animated.Image
+          source={current.titleImage}
+          resizeMode="contain"
+          style={[
+            styles.chapterIntroTitle,
+            {
+              opacity: chapterTitleOpacity,
+            },
+          ]}
+        />
+
+        <AnimatedNextButton onPress={goNext} />
+      </ImageBackground>
+    );
+  }
+
+  // ===================================================
+>>>>>>> Stashed changes
   // INTRO SCREENS
   // ===================================================
 
@@ -650,6 +996,7 @@ function PartRenderer(props) {
               onPress={() => {
                 if (!isAnswered) {
                   setQuizAnswer(index);
+                  playSfx(index === current.correctIndex ? "correct" : "wrong");
                 }
               }}
               activeOpacity={0.85}
@@ -1369,7 +1716,13 @@ const styles = StyleSheet.create({
     width: "100%",
     minHeight: 150,
     justifyContent: "center",
+<<<<<<< Updated upstream
     padding: 30,
+=======
+    paddingTop: 40,
+    paddingBottom: 25,
+    paddingLeft: 30,
+>>>>>>> Stashed changes
   },
 
   narratorLabel: {
@@ -1434,8 +1787,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingTop: 28,
     paddingBottom: 25,
+<<<<<<< Updated upstream
     paddingLeft: 30,
     paddingRight: 30,
+=======
+    paddingLeft: 10,
+>>>>>>> Stashed changes
   },
 
   speakerName: {
