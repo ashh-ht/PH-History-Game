@@ -1,209 +1,179 @@
-import React, { useRef, useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
-  ImageBackground,
   Image,
   StyleSheet,
-  Text,
   View,
   Animated,
+  Pressable,
+  ImageBackground,
+  useWindowDimensions,
 } from 'react-native';
 import Sound_clicks from '../../Components/Sound_clicks';
+import useScale from '../../Components/ScreenScaler';
 import { useGameplaySettings } from './GameplaySetting';
 
-function SpringImageButton({ image, pressedImage, onPress }) {
+const BG_BASE = require('../../assets/Settings_Assets/Gameplay_Base.png');
+const BG_TEXT_SPEED = require('../../assets/Settings_Assets/Gameplay_TextSpeed.png');
+const BG_PLAY_MODE = require('../../assets/Settings_Assets/Gameplay_PlayMode.png');
+const IMG_CIRCLE = require('../../assets/Settings_Assets/CircleButton.png');
+const IMG_CIRCLE_CHECKED = require('../../assets/Settings_Assets/CircleButton_Checked.png');
+
+const PANEL_ASPECT = 1205 / 630;
+
+const SPEED_ROW = { left: 255/1920, w: 380/1920, cx: 318/1920 };
+const AUTO_ROW = { left: 870/1920, w: 330/1920, cx: 921/1920 };
+const DELAY_ROW = { left: 1288/1920, w: 410/1920, cx: 1339/1920 };
+const DELAY_DIM = { left: 1285/1920, top: 440/1080, w: 415/1920, h: 320/1080 };
+const CIRCLE_W = 90/1920;
+const ROW_H = 105/1080;
+
+const SPEED_OPTIONS = [
+  { value: 'Slow', y: 473/1080 },
+  { value: 'Normal', y: 587/1080 },
+  { value: 'Fast', y: 707/1080 },
+];
+const AUTO_OPTIONS = [
+  { value: true, y: 548/1080 },
+  { value: false, y: 670/1080 },
+];
+const DELAY_OPTIONS = [
+  { value: 5, y: 480/1080 },
+  { value: 10, y: 595/1080 },
+  { value: 20, y: 714/1080 },
+];
+
+function SpringImageButton({ onPress, image, pressedImage, imageStyle }) {
   const scale = useRef(new Animated.Value(1)).current;
   const [pressed, setPressed] = useState(false);
 
   const handlePressIn = () => {
     setPressed(true);
-    Animated.spring(scale, {
-      toValue: 0.9,
-      useNativeDriver: true,
-      speed: 20,
-      bounciness: 10,
-    }).start();
+    Animated.spring(scale, { toValue: 0.9, useNativeDriver: true, speed: 20, bounciness: 10 }).start();
   };
 
   const handlePressOut = () => {
     setPressed(false);
-    Animated.spring(scale, {
-      toValue: 1,
-      useNativeDriver: true,
-      speed: 20,
-      bounciness: 10,
-    }).start();
+    Animated.spring(scale, { toValue: 1, useNativeDriver: true, speed: 20, bounciness: 10 }).start();
   };
 
   return (
     <Animated.View style={{ transform: [{ scale }] }}>
-      <Sound_clicks
-        onPress={onPress}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-      >
-        <Image
-          source={pressed ? pressedImage : image}
-          style={styles.icon}
-        />
-      </Sound_clicks>
+      <Pressable onPress={onPress} onPressIn={handlePressIn} onPressOut={handlePressOut}>
+        <Image source={pressed ? pressedImage : image} style={imageStyle} resizeMode="contain" />
+      </Pressable>
     </Animated.View>
   );
 }
 
-function Option({ label, selected, onPress, disabled }) {
+function RadioRow({ panelW, panelH, row, y, selected, onPress, disabled }) {
   return (
     <Sound_clicks
       onPress={disabled ? undefined : onPress}
-      style={[styles.option, disabled && styles.optionDisabled]}
+      style={{
+        position: 'absolute',
+        left: row.left * panelW,
+        top: (y - ROW_H / 2) * panelH,
+        width: row.w * panelW,
+        height: ROW_H * panelH,
+        justifyContent: 'center',
+      }}
     >
-      <View style={styles.diamond}>
-        {selected && <Text style={styles.check}>✓</Text>}
-      </View>
-      <Text style={styles.optionText}>{label}</Text>
+      <Image
+        source={selected ? IMG_CIRCLE_CHECKED : IMG_CIRCLE}
+        resizeMode="contain"
+        style={{
+          position: 'absolute',
+          left: (row.cx - (CIRCLE_W / 2) - row.left) * panelW,
+          width: CIRCLE_W * panelW,
+          height: CIRCLE_W * panelW,
+        }}
+      />
     </Sound_clicks>
   );
 }
 
-function GameplayScreen({ navigation }) {
-  const {
-    textSpeed, setTextSpeed,
-    autoPlay, setAutoPlay,
-    autoDelay, setAutoDelay,
-  } = useGameplaySettings();
-
+export default function GameplayScreen({ navigation }) {
+  const { textSpeed, setTextSpeed, autoPlay, setAutoPlay, autoDelay, setAutoDelay } = useGameplaySettings();
+  const { s, insets } = useScale();
+  const { width: winW, height: winH } = useWindowDimensions();
   const autoOff = !autoPlay;
 
+  const panelH = Math.min(winH * 0.92, 700, (winW * 0.9) / PANEL_ASPECT);
+  const panelW = panelH * PANEL_ASPECT;
+
+  const dynamicStyles = {
+    topIconContainer: {
+      top: Math.max(insets.top, 12 * s),
+      left: Math.max(insets.left, 20 * s),
+    },
+    topIconImage: {
+      width: 40 * s,
+      height: 40 * s,
+    },
+  };
+
   return (
-    <ImageBackground source={require('../../assets/Settingbg.png')} style={styles.container}>
-      {/* Top-left icons */}
-      <View style={styles.topIcon}>
+    <View style={styles.screenOverlay}>
+      <View style={[styles.topIconContainer, dynamicStyles.topIconContainer]}>
         <SpringImageButton
+          imageStyle={dynamicStyles.topIconImage}
+          onPress={() => navigation.goBack()}
           image={require('../../assets/icons/x_button.png')}
           pressedImage={require('../../assets/icons/x_buttonpressed.png')}
-          onPress={() => navigation.goBack()}
-        />
-        <SpringImageButton
-          image={require('../../assets/icons/journal_button.png')}
-          pressedImage={require('../../assets/icons/journal_buttonpressed.png')}
-          onPress={() => navigation.navigate('Journal')}
         />
       </View>
 
-      {/* Panel */}
-      <View style={styles.panel}>
-        <Text style={styles.title}>Gameplay</Text>
+      <View style={{ width: panelW, height: panelH }}>
+        <ImageBackground
+          source={BG_BASE}
+          style={{ width: panelW, height: panelH }}
+          resizeMode="stretch"
+        >
+          {/* Stacks the text images perfectly on top of the base */}
+          <Image source={BG_TEXT_SPEED} style={{ position: 'absolute', width: panelW, height: panelH }} resizeMode="stretch" pointerEvents="none" />
+          <Image source={BG_PLAY_MODE} style={{ position: 'absolute', width: panelW, height: panelH }} resizeMode="stretch" pointerEvents="none" />
 
-        <View style={styles.columns}>
-          {/* Left column: Text Speed */}
-          <View style={styles.column}>
-            <Text style={styles.heading}>Text Speed</Text>
-            {['Slow', 'Normal', 'Fast'].map((speed) => (
-              <Option
-                key={speed}
-                label={speed}
-                selected={textSpeed === speed}
-                onPress={() => setTextSpeed(speed)}
-              />
-            ))}
-          </View>
+          {SPEED_OPTIONS.map((opt) => (
+            <RadioRow key={opt.value} panelW={panelW} panelH={panelH} row={SPEED_ROW} y={opt.y} selected={textSpeed === opt.value} onPress={() => setTextSpeed(opt.value)} />
+          ))}
 
-          {/* Right column: Auto Play Mode + Plays After */}
-          <View style={styles.column}>
-            <Text style={styles.heading}>Auto Play Mode</Text>
-            <Option label="On" selected={autoPlay} onPress={() => setAutoPlay(true)} />
-            <Option label="Off" selected={!autoPlay} onPress={() => setAutoPlay(false)} />
+          {AUTO_OPTIONS.map((opt) => (
+            <RadioRow key={String(opt.value)} panelW={panelW} panelH={panelH} row={AUTO_ROW} y={opt.y} selected={autoPlay === opt.value} onPress={() => setAutoPlay(opt.value)} />
+          ))}
 
-            <View style={styles.divider} />
+          {DELAY_OPTIONS.map((opt) => (
+            <RadioRow key={opt.value} panelW={panelW} panelH={panelH} row={DELAY_ROW} y={opt.y} selected={autoDelay === opt.value} disabled={autoOff} onPress={() => setAutoDelay(opt.value)} />
+          ))}
 
-            <Text style={styles.subheading}>Plays After:</Text>
-            {[5, 10, 20].map((sec) => (
-              <Option
-                key={sec}
-                label={`${sec} Seconds`}
-                selected={autoDelay === sec}
-                disabled={autoOff}
-                onPress={() => setAutoDelay(sec)}
-              />
-            ))}
-          </View>
-        </View>
+          {autoOff && (
+            <View
+              pointerEvents="none"
+              style={{
+                position: 'absolute',
+                left: DELAY_DIM.left * panelW,
+                top: DELAY_DIM.top * panelH,
+                width: DELAY_DIM.w * panelW,
+                height: DELAY_DIM.h * panelH,
+                backgroundColor: 'rgba(168, 124, 94, 0.55)',
+              }}
+            />
+          )}
+        </ImageBackground>
       </View>
-    </ImageBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-
-  topIcon: {
-    position: 'absolute',
-    top: 12,
-    left: 20,
-    flexDirection:
-      'row',
-    gap: 15
+  screenOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.65)",
+    justifyContent: "center",
+    alignItems: "center",
   },
-
-  icon: {
-    width: 40,
-    height: 40
-  },
-
-  panel: {
-    backgroundColor: '#FFF2CB',
-    borderRadius: 15,
-    paddingVertical: 20,
-    paddingHorizontal: 24,
-    width: '70%',
-  },
-  title: {
-    fontSize: 22,
-    textAlign: 'center',
-    marginBottom: 12
-  },
-
-  columns: {
-    flexDirection: 'row',
-    justifyContent: 'space-around'
-  },
-  column: {
-    gap: 12
-  },
-
-  heading: {
-    fontSize: 20,
-    marginBottom: 4
-  },
-  subheading: {
-    fontSize: 15,
-    marginBottom: 2
-  },
-
-  divider: {
-    height: 1,
-    backgroundColor: '#D9B98A',
-    marginVertical: 8
-  },
-
-  option: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  optionDisabled: { opacity: 0.4 },
-  optionText: { fontSize: 14 },
-
-  diamond: {
-    width: 20,
-    height: 20,
-    backgroundColor: '#C9A46B',
-    transform: [{ rotate: '45deg' }],
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 50,
-  },
-
-  check: {
-    color: '#fff',
-    fontSize: 12,
-    transform: [{ rotate: '-45deg' }]
+  topIconContainer: {
+    position: "absolute",
+    zIndex: 10,
+    flexDirection: "row",
   },
 });
-
-export default GameplayScreen;

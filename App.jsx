@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { StatusBar, View } from 'react-native';
+import { StatusBar, View, StyleSheet } from 'react-native';
 import Orientation from 'react-native-orientation-locker';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
 
@@ -21,9 +21,10 @@ import AudioScreen from './Main/Others/AudioScreen';
 import Journalbook from './Main/Others/Journal';
 import SaveScreen from './Main/Others/SaveScreen';
 import AboutScreen from './Main/Others/AboutScreen';
-import EducationalScreen from './Main/Others/EducationalScreen';
+import SourcesScreen from './Main/Others/SourcesScreen';
 import GameplayScreen from './Main/Others/GameplayScreen';
 import DisplayScreen from './Main/Others/DisplayScreen';
+
 // Chapter 1 story screens
 import {
   Chap1Part1Screen,
@@ -52,19 +53,19 @@ export default function App() {
   }, []);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.container}>
       <StatusBar hidden={true} />
       <AudioProvider>
         <GameProgressProvider>
           <GameplaySettingsProvider>
             <DisplaySettingsProvider>
               <JournalProvider>
-          <NavigationContainer>
-            <Stack.Navigator initialRouteName="Startup" screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="Startup" component={StartupScreen} />
-              <Stack.Screen name="Home" component={MainMenuScreen} />
-              <Stack.Screen name="NewGameConfirm" component={NewGameConfirmScreen} />
-              <Stack.Screen name="PartSelect" component={PartSelectScreen} />
+                <NavigationContainer>
+                  <Stack.Navigator initialRouteName="Startup" screenOptions={{ headerShown: false }}>
+                    <Stack.Screen name="Startup" component={StartupScreen} />
+                    <Stack.Screen name="Home" component={MainMenuScreen} />
+                    <Stack.Screen name="NewGameConfirm" component={NewGameConfirmScreen} />
+                    <Stack.Screen name="PartSelect" component={PartSelectScreen} />
 
                     <Stack.Screen name="Part1" component={Chap1Part1Screen} />
                     <Stack.Screen name="Part2" component={Chap1Part2Screen} />
@@ -81,23 +82,51 @@ export default function App() {
                       options={{ presentation: 'transparentModal', animation: 'fade' }}
                     />
 
-                    <Stack.Screen name="AudioScreen" component={AudioScreen} />
+                    {/* FIXED: Added presentation: 'transparentModal' */}
+                    <Stack.Screen
+                      name="AudioScreen"
+                      component={AudioScreen}
+                      options={{ presentation: 'transparentModal', animation: 'fade' }}
+                    />
 
                     <Stack.Screen
                       name="Journal"
                       component={Journalbook}
-                      options={{ presentation: 'transparentModal' }}
+                      options={{ presentation: 'transparentModal', animation: 'fade' }}
                     />
-                    <Stack.Screen name="SaveScreen" component={SaveScreen} />
-                    <Stack.Screen name="About" component={AboutScreen} />
-                    <Stack.Screen name="Educational" component={EducationalScreen}/>
-                    <Stack.Screen name="GameplayScreen" component={GameplayScreen}/>
-                    <Stack.Screen name="DisplayScreen" component={DisplayScreen}/>
+                    <Stack.Screen
+                      name="SaveScreen"
+                      component={SaveScreen}
+                      options={{ presentation: 'transparentModal', animation: 'fade' }}
+                    />
+                    <Stack.Screen
+                      name="About"
+                      component={AboutScreen}
+                      options={{ presentation: 'transparentModal', animation: 'fade' }}
+                    />
+
+                    {/* FIXED: Added presentation: 'transparentModal' */}
+                    <Stack.Screen
+                      name="Sources"
+                      component={SourcesScreen}
+                      options={{ presentation: 'transparentModal', animation: 'fade' }}
+                    />
+
+                    <Stack.Screen
+                      name="GameplayScreen"
+                      component={GameplayScreen}
+                      options={{ presentation: 'transparentModal', animation: 'fade' }}
+                    />
+
+                    {/* FIXED: Added presentation: 'transparentModal' */}
+                    <Stack.Screen
+                      name="DisplayScreen"
+                      component={DisplayScreen}
+                      options={{ presentation: 'transparentModal', animation: 'fade' }}
+                    />
                   </Stack.Navigator>
                 </NavigationContainer>
               </JournalProvider>
-              {/* END OF JOURNAL PROVIDER */}
-
             </DisplaySettingsProvider>
           </GameplaySettingsProvider>
         </GameProgressProvider>
@@ -105,3 +134,9 @@ export default function App() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

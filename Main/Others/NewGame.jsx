@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { useGameProgress } from '../../GameProgress';
 import Sound_clicks from '../../Components/Sound_clicks';
+import { clearCheckpoints } from './saveProgress'; // 1. Added missing import
 
 // Note: spring animation for le buttons.
 function AnimatedButton({ onPress, image }) {
@@ -52,7 +53,7 @@ function NewGameConfirmScreen({ navigation }) {
   const { setChapter, setPart, setScene, setInGame } = useGameProgress();
 
   const restart = async () => {
-    await restartEverything();
+    await clearCheckpoints(); // 2. Changed from restartEverything to clearCheckpoints
 
     setChapter(1);
     setPart(1);
@@ -74,10 +75,7 @@ function NewGameConfirmScreen({ navigation }) {
       <View style={styles.list}>
         <AnimatedButton
           image={require('../../assets/New Game/Restart.png')}
-          onPress={() => {
-            setPart(1);
-            navigation.navigate('Home');
-          }}
+          onPress={restart} // 3. Changed to call the restart function
         />
 
         <AnimatedButton

@@ -302,7 +302,7 @@ export default function CharacterMatchingMinigame({
             0,
             Math.floor((endTime - startedAt) / 1000)
         );
-    }, [startedAt, finishedAt, status]);
+    }, [startedAt, finishedAt]);
 
     const selectName = useCallback(
         (character) => {
