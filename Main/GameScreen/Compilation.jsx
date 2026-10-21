@@ -330,7 +330,6 @@ function PartRenderer(props) {
   const { sceneData, chapterNumber, partNumber, isLastPart, navigation, route } = props;
 
   const game = useGameProgress();
-  // FIXED: Destructured stopLoops so it doesn't crash on unmount
   const { playMusic, stopLoops } = useAudio();
 
   const settings = useGameplaySettings();
@@ -370,16 +369,20 @@ function PartRenderer(props) {
 
     return () => {
       game.setInGame(false);
-      stopLoops(); // FIXED: Now works correctly
+      stopLoops();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const startScene = route?.params?.startScene;
+  // FIXED: Added a ref so it only applies the startScene once and doesn't loop
+  const lastAppliedStartScene = useRef(null);
 
   useEffect(() => {
     if (startScene == null) return;
+    if (lastAppliedStartScene.current === startScene) return;
 
+    lastAppliedStartScene.current = startScene;
     setPicked(null);
     setQuizAnswer(null);
     setSceneIdx(startScene);
@@ -389,7 +392,6 @@ function PartRenderer(props) {
   const hasMoreScenes = sceneIdx < sceneData.length;
   const current = hasMoreScenes ? sceneData[sceneIdx] : null;
 
-  // FIXED: Define isMinigame so it doesn't crash below
   const isMinigame = current ? !!MINIGAMES[current.type] : false;
 
   const { unlock } = useJournal();
@@ -522,7 +524,7 @@ function PartRenderer(props) {
 
   const isTyped =
     current &&
-    !isMinigame && // FIXED: Now correctly checks if it's a minigame
+    !isMinigame &&
     current.type !== "scene" &&
     current.type !== "quiz" &&
     !(current.type === "system" && current.intro === true);
