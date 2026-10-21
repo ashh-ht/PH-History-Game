@@ -178,7 +178,7 @@ export const Chapter1_Part7 = [
         translation: "I will take the oath because it is necessary. But I will write down what I saw and heard.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Ricarte.png"),
+            source: require("../../../../Character Images/Temporary Placeholders/carte.png"),
             position: "right"
           }
         ]
@@ -190,7 +190,7 @@ export const Chapter1_Part7 = [
         translation: "I cannot support an election surrounded by these doubts.",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Ricarte.png"),
+            source: require("../../../../Character Images/Temporary Placeholders/carte.png"),
             position: "right"
           }
         ]

@@ -74,7 +74,7 @@ export const Chapter1_Part8 = [
     speaker: "E. SPENCER PRATT",
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Pratt.png"),
+        source: require("../../../../Character Images/Temporary Placeholders/Pratter.png"),
         position: "left"
       }
     ],

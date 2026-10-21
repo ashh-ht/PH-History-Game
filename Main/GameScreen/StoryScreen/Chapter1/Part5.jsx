@@ -41,7 +41,7 @@ export const Chapter1_Part5 = [
     background: require("../../../../Background Images/Part 5/19th century hand press printing shop ransacked.png"),
     characters: [
       {
-        source: require("../../../../Character Images/Temporary Placeholders/Gil.png"),
+        source: require("../../../../Character Images/Temporary Placeholders/geel.png"),
         position: "left"
       }
     ],
@@ -269,7 +269,7 @@ export const Chapter1_Part5 = [
         speaker: "KATIPUNAN SOLDIERS",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Katipunero.png"),
+            source: require("../../../../Character Images/Temporary Placeholders/katips.png"),
             position: "right"
           }
         ],
@@ -282,7 +282,7 @@ export const Chapter1_Part5 = [
         speaker: "KATIPUNAN SOLDIER",
         characters: [
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Katipunero.png"),
+            source: require("../../../../Character Images/Temporary Placeholders/katips.png"),
             position: "right"
           }
         ],
