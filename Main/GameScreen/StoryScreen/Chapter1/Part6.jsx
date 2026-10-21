@@ -474,7 +474,6 @@ export const Chapter1_Part6 = [
     ],
     correctIndex: 0
   },
-
   {
     type: "quiz",
     question: "What were the two main factions that emerged in Cavite?",
@@ -486,7 +485,6 @@ export const Chapter1_Part6 = [
     ],
     correctIndex: 1
   },
-
   {
     type: "quiz",
     question: "What happened to José Rizal on December 30, 1896?",
@@ -498,7 +496,6 @@ export const Chapter1_Part6 = [
     ],
     correctIndex: 2
   },
-
   {
     type: "quiz",
     question: "Why did the rivalry between the Magdiwang and Magdalo become a problem?",
@@ -510,7 +507,6 @@ export const Chapter1_Part6 = [
     ],
     correctIndex: 0
   },
-
   {
     type: "quiz",
     question: "What major problem faced the revolutionaries as Spanish forces advanced?",
@@ -519,6 +515,18 @@ export const Chapter1_Part6 = [
       "They had no support from Cavite",
       "They faced military pressure, shortages,\nand divisions over leadership",
       "They had already defeated Spain"
+    ],
+    correctIndex: 2
+  },
+  // NEW QUESTION ADDED
+  {
+    type: "quiz",
+    question: "Who was the leader of the Magdiwang faction in Cavite?",
+    options: [
+      "Emilio Aguinaldo",
+      "Baldomero Aguinaldo",
+      "Mariano Álvarez",
+      "Daniel Tirona"
     ],
     correctIndex: 2
   },

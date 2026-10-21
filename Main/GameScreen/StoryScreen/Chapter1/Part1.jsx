@@ -749,13 +749,11 @@ export const Chapter1_Part1 = [
       "Cebu",
       "Cibabao, Samar",
       "Bohol",
-      "Manila",
+      "Manila"
     ],
-    // FIXED: Removed duplicate correctIndex and music keys
     correctIndex: 1,
     music: "traditional"
   },
-
   {
     type: "quiz",
     question: "What did Legazpi plant on Leyte to formally claim the territory for Spain?",
@@ -767,7 +765,6 @@ export const Chapter1_Part1 = [
     ],
     correctIndex: 2
   },
-
   {
     type: "quiz",
     question: "Who welcomed Legazpi in Bohol and sealed their friendship with a sandugo?",
@@ -779,7 +776,6 @@ export const Chapter1_Part1 = [
     ],
     correctIndex: 3
   },
-
   {
     type: "quiz",
     question: "What important object did Juan de Camus discover inside a house in Cebu?",
@@ -791,7 +787,6 @@ export const Chapter1_Part1 = [
     ],
     correctIndex: 1
   },
-
   {
     type: "quiz",
     question: "Who urged Rajah Sulayman to negotiate with Legazpi when\nthe Spanish arrived in Manila?",
@@ -803,13 +798,17 @@ export const Chapter1_Part1 = [
     ],
     correctIndex: 2
   },
-
+  // NEW QUESTION ADDED
   {
-    type: "scene",
-    title: "Chapter Complete.",
-    date: "You survived the first encounters.\nBut the story doesn't end here...",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
-    music: "somber"
+    type: "quiz",
+    question: "What did Legazpi declare Manila as on June 24, 1571?",
+    options: [
+      "A military outpost",
+      "The capital of the colony",
+      "An independent city-state",
+      "A trade route hub"
+    ],
+    correctIndex: 1
   },
 
   {

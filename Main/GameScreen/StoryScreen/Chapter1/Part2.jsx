@@ -423,7 +423,6 @@ export const Chapter1_Part2 = [
     ],
     correctIndex: 1
   },
-
   {
     type: "quiz",
     question: "Where did Dagohoy and his followers establish their community?",
@@ -435,7 +434,6 @@ export const Chapter1_Part2 = [
     ],
     correctIndex: 1
   },
-
   {
     type: "quiz",
     question: "About how large did Dagohoy's mountain community eventually become?",
@@ -447,7 +445,6 @@ export const Chapter1_Part2 = [
     ],
     correctIndex: 2
   },
-
   {
     type: "quiz",
     question: "What happened when a Spanish expedition of 2,200 soldiers\nentered the mountains in 1827?",
@@ -459,7 +456,6 @@ export const Chapter1_Part2 = [
     ],
     correctIndex: 1
   },
-
   {
     type: "quiz",
     question: "How did the Dagohoy rebellion finally come to an end in 1829?",
@@ -471,13 +467,17 @@ export const Chapter1_Part2 = [
     ],
     correctIndex: 1
   },
-
-  
+  // NEW QUESTION ADDED
   {
-    type: "scene",
-    title: "Chapter Complete.",
-    date: "The longest rebellion in Philippine history has ended.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+    type: "quiz",
+    question: "Who led the final Spanish expedition of 6,000 soldiers that ended the Dagohoy rebellion?",
+    options: [
+      "Captain Manuel Sanz",
+      "Governor-General Mariano Ricafort",
+      "Father Gaspar Morales",
+      "Miguel López de Legazpi"
+    ],
+    correctIndex: 0
   },
 
   {

@@ -11,12 +11,15 @@ import {
 } from "react-native";
 
 import { useGameProgress } from "../../GameProgress";
-import { useAudio } from "../../Audiostore"; // FIXED: Removed duplicate import
+import { useAudio } from "../../Audiostore";
 import { useGameplaySettings } from "../Others/GameplaySetting";
 import { useDisplaySettings, FONT_SCALE } from "../Others/DisplaySetting";
 import { saveCheckpoint } from "../Others/saveProgress";
 import { Chapter1 } from "./StoryScreen/Chapter1";
 import { useJournal } from "../../Main/Others/JournalContext";
+
+// IMPORT THE REMNANT DATA
+import { REMNANT_DATA } from "./RemnantData"; 
 
 // =====================================================
 // MINIGAMES
@@ -355,6 +358,11 @@ function PartRenderer(props) {
   const [picked, setPicked] = useState(null);
   const [quizAnswer, setQuizAnswer] = useState(null);
 
+  // --- REMNANT POPUP STATES ---
+  const [showRewardPopup, setShowRewardPopup] = useState(false);
+  const [rewardImage, setRewardImage] = useState(null);
+  const quizCountRef = useRef(0);
+
   const introProgress = useRef(new Animated.Value(1)).current;
   const [introChanging, setIntroChanging] = useState(false);
   const [introNextIndex, setIntroNextIndex] = useState(null);
@@ -364,6 +372,9 @@ function PartRenderer(props) {
     game.setChapter(chapterNumber);
     game.setPart(partNumber);
     game.setInGame(true);
+
+    // Reset the remnant counter when a new part is loaded
+    quizCountRef.current = 0;
 
     console.log(`loaded ch${chapterNumber} part${partNumber}`);
 
@@ -375,7 +386,6 @@ function PartRenderer(props) {
   }, []);
 
   const startScene = route?.params?.startScene;
-  // FIXED: Added a ref so it only applies the startScene once and doesn't loop
   const lastAppliedStartScene = useRef(null);
 
   useEffect(() => {
@@ -646,7 +656,6 @@ function PartRenderer(props) {
       <View style={styles.introScreen}>
         <ImageBackground source={current.background} style={styles.introBackground} resizeMode="cover">
           <View style={styles.introTextBox}>
-            {/* CHANGED: typewriter instead of plain Text */}
             <TypedText style={scaled(styles.introText)} full={lineText} shown={shown} />
           </View>
         </ImageBackground>
@@ -654,13 +663,11 @@ function PartRenderer(props) {
           <Animated.View pointerEvents="none" style={[styles.introNextLayer, { opacity: introProgress }]}>
             <ImageBackground source={nextIntro.background} style={styles.introBackground} resizeMode="cover">
               <View style={styles.introTextBox}>
-                {/* CHANGED: keep the box size but hide the text so the next line types in after the crossfade */}
                 <TypedText style={scaled(styles.introText)} full={nextIntro.text} shown="" />
               </View>
             </ImageBackground>
           </Animated.View>
         )}
-        {/* CHANGED: first tap completes the typing, next tap continues */}
         <TouchableOpacity style={styles.introTouchable} activeOpacity={1} onPress={advance} />
       </View>
     );
@@ -669,6 +676,31 @@ function PartRenderer(props) {
   if (current.type === "quiz") {
     const isAnswered = quizAnswer !== null;
     const isCorrect = quizAnswer === current.correctIndex;
+
+    // --- REMNANT QUIZ LOGIC ---
+    const handleQuizSelect = (index) => {
+      if (isAnswered) return; // Already answered
+      
+      setQuizAnswer(index);
+
+      if (index === current.correctIndex) {
+        const pieceNumber = quizCountRef.current + 1;
+        
+        if (pieceNumber <= 6) {
+          quizCountRef.current += 1;
+          
+          // Unlock the piece in the Journal
+          const remnantId = `remnant-part${partNumber}-${pieceNumber}`;
+          unlock([remnantId]);
+          
+          // Show the popup
+          if (REMNANT_DATA[partNumber] && REMNANT_DATA[partNumber].pieces) {
+            setRewardImage(REMNANT_DATA[partNumber].pieces[pieceNumber - 1]);
+            setShowRewardPopup(true);
+          }
+        }
+      }
+    };
 
     return withOverlay(
       <View style={[styles.choiceScreen, styles.quizBackground]}>
@@ -682,16 +714,34 @@ function PartRenderer(props) {
             )}
           </ImageBackground>
         </View>
+        
         <View style={styles.quizButtonsGrid}>
           {current.options.map((option, index) => (
-            <AnimatedQuizButton key={index} style={styles.quizImageButton} onPress={() => { if (!isAnswered) setQuizAnswer(index); }}>
+            <AnimatedQuizButton key={index} style={styles.quizImageButton} onPress={() => handleQuizSelect(index)}>
               <ImageBackground source={require("../../assets/buttons/choice_button.png")} style={styles.quizImageButtonBg} resizeMode="stretch">
                 <Text style={scaled(styles.quizButtonText)}>{option}</Text>
               </ImageBackground>
             </AnimatedQuizButton>
           ))}
         </View>
+        
         {isAnswered && <AnimatedNextButton onPress={goNext} />}
+
+        {/* REMNANT CONGRATULATIONS POPUP */}
+        {showRewardPopup && (
+          <View style={styles.rewardPopupOverlay}>
+            <View style={styles.rewardPopupBox}>
+              <Text style={styles.rewardTitle}>CONGRATULATIONS!</Text>
+              <Text style={styles.rewardSubtitle}>You received a Remnant piece!</Text>
+              {rewardImage && (
+                <Image source={rewardImage} style={styles.rewardImage} resizeMode="contain" />
+              )}
+              <TouchableOpacity style={styles.rewardButton} onPress={() => setShowRewardPopup(false)}>
+                <Text style={styles.rewardButtonText}>CLAIM</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
       </View>
     );
   }
@@ -1218,5 +1268,60 @@ const styles = StyleSheet.create({
     color: "#000000",
     fontSize: 18,
     fontWeight: "bold",
+  },
+
+  // =====================================================
+  // REMNANT REWARD POPUP STYLES
+  // =====================================================
+  rewardPopupOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.75)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 999,
+  },
+  rewardPopupBox: {
+    backgroundColor: '#F4E4C8',
+    padding: 30,
+    borderRadius: 15,
+    borderWidth: 2,
+    borderColor: '#A87C5E',
+    alignItems: 'center',
+    width: '60%',
+    maxWidth: 400,
+  },
+  rewardTitle: {
+    fontSize: 28,
+    fontFamily: 'serif',
+    fontWeight: 'bold',
+    color: '#5A4A32',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  rewardSubtitle: {
+    fontSize: 16,
+    fontFamily: 'serif',
+    color: '#5A4A32',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  rewardImage: {
+    width: 200,
+    height: 200,
+    marginBottom: 20,
+  },
+  rewardButton: {
+    backgroundColor: '#A87C5E',
+    paddingVertical: 12,
+    paddingHorizontal: 40,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#5A4A32',
+  },
+  rewardButtonText: {
+    color: '#FFF',
+    fontFamily: 'serif',
+    fontWeight: 'bold',
+    fontSize: 18,
   },
 });

@@ -639,7 +639,6 @@ export const Chapter1_Part4 = [
     ],
     correctIndex: 1
   },
-
   {
     type: "quiz",
     question: "What name did the Katipunan use for the nation it imagined?",
@@ -651,7 +650,6 @@ export const Chapter1_Part4 = [
     ],
     correctIndex: 2
   },
-
   {
     type: "quiz",
     question: "What was the purpose of the Triangle System?",
@@ -663,7 +661,6 @@ export const Chapter1_Part4 = [
     ],
     correctIndex: 2
   },
-
   {
     type: "quiz",
     question: "Who wrote the Kartilya ng Katipunan?",
@@ -675,7 +672,6 @@ export const Chapter1_Part4 = [
     ],
     correctIndex: 1
   },
-
   {
     type: "quiz",
     question: "What happened after the Katipunan was discovered by\nSpanish authorities in August 1896?",
@@ -687,12 +683,24 @@ export const Chapter1_Part4 = [
     ],
     correctIndex: 2
   },
+  // NEW QUESTION ADDED
+  {
+    type: "quiz",
+    question: "Who was the 'Lakambini' (Muse) of the Katipunan who safeguarded its secret documents?",
+    options: [
+      "Melchora Aquino",
+      "Gregoria de Jesús",
+      "Teodora Alonso",
+      "Trinidad Tecson"
+    ],
+    correctIndex: 1
+  },
 
   {
-    type: "scene",
-    title: "Chapter Complete.",
-    date: "The secret of the Katipunan is now out.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+      type: "scene",
+      title: "Chapter Complete.",
+      date: "The secret of the Katipunan is now out.",
+      background: require("../../../../Background Images/Usuals/Black Background.jpg")
   }
 
 ];

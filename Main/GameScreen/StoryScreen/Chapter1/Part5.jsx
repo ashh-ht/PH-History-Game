@@ -508,13 +508,12 @@ export const Chapter1_Part5 = [
     question: "What led Bonifacio and the Katipunan to move toward\nopen revolt in August 1896?",
     options: [
       "The Spanish government offered\nthem independence",
-      "The Katipunan was exposed and its\nembers began facing arrests",
+      "The Katipunan was exposed and its\nmembers began facing arrests",
       "Rizal returned from exile",
       "The Spanish army abandoned Manila"
     ],
     correctIndex: 1
   },
-
   {
     type: "quiz",
     question: "What did the tearing of the cédulas symbolize?",
@@ -526,7 +525,6 @@ export const Chapter1_Part5 = [
     ],
     correctIndex: 1
   },
-
   {
     type: "quiz",
     question: "Where did the Katipuneros launch a major attack on August 30, 1896?",
@@ -538,7 +536,6 @@ export const Chapter1_Part5 = [
     ],
     correctIndex: 2
   },
-
   {
     type: "quiz",
     question: "What happened after the attack at San Juan del Monte?",
@@ -550,7 +547,6 @@ export const Chapter1_Part5 = [
     ],
     correctIndex: 2
   },
-
   {
     type: "quiz",
     question: "What did Governor-General Ramón Blanco declare on August 30, 1896?",
@@ -559,6 +555,18 @@ export const Chapter1_Part5 = [
       "Eight provinces under a state of war",
       "Philippine independence",
       "The restoration of La Liga Filipina"
+    ],
+    correctIndex: 1
+  },
+  // NEW QUESTION ADDED
+  {
+    type: "quiz",
+    question: "What was the name of the Spanish weapons depot that the Katipuneros tried to capture in San Juan?",
+    options: [
+      "Fort Santiago",
+      "El Polvorín",
+      "Intramuros",
+      "Casa Hacienda"
     ],
     correctIndex: 1
   },

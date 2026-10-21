@@ -564,6 +564,19 @@ export const Chapter1_Part7 = [
     correctIndex: 2
   },
 
+// NEW QUESTION ADDED
+  {
+    type: "quiz",
+    question: "Where were the Bonifacio brothers tried and sentenced by the military court?",
+    options: [
+      "Tejeros",
+      "Tanza",
+      "Maragondon",
+      "Naik"
+    ],
+    correctIndex: 2
+  },
+
   {
     type: "scene",
     title: "Chapter Complete.",

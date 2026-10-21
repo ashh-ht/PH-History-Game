@@ -2,7 +2,8 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { Animated, Easing, ImageBackground, ScrollView, Text, View, Pressable, Image, useWindowDimensions, StyleSheet } from 'react-native';
 import Journal from './Journal.json';
 import styles from '../../Styles/Others/StyleJournal';
-import { useJournal } from '../../Main/Others/JournalContext'; // IMPORT THE CONTEXT
+import { useJournal } from '../../Main/Others/JournalContext'; 
+import { REMNANT_DATA } from '../GameScreen/RemnantData'; // Import the new Remnant Data
 
 // ==================================== IMAGES OF TABS ====================================
 const TABS = ['Timeline', 'Character Profiles', 'Minigame Collections', 'Glossary'];
@@ -60,15 +61,6 @@ const PORTRAITS = {
   'Dr. José Rizal': require('../../Character Images/Temporary Placeholders/Rizal.png'),
   'Apolinario Mabini': require('../../Character Images/Temporary Placeholders/Mabini.png'),
 };
-
-// ==================================== REMNANT DATA (Hardcoded) ====================================
-// We keep the images here, but the unlock state will be dynamic
-const REMNANTS_DATA = [
-  { id: 1, image: require('../../assets/Journal_Assets/Remnants_Box_unlocked.png') },
-  { id: 2, image: require('../../assets/Journal_Assets/Remnants_Box_locked.png') },
-  { id: 3, image: null }, { id: 4, image: null }, { id: 5, image: null },
-  { id: 6, image: null }, { id: 7, image: null }, { id: 8, image: null }, { id: 9, image: null },
-];
 
 
 function BookmarkTab({ image, openImage, index, active, onPress }) {
@@ -263,31 +255,6 @@ function TimelineEntry({ entry }) {
   );
 }
 
-// ==================================== REMNANT STUFF ====================================
-function RemnantCard({ id, unlocked, image, onPress }) {
-  return (
-    <Pressable style={styles.remnantCard} onPress={unlocked ? onPress : undefined} disabled={!unlocked}>
-      <View style={styles.remnantBoxWrap}>
-        <Image source={unlocked ? REMNANTS_BOX_UNLOCKED : REMNANTS_BOX_LOCKED} style={styles.remnantBoxImage} resizeMode="contain" />
-        {unlocked && image && <Image source={image} style={styles.remnantInnerImage} resizeMode="cover" />}
-      </View>
-      <Text style={styles.remnantLabel}>Remnant #{id}</Text>
-    </Pressable>
-  );
-}
-
-function CompleteCard({ unlocked, onPress }) {
-  return (
-    <Pressable style={styles.remnantCard} onPress={unlocked ? onPress : undefined} disabled={!unlocked}>
-      <View style={styles.remnantBoxWrap}>
-        <Image source={unlocked ? REMNANTS_BOX_UNLOCKED : REMNANTS_BOX_LOCKED} style={styles.remnantBoxImage} resizeMode="contain" />
-        {unlocked && <Image source={require('../../assets/Journal_Assets/Remnants_Box_locked.png')} style={styles.remnantInnerImage} resizeMode="cover" />}
-      </View>
-      <Text style={styles.remnantLabel}>Complete</Text>
-    </Pressable>
-  );
-}
-
 // ==================================== GLOSSARY STUFF ====================================
 function GlossaryEntry({ term, meaning, unit }) {
   return (
@@ -342,7 +309,11 @@ function Journalbook({ navigation }) {
   const [selectedChar, setSelectedChar] = useState(null);
   const [glossarypage, setGlossarypPage] = useState(0);
   const [timelinepage, setTimelinePage] = useState(0);
+  
+  // Remnant States
+  const [selectedRemnantPart, setSelectedRemnantPart] = useState(null);
   const [selectedRemnant, setSelectedRemnant] = useState(null);
+  
   const [bookSize, setBookSize] = useState({ w: 0, h: 0 });
 
   // ==================================== FILTERED DATA ====================================
@@ -440,18 +411,6 @@ function Journalbook({ navigation }) {
     </>
   );
 
-  // 3. Filter Remnants (Dynamic unlock based on IDs)
-  // You will need to add "remnant-1", "remnant-2", etc. to your story unlocks.
-  const minigameLeft = REMNANTS_DATA.slice(0, 4).map(r => ({
-    ...r,
-    unlocked: unlockedIds.has(`remnant-${r.id}`)
-  }));
-  const minigameRight = REMNANTS_DATA.slice(4).map(r => ({
-    ...r,
-    unlocked: unlockedIds.has(`remnant-${r.id}`)
-  }));
-  const allRemnantunlocked = REMNANTS_DATA.every(r => unlockedIds.has(`remnant-${r.id}`));
-
   // 4. Glossary (Untouched)
   const glossaryterm = Journal.find((s) => s.title === 'Glossary')?.content ?? [];
   const sortglossary = [...glossaryterm].sort((a, b) => a.term.localeCompare(b.term));
@@ -491,6 +450,7 @@ function Journalbook({ navigation }) {
         setSelectedEntry(null);
         setSelectedChar(null);
         setSelectedRemnant(null);
+        setSelectedRemnantPart(null); // Reset the remnant part view
         setTimelinePage(0);
         setCharPage(0);
         setGlossarypPage(0);
@@ -569,14 +529,29 @@ function Journalbook({ navigation }) {
           </View>
         )}
 
-        {activeTab === 'Minigame Collections' && (
+        {/* ================= REMNANTS TAB ================= */}
+        {activeTab === 'Minigame Collections' && !selectedRemnantPart && (
           <View style={styles.spreadRow} pointerEvents="box-none">
             <View style={styles.spreadPage} pointerEvents="box-none">
               <Image source={REMNANTS_TITLE} style={styles.remnantsTitle} resizeMode="contain" />
               <ScrollView style={styles.leftPage} contentContainerStyle={styles.pageContent}>
                 <View style={{ height: 260 * unit }} />
                 <View style={styles.Remnancegrid}>
-                  {minigameLeft.map((r) => <RemnantCard key={r.id} id={r.id} unlocked={r.unlocked} image={r.image} onPress={() => setSelectedRemnant(r.image)} />)}
+                  {[1, 2, 3, 4].map((partNum) => {
+                    const isComplete = [1, 2, 3, 4, 5, 6].every(i => unlockedIds.has(`remnant-part${partNum}-${i}`));
+                    return (
+                       <Pressable key={partNum} style={styles.remnantCard} onPress={() => setSelectedRemnantPart(partNum)}>
+                         <View style={styles.remnantBoxWrap}>
+                            <Image 
+                              source={isComplete ? REMNANT_DATA[partNum].complete : REMNANTS_BOX_UNLOCKED} 
+                              style={styles.remnantBoxImage} 
+                              resizeMode="contain" 
+                            />
+                         </View>
+                         <Text style={styles.remnantLabel}>Part {partNum}</Text>
+                       </Pressable>
+                    )
+                  })}
                 </View>
               </ScrollView>
             </View>
@@ -584,8 +559,69 @@ function Journalbook({ navigation }) {
               <ScrollView style={styles.rightPage} contentContainerStyle={styles.pageContent}>
                 <View style={{ height: 260 * unit }} />
                 <View style={styles.Remnancegrid}>
-                  {minigameRight.map((r) => <RemnantCard key={r.id} id={r.id} unlocked={r.unlocked} image={r.image} onPress={() => setSelectedRemnant(r.image)} />)}
-                  <CompleteCard unlocked={allRemnantunlocked} onPress={() => setSelectedRemnant(require('../../assets/Journal_Assets/Remnants_Box_locked.png'))} />
+                  {[5, 6, 7, 8].map((partNum) => {
+                    const isComplete = [1, 2, 3, 4, 5, 6].every(i => unlockedIds.has(`remnant-part${partNum}-${i}`));
+                    return (
+                       <Pressable key={partNum} style={styles.remnantCard} onPress={() => setSelectedRemnantPart(partNum)}>
+                         <View style={styles.remnantBoxWrap}>
+                            <Image 
+                              source={isComplete ? REMNANT_DATA[partNum].complete : REMNANTS_BOX_UNLOCKED} 
+                              style={styles.remnantBoxImage} 
+                              resizeMode="contain" 
+                            />
+                         </View>
+                         <Text style={styles.remnantLabel}>Part {partNum}</Text>
+                       </Pressable>
+                    )
+                  })}
+                </View>
+              </ScrollView>
+            </View>
+          </View>
+        )}
+
+        {activeTab === 'Minigame Collections' && selectedRemnantPart && (
+          <View style={styles.spreadRow} pointerEvents="box-none">
+            <View style={styles.spreadPage} pointerEvents="box-none">
+               <Pressable onPress={() => setSelectedRemnantPart(null)} style={{ position: 'absolute', top: 40, left: 40, zIndex: 10 }}>
+                 <Text style={styles.backLink}>← Back to Parts</Text>
+               </Pressable>
+               
+               {/* Shows the Complete Image if all 6 are unlocked */}
+               <Image 
+                 source={
+                   [1, 2, 3, 4, 5, 6].every(i => unlockedIds.has(`remnant-part${selectedRemnantPart}-${i}`)) 
+                   ? REMNANT_DATA[selectedRemnantPart].complete 
+                   : REMNANTS_BOX_LOCKED
+                 } 
+                 style={{ width: '70%', height: '70%', marginTop: 60 }} 
+                 resizeMode="contain" 
+               />
+            </View>
+            
+            <View style={styles.spreadPage} pointerEvents="box-none">
+               <ScrollView style={styles.rightPage} contentContainerStyle={styles.pageContent}>
+                <View style={{ height: 260 * unit }} />
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10, width: '100%', paddingHorizontal: 20 }}>
+                  {REMNANT_DATA[selectedRemnantPart].pieces.map((piece, index) => {
+                    const isUnlocked = unlockedIds.has(`remnant-part${selectedRemnantPart}-${index + 1}`);
+                    return (
+                      <Pressable 
+                        key={index} 
+                        style={{ width: '30%', aspectRatio: 1, margin: 5 }} 
+                        onPress={() => isUnlocked ? setSelectedRemnant(piece) : null}
+                      >
+                        <Image 
+                          source={isUnlocked ? REMNANTS_BOX_UNLOCKED : REMNANTS_BOX_LOCKED} 
+                          style={{ width: '100%', height: '100%', position: 'absolute' }} 
+                          resizeMode="contain" 
+                        />
+                        {isUnlocked && (
+                          <Image source={piece} style={{ width: '80%', height: '80%', alignSelf: 'center', marginTop: '10%' }} resizeMode="contain" />
+                        )}
+                      </Pressable>
+                    )
+                  })}
                 </View>
               </ScrollView>
             </View>
