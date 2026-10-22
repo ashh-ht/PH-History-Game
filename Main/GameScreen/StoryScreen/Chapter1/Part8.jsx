@@ -24,7 +24,8 @@ export const Chapter1_Part8 = [
     type: "scene",
     title: "The Road to Kawit",
     date: "December 1897 – May 1898",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    sfx:'footstepsPavement'
   },
 
   {
@@ -115,7 +116,8 @@ export const Chapter1_Part8 = [
     type: "scene",
     title: "Alapan and the First Flag",
     date: "May 28, 1898",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'windyFlag'
   },
 
   {
@@ -164,7 +166,8 @@ export const Chapter1_Part8 = [
     type: "scene",
     title: "The Draft of the Acta",
     date: "Early June 1898",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'stampPapers'
   },
 
   {
@@ -319,7 +322,8 @@ export const Chapter1_Part8 = [
     type: "scene",
     title: "Dictator or President?",
     date: "June 23, 1898",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'chairSit'
   },
 
   {
@@ -514,7 +518,8 @@ export const Chapter1_Part8 = [
     type: "scene",
     title: "The Treaty of Paris",
     date: "August – December 1898",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'chairSit'
   },
 
   {

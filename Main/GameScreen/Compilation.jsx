@@ -14,7 +14,7 @@ import { useGameProgress } from "../../GameProgress";
 import { useAudio } from "../../Audiostore"; // FIXED: Removed duplicate import
 import { useGameplaySettings } from "../Others/GameplaySetting";
 import { useDisplaySettings, FONT_SCALE } from "../Others/DisplaySetting";
-import { saveCheckpoint } from "../Others/saveProgress";
+import { saveCheckpoint, markPartReached } from "../Others/saveProgress";
 import { Chapter1 } from "./StoryScreen/Chapter1";
 import { useJournal } from "../../Main/Others/JournalContext";
 
@@ -48,6 +48,7 @@ const getMusicFor = (sceneData, idx) => {
 // ANIMATED BUTTONS
 // =====================================================
 function AnimatedNextButton({ onPress }) {
+  const { playSfx } = useAudio();
   const [pressed, setPressed] = useState(false);
   const scale = useRef(new Animated.Value(1)).current;
   const translateY = useRef(new Animated.Value(0)).current;
@@ -81,7 +82,10 @@ function AnimatedNextButton({ onPress }) {
         activeOpacity={1}
         onPressIn={() => animatePress(true)}
         onPressOut={() => animatePress(false)}
-        onPress={onPress}
+        onPress={() => {
+          playSfx("dialogueClick");
+          onPress();
+        }}
       >
         <Image
           source={
@@ -222,6 +226,21 @@ const MINIGAMES = {
   oathtrace: OathTrace,
 };
 
+// Every scene type that runs its own minigame UI (no typed line).
+// Used so Auto Play never skips them and they never get a typewriter line.
+const MINIGAME_TYPES = new Set([
+  "voyage",
+  "santoNino",
+  "cedula", 
+  "decipher",
+  "matching",
+  "chronological",
+  "whoSaidIt",
+  "sortingtimeline",
+  "bloodtrace",
+  "oathtrace",
+]);
+
 // =====================================================
 // TYPEWRITER
 // =====================================================
@@ -330,7 +349,7 @@ function PartRenderer(props) {
   const { sceneData, chapterNumber, partNumber, isLastPart, navigation, route } = props;
 
   const game = useGameProgress();
-  const { playMusic, stopLoops } = useAudio();
+  const { playMusic, stopLoops, playSfx } = useAudio();
 
   const settings = useGameplaySettings();
   const display = useDisplaySettings();
@@ -364,6 +383,7 @@ function PartRenderer(props) {
     game.setChapter(chapterNumber);
     game.setPart(partNumber);
     game.setInGame(true);
+    markPartReached(partNumber); // saved to storage so Part Select stays unlocked after closing the app
 
     console.log(`loaded ch${chapterNumber} part${partNumber}`);
 
@@ -392,7 +412,14 @@ function PartRenderer(props) {
   const hasMoreScenes = sceneIdx < sceneData.length;
   const current = hasMoreScenes ? sceneData[sceneIdx] : null;
 
-  const isMinigame = current ? !!MINIGAMES[current.type] : false;
+  // FIXED: covers every minigame type, not just the ones in MINIGAMES
+  const isMinigame = current ? MINIGAME_TYPES.has(current.type) : false;
+
+  // Finishing a part unlocks the next one right away,
+  // even if the player quits on the "Part complete!" screen
+  useEffect(() => {
+    if (!hasMoreScenes && !isLastPart) markPartReached(partNumber + 1);
+  }, [hasMoreScenes, isLastPart, partNumber]);
 
   const { unlock } = useJournal();
 
@@ -407,6 +434,17 @@ function PartRenderer(props) {
     const track = getMusicFor(sceneData, sceneIdx);
     if (track) playMusic(track);
   }, [sceneIdx, sceneData, playMusic]);
+
+  // SFX Effect: fires once whenever a new scene becomes current.
+  // In Chapter1 data use:  sfx: "cannonFire"  or  sfx: ["churchBell", "footstepsSand"]
+  // Add  stopSfx: true  to cut looping sounds (oilLamp, tar) at that scene.
+  useEffect(() => {
+    const scene = sceneData[sceneIdx];
+    if (!scene) return;
+    if (scene.stopSfx) stopLoops();
+    [].concat(scene.sfx ?? []).forEach((key) => playSfx(key));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sceneIdx, sceneData]);
 
   // Chapter Title Effect
   useEffect(() => {
@@ -560,13 +598,14 @@ function PartRenderer(props) {
   // Auto Play
   useEffect(() => {
     if (!settings?.autoPlay || !done || !current) return;
+    if (isMinigame) return; // FIXED: Auto Play must never skip a minigame
     if (current.type === "quiz") return;
     if (current.type === "choice" && picked === null) return;
 
     const id = setTimeout(next, settings.autoDelay * 1000);
     return () => clearTimeout(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sceneIdx, picked, done, settings?.autoPlay, settings?.autoDelay, current]);
+  }, [sceneIdx, picked, done, settings?.autoPlay, settings?.autoDelay, current, isMinigame]);
 
 
   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -661,7 +700,7 @@ function PartRenderer(props) {
           </Animated.View>
         )}
         {/* CHANGED: first tap completes the typing, next tap continues */}
-        <TouchableOpacity style={styles.introTouchable} activeOpacity={1} onPress={advance} />
+        <TouchableOpacity style={styles.introTouchable} activeOpacity={1} onPress={() => { playSfx("dialogueClick"); advance(); }} />
       </View>
     );
   }
@@ -684,7 +723,11 @@ function PartRenderer(props) {
         </View>
         <View style={styles.quizButtonsGrid}>
           {current.options.map((option, index) => (
-            <AnimatedQuizButton key={index} style={styles.quizImageButton} onPress={() => { if (!isAnswered) setQuizAnswer(index); }}>
+            <AnimatedQuizButton key={index} style={styles.quizImageButton} onPress={() => {
+              if (isAnswered) return;
+              setQuizAnswer(index);
+              playSfx(index === current.correctIndex ? "correct" : "wrong");
+            }}>
               <ImageBackground source={require("../../assets/buttons/choice_button.png")} style={styles.quizImageButtonBg} resizeMode="stretch">
                 <Text style={scaled(styles.quizButtonText)}>{option}</Text>
               </ImageBackground>
@@ -760,7 +803,7 @@ function PartRenderer(props) {
           </View>
           <View style={styles.choiceButtonsGrid}>
             {current.choices.map((choice, index) => (
-              <AnimatedChoiceButton key={index} style={styles.choiceImageButton} onPress={() => { setPicked(index); saveDecision(index); }}>
+              <AnimatedChoiceButton key={index} style={styles.choiceImageButton} onPress={() => { playSfx("choose"); setPicked(index); saveDecision(index); }}>
                 <ImageBackground source={require("../../assets/buttons/choice_button.png")} style={styles.choiceImageButtonBg} resizeMode="stretch">
                   <Text style={scaled(styles.choiceButtonText)}>{choice.text}</Text>
                 </ImageBackground>
@@ -849,7 +892,22 @@ export function Chap1Part7Screen({ navigation, ...props }) {
 }
 
 export function Chap1Part8Screen({ navigation, ...props }) {
-  return <PartRenderer sceneData={Chapter1.part8} chapterNumber={1} partNumber={8} isLastPart={true} onChapterComplete={() => navigation.navigate("Menu")} navigation={navigation} {...props} />;
+  const { stopLoops } = useAudio();
+
+  return (
+    <PartRenderer
+      sceneData={Chapter1.part8}
+      chapterNumber={1}
+      partNumber={8}
+      isLastPart={true}
+      onChapterComplete={() => {
+        stopLoops();
+        navigation.reset({ index: 0, routes: [{ name: "Home" }] });
+      }}
+      navigation={navigation}
+      {...props}
+    />
+  );
 }
 
 // =====================================================

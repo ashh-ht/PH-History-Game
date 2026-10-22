@@ -11,7 +11,8 @@ export const Chapter1_Part6 = [
     type: "system",
     intro: true,
     background: require("../../../../Background Images/Usuals/Black Background.jpg"),
-    text: "As the fighting spread to Cavite, a new question began to emerge: who would lead?"
+    text: "As the fighting spread to Cavite, a new question began to emerge: who would lead?",
+    sfx:'chairSit'
   },
 
 
@@ -38,7 +39,8 @@ export const Chapter1_Part6 = [
     type: "narrator",
     background: require("../../../../Background Images/Part 6/San Mateo Rizal 1896 revolution.png"),
     text: "Bonifacio's forces have suffered heavy losses, and Governor-General Ramón\nBlanco has placed eight provinces under a state of war.",
-    unlock: ["Timeline_1896_08-24", "Timeline_1896_08-29_30"]
+    unlock: ["Timeline_1896_08-24", "Timeline_1896_08-29_30"],
+    stopSfx: true
   },
 
   //T3_6 here
@@ -58,7 +60,8 @@ export const Chapter1_Part6 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Cavite revolution 1896 plaza.png"),
-    text: "While Bonifacio's forces struggle around Manila, the revolution gains ground in Cavite."
+    text: "While Bonifacio's forces struggle around Manila, the revolution gains ground in Cavite.",
+    stopSfx: true
   },
 
   {
@@ -112,7 +115,8 @@ export const Chapter1_Part6 = [
     type: "scene",
     title: "Remembering Dr. José Rizal",
     date: "December 30, 1896",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'footstepsGround'
   },
 
   {
@@ -140,7 +144,8 @@ export const Chapter1_Part6 = [
       }
     ],
     text: "Consummatum est.",
-    translation: "It is finished."
+    translation: "It is finished.",
+    sfx:'gunShot'
   },
 
   {
@@ -169,7 +174,8 @@ export const Chapter1_Part6 = [
     type: "scene",
     title: "The Naic Letter",
     date: "Early 1897",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'quillWriting'
   },
 
   {
@@ -258,7 +264,8 @@ export const Chapter1_Part6 = [
     type: "scene",
     title: "The Question of Loyalty",
     date: "Early 1897",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'chairSit'
   },
 
   {
@@ -369,13 +376,15 @@ export const Chapter1_Part6 = [
     type: "scene",
     title: "The Breaking Point in Tanza",
     date: "Early 1897",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'tar'
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/st augustine church tanza (surrender scene).png"),
-    text: "Spanish forces continue their advance through Cavite, putting the revolutionary\nforces under increasing pressure."
+    text: "Spanish forces continue their advance through Cavite, putting the revolutionary\nforces under increasing pressure.",
+    stopSfx: true
   },
 
   {

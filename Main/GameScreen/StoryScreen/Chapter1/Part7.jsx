@@ -25,7 +25,8 @@ export const Chapter1_Part7 = [
     type: "scene",
     title: "The Tejeros Convention",
     date: "March 22, 1897",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    sfx:'chairSit'
   },
 
   {
@@ -166,7 +167,8 @@ export const Chapter1_Part7 = [
     type: "scene",
     title: "The Annulment",
     date: "March 23, 1897",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'chairSit'
   },
 
   {
@@ -266,7 +268,8 @@ export const Chapter1_Part7 = [
     type: "scene",
     title: "The Naic Agreement",
     date: "April 1897",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'stampPapers'
   },
 
   {
@@ -360,7 +363,8 @@ export const Chapter1_Part7 = [
     type: "scene",
     title: "The Trial at Maragondon",
     date: "May 1897",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'courtroom'
   },
 
   {

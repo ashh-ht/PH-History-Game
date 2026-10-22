@@ -13,14 +13,13 @@ import {
     StyleSheet,
     ScrollView,
     StatusBar,
-    PanResponder,
     useWindowDimensions,
 } from "react-native";
 
 const START_SECONDS = 45;
 const BONUS_SECONDS = 10;
 const TICK_MS = 200;
-const CARD_GAP = 5;
+const CARD_GAP = 6;
 
 const EVENT_LIBRARY = {
     legazpi: {
@@ -134,118 +133,81 @@ const getCorrectOrder = (eventIds) =>
         .filter(Boolean)
         .sort((a, b) => a.sortDate - b.sortDate);
 
+// A card is just text + two arrow buttons. There is NO gesture handler on the
+// card, so the list scrolls normally no matter where the finger starts.
 function TimelineCard({
     event,
     index,
     total,
-    selected,
+    justMoved,
     disabled,
-    onTap,
-    onDrag,
-    onMeasured,
+    onMove,
     compact,
 }) {
-    const latestProps = useRef(null);
-
-    latestProps.current = {
-        index,
-        disabled,
-        onDrag,
-    };
-
-    const panResponder = useRef(
-        PanResponder.create({
-            onStartShouldSetPanResponder: () => false,
-
-            onMoveShouldSetPanResponder: (_, gesture) =>
-                !latestProps.current.disabled &&
-                Math.abs(gesture.dy) > 8 &&
-                Math.abs(gesture.dy) > Math.abs(gesture.dx),
-
-            onMoveShouldSetPanResponderCapture: (_, gesture) =>
-                !latestProps.current.disabled &&
-                Math.abs(gesture.dy) > 12 &&
-                Math.abs(gesture.dy) > Math.abs(gesture.dx),
-
-            onPanResponderTerminationRequest: () => false,
-
-            onPanResponderRelease: (_, gesture) => {
-                const props = latestProps.current;
-
-                if (props.disabled || Math.abs(gesture.dy) < 18) {
-                    return;
-                }
-
-                props.onDrag(props.index, gesture.dy);
-            },
-
-            onPanResponderTerminate: () => { },
-        })
-    ).current;
+    const canUp = !disabled && index > 0;
+    const canDown = !disabled && index < total - 1;
 
     return (
         <View
-            {...panResponder.panHandlers}
-            onLayout={(eventLayout) => {
-                onMeasured(
-                    event.id,
-                    eventLayout.nativeEvent.layout.height
-                );
-            }}
             style={[
                 styles.eventCard,
                 compact && styles.eventCardCompact,
-                selected && styles.eventCardSelected,
+                justMoved && styles.eventCardMoved,
                 disabled && styles.eventCardDisabled,
             ]}
         >
-            <TouchableOpacity
-                activeOpacity={0.85}
-                disabled={disabled}
-                onPress={onTap}
-                accessibilityRole="button"
-                accessibilityLabel={
-                    `Position ${index + 1} of ${total}. ${event.text}. ` +
-                    "Tap to select or reposition."
-                }
+            <View
                 style={[
-                    styles.cardTouchable,
-                    compact && styles.cardTouchableCompact,
+                    styles.positionBadge,
+                    compact && styles.positionBadgeCompact,
+                    justMoved && styles.positionBadgeMoved,
                 ]}
             >
-                <View
+                <Text style={styles.positionNumber}>
+                    {String(index + 1).padStart(2, "0")}
+                </Text>
+            </View>
+
+            <View style={styles.cardTextContainer}>
+                <Text
                     style={[
-                        styles.positionBadge,
-                        compact && styles.positionBadgeCompact,
-                        selected && styles.positionBadgeSelected,
+                        styles.eventText,
+                        compact && styles.eventTextCompact,
                     ]}
                 >
-                    <Text style={styles.positionNumber}>
-                        {String(index + 1).padStart(2, "0")}
+                    {event.text}
+                </Text>
+            </View>
+
+            <View style={styles.arrowRow}>
+                <TouchableOpacity
+                    accessibilityRole="button"
+                    accessibilityLabel={`Move up. Currently position ${index + 1} of ${total}. ${event.text}`}
+                    activeOpacity={0.6}
+                    disabled={!canUp}
+                    onPress={() => onMove(index, -1)}
+                    hitSlop={{ top: 4, bottom: 4, left: 2, right: 2 }}
+                    style={[styles.arrowButton, !canUp && styles.arrowButtonOff]}
+                >
+                    <Text style={[styles.arrowText, !canUp && styles.arrowTextOff]}>
+                        ▲
                     </Text>
-                </View>
+                </TouchableOpacity>
 
-                <View style={styles.cardTextContainer}>
-                    <Text
-                        style={[
-                            styles.eventText,
-                            compact && styles.eventTextCompact,
-                        ]}
-                    >
-                        {event.text}
+                <TouchableOpacity
+                    accessibilityRole="button"
+                    accessibilityLabel={`Move down. Currently position ${index + 1} of ${total}. ${event.text}`}
+                    activeOpacity={0.6}
+                    disabled={!canDown}
+                    onPress={() => onMove(index, 1)}
+                    hitSlop={{ top: 4, bottom: 4, left: 2, right: 2 }}
+                    style={[styles.arrowButton, !canDown && styles.arrowButtonOff]}
+                >
+                    <Text style={[styles.arrowText, !canDown && styles.arrowTextOff]}>
+                        ▼
                     </Text>
-
-                    {selected ? (
-                        <Text style={styles.selectedHint}>
-                            SELECTED · TAP DESTINATION
-                        </Text>
-                    ) : null}
-                </View>
-
-                <View style={styles.dragHandleArea}>
-                    <Text style={styles.dragHandle}>☰</Text>
-                </View>
-            </TouchableOpacity>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 }
@@ -261,7 +223,7 @@ export default function ChronologicalOrderMinigame({
     const [screen, setScreen] = useState("start");
     const [roundIndex, setRoundIndex] = useState(0);
     const [orderedEvents, setOrderedEvents] = useState([]);
-    const [selectedIndex, setSelectedIndex] = useState(null);
+    const [lastMovedId, setLastMovedId] = useState(null);
     const [remainingMs, setRemainingMs] = useState(
         START_SECONDS * 1000
     );
@@ -271,7 +233,6 @@ export default function ChronologicalOrderMinigame({
     const [feedbackType, setFeedbackType] = useState("");
     const [roundPoints, setRoundPoints] = useState(0);
     const [elapsedSeconds, setElapsedSeconds] = useState(0);
-    const [cardHeights, setCardHeights] = useState({});
 
     const timerRef = useRef(null);
     const deadlineRef = useRef(null);
@@ -301,23 +262,6 @@ export default function ChronologicalOrderMinigame({
         setOrderedEvents(events);
     }, []);
 
-    const measureCard = useCallback((id, cardHeight) => {
-        if (!Number.isFinite(cardHeight) || cardHeight <= 0) {
-            return;
-        }
-
-        setCardHeights((previous) => {
-            if (previous[id] === cardHeight) {
-                return previous;
-            }
-
-            return {
-                ...previous,
-                [id]: cardHeight,
-            };
-        });
-    }, []);
-
     const finishGameOver = useCallback(() => {
         if (phaseRef.current !== "active") return;
 
@@ -327,7 +271,7 @@ export default function ChronologicalOrderMinigame({
         remainingMsRef.current = 0;
 
         setRemainingMs(0);
-        setSelectedIndex(null);
+        setLastMovedId(null);
         setFeedback("");
         setScreen("gameover");
     }, [stopTimer]);
@@ -364,7 +308,7 @@ export default function ChronologicalOrderMinigame({
                 remainingMsRef.current = 0;
 
                 setRemainingMs(0);
-                setSelectedIndex(null);
+                setLastMovedId(null);
                 setFeedback("");
                 setScreen("gameover");
             }
@@ -381,10 +325,9 @@ export default function ChronologicalOrderMinigame({
             .filter(Boolean);
 
         setOrder(shuffle(events));
-        setSelectedIndex(null);
+        setLastMovedId(null);
         setFeedback("");
         setFeedbackType("");
-        setCardHeights({});
         roundScoredRef.current = false;
     }, [setOrder]);
 
@@ -403,7 +346,7 @@ export default function ChronologicalOrderMinigame({
         setRoundsCompleted(0);
         setRoundPoints(0);
         setElapsedSeconds(0);
-        setSelectedIndex(null);
+        setLastMovedId(null);
         setFeedback("");
         setFeedbackType("");
         setScreen("active");
@@ -412,88 +355,24 @@ export default function ChronologicalOrderMinigame({
         startTimer(START_SECONDS * 1000);
     }, [loadRound, startTimer, stopTimer]);
 
-    // Reorder based on measured card heights instead of fixed estimates.
-    const reorderFromDrag = useCallback((fromIndex, dragDy) => {
+    // Move one card up (-1) or down (+1). The card keeps a gold outline
+    // afterwards so you can see where it landed.
+    const moveCard = useCallback((index, direction) => {
         if (phaseRef.current !== "active") return;
         if (roundScoredRef.current) return;
 
         const events = orderedEventsRef.current;
+        const target = index + direction;
 
-        if (
-            fromIndex < 0 ||
-            fromIndex >= events.length ||
-            Math.abs(dragDy) < 18
-        ) {
-            return;
-        }
+        if (target < 0 || target >= events.length) return;
 
-        let sourceCenter = 0;
+        const movedId = events[index].id;
 
-        for (let i = 0; i < fromIndex; i += 1) {
-            sourceCenter +=
-                (cardHeights[events[i].id] || 66) + CARD_GAP;
-        }
-
-        sourceCenter +=
-            (cardHeights[events[fromIndex].id] || 66) / 2;
-
-        const targetCenter = sourceCenter + dragDy;
-
-        let runningTop = 0;
-        let closestIndex = fromIndex;
-        let closestDistance = Infinity;
-
-        for (let i = 0; i < events.length; i += 1) {
-            const itemHeight = cardHeights[events[i].id] || 66;
-            const center = runningTop + itemHeight / 2;
-            const distance = Math.abs(center - targetCenter);
-
-            if (distance < closestDistance) {
-                closestDistance = distance;
-                closestIndex = i;
-            }
-
-            runningTop += itemHeight + CARD_GAP;
-        }
-
-        if (closestIndex === fromIndex) return;
-
-        setOrder(moveItem(events, fromIndex, closestIndex));
-        setSelectedIndex(null);
+        setOrder(moveItem(events, index, target));
+        setLastMovedId(movedId);
         setFeedback("");
         setFeedbackType("");
-    }, [cardHeights, setOrder]);
-
-    const tapCard = useCallback((index) => {
-        if (phaseRef.current !== "active") return;
-        if (roundScoredRef.current) return;
-
-        if (selectedIndex === null) {
-            setSelectedIndex(index);
-            setFeedback("Selected. Tap another card to move it.");
-            setFeedbackType("neutral");
-            return;
-        }
-
-        if (selectedIndex === index) {
-            setSelectedIndex(null);
-            setFeedback("");
-            setFeedbackType("");
-            return;
-        }
-
-        setOrder(
-            moveItem(
-                orderedEventsRef.current,
-                selectedIndex,
-                index
-            )
-        );
-
-        setSelectedIndex(null);
-        setFeedback("");
-        setFeedbackType("");
-    }, [selectedIndex, setOrder]);
+    }, [setOrder]);
 
     const submitAnswer = useCallback(() => {
         if (phaseRef.current !== "active") return;
@@ -525,7 +404,6 @@ export default function ChronologicalOrderMinigame({
         if (!isCorrect) {
             setFeedback("Not quite. Check the sequence and try again.");
             setFeedbackType("error");
-            setSelectedIndex(null);
             return;
         }
 
@@ -540,7 +418,7 @@ export default function ChronologicalOrderMinigame({
         setScore(scoreRef.current);
         setRoundsCompleted(roundsCompletedRef.current);
         setRoundPoints(earned);
-        setSelectedIndex(null);
+        setLastMovedId(null);
         setFeedback(
             `Correct order! +${earned} points and +${BONUS_SECONDS} seconds.`
         );
@@ -647,7 +525,6 @@ export default function ChronologicalOrderMinigame({
 
             <View style={styles.flex}>
                 {(screen === "active" || screen === "roundComplete") ? (
-                    // One compact row. No chapter eyebrow or large title.
                     <View style={styles.activeHeader}>
                         <Text style={styles.activeTitle}>TIMELINE</Text>
 
@@ -710,8 +587,8 @@ export default function ChronologicalOrderMinigame({
                                     • Start with 45 seconds.
                                 </Text>
                                 <Text style={styles.ruleText}>
-                                    • Drag cards or tap one card, then
-                                    tap its destination.
+                                    • Tap ▲ or ▼ on a card to move it one
+                                    step. Scroll the list normally.
                                 </Text>
                                 <Text style={styles.ruleText}>
                                     • Submit the sequence when ready.
@@ -733,7 +610,6 @@ export default function ChronologicalOrderMinigame({
 
                 {screen === "active" ? (
                     <View style={styles.gameArea}>
-                        {/* Minimal round progress; no large round heading. */}
                         <View style={styles.roundBar}>
                             <Text style={styles.roundMeta}>
                                 ROUND {roundIndex + 1}/{ROUNDS.length}
@@ -755,7 +631,6 @@ export default function ChronologicalOrderMinigame({
                             </View>
                         </View>
 
-                        {/* Compact direction guide. */}
                         <View style={styles.timelineLabels}>
                             <View style={styles.timelineEndpoint}>
                                 <Text style={styles.endpointArrow}>↑</Text>
@@ -772,12 +647,10 @@ export default function ChronologicalOrderMinigame({
                             </View>
                         </View>
 
-                        {/* The timeline receives all remaining vertical space. */}
                         <ScrollView
                             style={styles.cardsScroll}
                             contentContainerStyle={styles.cardsContent}
                             showsVerticalScrollIndicator
-                            nestedScrollEnabled
                             keyboardShouldPersistTaps="handled"
                         >
                             {orderedEvents.map((event, index) => (
@@ -786,17 +659,14 @@ export default function ChronologicalOrderMinigame({
                                     event={event}
                                     index={index}
                                     total={orderedEvents.length}
-                                    selected={selectedIndex === index}
+                                    justMoved={lastMovedId === event.id}
                                     disabled={roundScoredRef.current}
                                     compact={compact}
-                                    onTap={() => tapCard(index)}
-                                    onDrag={reorderFromDrag}
-                                    onMeasured={measureCard}
+                                    onMove={moveCard}
                                 />
                             ))}
                         </ScrollView>
 
-                        {/* Controls stay fixed at the bottom. */}
                         <View style={styles.bottomArea}>
                             <Text
                                 numberOfLines={2}
@@ -992,7 +862,7 @@ const styles = StyleSheet.create({
         marginTop: 2,
     },
 
-    // Compact active header: about 35–38 px tall.
+    // Compact active header.
     activeHeader: {
         height: 38,
         flexDirection: "row",
@@ -1158,7 +1028,7 @@ const styles = StyleSheet.create({
         opacity: 0.7,
     },
 
-    // Gameplay takes all available height below the tiny header.
+    // Gameplay.
     gameArea: {
         flex: 1,
         minHeight: 0,
@@ -1201,7 +1071,6 @@ const styles = StyleSheet.create({
         borderColor: "#c4a66a",
     },
 
-    // Small, clear endpoints instead of a separate instruction block.
     timelineLabels: {
         height: 32,
         flexDirection: "row",
@@ -1238,42 +1107,32 @@ const styles = StyleSheet.create({
         minHeight: 0,
     },
     cardsContent: {
-        paddingBottom: 3,
+        paddingBottom: 6,
     },
     eventCard: {
-        minHeight: 62,
+        minHeight: 64,
         marginBottom: CARD_GAP,
         borderRadius: 10,
         backgroundColor: "#f2ead8",
-        borderWidth: 1,
+        borderWidth: 2,
         borderColor: "#d2bd8f",
-        overflow: "hidden",
+        flexDirection: "row",
+        alignItems: "center",
+        paddingLeft: 8,
+        paddingRight: 6,
+        paddingVertical: 6,
+        gap: 8,
     },
     eventCardCompact: {
-        minHeight: 57,
-        marginBottom: 4,
+        minHeight: 58,
+        gap: 6,
     },
-    eventCardSelected: {
+    eventCardMoved: {
         borderColor: "#c4a66a",
-        borderWidth: 2,
         backgroundColor: "#fff4d8",
     },
     eventCardDisabled: {
         opacity: 0.92,
-    },
-    cardTouchable: {
-        flex: 1,
-        minHeight: 60,
-        flexDirection: "row",
-        alignItems: "center",
-        paddingHorizontal: 8,
-        paddingVertical: 6,
-        gap: 8,
-    },
-    cardTouchableCompact: {
-        minHeight: 55,
-        paddingVertical: 5,
-        gap: 7,
     },
     positionBadge: {
         width: 31,
@@ -1289,7 +1148,7 @@ const styles = StyleSheet.create({
         width: 29,
         height: 30,
     },
-    positionBadgeSelected: {
+    positionBadgeMoved: {
         backgroundColor: "#d6c28e",
         borderColor: "#a88a4d",
     },
@@ -1314,27 +1173,37 @@ const styles = StyleSheet.create({
         fontSize: 11,
         lineHeight: 14,
     },
-    selectedHint: {
-        color: "#8a6b35",
-        fontSize: 8,
-        lineHeight: 10,
-        fontWeight: "900",
-        letterSpacing: 0.2,
-        marginTop: 3,
+
+    // Big, thumb-sized arrow buttons.
+    arrowRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 4,
     },
-    dragHandleArea: {
-        width: 22,
-        minHeight: 36,
+    arrowButton: {
+        width: 40,
+        height: 44,
+        borderRadius: 9,
+        backgroundColor: "#34483d",
+        borderWidth: 1,
+        borderColor: "#506a58",
         alignItems: "center",
         justifyContent: "center",
     },
-    dragHandle: {
-        color: "#777c6e",
-        fontSize: 17,
+    arrowButtonOff: {
+        backgroundColor: "#e0d6bd",
+        borderColor: "#d2c5a3",
+    },
+    arrowText: {
+        color: "#fff4db",
+        fontSize: 16,
         fontWeight: "900",
     },
+    arrowTextOff: {
+        color: "#b7ab8c",
+    },
 
-    // Compact fixed controls at the bottom of gameplay.
+    // Fixed controls at the bottom of gameplay.
     bottomArea: {
         flexShrink: 0,
         paddingTop: 2,
@@ -1358,7 +1227,7 @@ const styles = StyleSheet.create({
         color: "#e7d9bb",
     },
     submitButton: {
-        minHeight: 42,
+        minHeight: 46,
         borderRadius: 10,
         backgroundColor: "#34483d",
         borderWidth: 1,
