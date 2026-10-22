@@ -7,6 +7,8 @@ import {
   Text,
   View,
   Animated,
+  Pressable,
+  Modal,
   useWindowDimensions,
 } from 'react-native';
 
@@ -26,6 +28,16 @@ const BTN_W = 0.55;
 const BTN_ASPECT = 1.45;
 const BTN_TOP = 0.16;
 const COLS = [0.02, 0.42];
+
+// --- POPUP SIZE (max fraction of the whole screen) ---
+const POPUP_MAX_W = 0.80;
+const POPUP_MAX_H = 0.85;
+
+// --- POPUP TEXT AREA (fractions of the popup card itself) ---
+// TEXT_TOP: where text starts, just below the baked-in title.
+const TEXT_TOP = 0.28;
+const TEXT_BOTTOM = 0.08;
+const TEXT_SIDE = 0.12;
 
 function SpringImageButton({ image, pressedImage, onPress, imageStyle }) {
   const scale = useRef(new Animated.Value(1)).current;
@@ -47,6 +59,58 @@ function SpringImageButton({ image, pressedImage, onPress, imageStyle }) {
         <Image source={pressed ? pressedImage : image} style={imageStyle} resizeMode="contain" />
       </Sound_clicks>
     </Animated.View>
+  );
+}
+
+// Centered popup: dim backdrop + card at the artwork's own aspect ratio (no stretching)
+function InfoOverlay({ source, onClose, children }) {
+  const { width: winW, height: winH } = useWindowDimensions();
+  const asset = Image.resolveAssetSource(source);
+  const aspect = asset && asset.width && asset.height ? asset.width / asset.height : PANEL_ASPECT;
+
+  let cardW = winW * POPUP_MAX_W;
+  let cardH = cardW / aspect;
+  if (cardH > winH * POPUP_MAX_H) {
+    cardH = winH * POPUP_MAX_H;
+    cardW = cardH * aspect;
+  }
+
+  return (
+    <Modal
+      transparent
+      animationType="fade"
+      statusBarTranslucent
+      supportedOrientations={['landscape', 'portrait']}
+      onRequestClose={onClose}
+    >
+    <View style={styles.backdrop}>
+      {/* Tap outside the card to close */}
+      <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
+
+      <ImageBackground source={source} style={{ width: cardW, height: cardH }} resizeMode="stretch">
+        <View
+          style={{
+            position: 'absolute',
+            top: TEXT_TOP * cardH,
+            bottom: TEXT_BOTTOM * cardH,
+            left: TEXT_SIDE * cardW,
+            right: TEXT_SIDE * cardW,
+            alignItems: 'center',
+          }}
+        >
+          <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+            {children}
+          </ScrollView>
+
+          <Sound_clicks onPress={onClose}>
+            <View style={styles.closeButton}>
+              <Text style={styles.closeButtonText}>CLOSE</Text>
+            </View>
+          </Sound_clicks>
+        </View>
+      </ImageBackground>
+    </View>
+    </Modal>
   );
 }
 
@@ -72,6 +136,8 @@ export default function AboutScreen({ navigation }) {
     },
   };
 
+  const closeOverlay = () => setActiveOverlay(null);
+
   return (
     <View style={styles.screenOverlay}>
       <View style={[styles.topIconContainer, dynamicStyles.topIconContainer]}>
@@ -82,10 +148,11 @@ export default function AboutScreen({ navigation }) {
         />
       </View>
 
+      {/* Main About panel */}
       <ImageBackground source={BG_MAIN} style={{ width: panelW, height: panelH }} resizeMode="stretch">
 
         {/* Team Button */}
-        <Sound_clicks
+        <View
           style={{
             position: 'absolute',
             left: COLS[0] * panelW,
@@ -93,13 +160,14 @@ export default function AboutScreen({ navigation }) {
             width: btnW,
             height: btnH
           }}
-          onPress={() => setActiveOverlay('Team')}
         >
-          <Image source={BTN_TEAM} style={styles.buttonImage} resizeMode="stretch" />
-        </Sound_clicks>
+          <Sound_clicks onPress={() => setActiveOverlay('Team')}>
+            <Image source={BTN_TEAM} style={{ width: btnW, height: btnH }} resizeMode="stretch" />
+          </Sound_clicks>
+        </View>
 
         {/* Game Button */}
-        <Sound_clicks
+        <View
           style={{
             position: 'absolute',
             left: COLS[1] * panelW,
@@ -107,81 +175,45 @@ export default function AboutScreen({ navigation }) {
             width: btnW,
             height: btnH
           }}
-          onPress={() => setActiveOverlay('Game')}
         >
-          <Image source={BTN_GAME} style={styles.buttonImage} resizeMode="stretch" />
-        </Sound_clicks>
+          <Sound_clicks onPress={() => setActiveOverlay('Game')}>
+            <Image source={BTN_GAME} style={{ width: btnW, height: btnH }} resizeMode="stretch" />
+          </Sound_clicks>
+        </View>
 
       </ImageBackground>
 
-      {/* ================= GAME OVERLAY (Credits) ================= */}
+      {/* ================= GAME POPUP (Credits) ================= */}
       {activeOverlay === 'Game' && (
-        <View style={styles.absoluteOverlayContainer}>
-          <ImageBackground
-            source={BG_GAME_OVERLAY}
-            style={{ width: panelW, height: panelH, justifyContent: "center", alignItems: "center" }}
-            resizeMode="stretch"
-          >
-            <View style={styles.overlayWrapper}>
-              <ScrollView style={styles.creditsScroll} showsVerticalScrollIndicator={false}>
-                <Text style={styles.overlayBody}>
-                  <Text style={styles.boldText}>Lead Developer</Text>
-                  {'\n'}Fulgencio, John Hendrick{'\n\n'}
+        <InfoOverlay source={BG_GAME_OVERLAY} onClose={closeOverlay}>
+          <Text style={styles.overlayBody}>
+            <Text style={styles.boldText}>Lead Developer</Text>
+            {'\n'}Fulgencio, John Hendrick{'\n\n'}
 
-                  <Text style={styles.boldText}>Game Design</Text>
-                  {'\n'}Sulla, Sylvia Heart{'\n'}
-                  Arellano, Janell Ashtene R.{'\n\n'}
+            <Text style={styles.boldText}>Game Design</Text>
+            {'\n'}Sulla, 
+            {'\n'}Arellano, Janell Ashtene {'\n'}
+            Catapang, Maureign Anne Christyanna M.{'\n'}
+            Sulla, Sylvia Heart L.{'\n\n'}
 
-                  <Text style={styles.boldText}>Programmer</Text>
-                  {'\n'}Arellano, Janell Ashtene {'\n'}
-                  Catapang, Maureign Anne Christyanna M.{'\n'}
-                  Solis, Markuz Andre Merek R.{'\n'}
-                  Sulla, Sylvia Heart L.{'\n\n'}
-
-                  <Text style={styles.boldText}>Scriptwriter</Text>
-                  {'\n'}Arellano, Janell Ashtene {'\n'}
-                  Catapang, Maureign Anne Christyanna M.{'\n'}
-                  Solis, Markuz Andre Merek R.{'\n'}
-                  Sulla, Sylvia Heart L.{'\n\n'}
-
-                  <Text style={styles.boldText}>SFX/BGM</Text>
-                  {'\n'}Solis, Markuz Andre Merek R.{'\n'}
-                </Text>
-              </ScrollView>
-              <Sound_clicks style={styles.closeButton} onPress={() => setActiveOverlay(null)}>
-                <Text style={styles.closeButtonText}>CLOSE</Text>
-              </Sound_clicks>
-            </View>
-          </ImageBackground>
-        </View>
+            <Text style={styles.boldText}>SFX/BGM</Text>
+            {'\n'}Solis, Markuz Andre Merek R.{'\n'}
+          </Text>
+        </InfoOverlay>
       )}
 
-      {/* ================= TEAM OVERLAY (About Team) ================= */}
+      {/* ================= TEAM POPUP (About Team) ================= */}
       {activeOverlay === 'Team' && (
-        <View style={styles.absoluteOverlayContainer}>
-          <ImageBackground
-            source={BG_TEAM_OVERLAY}
-            style={{ width: panelW, height: panelH, justifyContent: "center", alignItems: "center" }}
-            resizeMode="stretch"
-          >
-            <View style={styles.overlayWrapper}>
-              <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-                <Text style={styles.overlayBody}>
-                  We're a Team 67 sikibidi, a group of students who are interested in creating
-                  a Philippine History game that is tied to Spanish colonization.
-                  {'\n\n'}
-                  The team created a novel-like game to introduce it to people who are interested
-                  in history-based games.
-                </Text>
-              </ScrollView>
-              <Sound_clicks style={styles.closeButton} onPress={() => setActiveOverlay(null)}>
-                <Text style={styles.closeButtonText}>CLOSE</Text>
-              </Sound_clicks>
-            </View>
-          </ImageBackground>
-        </View>
+        <InfoOverlay source={BG_TEAM_OVERLAY} onClose={closeOverlay}>
+          <Text style={styles.overlayBody}>
+          The Pamana Development Team is a group of Computer Science students with different skills and talents. 
+          The team was formed to create Pamana as a school project.
+            {'\n\n'}
+          Together, they work to make the game fun, interesting, 
+          and educational for players.
+          </Text>
+        </InfoOverlay>
       )}
-
     </View>
   );
 }
@@ -198,58 +230,40 @@ const styles = StyleSheet.create({
     zIndex: 10,
     flexDirection: "row",
   },
-  buttonImage: {
-    width: "100%",
-    height: "100%",
-  },
-  absoluteOverlayContainer: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 100, // Keeps overlay on top of the main panel
-  },
-  overlayWrapper: {
+  // Full-screen dim layer; the popup card is centered inside it
+  backdrop: {
     flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.55)",
     justifyContent: "center",
     alignItems: "center",
-    paddingTop: "20%", // Pushes content below the baked-in title of the overlay
-    paddingBottom: "10%",
-    width: "100%",
   },
   scrollView: {
-    width: "70%",
-    maxHeight: "65%",
-    marginBottom: 20,
-  },
-  creditsScroll: {
-    width: "70%",
-    maxHeight: "60%",
-    marginBottom: 10,
+    flex: 1,
+    width: "100%",
   },
   overlayBody: {
-    fontSize: 22,
-    fontFamily: 'serif',
-    color: '#5A4A32',
-    textAlign: 'center',
-    lineHeight: 34,
+    fontFamily: "serif",
+    fontSize: 16,
+    lineHeight: 24,
+    color: "#5A4A32",
+    textAlign: "center",
   },
   boldText: {
-    fontWeight: 'bold',
-    fontSize: 24,
+    fontWeight: "bold",
   },
   closeButton: {
-    backgroundColor: '#A87C5E',
-    borderWidth: 2,
-    borderColor: '#5A4A32',
+    marginTop: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 28,
     borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 35,
-    marginTop: 10,
+    backgroundColor: "#9D704E",
+    alignItems: "center",
+    justifyContent: "center",
   },
   closeButtonText: {
-    fontFamily: 'serif',
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#FFF',
+    fontFamily: "serif",
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#FFFFFF",
   },
 });

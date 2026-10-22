@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Animated,
   ImageBackground,
@@ -9,8 +9,8 @@ import {
   useWindowDimensions,
   Pressable,
 } from 'react-native';
-import { useGameProgress } from '../../GameProgress';
-// FIXED: Removed duplicate and unused getUnlockedPart import
+import { useFocusEffect } from '@react-navigation/native';
+import { getUnlockedPart } from '../Others/saveProgress'; // adjust path if your file lives elsewhere
 import Sound_clicks from '../../Components/Sound_clicks';
 
 const PART_ROUTES = [
@@ -141,16 +141,30 @@ function PolaroidItem({ image, unlocked, onPress }) {
 }
 
 function Chapter1Selection({ navigation }) {
-  const { part } = useGameProgress();
-  const [savedPart, setSavedPart] = useState(1);
+  // Highest part the player has ever reached, loaded from saved progress
+  const [unlockedPart, setUnlockedPart] = useState(1);
   const [showBackBtn, setShowBackBtn] = useState(true);
   const [selectedIndex, setSelectedIndex] = useState(null);
   const { width } = useWindowDimensions();
 
   const instructionFloat = useRef(new Animated.Value(0)).current;
 
-  // Part 1 is always unlocked. Progress unlocks the later parts.
-  const isUnlocked = (index) => index === 0 || index < part;
+  // Reload saved progress every time this screen is shown,
+  // so it survives closing the app and updates after finishing a part
+  useFocusEffect(
+    useCallback(() => {
+      let active = true;
+      getUnlockedPart().then((p) => {
+        if (active) setUnlockedPart(p);
+      });
+      return () => {
+        active = false;
+      };
+    }, [])
+  );
+
+  // Part 1 is always unlocked. Saved progress unlocks the later parts.
+  const isUnlocked = (index) => index === 0 || index < unlockedPart;
 
   // Gently float the instruction image while a preview is visible.
   useEffect(() => {

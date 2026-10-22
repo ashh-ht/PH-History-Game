@@ -29,17 +29,23 @@ const SLIDER_Y = [0.33, 0.50, 0.67];
 const THUMB_SIZE_PCT = 140 / 1205;
 const TRACK_HEIGHT = 16; // Slightly thicker track
 
+// Hitbox tall enough to cover the big thumb
+const HITBOX_H = 100;
+
 function VolumeSlider({ panelW, value, onChange }) {
   const [width, setWidth] = useState(0);
   const widthRef = useRef(0);
+  const containerRef = useRef(null);
+  const leftRef = useRef(0); // container's screen-absolute left edge
   const thumb = THUMB_SIZE_PCT * panelW;
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
 
-  const setFromTouch = (locationX) => {
+  // pageX is screen-absolute, so it doesn't matter which child was touched
+  const setFromPageX = (pageX) => {
     const usable = widthRef.current - thumb;
     if (usable <= 0) return;
-    const f = Math.min(1, Math.max(0, (locationX - thumb / 2) / usable));
+    const f = Math.min(1, Math.max(0, (pageX - leftRef.current - thumb / 2) / usable));
     onChangeRef.current(f);
   };
 
@@ -48,8 +54,15 @@ function VolumeSlider({ panelW, value, onChange }) {
       onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: () => true,
       onPanResponderTerminationRequest: () => false,
-      onPanResponderGrant: (e) => setFromTouch(e.nativeEvent.locationX),
-      onPanResponderMove: (e) => setFromTouch(e.nativeEvent.locationX),
+      onPanResponderGrant: (e) => {
+        const pageX = e.nativeEvent.pageX;
+        // Re-measure on every touch so layout changes / transitions don't matter
+        containerRef.current?.measure((x, y, w, h, px) => {
+          leftRef.current = px;
+          setFromPageX(pageX);
+        });
+      },
+      onPanResponderMove: (e) => setFromPageX(e.nativeEvent.pageX),
     })
   ).current;
 
@@ -57,6 +70,8 @@ function VolumeSlider({ panelW, value, onChange }) {
 
   return (
     <View
+      ref={containerRef}
+      collapsable={false}
       style={{ width: "100%", height: "100%", justifyContent: "center" }}
       onLayout={(e) => {
         widthRef.current = e.nativeEvent.layout.width;
@@ -94,9 +109,9 @@ function VolumeSlider({ panelW, value, onChange }) {
         pointerEvents="none"
       />
 
-      {/* Thumb Circle */}
-      <Image
-        source={CIRCLE_THUMB}
+      {/* Thumb Circle (Image wrapped in a View so pointerEvents is reliable) */}
+      <View
+        pointerEvents="none"
         style={{
           position: "absolute",
           width: thumb,
@@ -105,9 +120,13 @@ function VolumeSlider({ panelW, value, onChange }) {
           top: '50%',
           marginTop: -thumb / 2
         }}
-        resizeMode="contain"
-        pointerEvents="none"
-      />
+      >
+        <Image
+          source={CIRCLE_THUMB}
+          style={{ width: '100%', height: '100%' }}
+          resizeMode="contain"
+        />
+      </View>
     </View>
   );
 }
@@ -154,6 +173,15 @@ export default function AudioScreen({ navigation }) {
     },
   };
 
+  const sliderBox = (index) => ({
+    position: 'absolute',
+    left: SLIDER_LEFT * panelW,
+    right: SLIDER_RIGHT * panelW,
+    top: SLIDER_Y[index] * panelH,
+    height: HITBOX_H,
+    transform: [{ translateY: -HITBOX_H / 2 }],
+  });
+
   return (
     <View style={styles.screenOverlay}>
       <View style={[styles.topIconContainer, dynamicStyles.topIconContainer]}>
@@ -177,44 +205,18 @@ export default function AudioScreen({ navigation }) {
             height: LEFT_PANEL_BOX.height * panelH,
           }}
           resizeMode="stretch"
+          pointerEvents="none"
         />
 
-        <View
-          style={{
-            position: 'absolute',
-            left: SLIDER_LEFT * panelW,
-            right: SLIDER_RIGHT * panelW,
-            top: SLIDER_Y[0] * panelH,
-            height: 60, // Made hitbox slightly taller to accommodate bigger thumb
-            transform: [{ translateY: -30 }],
-          }}
-        >
+        <View style={sliderBox(0)}>
           <VolumeSlider panelW={panelW} value={masterVolume} onChange={changeMasterVolume} />
         </View>
 
-        <View
-          style={{
-            position: 'absolute',
-            left: SLIDER_LEFT * panelW,
-            right: SLIDER_RIGHT * panelW,
-            top: SLIDER_Y[1] * panelH,
-            height: 60,
-            transform: [{ translateY: -30 }],
-          }}
-        >
+        <View style={sliderBox(1)}>
           <VolumeSlider panelW={panelW} value={musicVolume} onChange={changeMusicVolume} />
         </View>
 
-        <View
-          style={{
-            position: 'absolute',
-            left: SLIDER_LEFT * panelW,
-            right: SLIDER_RIGHT * panelW,
-            top: SLIDER_Y[2] * panelH,
-            height: 60,
-            transform: [{ translateY: -30 }],
-          }}
-        >
+        <View style={sliderBox(2)}>
           <VolumeSlider panelW={panelW} value={soundVolume} onChange={changeSoundVolume} />
         </View>
 

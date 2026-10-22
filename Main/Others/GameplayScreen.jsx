@@ -16,7 +16,6 @@ const BG_BASE = require('../../assets/Settings_Assets/Gameplay_Base.png');
 const BG_TEXT_SPEED = require('../../assets/Settings_Assets/Gameplay_TextSpeed.png');
 const BG_PLAY_MODE = require('../../assets/Settings_Assets/Gameplay_PlayMode.png');
 const IMG_CIRCLE = require('../../assets/Settings_Assets/CircleButton.png');
-const IMG_CIRCLE_CHECKED = require('../../assets/Settings_Assets/CircleButton_Checked.png');
 
 const PANEL_ASPECT = 1205 / 630;
 
@@ -24,8 +23,10 @@ const SPEED_ROW = { left: 255/1920, w: 380/1920, cx: 318/1920 };
 const AUTO_ROW = { left: 870/1920, w: 330/1920, cx: 921/1920 };
 const DELAY_ROW = { left: 1288/1920, w: 410/1920, cx: 1339/1920 };
 const DELAY_DIM = { left: 1285/1920, top: 440/1080, w: 415/1920, h: 320/1080 };
-const CIRCLE_W = 90/1920;
-const ROW_H = 105/1080;
+const CIRCLE_W = 84/1920;
+const ROW_H = 108/1080;
+const ACTIVE_GREEN = '#4CAF50';
+const DOT_INSET = '18%'; // smaller % = bigger green dot
 
 const SPEED_OPTIONS = [
   { value: 'Slow', y: 473/1080 },
@@ -66,6 +67,8 @@ function SpringImageButton({ onPress, image, pressedImage, imageStyle }) {
 }
 
 function RadioRow({ panelW, panelH, row, y, selected, onPress, disabled }) {
+  const size = CIRCLE_W * panelW;
+
   return (
     <Sound_clicks
       onPress={disabled ? undefined : onPress}
@@ -78,16 +81,34 @@ function RadioRow({ panelW, panelH, row, y, selected, onPress, disabled }) {
         justifyContent: 'center',
       }}
     >
-      <Image
-        source={selected ? IMG_CIRCLE_CHECKED : IMG_CIRCLE}
-        resizeMode="contain"
+      <View
         style={{
           position: 'absolute',
-          left: (row.cx - (CIRCLE_W / 2) - row.left) * panelW,
-          width: CIRCLE_W * panelW,
-          height: CIRCLE_W * panelW,
+          left: (row.cx - CIRCLE_W / 2 - row.left) * panelW,
+          width: size,
+          height: size,
         }}
-      />
+      >
+        <Image
+          source={IMG_CIRCLE}
+          resizeMode="contain"
+          style={{ width: '100%', height: '100%' }}
+        />
+        {selected && (
+          <View
+            pointerEvents="none"
+            style={{
+              position: 'absolute',
+              top: DOT_INSET,
+              left: DOT_INSET,
+              right: DOT_INSET,
+              bottom: DOT_INSET,
+              borderRadius: size / 2,
+              backgroundColor: ACTIVE_GREEN,
+            }}
+          />
+        )}
+      </View>
     </Sound_clicks>
   );
 }

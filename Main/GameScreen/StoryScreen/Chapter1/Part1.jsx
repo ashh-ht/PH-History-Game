@@ -52,7 +52,8 @@ export const Chapter1_Part1 = [
     title: "Cibabao, Samar",
     date: "February 13, 1565",
     background: require("../../../../Background Images/Usuals/Black Background.jpg"),
-    music: "traditional"
+    music: "traditional",
+    sfx:'shipArrival'
   },
 
   // scratched. 
@@ -202,7 +203,8 @@ export const Chapter1_Part1 = [
     title: "Formal Claims & Island Hopping",
     date: "February 15 – April 1565",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    music: "traditional"
+    music: "traditional",
+    sfx:'shipArrival'
   },
 
   {
@@ -281,7 +283,8 @@ export const Chapter1_Part1 = [
     title: "The Ultimatum in Cebu",
     date: "April 27, 1565",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    music: "somber"
+    music: "somber",
+    sfx:'shipArrival'
   },
 
   {

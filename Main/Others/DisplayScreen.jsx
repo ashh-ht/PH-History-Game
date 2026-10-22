@@ -24,9 +24,10 @@ const PANEL_ASPECT = 1205 / 630;
 
 const ROW_LEFT = 215/1920;
 const ROW_W = 370/1920;
-const ROW_H = 90/1080;
+const ROW_H = 108/1080; 
 const CIRCLE_CX = 252/1920;
-const CIRCLE_W = 60/1920;
+const CIRCLE_W = 84/1920;
+const ACTIVE_GREEN = '#4CAF50'; 
 
 const FONT_OPTIONS = [
   { value: 'Small', y: 473/1080 },
@@ -45,14 +46,17 @@ const PERCENT_FONT = 54/1920;
 function OpacitySlider({ panelW, panelH, value, onChange }) {
   const [width, setWidth] = useState(0);
   const widthRef = useRef(0);
+  const containerRef = useRef(null);
+  const leftRef = useRef(0); // container's screen-absolute left edge
   const thumb = THUMB_W * panelW;
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
 
-  const setFromTouch = (locationX) => {
+  // pageX is screen-absolute, so it doesn't matter which child was touched
+  const setFromPageX = (pageX) => {
     const usable = widthRef.current - thumb;
     if (usable <= 0) return;
-    const f = Math.min(1, Math.max(0, (locationX - thumb / 2) / usable));
+    const f = Math.min(1, Math.max(0, (pageX - leftRef.current - thumb / 2) / usable));
     onChangeRef.current(MIN_BOX_OPACITY + f * (1 - MIN_BOX_OPACITY));
   };
 
@@ -61,8 +65,15 @@ function OpacitySlider({ panelW, panelH, value, onChange }) {
       onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: () => true,
       onPanResponderTerminationRequest: () => false,
-      onPanResponderGrant: (e) => setFromTouch(e.nativeEvent.locationX),
-      onPanResponderMove: (e) => setFromTouch(e.nativeEvent.locationX),
+      onPanResponderGrant: (e) => {
+        const pageX = e.nativeEvent.pageX;
+        // Re-measure on every touch so layout changes / transitions don't matter
+        containerRef.current?.measure((x, y, w, h, px) => {
+          leftRef.current = px;
+          setFromPageX(pageX);
+        });
+      },
+      onPanResponderMove: (e) => setFromPageX(e.nativeEvent.pageX),
     })
   ).current;
 
@@ -74,6 +85,8 @@ function OpacitySlider({ panelW, panelH, value, onChange }) {
 
   return (
     <View
+      ref={containerRef}
+      collapsable={false}
       style={{ flex: 1 }}
       onLayout={(e) => {
         widthRef.current = e.nativeEvent.layout.width;
@@ -124,10 +137,9 @@ function OpacitySlider({ panelW, panelH, value, onChange }) {
         }}
       />
 
-      <Image
-        source={CIRCLE_THUMB}
+      {/* Thumb (Image wrapped in a View so pointerEvents is reliable) */}
+      <View
         pointerEvents="none"
-        resizeMode="contain"
         style={{
           position: 'absolute',
           left: handleLeft,
@@ -136,7 +148,13 @@ function OpacitySlider({ panelW, panelH, value, onChange }) {
           width: thumb,
           height: thumb,
         }}
-      />
+      >
+        <Image
+          source={CIRCLE_THUMB}
+          resizeMode="contain"
+          style={{ width: '100%', height: '100%' }}
+        />
+      </View>
     </View>
   );
 }
@@ -199,31 +217,53 @@ export default function DisplayScreen({ navigation }) {
           <Image source={PANEL_FONT_SIZE} style={{ position: 'absolute', width: panelW, height: panelH }} resizeMode="stretch" pointerEvents="none" />
           <Image source={BANNER_OPACITY} style={{ position: 'absolute', width: panelW, height: panelH }} resizeMode="stretch" pointerEvents="none" />
 
-          {FONT_OPTIONS.map((opt) => (
-            <Sound_clicks
-              key={opt.value}
-              onPress={() => setFontSize(opt.value)}
-              style={{
-                position: 'absolute',
-                left: ROW_LEFT * panelW,
-                top: (opt.y - ROW_H / 2) * panelH,
-                width: ROW_W * panelW,
-                height: ROW_H * panelH,
-                justifyContent: 'center',
-              }}
-            >
-              <Image
-                source={fontSize === opt.value ? CIRCLE_THUMB_CHECKED : CIRCLE_THUMB}
-                resizeMode="contain"
-                style={{
-                  position: 'absolute',
-                  left: (CIRCLE_CX - (CIRCLE_W / 2) - ROW_LEFT) * panelW,
-                  width: CIRCLE_W * panelW,
-                  height: CIRCLE_W * panelW,
-                }}
-              />
-            </Sound_clicks>
-          ))}
+{FONT_OPTIONS.map((opt) => {
+  const selected = fontSize === opt.value;
+  const size = CIRCLE_W * panelW;
+  return (
+    <Sound_clicks
+      key={opt.value}
+      onPress={() => setFontSize(opt.value)}
+      style={{
+        position: 'absolute',
+        left: ROW_LEFT * panelW,
+        top: (opt.y - ROW_H / 2) * panelH,
+        width: ROW_W * panelW,
+        height: ROW_H * panelH,
+        justifyContent: 'center',
+      }}
+    >
+      <View
+        style={{
+          position: 'absolute',
+          left: (CIRCLE_CX - CIRCLE_W / 2 - ROW_LEFT) * panelW,
+          width: size,
+          height: size,
+        }}
+      >
+        <Image
+          source={CIRCLE_THUMB}
+          resizeMode="contain"
+          style={{ width: '100%', height: '100%' }}
+        />
+        {selected && (
+          <View
+            pointerEvents="none"
+            style={{
+              position: 'absolute',
+              top: '18%',
+              left: '18%',
+              right: '18%',
+              bottom: '18%',
+              borderRadius: size / 2,
+              backgroundColor: ACTIVE_GREEN,
+            }}
+          />
+        )}
+      </View>
+    </Sound_clicks>
+  );
+})}
 
           <View
             style={{

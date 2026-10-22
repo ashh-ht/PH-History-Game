@@ -32,7 +32,8 @@ export const Chapter1_Part4 = [
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
     text: "After Rizal's exile, Andrés Bonifacio and the others realize that peaceful\nrequests alone have not been enough to bring change.",
-    music: "suspense"
+    music: "suspense",
+    stopSfx: true
     
   },
 
@@ -551,7 +552,8 @@ export const Chapter1_Part4 = [
     type: "scene",
     title: "Discovery and the National Assembly",
     date: "August 1896",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'marching'
   },
 
   {

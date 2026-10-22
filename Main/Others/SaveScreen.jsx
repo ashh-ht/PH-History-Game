@@ -71,7 +71,7 @@ function AnimatedSaveCard({ save, onSelect, onDelete, cardH, fontSize }) {
           onPressOut={() => animatePress(false)}
         >
           <Text style={[styles.cardTitle, { fontSize }]}>
-            CHAPTER {save.chap} - SCENE {save.sceneNumber || save.sceneIdx || 1}
+            CHAPTER {save.part} - SCENE {save.sceneNumber || 1}
           </Text>
           <Text style={[styles.cardTime, { fontSize }]}>
             {timeAgo(save.timestamp)}
@@ -87,7 +87,7 @@ function AnimatedSaveCard({ save, onSelect, onDelete, cardH, fontSize }) {
         >
           <Image
             source={BTN_X_CIRCLE}
-            style={{ width: cardH * 0.55, height: cardH * 0.55 }}
+            style={{ width: cardH * 2.05, height: cardH * 0.95 }}
             resizeMode="contain"
           />
         </TouchableOpacity>
@@ -407,6 +407,8 @@ const styles = StyleSheet.create({
   cardDeleteBtn: {
     justifyContent: "center",
     alignItems: "center",
+    width: 30,
+    height:30
   },
   deleteAllImage: {
     width: "100%",

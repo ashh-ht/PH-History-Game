@@ -218,9 +218,7 @@ function Setting_screen({ navigation }) {
             <Text style={styles.confirmText} allowFontScaling={false}>
               Do you want to exit?
             </Text>
-            <Text style={styles.confirmText} allowFontScaling={false}>
-              Do you want to exit?
-            </Text>
+
 
             <View style={styles.confirmButtonsRow}>
               <Sound_clicks

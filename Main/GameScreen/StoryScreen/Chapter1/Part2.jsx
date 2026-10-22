@@ -194,7 +194,8 @@ export const Chapter1_Part2 = [
     type: "scene",
     title: "Flight to the Mountains",
     date: "1744",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'hiking'
   },
 
   {

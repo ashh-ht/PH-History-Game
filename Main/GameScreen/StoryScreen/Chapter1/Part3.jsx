@@ -78,7 +78,8 @@ export const Chapter1_Part3 = [
     type: "scene",
     title: "The Covenant in Tondo",
     date: "July 3, 1892",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'chairSit'
   },
 
   {
@@ -297,7 +298,8 @@ export const Chapter1_Part3 = [
     type: "scene",
     title: "The Great Disagreement",
     date: "April – October 1893",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx:'chairSit'
   },
 
   {
@@ -439,14 +441,16 @@ export const Chapter1_Part3 = [
     title: "The Founding of the KKK",
     date: "July 7, 1892",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx: 'oilLamp'
+    sfx:'oilLamp'
+    
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 3/Arellano house, Calle Elcano, Tondo.png"),
     text: "Inside the small home of Deodato Arellano on Calle Elcano, Bonifacio, Plata,\nand the others gather around a single oil lamp.",
-    unlock: ["arellano-2", "Timeline_1892_10"]
+    unlock: ["arellano-2", "Timeline_1892_10"],
+    stopSfx: true
   },
 
   {

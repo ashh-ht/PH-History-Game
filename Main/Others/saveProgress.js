@@ -151,7 +151,7 @@ async function clearCheckpoints() {
     console.error("error clearing checkpoints", error);
   }
 }
-
+  
 async function restartEverything() {
   try {
     await AsyncStorage.clear();
