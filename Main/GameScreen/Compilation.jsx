@@ -11,7 +11,7 @@ import {
 } from "react-native";
 
 import { useGameProgress } from "../../GameProgress";
-import { useAudio } from "../../Audiostore"; // FIXED: Removed duplicate import
+import { useAudio } from "../../Audiostore";
 import { useGameplaySettings } from "../Others/GameplaySetting";
 import { useDisplaySettings, FONT_SCALE } from "../Others/DisplaySetting";
 import { saveCheckpoint, markPartReached } from "../Others/saveProgress";
@@ -34,8 +34,6 @@ import { BloodTrace, OathTrace } from "./Minigames/TracingMinigame";
 // =====================================================
 // HELPERS
 // =====================================================
-
-// Moved outside to fix ESLint dependency warning
 const getMusicFor = (sceneData, idx) => {
   for (let i = Math.min(idx, sceneData.length - 1); i >= 0; i--) {
     const m = sceneData[i].music ?? sceneData[i].Music;
@@ -43,6 +41,61 @@ const getMusicFor = (sceneData, idx) => {
   }
   return null;
 };
+
+// =====================================================
+// CHAPTER COMPLETE SCREEN
+// Shows the background first, then pops in the title.
+// =====================================================
+function ChapterCompleteScreen({ onContinue }) {
+  const titleScale = useRef(new Animated.Value(0.65)).current;
+  const titleOpacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const animation = Animated.sequence([
+      Animated.delay(250),
+      Animated.parallel([
+        Animated.timing(titleOpacity, {
+          toValue: 1,
+          duration: 350,
+          useNativeDriver: true,
+        }),
+        Animated.spring(titleScale, {
+          toValue: 1,
+          speed: 10,
+          bounciness: 10,
+          useNativeDriver: true,
+        }),
+      ]),
+    ]);
+
+    animation.start();
+
+    return () => animation.stop();
+  }, [titleOpacity, titleScale]);
+
+  return (
+    <ImageBackground
+      source={require("../../Background Images/Intro/CHAPTERCOMPLETE_BG.png")}
+      style={styles.chapterCompleteScreen}
+      resizeMode="cover"
+    >
+      <Animated.Image
+        pointerEvents="none"
+        source={require("../../Background Images/Intro/CHAPTERCOMPLETE.png")}
+        resizeMode="contain"
+        style={[
+          styles.chapterCompleteArtwork,
+          {
+            opacity: titleOpacity,
+            transform: [{ scale: titleScale }],
+          },
+        ]}
+      />
+
+      <AnimatedNextButton onPress={onContinue} />
+    </ImageBackground>
+  );
+}
 
 // =====================================================
 // ANIMATED BUTTONS
@@ -55,6 +108,7 @@ function AnimatedNextButton({ onPress }) {
 
   const animatePress = (isPressed) => {
     setPressed(isPressed);
+
     Animated.parallel([
       Animated.spring(scale, {
         toValue: isPressed ? 0.88 : 1,
@@ -84,7 +138,7 @@ function AnimatedNextButton({ onPress }) {
         onPressOut={() => animatePress(false)}
         onPress={() => {
           playSfx("dialogueClick");
-          onPress();
+          onPress?.();
         }}
       >
         <Image
@@ -175,16 +229,23 @@ function AnimatedQuizButton({ children, onPress, style }) {
   );
 }
 
-function AnimatedImageButton({ normalSource, pressedSource, onPress, style, imageStyle }) {
+function AnimatedImageButton({
+  normalSource,
+  pressedSource,
+  onPress,
+  style,
+  imageStyle,
+}) {
   const [pressed, setPressed] = useState(false);
   const scale = useRef(new Animated.Value(1)).current;
   const translateY = useRef(new Animated.Value(0)).current;
 
   const animate = (isPressed) => {
     setPressed(isPressed);
+
     Animated.parallel([
       Animated.spring(scale, {
-        toValue: isPressed ? 0.90 : 1,
+        toValue: isPressed ? 0.9 : 1,
         speed: isPressed ? 22 : 18,
         bounciness: isPressed ? 6 : 12,
         useNativeDriver: true,
@@ -226,12 +287,10 @@ const MINIGAMES = {
   oathtrace: OathTrace,
 };
 
-// Every scene type that runs its own minigame UI (no typed line).
-// Used so Auto Play never skips them and they never get a typewriter line.
 const MINIGAME_TYPES = new Set([
   "voyage",
   "santoNino",
-  "cedula", 
+  "cedula",
   "decipher",
   "matching",
   "chronological",
@@ -249,12 +308,11 @@ const SPEED_MS = { Slow: 60, Normal: 30, Fast: 12 };
 function useTypewriter(text, msPerChar, resetKey) {
   const [state, setState] = useState({ key: resetKey, count: 0 });
   const length = text ? text.length : 0;
-
   const count = state.key === resetKey ? state.count : 0;
 
   useEffect(() => {
     setState({ key: resetKey, count: 0 });
-    if (!length) return;
+    if (!length) return undefined;
 
     const id = setInterval(() => {
       setState((s) =>
@@ -346,13 +404,20 @@ function CharacterLayer({ characters }) {
 // PART RENDERER
 // =====================================================
 function PartRenderer(props) {
-  const { sceneData, chapterNumber, partNumber, isLastPart, navigation, route } = props;
+  const {
+    sceneData,
+    chapterNumber,
+    partNumber,
+    isLastPart,
+    navigation,
+  } = props;
 
   const game = useGameProgress();
   const { playMusic, stopLoops, playSfx } = useAudio();
-
   const settings = useGameplaySettings();
   const display = useDisplaySettings();
+  const { unlock } = useJournal();
+
   const fontScale = FONT_SCALE[display?.fontSize] ?? 1;
 
   const boxImage = {
@@ -361,14 +426,19 @@ function PartRenderer(props) {
 
   const scaled = (style) => {
     const s = StyleSheet.flatten(style) || {};
+
     return {
       ...s,
-      ...(s.fontSize ? { fontSize: Math.round(s.fontSize * fontScale) } : {}),
-      ...(s.lineHeight ? { lineHeight: Math.round(s.lineHeight * fontScale) } : {}),
+      ...(s.fontSize
+        ? { fontSize: Math.round(s.fontSize * fontScale) }
+        : {}),
+      ...(s.lineHeight
+        ? { lineHeight: Math.round(s.lineHeight * fontScale) }
+        : {}),
     };
   };
 
-  const startIdx = route?.params?.startScene ?? game.scene;
+  const startIdx = props.route?.params?.startScene ?? game.scene;
 
   const [sceneIdx, setSceneIdx] = useState(startIdx);
   const [picked, setPicked] = useState(null);
@@ -383,7 +453,7 @@ function PartRenderer(props) {
     game.setChapter(chapterNumber);
     game.setPart(partNumber);
     game.setInGame(true);
-    markPartReached(partNumber); // saved to storage so Part Select stays unlocked after closing the app
+    markPartReached(partNumber);
 
     console.log(`loaded ch${chapterNumber} part${partNumber}`);
 
@@ -394,8 +464,7 @@ function PartRenderer(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const startScene = route?.params?.startScene;
-  // FIXED: Added a ref so it only applies the startScene once and doesn't loop
+  const startScene = props.route?.params?.startScene;
   const lastAppliedStartScene = useRef(null);
 
   useEffect(() => {
@@ -411,48 +480,42 @@ function PartRenderer(props) {
 
   const hasMoreScenes = sceneIdx < sceneData.length;
   const current = hasMoreScenes ? sceneData[sceneIdx] : null;
-
-  // FIXED: covers every minigame type, not just the ones in MINIGAMES
   const isMinigame = current ? MINIGAME_TYPES.has(current.type) : false;
 
-  // Finishing a part unlocks the next one right away,
-  // even if the player quits on the "Part complete!" screen
   useEffect(() => {
     if (!hasMoreScenes && !isLastPart) markPartReached(partNumber + 1);
   }, [hasMoreScenes, isLastPart, partNumber]);
 
-  const { unlock } = useJournal();
-
+  // Unlock journal entries when their scene becomes current.
   useEffect(() => {
-    if (current && current.unlock) {
+    if (current?.unlock) {
       unlock(current.unlock);
     }
   }, [current, unlock]);
 
-  // Music Effect
+  // Music
   useEffect(() => {
     const track = getMusicFor(sceneData, sceneIdx);
     if (track) playMusic(track);
   }, [sceneIdx, sceneData, playMusic]);
 
-  // SFX Effect: fires once whenever a new scene becomes current.
-  // In Chapter1 data use:  sfx: "cannonFire"  or  sfx: ["churchBell", "footstepsSand"]
-  // Add  stopSfx: true  to cut looping sounds (oilLamp, tar) at that scene.
+  // Scene sound effects
   useEffect(() => {
     const scene = sceneData[sceneIdx];
     if (!scene) return;
+
     if (scene.stopSfx) stopLoops();
+
     [].concat(scene.sfx ?? []).forEach((key) => playSfx(key));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sceneIdx, sceneData]);
 
-  // Chapter Title Effect
+  // Chapter title animation
   useEffect(() => {
-    if (current?.type !== "chapterIntro") {
-      return;
-    }
+    if (current?.type !== "chapterIntro") return undefined;
 
     chapterTitleOpacity.setValue(0);
+
     const animation = Animated.sequence([
       Animated.delay(500),
       Animated.timing(chapterTitleOpacity, {
@@ -464,24 +527,27 @@ function PartRenderer(props) {
 
     animation.start();
 
-    return () => {
-      animation.stop();
-    };
+    return () => animation.stop();
   }, [sceneIdx, current?.type, chapterTitleOpacity]);
 
-  const getSceneInfo = useCallback((idx) => {
-    let sceneNumber = 0;
-    let sceneTitle = "";
+  const getSceneInfo = useCallback(
+    (idx) => {
+      let sceneNumber = 0;
+      let sceneTitle = "";
 
-    for (let i = 0; i <= idx && i < sceneData.length; i++) {
-      if (sceneData[i].type === "scene") {
-        sceneNumber += 1;
-        sceneTitle = sceneData[i].title;
+      for (let i = 0; i <= idx && i < sceneData.length; i++) {
+        if (sceneData[i].type === "scene") {
+          sceneNumber += 1;
+          sceneTitle = sceneData[i].title;
+        }
       }
-    }
-    return { sceneNumber, sceneTitle };
-  }, [sceneData]);
 
+      return { sceneNumber, sceneTitle };
+    },
+    [sceneData]
+  );
+
+  // Save checkpoints on scene screens.
   useEffect(() => {
     if (!current || current.type !== "scene") return;
     if (sceneIdx === sceneData.length - 1) return;
@@ -492,13 +558,25 @@ function PartRenderer(props) {
       sceneIdx,
       ...getSceneInfo(sceneIdx),
     });
-  }, [sceneIdx, current, chapterNumber, partNumber, sceneData.length, getSceneInfo]);
+  }, [
+    sceneIdx,
+    current,
+    chapterNumber,
+    partNumber,
+    sceneData.length,
+    getSceneInfo,
+  ]);
 
   const saveDecision = (choiceIndex) => {
     if (!current || current.type !== "choice") return;
 
-    const decNum = current.title?.match(/Choice (\d+\.\d+)/)?.[1] ?? null;
-    const resumeIdx = typeof current.nextScene === "number" ? current.nextScene : sceneIdx + 1;
+    const decNum =
+      current.title?.match(/Choice (\d+\.\d+)/)?.[1] ?? null;
+
+    const resumeIdx =
+      typeof current.nextScene === "number"
+        ? current.nextScene
+        : sceneIdx + 1;
 
     saveCheckpoint({
       chap: chapterNumber,
@@ -511,9 +589,14 @@ function PartRenderer(props) {
   };
 
   const goToIndex = (index) => {
-    if (typeof index !== "number" || index < 0 || index >= sceneData.length) {
+    if (
+      typeof index !== "number" ||
+      index < 0 ||
+      index >= sceneData.length
+    ) {
       return;
     }
+
     setPicked(null);
     setQuizAnswer(null);
     setSceneIdx(index);
@@ -522,11 +605,13 @@ function PartRenderer(props) {
 
   const goNext = () => {
     const nextIndex = sceneIdx + 1;
+
     if (nextIndex >= sceneData.length) {
       setSceneIdx(sceneData.length);
       game.setScene(sceneData.length);
       return;
     }
+
     goToIndex(nextIndex);
   };
 
@@ -538,7 +623,11 @@ function PartRenderer(props) {
 
     const nextScene = sceneData[nextIndex];
 
-    if (!nextScene || nextScene.type !== "system" || nextScene.intro !== true) {
+    if (
+      !nextScene ||
+      nextScene.type !== "system" ||
+      nextScene.intro !== true
+    ) {
       goToIndex(nextIndex);
       return;
     }
@@ -584,55 +673,103 @@ function PartRenderer(props) {
 
   const next = () => {
     if (!current) return;
+
     if (current.type === "choice") {
-      return goToIndex(typeof current.nextScene === "number" ? current.nextScene : sceneIdx + 1);
+      return goToIndex(
+        typeof current.nextScene === "number"
+          ? current.nextScene
+          : sceneIdx + 1
+      );
     }
+
     if (current.type === "system" && current.intro) {
       return goToNextIntro();
     }
+
     return goNext();
   };
 
   const advance = () => (done ? next() : skip());
 
-  // Auto Play
+  // Auto Play never skips minigames or quizzes.
   useEffect(() => {
-    if (!settings?.autoPlay || !done || !current) return;
-    if (isMinigame) return; // FIXED: Auto Play must never skip a minigame
-    if (current.type === "quiz") return;
-    if (current.type === "choice" && picked === null) return;
+    if (!settings?.autoPlay || !done || !current) return undefined;
+    if (isMinigame) return undefined;
+    if (current.type === "quiz") return undefined;
+    if (current.type === "choice" && picked === null) return undefined;
 
     const id = setTimeout(next, settings.autoDelay * 1000);
     return () => clearTimeout(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sceneIdx, picked, done, settings?.autoPlay, settings?.autoDelay, current, isMinigame]);
+  }, [
+    sceneIdx,
+    picked,
+    done,
+    settings?.autoPlay,
+    settings?.autoDelay,
+    current,
+    isMinigame,
+  ]);
 
-
-  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // =====================================================
   // MINIGAMES
-  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // =====================================================
+  if (current?.type === "voyage") {
+    return <VoyageMinigame onComplete={goNext} />;
+  }
 
-  if (current?.type === "voyage") return <VoyageMinigame onComplete={goNext} />;
-  if (current?.type === "santoNino") return <SantoNinoMinigame onComplete={goNext} />;
+  if (current?.type === "santoNino") {
+    return <SantoNinoMinigame onComplete={goNext} />;
+  }
 
   if (current?.type === "cedula") {
-    return <CedulaMinigame key={`cedula-${sceneIdx}`} onComplete={goNext} />;
+    return (
+      <CedulaMinigame
+        key={`cedula-${sceneIdx}`}
+        onComplete={goNext}
+      />
+    );
   }
 
   if (current?.type === "decipher") {
-    return <DecipherMinigame key={`decipher-${chapterNumber}-${partNumber}-${sceneIdx}`} onComplete={goNext} />;
+    return (
+      <DecipherMinigame
+        key={`decipher-${chapterNumber}-${partNumber}-${sceneIdx}`}
+        onComplete={goNext}
+      />
+    );
   }
 
   if (current?.type === "matching") {
-    return <CharacterMatchingMinigame key={`matching-${chapterNumber}-${partNumber}-${sceneIdx}`} characters={current.characters} onComplete={goNext} />;
+    return (
+      <CharacterMatchingMinigame
+        key={`matching-${chapterNumber}-${partNumber}-${sceneIdx}`}
+        characters={current.characters}
+        onComplete={goNext}
+      />
+    );
   }
 
   if (current?.type === "chronological") {
-    return <ChronologicalOrderMinigame key={`chronological-${chapterNumber}-${partNumber}-${sceneIdx}`} events={current.events} onComplete={goNext} />;
+    return (
+      <ChronologicalOrderMinigame
+        key={`chronological-${chapterNumber}-${partNumber}-${sceneIdx}`}
+        events={current.events}
+        onComplete={goNext}
+      />
+    );
   }
 
   if (current?.type === "whoSaidIt") {
-    return <WhoSaidItMinigame key={`who-said-it-${chapterNumber}-${partNumber}-${sceneIdx}`} onComplete={(results) => { console.log("Who Said It results:", results); goNext(); }} />;
+    return (
+      <WhoSaidItMinigame
+        key={`who-said-it-${chapterNumber}-${partNumber}-${sceneIdx}`}
+        onComplete={(results) => {
+          console.log("Who Said It results:", results);
+          goNext();
+        }}
+      />
+    );
   }
 
   const Minigame = current ? MINIGAMES[current.type] : null;
@@ -645,66 +782,110 @@ function PartRenderer(props) {
     </>
   );
 
+  // =====================================================
+  // PART COMPLETE
+  // =====================================================
   if (!hasMoreScenes) {
-    return withOverlay(
-      <View style={styles.container}>
-        <Text style={scaled(styles.dialogueText)}>Part {partNumber} complete!</Text>
-        <TouchableOpacity
-          style={styles.nextButton}
-          onPress={() => {
-            game.setScene(0);
-            if (isLastPart) {
-              props.onChapterComplete?.(chapterNumber + 1);
-            } else {
-              props.onPartComplete?.(partNumber + 1);
-            }
-          }}
-        >
-          <Text style={styles.nextButtonText}>Continue</Text>
-        </TouchableOpacity>
-      </View>
+    return (
+      <ChapterCompleteScreen
+        onContinue={() => {
+          game.setScene(0);
+
+          if (isLastPart) {
+            props.onChapterComplete?.(chapterNumber + 1);
+          } else {
+            props.onPartComplete?.(partNumber + 1);
+          }
+        }}
+      />
     );
   }
 
+  // =====================================================
+  // CHAPTER INTRO
+  // =====================================================
   if (current.type === "chapterIntro") {
     return withOverlay(
-      <ImageBackground source={current.background} style={styles.chapterIntroScreen} resizeMode="cover">
+      <ImageBackground
+        source={current.background}
+        style={styles.chapterIntroScreen}
+        resizeMode="cover"
+      >
         <Animated.Image
           source={current.titleImage}
           resizeMode="contain"
-          style={[styles.chapterIntroTitle, { opacity: chapterTitleOpacity }]}
+          style={[
+            styles.chapterIntroTitle,
+            { opacity: chapterTitleOpacity },
+          ]}
         />
         <AnimatedNextButton onPress={goNext} />
       </ImageBackground>
     );
   }
 
+  // =====================================================
+  // SYSTEM INTRO
+  // =====================================================
   if (current.type === "system" && current.intro === true) {
-    const nextIntro = introNextIndex !== null ? sceneData[introNextIndex] : null;
+    const nextIntro =
+      introNextIndex !== null ? sceneData[introNextIndex] : null;
+
     return withOverlay(
       <View style={styles.introScreen}>
-        <ImageBackground source={current.background} style={styles.introBackground} resizeMode="cover">
+        <ImageBackground
+          source={current.background}
+          style={styles.introBackground}
+          resizeMode="cover"
+        >
           <View style={styles.introTextBox}>
-            {/* CHANGED: typewriter instead of plain Text */}
-            <TypedText style={scaled(styles.introText)} full={lineText} shown={shown} />
+            <TypedText
+              style={scaled(styles.introText)}
+              full={lineText}
+              shown={shown}
+            />
           </View>
         </ImageBackground>
+
         {nextIntro && (
-          <Animated.View pointerEvents="none" style={[styles.introNextLayer, { opacity: introProgress }]}>
-            <ImageBackground source={nextIntro.background} style={styles.introBackground} resizeMode="cover">
+          <Animated.View
+            pointerEvents="none"
+            style={[
+              styles.introNextLayer,
+              { opacity: introProgress },
+            ]}
+          >
+            <ImageBackground
+              source={nextIntro.background}
+              style={styles.introBackground}
+              resizeMode="cover"
+            >
               <View style={styles.introTextBox}>
-                {/* CHANGED: keep the box size but hide the text so the next line types in after the crossfade */}
-                <TypedText style={scaled(styles.introText)} full={nextIntro.text} shown="" />
+                <TypedText
+                  style={scaled(styles.introText)}
+                  full={nextIntro.text}
+                  shown=""
+                />
               </View>
             </ImageBackground>
           </Animated.View>
         )}
-        {/* CHANGED: first tap completes the typing, next tap continues */}
-        <TouchableOpacity style={styles.introTouchable} activeOpacity={1} onPress={() => { playSfx("dialogueClick"); advance(); }} />
+
+        <TouchableOpacity
+          style={styles.introTouchable}
+          activeOpacity={1}
+          onPress={() => {
+            playSfx("dialogueClick");
+            advance();
+          }}
+        />
       </View>
     );
   }
 
+  // =====================================================
+  // QUIZ
+  // =====================================================
   if (current.type === "quiz") {
     const isAnswered = quizAnswer !== null;
     const isCorrect = quizAnswer === current.correctIndex;
@@ -712,100 +893,213 @@ function PartRenderer(props) {
     return withOverlay(
       <View style={[styles.choiceScreen, styles.quizBackground]}>
         <View style={styles.choiceParchmentWrapper}>
-          <ImageBackground source={require("../../assets/foreground/quizzing_box.png")} style={styles.choiceParchmentBox} imageStyle={boxImage} resizeMode="stretch">
-            <Text style={scaled(styles.choiceQuestion)}>{current.question}</Text>
+          <ImageBackground
+            source={require("../../assets/foreground/quizzing_box.png")}
+            style={styles.choiceParchmentBox}
+            imageStyle={boxImage}
+            resizeMode="stretch"
+          >
+            <Text style={scaled(styles.choiceQuestion)}>
+              {current.question}
+            </Text>
+
             {isAnswered && (
-              <Text style={scaled(isCorrect ? styles.quizCorrectPrompt : styles.quizIncorrectPrompt)}>
+              <Text
+                style={scaled(
+                  isCorrect
+                    ? styles.quizCorrectPrompt
+                    : styles.quizIncorrectPrompt
+                )}
+              >
                 {isCorrect ? "Correct!" : "Not quite..."}
               </Text>
             )}
           </ImageBackground>
         </View>
+
         <View style={styles.quizButtonsGrid}>
           {current.options.map((option, index) => (
-            <AnimatedQuizButton key={index} style={styles.quizImageButton} onPress={() => {
-              if (isAnswered) return;
-              setQuizAnswer(index);
-              playSfx(index === current.correctIndex ? "correct" : "wrong");
-            }}>
-              <ImageBackground source={require("../../assets/buttons/choice_button.png")} style={styles.quizImageButtonBg} resizeMode="stretch">
-                <Text style={scaled(styles.quizButtonText)}>{option}</Text>
+            <AnimatedQuizButton
+              key={index}
+              style={styles.quizImageButton}
+              onPress={() => {
+                if (isAnswered) return;
+
+                setQuizAnswer(index);
+                playSfx(index === current.correctIndex ? "correct" : "wrong");
+              }}
+            >
+              <ImageBackground
+                source={require("../../assets/buttons/choice_button.png")}
+                style={styles.quizImageButtonBg}
+                resizeMode="stretch"
+              >
+                <Text style={scaled(styles.quizButtonText)}>
+                  {option}
+                </Text>
               </ImageBackground>
             </AnimatedQuizButton>
           ))}
         </View>
+
         {isAnswered && <AnimatedNextButton onPress={goNext} />}
       </View>
     );
   }
 
+  // =====================================================
+  // SYSTEM NARRATION
+  // =====================================================
   if (current.type === "system") {
     const systemContent = (
       <>
         <View style={styles.systemParchmentWrapper}>
-          <ImageBackground source={require("../../assets/foreground/narration_box.png")} style={styles.systemParchmentBox} imageStyle={boxImage} resizeMode="stretch">
-            <TypedText style={scaled(styles.systemText)} full={lineText} shown={shown} />
+          <ImageBackground
+            source={require("../../assets/foreground/narration_box.png")}
+            style={styles.systemParchmentBox}
+            imageStyle={boxImage}
+            resizeMode="stretch"
+          >
+            <TypedText
+              style={scaled(styles.systemText)}
+              full={lineText}
+              shown={shown}
+            />
           </ImageBackground>
         </View>
+
         <AnimatedNextButton onPress={advance} />
       </>
     );
 
     if (current.background) {
-      return withOverlay(<ImageBackground source={current.background} style={styles.systemScreen} resizeMode="cover">{systemContent}</ImageBackground>);
+      return withOverlay(
+        <ImageBackground
+          source={current.background}
+          style={styles.systemScreen}
+          resizeMode="cover"
+        >
+          {systemContent}
+        </ImageBackground>
+      );
     }
-    return withOverlay(<View style={styles.systemScreen}>{systemContent}</View>);
+
+    return withOverlay(
+      <View style={styles.systemScreen}>{systemContent}</View>
+    );
   }
 
+  // =====================================================
+  // SCENE TITLE
+  // =====================================================
   if (current.type === "scene") {
     return withOverlay(
-      <ImageBackground source={current.background} style={styles.sceneScreen} resizeMode="cover">
+      <ImageBackground
+        source={current.background}
+        style={styles.sceneScreen}
+        resizeMode="cover"
+      >
         <View style={styles.sceneDarkOverlay}>
           <View style={styles.sceneTitleBox}>
             <Text style={styles.sceneTitle}>{current.title}</Text>
-            {current.date ? <Text style={styles.sceneDate}>{current.date}</Text> : null}
+            {current.date ? (
+              <Text style={styles.sceneDate}>{current.date}</Text>
+            ) : null}
           </View>
         </View>
+
         <AnimatedNextButton onPress={goNext} />
       </ImageBackground>
     );
   }
 
+  // =====================================================
+  // NARRATOR
+  // =====================================================
   if (current.type === "narrator") {
     const narratorContent = (
       <>
         <CharacterLayer characters={current.characters} />
+
         <View style={styles.narratorWrapper}>
-          <ImageBackground source={require("../../assets/foreground/narration_box.png")} style={styles.narratorBox} imageStyle={boxImage} resizeMode="stretch">
+          <ImageBackground
+            source={require("../../assets/foreground/narration_box.png")}
+            style={styles.narratorBox}
+            imageStyle={boxImage}
+            resizeMode="stretch"
+          >
             <Text style={scaled(styles.narratorLabel)}>Narrator:</Text>
-            <TypedText style={scaled(styles.narratorText)} full={lineText} shown={shown} />
+            <TypedText
+              style={scaled(styles.narratorText)}
+              full={lineText}
+              shown={shown}
+            />
           </ImageBackground>
         </View>
+
         <AnimatedNextButton onPress={advance} />
       </>
     );
 
     if (current.background) {
-      return withOverlay(<ImageBackground source={current.background} style={styles.background} resizeMode="cover">{narratorContent}</ImageBackground>);
+      return withOverlay(
+        <ImageBackground
+          source={current.background}
+          style={styles.background}
+          resizeMode="cover"
+        >
+          {narratorContent}
+        </ImageBackground>
+      );
     }
-    return withOverlay(<View style={styles.background}>{narratorContent}</View>);
+
+    return withOverlay(
+      <View style={styles.background}>{narratorContent}</View>
+    );
   }
 
+  // =====================================================
+  // CHOICES
+  // =====================================================
   if (current.type === "choice") {
     if (picked === null) {
       const choiceContent = (
         <>
           <View style={styles.choiceParchmentWrapper}>
-            <ImageBackground source={require("../../assets/foreground/quizzing_box.png")} style={styles.choiceParchmentBox} imageStyle={boxImage} resizeMode="stretch">
-              <Text style={scaled(styles.choiceQuestion)}>{current.question}</Text>
-              <Text style={scaled(styles.choicePrompt)}>What will you choose?</Text>
+            <ImageBackground
+              source={require("../../assets/foreground/quizzing_box.png")}
+              style={styles.choiceParchmentBox}
+              imageStyle={boxImage}
+              resizeMode="stretch"
+            >
+              <Text style={scaled(styles.choiceQuestion)}>
+                {current.question}
+              </Text>
+              <Text style={scaled(styles.choicePrompt)}>
+                What will you choose?
+              </Text>
             </ImageBackground>
           </View>
+
           <View style={styles.choiceButtonsGrid}>
             {current.choices.map((choice, index) => (
-              <AnimatedChoiceButton key={index} style={styles.choiceImageButton} onPress={() => { playSfx("choose"); setPicked(index); saveDecision(index); }}>
-                <ImageBackground source={require("../../assets/buttons/choice_button.png")} style={styles.choiceImageButtonBg} resizeMode="stretch">
-                  <Text style={scaled(styles.choiceButtonText)}>{choice.text}</Text>
+              <AnimatedChoiceButton
+                key={index}
+                style={styles.choiceImageButton}
+                onPress={() => {
+                  playSfx("choose");
+                  setPicked(index);
+                  saveDecision(index);
+                }}
+              >
+                <ImageBackground
+                  source={require("../../assets/buttons/choice_button.png")}
+                  style={styles.choiceImageButtonBg}
+                  resizeMode="stretch"
+                >
+                  <Text style={scaled(styles.choiceButtonText)}>
+                    {choice.text}
+                  </Text>
                 </ImageBackground>
               </AnimatedChoiceButton>
             ))}
@@ -814,81 +1108,244 @@ function PartRenderer(props) {
       );
 
       if (current.background) {
-        return withOverlay(<ImageBackground source={current.background} style={styles.choiceScreen} resizeMode="cover">{choiceContent}</ImageBackground>);
+        return withOverlay(
+          <ImageBackground
+            source={current.background}
+            style={styles.choiceScreen}
+            resizeMode="cover"
+          >
+            {choiceContent}
+          </ImageBackground>
+        );
       }
-      return withOverlay(<View style={styles.choiceScreen}>{choiceContent}</View>);
+
+      return withOverlay(
+        <View style={styles.choiceScreen}>{choiceContent}</View>
+      );
     }
 
     const selectedChoice = current.choices[picked];
+
     const responseContent = (
       <>
         <CharacterLayer characters={selectedChoice.characters} />
+
         <View style={styles.dialogueWrapper}>
-          <ImageBackground source={require("../../assets/foreground/dialogue_box.png")} style={styles.dialogueBox} imageStyle={boxImage} resizeMode="stretch">
-            <Text style={scaled(styles.speakerName)}>{selectedChoice.speaker}</Text>
-            <TypedText style={scaled(styles.dialogueText)} full={lineText} shown={shown} />
-            {selectedChoice.translation ? <Text style={scaled(styles.dialogueTranslation)}>{selectedChoice.translation}</Text> : null}
+          <ImageBackground
+            source={require("../../assets/foreground/dialogue_box.png")}
+            style={styles.dialogueBox}
+            imageStyle={boxImage}
+            resizeMode="stretch"
+          >
+            <Text style={scaled(styles.speakerName)}>
+              {selectedChoice.speaker}
+            </Text>
+
+            <TypedText
+              style={scaled(styles.dialogueText)}
+              full={lineText}
+              shown={shown}
+            />
+
+            {selectedChoice.translation ? (
+              <Text style={scaled(styles.dialogueTranslation)}>
+                {selectedChoice.translation}
+              </Text>
+            ) : null}
           </ImageBackground>
         </View>
+
         <AnimatedNextButton onPress={advance} />
       </>
     );
 
     if (current.background) {
-      return withOverlay(<ImageBackground source={current.background} style={styles.background} resizeMode="cover">{responseContent}</ImageBackground>);
+      return withOverlay(
+        <ImageBackground
+          source={current.background}
+          style={styles.background}
+          resizeMode="cover"
+        >
+          {responseContent}
+        </ImageBackground>
+      );
     }
-    return withOverlay(<View style={styles.background}>{responseContent}</View>);
+
+    return withOverlay(
+      <View style={styles.background}>{responseContent}</View>
+    );
   }
 
+  // =====================================================
+  // STANDARD DIALOGUE
+  // =====================================================
   const dialogueContent = (
     <>
       <CharacterLayer characters={current.characters} />
+
       <View style={styles.dialogueWrapper}>
-        <ImageBackground source={require("../../assets/foreground/dialogue_box.png")} style={styles.dialogueBox} imageStyle={boxImage} resizeMode="stretch">
+        <ImageBackground
+          source={require("../../assets/foreground/dialogue_box.png")}
+          style={styles.dialogueBox}
+          imageStyle={boxImage}
+          resizeMode="stretch"
+        >
           <Text style={scaled(styles.speakerName)}>{current.speaker}</Text>
-          <TypedText style={scaled(styles.dialogueText)} full={lineText} shown={shown} />
-          {current.translation ? <Text style={scaled(styles.dialogueTranslation)}>{current.translation}</Text> : null}
+
+          <TypedText
+            style={scaled(styles.dialogueText)}
+            full={lineText}
+            shown={shown}
+          />
+
+          {current.translation ? (
+            <Text style={scaled(styles.dialogueTranslation)}>
+              {current.translation}
+            </Text>
+          ) : null}
         </ImageBackground>
       </View>
+
       <AnimatedNextButton onPress={advance} />
     </>
   );
 
   if (current.background) {
-    return withOverlay(<ImageBackground source={current.background} style={styles.background} resizeMode="cover">{dialogueContent}</ImageBackground>);
+    return withOverlay(
+      <ImageBackground
+        source={current.background}
+        style={styles.background}
+        resizeMode="cover"
+      >
+        {dialogueContent}
+      </ImageBackground>
+    );
   }
-  return withOverlay(<View style={styles.background}>{dialogueContent}</View>);
+
+  return withOverlay(
+    <View style={styles.background}>{dialogueContent}</View>
+  );
 }
+
+// =====================================================
+// PART SELECT HAND-OFF
+// =====================================================
+const PART_SELECT_ROUTE = "PartSelect";
+
+const goToUnlockSequence = (navigation, completedPart) => {
+  const params = {
+    unlockSequence: {
+      completedPart,
+      token: Date.now(),
+    },
+  };
+
+  if (typeof navigation.popTo === "function") {
+    navigation.popTo(PART_SELECT_ROUTE, params);
+  } else {
+    navigation.navigate(PART_SELECT_ROUTE, params);
+  }
+};
 
 // =====================================================
 // SCREEN EXPORTS
 // =====================================================
 export function Chap1Part1Screen({ navigation, ...props }) {
-  return <PartRenderer sceneData={Chapter1.part1} chapterNumber={1} partNumber={1} isLastPart={false} onPartComplete={() => navigation.navigate("Part2")} navigation={navigation} {...props} />;
+  return (
+    <PartRenderer
+      sceneData={Chapter1.part1}
+      chapterNumber={1}
+      partNumber={1}
+      isLastPart={false}
+      onPartComplete={() => goToUnlockSequence(navigation, 1)}
+      navigation={navigation}
+      {...props}
+    />
+  );
 }
 
 export function Chap1Part2Screen({ navigation, ...props }) {
-  return <PartRenderer sceneData={Chapter1.part2} chapterNumber={1} partNumber={2} isLastPart={false} onPartComplete={() => navigation.navigate("Part3")} navigation={navigation} {...props} />;
+  return (
+    <PartRenderer
+      sceneData={Chapter1.part2}
+      chapterNumber={1}
+      partNumber={2}
+      isLastPart={false}
+      onPartComplete={() => goToUnlockSequence(navigation, 2)}
+      navigation={navigation}
+      {...props}
+    />
+  );
 }
 
 export function Chap1Part3Screen({ navigation, ...props }) {
-  return <PartRenderer sceneData={Chapter1.part3} chapterNumber={1} partNumber={3} isLastPart={false} onPartComplete={() => navigation.navigate("Part4")} navigation={navigation} {...props} />;
+  return (
+    <PartRenderer
+      sceneData={Chapter1.part3}
+      chapterNumber={1}
+      partNumber={3}
+      isLastPart={false}
+      onPartComplete={() => goToUnlockSequence(navigation, 3)}
+      navigation={navigation}
+      {...props}
+    />
+  );
 }
 
 export function Chap1Part4Screen({ navigation, ...props }) {
-  return <PartRenderer sceneData={Chapter1.part4} chapterNumber={1} partNumber={4} isLastPart={false} onPartComplete={() => navigation.navigate("Part5")} navigation={navigation} {...props} />;
+  return (
+    <PartRenderer
+      sceneData={Chapter1.part4}
+      chapterNumber={1}
+      partNumber={4}
+      isLastPart={false}
+      onPartComplete={() => goToUnlockSequence(navigation, 4)}
+      navigation={navigation}
+      {...props}
+    />
+  );
 }
 
 export function Chap1Part5Screen({ navigation, ...props }) {
-  return <PartRenderer sceneData={Chapter1.part5} chapterNumber={1} partNumber={5} isLastPart={false} onPartComplete={() => navigation.navigate("Part6")} navigation={navigation} {...props} />;
+  return (
+    <PartRenderer
+      sceneData={Chapter1.part5}
+      chapterNumber={1}
+      partNumber={5}
+      isLastPart={false}
+      onPartComplete={() => goToUnlockSequence(navigation, 5)}
+      navigation={navigation}
+      {...props}
+    />
+  );
 }
 
 export function Chap1Part6Screen({ navigation, ...props }) {
-  return <PartRenderer sceneData={Chapter1.part6} chapterNumber={1} partNumber={6} isLastPart={false} onPartComplete={() => navigation.navigate("Part7")} navigation={navigation} {...props} />;
+  return (
+    <PartRenderer
+      sceneData={Chapter1.part6}
+      chapterNumber={1}
+      partNumber={6}
+      isLastPart={false}
+      onPartComplete={() => goToUnlockSequence(navigation, 6)}
+      navigation={navigation}
+      {...props}
+    />
+  );
 }
 
 export function Chap1Part7Screen({ navigation, ...props }) {
-  return <PartRenderer sceneData={Chapter1.part7} chapterNumber={1} partNumber={7} isLastPart={false} onPartComplete={() => navigation.navigate("Part8")} navigation={navigation} {...props} />;
+  return (
+    <PartRenderer
+      sceneData={Chapter1.part7}
+      chapterNumber={1}
+      partNumber={7}
+      isLastPart={false}
+      onPartComplete={() => goToUnlockSequence(navigation, 7)}
+      navigation={navigation}
+      {...props}
+    />
+  );
 }
 
 export function Chap1Part8Screen({ navigation, ...props }) {
@@ -902,7 +1359,7 @@ export function Chap1Part8Screen({ navigation, ...props }) {
       isLastPart={true}
       onChapterComplete={() => {
         stopLoops();
-        navigation.reset({ index: 0, routes: [{ name: "Home" }] });
+        goToUnlockSequence(navigation, 8);
       }}
       navigation={navigation}
       {...props}
@@ -914,8 +1371,14 @@ export function Chap1Part8Screen({ navigation, ...props }) {
 // STYLES
 // =====================================================
 const styles = StyleSheet.create({
-  opacityZero: { opacity: 0 },
-  quizBackground: { backgroundColor: "#fffca0" },
+  opacityZero: {
+    opacity: 0,
+  },
+
+  quizBackground: {
+    backgroundColor: "#fffca0",
+  },
+
   chapterIntroScreen: {
     flex: 1,
     width: "100%",
@@ -924,29 +1387,40 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+
   chapterIntroTitle: {
     width: "60%",
     height: "45%",
   },
-  container: {
+
+  chapterCompleteScreen: {
     flex: 1,
+    width: "100%",
+    height: "100%",
     backgroundColor: "#000000",
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
   },
+
+  chapterCompleteArtwork: {
+    width: "60%",
+    height: "45%",
+  },
+
   background: {
     flex: 1,
     width: "100%",
     height: "100%",
     backgroundColor: "#000000",
   },
+
   typedOverlay: {
     position: "absolute",
     left: 0,
     right: 0,
     top: 0,
   },
+
   menuOverlay: {
     position: "absolute",
     top: 20,
@@ -956,26 +1430,31 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 10,
   },
+
   menuButton: {
     width: 42,
     height: 42,
   },
+
   menuButtonImage: {
     width: "100%",
     height: "100%",
     resizeMode: "contain",
   },
+
   introScreen: {
     flex: 1,
     width: "100%",
     height: "100%",
     backgroundColor: "#000000",
   },
+
   introBackground: {
     flex: 1,
     width: "100%",
     height: "100%",
   },
+
   introNextLayer: {
     position: "absolute",
     left: 0,
@@ -983,6 +1462,7 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
   },
+
   introTouchable: {
     position: "absolute",
     left: 0,
@@ -990,6 +1470,7 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
   },
+
   introTextBox: {
     position: "absolute",
     bottom: 0,
@@ -1000,18 +1481,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 48,
     borderRadius: 0,
   },
+
   introText: {
     color: "#FFFFFF",
     textAlign: "center",
     fontSize: 17,
     lineHeight: 24,
   },
+
   sceneScreen: {
     flex: 1,
     width: "100%",
     height: "100%",
     backgroundColor: "#000000",
   },
+
   sceneDarkOverlay: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.35)",
@@ -1019,10 +1503,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 25,
   },
+
   sceneTitleBox: {
     alignItems: "center",
     justifyContent: "center",
   },
+
   sceneTitle: {
     color: "#FFFFFF",
     fontSize: 28,
@@ -1030,46 +1516,54 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 10,
   },
+
   sceneDate: {
     color: "#FFFFFF",
     fontSize: 18,
     textAlign: "center",
   },
+
   arrowButton: {
     position: "absolute",
     right: 50,
     bottom: 25,
     zIndex: 50,
   },
+
   arrowImage: {
     width: 35,
     height: 35,
     resizeMode: "contain",
   },
+
   systemScreen: {
     flex: 1,
     width: "100%",
     height: "100%",
     backgroundColor: "#000000",
   },
+
   systemParchmentWrapper: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     padding: 25,
   },
+
   systemParchmentBox: {
     width: "100%",
     minHeight: 180,
     justifyContent: "center",
     padding: 30,
   },
+
   systemText: {
     color: "#000000",
     fontSize: 18,
     textAlign: "center",
     lineHeight: 25,
   },
+
   narratorWrapper: {
     position: "absolute",
     left: 20,
@@ -1077,6 +1571,7 @@ const styles = StyleSheet.create({
     bottom: 5,
     zIndex: 20,
   },
+
   narratorBox: {
     width: "100%",
     minHeight: 160,
@@ -1086,6 +1581,7 @@ const styles = StyleSheet.create({
     paddingLeft: 30,
     paddingRight: -120,
   },
+
   narratorLabel: {
     position: "absolute",
     top: -1,
@@ -1099,12 +1595,14 @@ const styles = StyleSheet.create({
     textAlignVertical: "center",
     includeFontPadding: false,
   },
+
   narratorText: {
     color: "#FFFFFF",
     fontSize: 17,
     lineHeight: 24,
     textAlign: "center",
   },
+
   characterLayer: {
     position: "absolute",
     left: 0,
@@ -1113,6 +1611,7 @@ const styles = StyleSheet.create({
     height: "100%",
     zIndex: 10,
   },
+
   characterImage: {
     position: "absolute",
     bottom: 100,
@@ -1120,15 +1619,19 @@ const styles = StyleSheet.create({
     height: "72%",
     resizeMode: "contain",
   },
+
   characterLeft: {
     left: "2%",
   },
+
   characterRight: {
     right: "2%",
   },
+
   characterCenter: {
     left: "30%",
   },
+
   dialogueWrapper: {
     position: "absolute",
     left: 20,
@@ -1136,6 +1639,7 @@ const styles = StyleSheet.create({
     bottom: 5,
     zIndex: 20,
   },
+
   dialogueBox: {
     width: "100%",
     minHeight: 160,
@@ -1145,6 +1649,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: -30,
   },
+
   speakerName: {
     position: "absolute",
     top: -1,
@@ -1158,12 +1663,14 @@ const styles = StyleSheet.create({
     textAlignVertical: "center",
     includeFontPadding: false,
   },
+
   dialogueText: {
     color: "#0f0f0f",
     fontSize: 17,
     lineHeight: 24,
     textAlign: "center",
   },
+
   dialogueTranslation: {
     color: "#141414",
     fontSize: 14,
@@ -1172,27 +1679,32 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontStyle: "italic",
   },
+
   choiceScreen: {
     flex: 1,
     backgroundColor: "#fafafa",
     justifyContent: "center",
   },
+
   choiceParchmentWrapper: {
     paddingHorizontal: 20,
     marginBottom: 20,
   },
+
   choiceParchmentBox: {
     width: "100%",
     minHeight: 180,
     justifyContent: "center",
     padding: 30,
   },
+
   choiceQuestion: {
     color: "#fdfdfd",
     fontSize: 18,
     lineHeight: 25,
     textAlign: "center",
   },
+
   choicePrompt: {
     color: "#d7cfbe",
     fontSize: 16,
@@ -1200,6 +1712,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     fontWeight: "bold",
   },
+
   choiceButtonsGrid: {
     paddingHorizontal: 20,
     flexDirection: "row",
@@ -1209,9 +1722,11 @@ const styles = StyleSheet.create({
     gap: 12,
     transform: [{ translateX: -15 }],
   },
+
   choiceImageButton: {
     width: "47%",
   },
+
   choiceImageButtonBg: {
     width: "100%",
     minHeight: 90,
@@ -1220,12 +1735,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 12,
   },
+
   choiceButtonText: {
     color: "#000000",
     fontSize: 16,
     textAlign: "center",
     fontWeight: "bold",
   },
+
   quizButtonsGrid: {
     paddingHorizontal: 15,
     flexDirection: "row",
@@ -1233,9 +1750,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 10,
   },
+
   quizImageButton: {
     width: "47%",
   },
+
   quizImageButtonBg: {
     width: "100%",
     minHeight: 65,
@@ -1244,6 +1763,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 10,
   },
+
   quizButtonText: {
     color: "#371f10",
     fontSize: 15,
@@ -1251,6 +1771,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "bold",
   },
+
   quizCorrectPrompt: {
     color: "#218838",
     fontSize: 16,
@@ -1258,23 +1779,12 @@ const styles = StyleSheet.create({
     marginTop: 15,
     fontWeight: "bold",
   },
+
   quizIncorrectPrompt: {
     color: "#dc3545",
     fontSize: 16,
     textAlign: "center",
     marginTop: 15,
-    fontWeight: "bold",
-  },
-  nextButton: {
-    marginTop: 20,
-    paddingHorizontal: 30,
-    paddingVertical: 15,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 8,
-  },
-  nextButtonText: {
-    color: "#000000",
-    fontSize: 18,
     fontWeight: "bold",
   },
 });
