@@ -618,7 +618,8 @@ export const Chapter1_Part8 = [
       "Naic Agreement",
       "Treaty of Manila"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part8-1"]
   },
 
   {
@@ -630,7 +631,8 @@ export const Chapter1_Part8 = [
       "Hong Kong",
       "Singapore"
     ],
-    correctIndex: 2
+    correctIndex: 2,
+    unlock: ["remnant-part8-2"]
   },
 
   {
@@ -642,7 +644,8 @@ export const Chapter1_Part8 = [
       "Philippine independence was declared in Kawit",
       "The Treaty of Paris was signed"
     ],
-    correctIndex: 2
+    correctIndex: 2,
+    unlock: ["remnant-part8-3"]
   },
 
   {
@@ -654,7 +657,8 @@ export const Chapter1_Part8 = [
       "Mariano Trías",
       "Daniel Tirona"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part8-4"]
   },
 
   {
@@ -666,7 +670,8 @@ export const Chapter1_Part8 = [
       "Aguinaldo became president\nof the United States",
       "The Philippine-American War ended"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part8-5"]
   },
 
   {
@@ -678,7 +683,8 @@ export const Chapter1_Part8 = [
       "The fighting near Santa Mesa on\nFebruary 4, 1899",
       "The signing of the Treaty of Paris"
     ],
-    correctIndex: 2
+    correctIndex: 2,
+    unlock: ["remnant-part8-6"]
   },
 
   {

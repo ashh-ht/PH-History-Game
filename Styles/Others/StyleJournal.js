@@ -1,7 +1,5 @@
 import { StyleSheet } from 'react-native';
 
-// Display font for character names on the detail page. Set this to your font's name once it's loaded
-// (e.g. 'YourFont'); undefined uses the device default.
 const TITLE_FONT = undefined;
 
 const styles = StyleSheet.create({
@@ -11,13 +9,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  // ADDED: dark layer over the screen underneath. Raise/lower the last number (0 to 1) to taste.
   overlay: {
     backgroundColor: 'rgba(0, 0, 0, 0.55)',
   },
 
-  // ADDED: the 16:9 book frame inside the stage. Pages, title and boxes are placed in % of this frame.
-  // left = 0.14/1.07, width = 1/1.07 (the stage is 1.07 frames wide, with 0.14 of a frame of room on the left for the open tab)
   bookFrame: {
     position: 'absolute',
     left: '2%',
@@ -40,13 +35,13 @@ const styles = StyleSheet.create({
 
   tabClosed: {
     width: '14%',
-    aspectRatio: 400 / 300, //OG size - 400x288
+    aspectRatio: 400 / 300,
   },
 
   tabOpen: {
     right: '70.5%',
     width: '48%',
-    aspectRatio: 850 / 231, //OG size - 850x231
+    aspectRatio: 850 / 231,
   },
 
   tabImage: {
@@ -54,8 +49,6 @@ const styles = StyleSheet.create({
     height: '100%',
   },
 
-  // CHANGED: placed by % of the canvas so it sits inside the book's pages.
-  // Tune left/right/top/bottom by eye. 'gap' should cover the spine.
   pageRow: {
     position: 'absolute',
     left: '15%',
@@ -65,9 +58,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: '4%',
   },
-  // ---- Full-height two-page layout (used by the Timeline list and the Profile pages) ----
-  // ADDED: covers the whole canvas height so child positions can be written in % of the canvas.
-  // Same left/right/gap as pageRow, so the two pages line up with the book.
+  
   spreadRow: {
     position: 'absolute',
     left: '15%',
@@ -79,8 +70,8 @@ const styles = StyleSheet.create({
   },
   spreadPage: {
     flex: 1,
+    overflow: 'hidden',
   },
-
 
   timelineTitle: {
     position: 'absolute',
@@ -91,7 +82,7 @@ const styles = StyleSheet.create({
     zIndex: 5,
   },
 
-   timelineBox: {
+  timelineBox: {
       position: 'absolute',
       left: '15%',
       width: '70%',
@@ -125,33 +116,23 @@ const styles = StyleSheet.create({
      height: '100%',
    },
 
-
-  sideArrow: {
-    position: 'absolute',
-    top: '45%',
-    padding: 2,
-  },
-
-  sideArrowLeft: { left: '-3%' },
-
-  sideArrowRight: { right: '-3%' },
-
   leftPage: {
     flex: 1,
+    overflow: 'hidden',
   },
   rightPage: {
     flex: 1,
     flexShrink: 1,
+    overflow: 'hidden',
   },
   pageContent: {
     width: '100%',
     padding: 10,
   },
-  // ADDED: only used on the timeline list so other pages stay as they were
   pageContentCenter: {
     flexGrow: 1,
     justifyContent: 'center',
-    paddingTop: 0, // CHANGED: no more ribbon hanging onto the page, so no extra room needed
+    paddingTop: 0, 
   },
 
   pageTitle: {
@@ -178,11 +159,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 
-  // CHANGED: bigger buttons and text
   listButtonWrapper: {
     width: '85%',
     alignSelf: 'center',
-    marginBottom: 6, // CHANGED: was 10, so 6 buttons still fit after the extra top padding
+    marginBottom: 6,
   },
   listButtonBg: {
     paddingVertical: 10,
@@ -221,7 +201,6 @@ const styles = StyleSheet.create({
     lineHeight: 14,
   },
 
-  // ---- Timeline detail page ----
   chapterTitle: {
     fontSize: 14,
     fontWeight: 'bold',
@@ -236,7 +215,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 12,
   },
-  // sub-entries are indented with a thin line down the left
   subEntry: {
     marginTop: 6,
     marginLeft: 6,
@@ -251,7 +229,6 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
 
-  // ---- Character Profiles: list page ----
   profileTitle: {
     position: 'absolute',
     top: '9.5%',
@@ -260,7 +237,6 @@ const styles = StyleSheet.create({
     height: '20%',
     zIndex: 5,
   },
-  // card = Profile_w_Details_Box.png (900x368). Width/left are % of the page; top is set in the JSX.
   profileCard: {
     position: 'absolute',
     width: '100%',
@@ -275,7 +251,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  // where the dark photo square / the paper sit inside the card image (measured from the art), in % of the card
   cardPortraitSlot: {
     position: 'absolute',
     left: '2.99%',
@@ -305,19 +280,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  // ---- Page arrows ----
-  // CHANGED: tabs now use the left side, so arrows sit at the bottom corners of the pages
-  arrow: {
-    position: 'absolute',
-    bottom: '-9%',
-    padding: 2,
-  },
-  arrowRight: { right: 0 },
-  arrowLeft: { left: 0 },
-  arrowText: { fontSize: 22, color: '#6b4a2b' },
-
-  // ---- Character Profiles: detail page ----
-  // frame = Profile_Box.png (500x501), centered on the left page
   detailFrame: {
     position: 'absolute',
     top: '14.8%',
@@ -370,6 +332,7 @@ const styles = StyleSheet.create({
     bottom: '9%',
     left: '4%',
     right: '4%',
+    overflow: 'hidden',
   },
   detailBodyContent: {
     paddingBottom: 10,
@@ -386,7 +349,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
 
-  // Remnants title sits on the left page, same placement pattern as Timeline/Profile titles
   remnantsTitle: {
     position: 'absolute',
     top: '9.5%',
@@ -396,22 +358,29 @@ const styles = StyleSheet.create({
     zIndex: 5,
   },
 
-  // wrapper holds the box image (locked or unlocked) + the inner remnant image
   remnantCard: {
     width: '47%',
     marginBottom: 10,
     alignItems: 'center',
   },
+  
+  remnantCompleteCard: {
+    width: '80%',
+    aspectRatio: 10.5, 
+    marginTop: -30, // negative = moves the box up; make it more negative to go higher
+    marginBottom: 10,
+    alignItems: 'center',
+  },
+
   remnantBoxWrap: {
     width: '100%',
-    aspectRatio: 1, // matches Remnants_Box_*.png (torn paper crop)
+    aspectRatio: 1,
     position: 'relative',
   },
   remnantBoxImage: {
     width: '100%',
     height: '100%',
   },
-  // remnant content sits inside the paper area of the box image
   remnantInnerImage: {
     position: 'absolute',
     top: '8%',
@@ -427,7 +396,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  // ---- Full-screen remnant viewer (tap an unlocked remnant) ----
+  // NEW: Separate style for the Complete Remnant text
+  remnantCompleteLabel: {
+    fontSize: 9, 
+    fontWeight: 'bold',
+    color: '#3a2e1f',
+    marginTop: 3,
+    textAlign: 'center',
+  },
+
   remnantViewer: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0, 0, 0, 0.85)',
@@ -435,13 +412,24 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     zIndex: 100,
   },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    zIndex: 10000,
+    padding: 10,
+  },
+  closeButtonImage: {
+    width: 40,
+    height: 40,
+    resizeMode: 'contain',
+  },
   remnantViewerImage: {
-    width: '85%',
-    height: '85%',
+    width: '120%',
+    height: '100%',
+    transform: [{ translateX: -50}],
   },
 
-  // ---- Glossary page ----
-  // Same title placement as the other sections, so it lines up with Timeline / Profile / Remnants.
   glossaryTitle: {
     position: 'absolute',
     top: '9.5%',
@@ -450,7 +438,6 @@ const styles = StyleSheet.create({
     height: '20%',
     zIndex: 5,
   },
-  // one term block: fancy uppercase term, plain meaning below, then a decorative divider
   glossaryBlock: {
     marginBottom: 14,
     alignItems: 'center',
@@ -470,7 +457,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingHorizontal: '4%',
   },
-  // decorative swirly divider between entries
   glossaryDivider: {
     width: '80%',
     aspectRatio: 1920 / 180,

@@ -17,17 +17,20 @@ import { useDisplaySettings, MIN_BOX_OPACITY } from './DisplaySetting';
 const BG_BASE = require('../../assets/Settings_Assets/Display_Base.png');
 const PANEL_FONT_SIZE = require('../../assets/Settings_Assets/Display_FontSize.png');
 const BANNER_OPACITY = require('../../assets/Settings_Assets/Display_DialogueOpacity.png');
+
 const CIRCLE_THUMB = require('../../assets/Settings_Assets/CircleButton.png');
 const CIRCLE_THUMB_CHECKED = require('../../assets/Settings_Assets/CircleButton_Checked.png');
 
 const PANEL_ASPECT = 1205 / 630;
 
-const ROW_LEFT = 215/1920;
-const ROW_W = 370/1920;
-const ROW_H = 108/1080; 
-const CIRCLE_CX = 252/1920;
-const CIRCLE_W = 84/1920;
-const ACTIVE_GREEN = '#4CAF50'; 
+// ===== RADIO CIRCLES (per your request) =====
+const CIRCLE_W = 80/1920;
+const ROW_H = 80/1080;
+
+// Positioning (kept the same so the circles land on the baked-in labels)
+const ROW_LEFT = 200/1920;
+const ROW_W = 400/1920;
+const CIRCLE_CX = 250/1920;
 
 const FONT_OPTIONS = [
   { value: 'Small', y: 473/1080 },
@@ -35,24 +38,24 @@ const FONT_OPTIONS = [
   { value: 'Large', y: 708/1080 },
 ];
 
+// Slider
 const SLIDER_LEFT = 703/1920;
 const SLIDER_W = 1000/1920;
 const SLIDER_CY = 670/1080;
 const SLIDER_H = 170/1080;
-const THUMB_W = 64/1920;
-const TRACK_H = 14/1080;
-const PERCENT_FONT = 54/1920;
+const THUMB_W = 90/1920;
+const TRACK_H = 16/1080;
+const PERCENT_FONT = 68/1920;
 
 function OpacitySlider({ panelW, panelH, value, onChange }) {
   const [width, setWidth] = useState(0);
   const widthRef = useRef(0);
   const containerRef = useRef(null);
-  const leftRef = useRef(0); // container's screen-absolute left edge
+  const leftRef = useRef(0);
   const thumb = THUMB_W * panelW;
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
 
-  // pageX is screen-absolute, so it doesn't matter which child was touched
   const setFromPageX = (pageX) => {
     const usable = widthRef.current - thumb;
     if (usable <= 0) return;
@@ -67,7 +70,6 @@ function OpacitySlider({ panelW, panelH, value, onChange }) {
       onPanResponderTerminationRequest: () => false,
       onPanResponderGrant: (e) => {
         const pageX = e.nativeEvent.pageX;
-        // Re-measure on every touch so layout changes / transitions don't matter
         containerRef.current?.measure((x, y, w, h, px) => {
           leftRef.current = px;
           setFromPageX(pageX);
@@ -97,8 +99,8 @@ function OpacitySlider({ panelW, panelH, value, onChange }) {
       <View
         style={{
           position: 'absolute',
-          top: 0,
-          left: handleLeft + thumb / 2 - percentFont * 1.5,
+          top: -percentFont * 0.8,
+          left: handleLeft + thumb / 2 - percentFont * 1.,
           width: percentFont * 3,
           alignItems: 'center',
         }}
@@ -137,7 +139,6 @@ function OpacitySlider({ panelW, panelH, value, onChange }) {
         }}
       />
 
-      {/* Thumb (Image wrapped in a View so pointerEvents is reliable) */}
       <View
         pointerEvents="none"
         style={{
@@ -149,11 +150,7 @@ function OpacitySlider({ panelW, panelH, value, onChange }) {
           height: thumb,
         }}
       >
-        <Image
-          source={CIRCLE_THUMB}
-          resizeMode="contain"
-          style={{ width: '100%', height: '100%' }}
-        />
+        <Image source={CIRCLE_THUMB} resizeMode="contain" style={{ width: '100%', height: '100%' }} />
       </View>
     </View>
   );
@@ -195,10 +192,7 @@ export default function DisplayScreen({ navigation }) {
       top: Math.max(insets.top, 12 * s),
       left: Math.max(insets.left, 20 * s),
     },
-    topIconImage: {
-      width: 40 * s,
-      height: 40 * s,
-    },
+    topIconImage: { width: 40 * s, height: 40 * s },
   };
 
   return (
@@ -217,53 +211,36 @@ export default function DisplayScreen({ navigation }) {
           <Image source={PANEL_FONT_SIZE} style={{ position: 'absolute', width: panelW, height: panelH }} resizeMode="stretch" pointerEvents="none" />
           <Image source={BANNER_OPACITY} style={{ position: 'absolute', width: panelW, height: panelH }} resizeMode="stretch" pointerEvents="none" />
 
-{FONT_OPTIONS.map((opt) => {
-  const selected = fontSize === opt.value;
-  const size = CIRCLE_W * panelW;
-  return (
-    <Sound_clicks
-      key={opt.value}
-      onPress={() => setFontSize(opt.value)}
-      style={{
-        position: 'absolute',
-        left: ROW_LEFT * panelW,
-        top: (opt.y - ROW_H / 2) * panelH,
-        width: ROW_W * panelW,
-        height: ROW_H * panelH,
-        justifyContent: 'center',
-      }}
-    >
-      <View
-        style={{
-          position: 'absolute',
-          left: (CIRCLE_CX - CIRCLE_W / 2 - ROW_LEFT) * panelW,
-          width: size,
-          height: size,
-        }}
-      >
-        <Image
-          source={CIRCLE_THUMB}
-          resizeMode="contain"
-          style={{ width: '100%', height: '100%' }}
-        />
-        {selected && (
-          <View
-            pointerEvents="none"
-            style={{
-              position: 'absolute',
-              top: '18%',
-              left: '18%',
-              right: '18%',
-              bottom: '18%',
-              borderRadius: size / 2,
-              backgroundColor: ACTIVE_GREEN,
-            }}
-          />
-        )}
-      </View>
-    </Sound_clicks>
-  );
-})}
+          {FONT_OPTIONS.map((opt) => {
+            const selected = fontSize === opt.value;
+            const size = CIRCLE_W * panelW;
+            return (
+              <Sound_clicks
+                key={opt.value}
+                onPress={() => setFontSize(opt.value)}
+                style={{
+                  position: 'absolute',
+                  left: ROW_LEFT * panelW,
+                  top: (opt.y - ROW_H / 2) * panelH,
+                  width: ROW_W * panelW,
+                  height: ROW_H * panelH,
+                  justifyContent: 'center',
+                }}
+              >
+                <Image
+                  source={selected ? CIRCLE_THUMB_CHECKED : CIRCLE_THUMB}
+                  // CHANGED: resizeMode is now "stretch" so both images force-match the same box
+                  resizeMode="stretch"
+                  style={{
+                    position: 'absolute',
+                    left: (CIRCLE_CX - CIRCLE_W / 2 - ROW_LEFT) * panelW,
+                    width: size,
+                    height: size,
+                  }}
+                />
+              </Sound_clicks>
+            );
+          })}
 
           <View
             style={{

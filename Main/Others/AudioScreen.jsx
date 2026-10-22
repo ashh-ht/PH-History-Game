@@ -3,6 +3,7 @@ import {
   StyleSheet,
   View,
   Image,
+  Text,
   Animated,
   PanResponder,
   ImageBackground,
@@ -17,31 +18,25 @@ const PANEL_LABELS = require('../../assets/Settings_Assets/Audio_MasterVolume.pn
 const CIRCLE_THUMB = require('../../assets/Settings_Assets/CircleButton.png');
 
 const PANEL_ASPECT = 1205 / 630;
-
-// Your manually adjusted left panel
 const LEFT_PANEL_BOX = { left: 0.03, top: 0.05, width: 0.90, height: 0.90 };
-
 const SLIDER_LEFT = 0.38;
 const SLIDER_RIGHT = 0.12;
-const SLIDER_Y = [0.33, 0.50, 0.67];
+const SLIDER_Y = [0.34, 0.52, 0.69];
 
-// INCREASED THUMB SIZE: From 80 to 140
-const THUMB_SIZE_PCT = 140 / 1205;
-const TRACK_HEIGHT = 16; // Slightly thicker track
-
-// Hitbox tall enough to cover the big thumb
+const THUMB_SIZE_PCT = 50 / 1205;
+const TRACK_HEIGHT = 16;
 const HITBOX_H = 100;
+const PERCENT_FONT = 30/ 1205;
 
 function VolumeSlider({ panelW, value, onChange }) {
   const [width, setWidth] = useState(0);
   const widthRef = useRef(0);
   const containerRef = useRef(null);
-  const leftRef = useRef(0); // container's screen-absolute left edge
+  const leftRef = useRef(0);
   const thumb = THUMB_SIZE_PCT * panelW;
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
 
-  // pageX is screen-absolute, so it doesn't matter which child was touched
   const setFromPageX = (pageX) => {
     const usable = widthRef.current - thumb;
     if (usable <= 0) return;
@@ -56,7 +51,6 @@ function VolumeSlider({ panelW, value, onChange }) {
       onPanResponderTerminationRequest: () => false,
       onPanResponderGrant: (e) => {
         const pageX = e.nativeEvent.pageX;
-        // Re-measure on every touch so layout changes / transitions don't matter
         containerRef.current?.measure((x, y, w, h, px) => {
           leftRef.current = px;
           setFromPageX(pageX);
@@ -67,6 +61,7 @@ function VolumeSlider({ panelW, value, onChange }) {
   ).current;
 
   const handleLeft = value * Math.max(0, width - thumb);
+  const percentFont = PERCENT_FONT * panelW;
 
   return (
     <View
@@ -79,6 +74,22 @@ function VolumeSlider({ panelW, value, onChange }) {
       }}
       {...pan.panHandlers}
     >
+      {/* PERCENTAGE TEXT ABOVE THUMB */}
+      <View
+        pointerEvents="none"
+        style={{
+          position: 'absolute',
+          top: 8,
+          left: handleLeft + thumb / 2 - percentFont * 1.5,
+          width: percentFont * 3,
+          alignItems: 'center',
+        }}
+      >
+        <Text style={[styles.percentText, { fontSize: percentFont }]} allowFontScaling={false}>
+          {Math.round(value * 100)}%
+        </Text>
+      </View>
+
       {/* Grey Track Background */}
       <View
         style={{
@@ -109,7 +120,7 @@ function VolumeSlider({ panelW, value, onChange }) {
         pointerEvents="none"
       />
 
-      {/* Thumb Circle (Image wrapped in a View so pointerEvents is reliable) */}
+      {/* Thumb Circle */}
       <View
         pointerEvents="none"
         style={{
@@ -121,11 +132,7 @@ function VolumeSlider({ panelW, value, onChange }) {
           marginTop: -thumb / 2
         }}
       >
-        <Image
-          source={CIRCLE_THUMB}
-          style={{ width: '100%', height: '100%' }}
-          resizeMode="contain"
-        />
+        <Image source={CIRCLE_THUMB} style={{ width: '100%', height: '100%' }} resizeMode="contain" />
       </View>
     </View>
   );
@@ -167,10 +174,7 @@ export default function AudioScreen({ navigation }) {
       top: Math.max(insets.top, 12 * s),
       left: Math.max(insets.left, 20 * s),
     },
-    topIconImage: {
-      width: 40 * s,
-      height: 40 * s,
-    },
+    topIconImage: { width: 40 * s, height: 40 * s },
   };
 
   const sliderBox = (index) => ({
@@ -194,7 +198,6 @@ export default function AudioScreen({ navigation }) {
       </View>
 
       <ImageBackground source={BG_BASE} style={{ width: panelW, height: panelH }} resizeMode="stretch">
-
         <Image
           source={PANEL_LABELS}
           style={{
@@ -219,7 +222,6 @@ export default function AudioScreen({ navigation }) {
         <View style={sliderBox(2)}>
           <VolumeSlider panelW={panelW} value={soundVolume} onChange={changeSoundVolume} />
         </View>
-
       </ImageBackground>
     </View>
   );
@@ -236,5 +238,10 @@ const styles = StyleSheet.create({
     position: "absolute",
     zIndex: 10,
     flexDirection: "row",
+  },
+  percentText: {
+    fontFamily: "serif",
+    color: "#5A4A32",
+    fontWeight: "bold",
   },
 });

@@ -555,7 +555,8 @@ export const Chapter1_Part3 = [
       "Leave Manila immediately",
       "Start a military campaign"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part3-1"]
   },
   {
     type: "quiz",
@@ -566,7 +567,8 @@ export const Chapter1_Part3 = [
       "The Philippine Republic",
       "The Propaganda Movement"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part3-2"]
   },
   {
     type: "quiz",
@@ -577,7 +579,8 @@ export const Chapter1_Part3 = [
       "He was arrested and exiled to Dapitan",
       "He joined Bonifacio's secret organization"
     ],
-    correctIndex: 2
+    correctIndex: 2,
+    unlock: ["remnant-part3-3"]
   },
   {
     type: "quiz",
@@ -588,7 +591,8 @@ export const Chapter1_Part3 = [
       "They wanted to replace Rizal as a novelist",
       "They disagreed about which language to use"
     ],
-    correctIndex: 0
+    correctIndex: 0,
+    unlock: ["remnant-part3-4"]
   },
   {
     type: "quiz",
@@ -599,7 +603,8 @@ export const Chapter1_Part3 = [
       "The Katipunan",
       "The Philippine Assembly"
     ],
-    correctIndex: 2
+    correctIndex: 2,
+    unlock: ["remnant-part3-5"]
   },
   // NEW QUESTION ADDED
   {
@@ -611,7 +616,8 @@ export const Chapter1_Part3 = [
       "Viva la Independencia",
       "God, Country, People"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part3-6"]
   },
 
   {

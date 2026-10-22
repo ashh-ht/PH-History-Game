@@ -37,8 +37,6 @@ import { BloodTrace, OathTrace } from "./Minigames/TracingMinigame";
 // =====================================================
 // HELPERS
 // =====================================================
-
-// Moved outside to fix ESLint dependency warning
 const getMusicFor = (sceneData, idx) => {
   for (let i = Math.min(idx, sceneData.length - 1); i >= 0; i--) {
     const m = sceneData[i].music ?? sceneData[i].Music;
@@ -229,8 +227,6 @@ const MINIGAMES = {
   oathtrace: OathTrace,
 };
 
-// Every scene type that runs its own minigame UI (no typed line).
-// Used so Auto Play never skips them and they never get a typewriter line.
 const MINIGAME_TYPES = new Set([
   "voyage",
   "santoNino",
@@ -380,7 +376,6 @@ function PartRenderer(props) {
   // --- REMNANT POPUP STATES ---
   const [showRewardPopup, setShowRewardPopup] = useState(false);
   const [rewardImage, setRewardImage] = useState(null);
-  const quizCountRef = useRef(0);
 
   const introProgress = useRef(new Animated.Value(1)).current;
   const [introChanging, setIntroChanging] = useState(false);
@@ -391,10 +386,7 @@ function PartRenderer(props) {
     game.setChapter(chapterNumber);
     game.setPart(partNumber);
     game.setInGame(true);
-    markPartReached(partNumber); // saved to storage so Part Select stays unlocked after closing the app
-
-    // Reset the remnant counter when a new part is loaded
-    quizCountRef.current = 0;
+    markPartReached(partNumber);
 
     console.log(`loaded ch${chapterNumber} part${partNumber}`);
 
@@ -422,32 +414,27 @@ function PartRenderer(props) {
   const hasMoreScenes = sceneIdx < sceneData.length;
   const current = hasMoreScenes ? sceneData[sceneIdx] : null;
 
-  // FIXED: covers every minigame type, not just the ones in MINIGAMES
   const isMinigame = current ? MINIGAME_TYPES.has(current.type) : false;
 
-  // Finishing a part unlocks the next one right away,
-  // even if the player quits on the "Part complete!" screen
   useEffect(() => {
     if (!hasMoreScenes && !isLastPart) markPartReached(partNumber + 1);
   }, [hasMoreScenes, isLastPart, partNumber]);
 
   const { unlock } = useJournal();
 
+  // FIXED: Exclude "quiz" so it doesn't auto-unlock when the screen loads. 
+  // Quizzes unlock their items via handleQuizSelect.
   useEffect(() => {
-    if (current && current.unlock) {
+    if (current && current.unlock && current.type !== "quiz") {
       unlock(current.unlock);
     }
   }, [current, unlock]);
 
-  // Music Effect
   useEffect(() => {
     const track = getMusicFor(sceneData, sceneIdx);
     if (track) playMusic(track);
   }, [sceneIdx, sceneData, playMusic]);
 
-  // SFX Effect: fires once whenever a new scene becomes current.
-  // In Chapter1 data use:  sfx: "cannonFire"  or  sfx: ["churchBell", "footstepsSand"]
-  // Add  stopSfx: true  to cut looping sounds (oilLamp, tar) at that scene.
   useEffect(() => {
     const scene = sceneData[sceneIdx];
     if (!scene) return;
@@ -456,7 +443,6 @@ function PartRenderer(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sceneIdx, sceneData]);
 
-  // Chapter Title Effect
   useEffect(() => {
     if (current?.type !== "chapterIntro") {
       return;
@@ -608,7 +594,7 @@ function PartRenderer(props) {
   // Auto Play
   useEffect(() => {
     if (!settings?.autoPlay || !done || !current) return;
-    if (isMinigame) return; // FIXED: Auto Play must never skip a minigame
+    if (isMinigame) return; 
     if (current.type === "quiz") return;
     if (current.type === "choice" && picked === null) return;
 
@@ -707,36 +693,40 @@ function PartRenderer(props) {
             </ImageBackground>
           </Animated.View>
         )}
-        {/* CHANGED: first tap completes the typing, next tap continues */}
         <TouchableOpacity style={styles.introTouchable} activeOpacity={1} onPress={() => { playSfx("dialogueClick"); advance(); }} />
       </View>
     );
   }
 
+  // =====================================================
+  // QUIZ SECTION - FIXED AND CLEANED UP
+  // =====================================================
   if (current.type === "quiz") {
     const isAnswered = quizAnswer !== null;
     const isCorrect = quizAnswer === current.correctIndex;
 
-    // --- REMNANT QUIZ LOGIC ---
     const handleQuizSelect = (index) => {
-      if (isAnswered) return; // Already answered
+      if (isAnswered) return; // Prevent double clicking
       
       setQuizAnswer(index);
+      playSfx(index === current.correctIndex ? "correct" : "wrong");
 
       if (index === current.correctIndex) {
-        const pieceNumber = quizCountRef.current + 1;
-        
-        if (pieceNumber <= 6) {
-          quizCountRef.current += 1;
+        // Check if the quiz has an unlock array (e.g., ["remnant-part1-1"])
+        if (current.unlock && current.unlock.length > 0) {
+          unlock(current.unlock);
           
-          // Unlock the piece in the Journal
-          const remnantId = `remnant-part${partNumber}-${pieceNumber}`;
-          unlock([remnantId]);
-          
-          // Show the popup
-          if (REMNANT_DATA[partNumber] && REMNANT_DATA[partNumber].pieces) {
-            setRewardImage(REMNANT_DATA[partNumber].pieces[pieceNumber - 1]);
-            setShowRewardPopup(true);
+          // Find the specific remnant ID to show the popup image
+          const remnantId = current.unlock.find(id => id.startsWith('remnant-part'));
+          if (remnantId) {
+            const parts = remnantId.split('-');
+            const partNum = parseInt(parts[1].replace('part', ''), 10);
+            const pieceNum = parseInt(parts[2], 10);
+            
+            if (REMNANT_DATA[partNum] && REMNANT_DATA[partNum].pieces[pieceNum - 1]) {
+              setRewardImage(REMNANT_DATA[partNum].pieces[pieceNum - 1]);
+              setShowRewardPopup(true);
+            }
           }
         }
       }
@@ -757,11 +747,7 @@ function PartRenderer(props) {
         
         <View style={styles.quizButtonsGrid}>
           {current.options.map((option, index) => (
-            <AnimatedQuizButton key={index} style={styles.quizImageButton} onPress={() => {
-              if (isAnswered) return;
-              setQuizAnswer(index);
-              playSfx(index === current.correctIndex ? "correct" : "wrong");
-            }}>
+            <AnimatedQuizButton key={index} style={styles.quizImageButton} onPress={() => handleQuizSelect(index)}>
               <ImageBackground source={require("../../assets/buttons/choice_button.png")} style={styles.quizImageButtonBg} resizeMode="stretch">
                 <Text style={scaled(styles.quizButtonText)}>{option}</Text>
               </ImageBackground>
@@ -1333,11 +1319,16 @@ const styles = StyleSheet.create({
   // REMNANT REWARD POPUP STYLES
   // =====================================================
   rewardPopupOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.75)',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.85)',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 999,
+    zIndex: 9999,
+    elevation: 999, // Required for Android z-index
   },
   rewardPopupBox: {
     backgroundColor: '#F4E4C8',
@@ -1346,33 +1337,34 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#A87C5E',
     alignItems: 'center',
-    width: '60%',
-    maxWidth: 400,
+    justifyContent: 'center',
+    width: '50%',       // Widened to fit the bigger image
+    maxWidth: 450,      // Increased max width
   },
   rewardTitle: {
-    fontSize: 28,
+    fontSize: 24,
     fontFamily: 'serif',
     fontWeight: 'bold',
     color: '#5A4A32',
-    marginBottom: 10,
+    marginBottom: 8,
     textAlign: 'center',
   },
   rewardSubtitle: {
-    fontSize: 16,
+    fontSize: 15,
     fontFamily: 'serif',
     color: '#5A4A32',
     marginBottom: 20,
     textAlign: 'center',
   },
   rewardImage: {
-    width: 200,
-    height: 200,
-    marginBottom: 20,
+    width: 150,
+    height: 150, 
+    marginBottom: 25,
   },
   rewardButton: {
     backgroundColor: '#A87C5E',
     paddingVertical: 12,
-    paddingHorizontal: 40,
+    paddingHorizontal: 30,
     borderRadius: 8,
     borderWidth: 2,
     borderColor: '#5A4A32',

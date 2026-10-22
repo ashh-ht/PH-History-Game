@@ -639,7 +639,8 @@ export const Chapter1_Part4 = [
       "To become a political party in Spain",
       "To replace La Liga Filipina as a reform group"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part4-1"]
   },
   {
     type: "quiz",
@@ -650,7 +651,8 @@ export const Chapter1_Part4 = [
       "Katagalugan",
       "Manila"
     ],
-    correctIndex: 2
+    correctIndex: 2,
+    unlock: ["remnant-part4-2"]
   },
   {
     type: "quiz",
@@ -661,7 +663,8 @@ export const Chapter1_Part4 = [
       "To recruit members while limiting\nwhat each member knew",
       "To divide the Katipunan into three armies"
     ],
-    correctIndex: 2
+    correctIndex: 2,
+    unlock: ["remnant-part4-3"]
   },
   {
     type: "quiz",
@@ -672,7 +675,8 @@ export const Chapter1_Part4 = [
       "José Rizal",
       "Deodato Arellano"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part4-4"]
   },
   {
     type: "quiz",
@@ -683,7 +687,8 @@ export const Chapter1_Part4 = [
       "The movement moved toward open revolt",
       "La Liga Filipina was restored"
     ],
-    correctIndex: 2
+    correctIndex: 2,
+    unlock: ["remnant-part4-5"]
   },
   // NEW QUESTION ADDED
   {
@@ -695,7 +700,8 @@ export const Chapter1_Part4 = [
       "Teodora Alonso",
       "Trinidad Tecson"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part4-6"]
   },
 
   {

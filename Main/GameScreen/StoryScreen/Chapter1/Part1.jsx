@@ -755,7 +755,8 @@ export const Chapter1_Part1 = [
       "Manila"
     ],
     correctIndex: 1,
-    music: "traditional"
+    music: "traditional",
+    unlock: ["remnant-part1-1"]
   },
   {
     type: "quiz",
@@ -766,7 +767,8 @@ export const Chapter1_Part1 = [
       "A cross",
       "A cannon"
     ],
-    correctIndex: 2
+    correctIndex: 2,
+    unlock: ["remnant-part1-2"]
   },
   {
     type: "quiz",
@@ -777,7 +779,8 @@ export const Chapter1_Part1 = [
       "Rajah Sulayman",
       "Datu Sikatuna"
     ],
-    correctIndex: 3
+    correctIndex: 3,
+    unlock: ["remnant-part1-3"]
   },
   {
     type: "quiz",
@@ -788,7 +791,8 @@ export const Chapter1_Part1 = [
       "A gold crown",
       "A map of Manila"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part1-4"]
   },
   {
     type: "quiz",
@@ -799,7 +803,8 @@ export const Chapter1_Part1 = [
       "Lakan Dula",
       "Juan de Salcedo"
     ],
-    correctIndex: 2
+    correctIndex: 2,
+    unlock: ["remnant-part1-5"]
   },
   // NEW QUESTION ADDED
   {
@@ -811,7 +816,8 @@ export const Chapter1_Part1 = [
       "An independent city-state",
       "A trade route hub"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part1-6"]
   },
 
   {

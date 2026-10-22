@@ -422,7 +422,8 @@ export const Chapter1_Part2 = [
       "The Spanish destroyed his mountain community",
       "He wanted to become governor of Bohol"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part2-1"]
   },
   {
     type: "quiz",
@@ -433,7 +434,8 @@ export const Chapter1_Part2 = [
       "Inside Manila",
       "On the island of Leyte"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part2-2"]
   },
   {
     type: "quiz",
@@ -444,7 +446,8 @@ export const Chapter1_Part2 = [
       "Around 20,000 people",
       "Around 50,000 people"
     ],
-    correctIndex: 2
+    correctIndex: 2,
+    unlock: ["remnant-part2-3"]
   },
   {
     type: "quiz",
@@ -455,7 +458,8 @@ export const Chapter1_Part2 = [
       "The community moved to Cebu",
       "Dagohoy signed a peace treaty with Spain"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part2-4"]
   },
   {
     type: "quiz",
@@ -466,7 +470,8 @@ export const Chapter1_Part2 = [
       "The Boholanos left the Philippines",
       "The mountain community defeated the\nSpanish completely"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part2-5"]
   },
   // NEW QUESTION ADDED
   {
@@ -478,7 +483,8 @@ export const Chapter1_Part2 = [
       "Father Gaspar Morales",
       "Miguel López de Legazpi"
     ],
-    correctIndex: 0
+    correctIndex: 0,
+    unlock: ["remnant-part2-6"]
   },
 
   {

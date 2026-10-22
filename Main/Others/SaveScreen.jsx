@@ -13,8 +13,8 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import Sound_clicks from '../../Components/Sound_clicks';
 import useScale from '../../Components/ScreenScaler';
+import { useAudio } from '../../Audiostore';
 
 import {
   getCheckpoints,
@@ -24,10 +24,13 @@ import {
 } from "../Others/saveProgress";
 import { useGameProgress } from "../../GameProgress";
 
-// --- IMAGE IMPORTS ---
 const BG_PARCHMENT = require('../../assets/Settings_Assets/Saves_Base.png');
+
 const BTN_DELETE_ALL = require('../../assets/Settings_Assets/Saves_DeleteAll.png');
+const BTN_DELETE_ALL_C = require('../../assets/Settings_Assets/Saves_DeleteAllClicked.png'); 
+
 const BTN_X_CIRCLE = require('../../assets/Settings_Assets/Saves_DeleteSave.png');
+const BTN_X_CIRCLE_C = require('../../assets/Settings_Assets/Saves_DeleteSaveClicked.png');
 
 const PANEL_ASPECT = 1205 / 630;
 
@@ -41,10 +44,12 @@ const timeAgo = (ts) => {
 };
 
 function AnimatedSaveCard({ save, onSelect, onDelete, cardH, fontSize }) {
+  const { playSfx } = useAudio();
   const scale = useRef(new Animated.Value(1)).current;
   const translateY = useRef(new Animated.Value(0)).current;
+  const [deletePressed, setDeletePressed] = useState(false);
 
-  const animatePress = (isPressed) => {
+  const animateCardPress = (isPressed) => {
     Animated.parallel([
       Animated.spring(scale, {
         toValue: isPressed ? 0.96 : 1,
@@ -66,9 +71,12 @@ function AnimatedSaveCard({ save, onSelect, onDelete, cardH, fontSize }) {
       <View style={[styles.saveCard, { height: cardH }]}>
         <Pressable
           style={styles.cardMainInfo}
-          onPress={() => onSelect(save.id)}
-          onPressIn={() => animatePress(true)}
-          onPressOut={() => animatePress(false)}
+          onPress={() => {
+            playSfx("dialogueClick");
+            onSelect(save.id);
+          }}
+          onPressIn={() => animateCardPress(true)}
+          onPressOut={() => animateCardPress(false)}
         >
           <Text style={[styles.cardTitle, { fontSize }]}>
             CHAPTER {save.part} - SCENE {save.sceneNumber || 1}
@@ -80,14 +88,17 @@ function AnimatedSaveCard({ save, onSelect, onDelete, cardH, fontSize }) {
 
         <TouchableOpacity
           style={styles.cardDeleteBtn}
-          onPress={() => onDelete(save.id)}
+          onPress={() => {
+            playSfx("dialogueClick");
+            onDelete(save.id);
+          }}
+          onPressIn={() => setDeletePressed(true)}
+          onPressOut={() => setDeletePressed(false)}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-          onPressIn={() => animatePress(true)}
-          onPressOut={() => animatePress(false)}
         >
           <Image
-            source={BTN_X_CIRCLE}
-            style={{ width: cardH * 2.05, height: cardH * 0.95 }}
+            source={deletePressed ? BTN_X_CIRCLE_C : BTN_X_CIRCLE}
+            style={{ width: cardH * 0.5, height: cardH * 0.5 }}
             resizeMode="contain"
           />
         </TouchableOpacity>
@@ -96,45 +107,50 @@ function AnimatedSaveCard({ save, onSelect, onDelete, cardH, fontSize }) {
   );
 }
 
-function SpringImageButton({ onPress, image, pressedImage, imageStyle }) {
-  const scale = useRef(new Animated.Value(1)).current;
+function AnimatedButton({ normalSource, pressedSource, onPress, containerStyle, imageStyle }) {
+  const { playSfx } = useAudio();
   const [pressed, setPressed] = useState(false);
+  const scale = useRef(new Animated.Value(1)).current;
+  const translateY = useRef(new Animated.Value(0)).current;
 
-  const handlePressIn = () => {
-    setPressed(true);
-    Animated.spring(scale, {
-      toValue: 0.9,
-      useNativeDriver: true,
-      speed: 20,
-      bounciness: 10,
-    }).start();
-  };
-
-  const handlePressOut = () => {
-    setPressed(false);
-    Animated.spring(scale, {
-      toValue: 1,
-      useNativeDriver: true,
-      speed: 20,
-      bounciness: 10,
-    }).start();
+  const animatePress = (isPressed) => {
+    setPressed(isPressed);
+    Animated.parallel([
+      Animated.spring(scale, {
+        toValue: isPressed ? 0.88 : 1,
+        speed: isPressed ? 24 : 18,
+        bounciness: isPressed ? 8 : 12,
+        useNativeDriver: true,
+      }),
+      Animated.spring(translateY, {
+        toValue: isPressed ? 4 : 0,
+        speed: isPressed ? 24 : 18,
+        bounciness: isPressed ? 4 : 12,
+        useNativeDriver: true,
+      }),
+    ]).start();
   };
 
   return (
-    <Animated.View style={{ transform: [{ scale }] }}>
-      <TouchableOpacity
-        onPress={onPress}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        activeOpacity={1}
-      >
-        <Image
-          source={pressed ? pressedImage : image}
-          style={imageStyle}
-          resizeMode="contain"
-        />
-      </TouchableOpacity>
-    </Animated.View>
+    <View style={containerStyle}>
+      <Animated.View style={{ transform: [{ scale }, { translateY }] }}>
+        <TouchableOpacity
+          activeOpacity={1}
+          onPressIn={() => animatePress(true)}
+          onPressOut={() => animatePress(false)}
+          onPress={() => {
+            playSfx("dialogueClick");
+            onPress();
+          }}
+        >
+          <Image
+            source={pressed ? pressedSource : normalSource}
+            style={imageStyle}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+      </Animated.View>
+    </View>
   );
 }
 
@@ -144,22 +160,22 @@ export default function SavesScreen({ navigation }) {
   const [confirm, setConfirm] = useState(null);
   const { s, insets } = useScale();
   const { width: winW, height: winH } = useWindowDimensions();
+  const { playSfx } = useAudio();
 
-  // Exact pixel size of the panel - identical to the Settings panel
   const panelH = Math.min(winH * 0.92, 700, (winW * 0.9) / PANEL_ASPECT);
   const panelW = panelH * PANEL_ASPECT;
 
   const listLeft = panelW * 0.11;
   const listW = panelW * 0.78;
   const listTop = panelH * 0.24;
-  const listH = panelH * 0.5;
+  const listH = panelH * 0.48;
 
-  const delW = panelW * 0.24;
-  const delH = panelH * 0.12;
+  const delW = panelW * 0.2;
+  const delH = panelH * 0.1;
   const delLeft = (panelW - delW) / 2;
-  const delTop = panelH * 0.78;
+  const delTop = panelH * 0.75;
 
-  const cardH = Math.max(40, panelH * 0.16);
+  const cardH = Math.max(50, panelH * 0.17);
   const cardFont = Math.max(12, panelH * 0.05);
 
   useFocusEffect(
@@ -224,34 +240,24 @@ export default function SavesScreen({ navigation }) {
 
   return (
     <View style={styles.screenOverlay}>
+      <AnimatedButton
+        normalSource={require('../../assets/icons/x_button.png')}
+        pressedSource={require('../../assets/icons/x_buttonpressed.png')}
+        onPress={() => navigation.goBack()}
+        containerStyle={[styles.absolute, dynamicStyles.topIconContainer]}
+        imageStyle={dynamicStyles.topIconImage}
+      />
 
-      {/* Top Icons (X only) */}
-      <View style={[styles.topIconContainer, dynamicStyles.topIconContainer]}>
-        <SpringImageButton
-          imageStyle={dynamicStyles.topIconImage}
-          onPress={() => navigation.goBack()}
-          image={require('../../assets/icons/x_button.png')}
-          pressedImage={require('../../assets/icons/x_buttonpressed.png')}
-        />
-      </View>
-
-      {/* Parchment panel */}
       <View style={{ width: panelW, height: panelH }}>
         <ImageBackground
           source={BG_PARCHMENT}
           style={{ width: panelW, height: panelH }}
           resizeMode="stretch"
         >
-          {/* FIXED: Extracted position: 'absolute' to StyleSheet to clear warning */}
           <View
             style={[
               styles.absolute,
-              {
-                left: listLeft,
-                top: listTop,
-                width: listW,
-                height: listH,
-              }
+              { left: listLeft, top: listTop, width: listW, height: listH }
             ]}
           >
             <ScrollView
@@ -280,26 +286,20 @@ export default function SavesScreen({ navigation }) {
           </View>
 
           {saves.length > 0 && (
-            <Sound_clicks
-              // FIXED: Extracted position: 'absolute' to StyleSheet to clear warning
-              style={[
-                styles.absolute,
-                {
-                  left: delLeft,
-                  top: delTop,
-                  width: delW,
-                  height: delH,
-                }
-              ]}
+            <AnimatedButton
+              normalSource={BTN_DELETE_ALL}
+              pressedSource={BTN_DELETE_ALL_C}
               onPress={() => setConfirm({ type: "all" })}
-            >
-              <Image source={BTN_DELETE_ALL} style={styles.deleteAllImage} resizeMode="contain" />
-            </Sound_clicks>
+              containerStyle={[
+                styles.absolute,
+                { left: delLeft, top: delTop, width: delW, height: delH }
+              ]}
+              imageStyle={styles.deleteAllImage}
+            />
           )}
         </ImageBackground>
       </View>
 
-      {/* Confirmation Modal */}
       <Modal
         visible={confirm !== null}
         transparent
@@ -307,43 +307,39 @@ export default function SavesScreen({ navigation }) {
         statusBarTranslucent
         supportedOrientations={["landscape", "portrait"]}
         onRequestClose={() => setConfirm(null)}
-        // FIXED: Removed duplicate visible and onRequestClose props
       >
         <View style={styles.modalOverlay}>
           <View style={styles.confirmBox}>
             <Text style={styles.confirmTitle}>Are you sure?</Text>
             <Text style={styles.confirmText}>
-              {/* FIXED: Removed duplicated text rendering */}
               {confirm?.type === "one"
                 ? "This will delete this save."
                 : "This will erase all your saves and progress."}
             </Text>
 
             <View style={styles.confirmButtons}>
-              <Sound_clicks
+              <TouchableOpacity
                 style={[styles.confirmBtn, styles.noBtn]}
                 onPress={() => setConfirm(null)}
-                // FIXED: Removed duplicate onPress
               >
                 <Text style={styles.noText}>No</Text>
-              </Sound_clicks>
+              </TouchableOpacity>
 
-              <Sound_clicks
+              <TouchableOpacity
                 style={[styles.confirmBtn, styles.yesBtn]}
                 onPress={onConfirmYes}
-                // FIXED: Removed duplicate onPress
               >
                 <Text style={styles.yesText}>Yes</Text>
-              </Sound_clicks>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
       </Modal>
-
     </View>
   );
 }
 
+// Styles ... (keep the same as before)
 const styles = StyleSheet.create({
   screenOverlay: {
     flex: 1,
@@ -352,11 +348,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   topIconContainer: {
-    position: "absolute",
     zIndex: 10,
     flexDirection: "row",
   },
-  // FIXED: Added this reusable style to fix the ESLint warnings
   absolute: {
     position: 'absolute',
   },
@@ -407,8 +401,6 @@ const styles = StyleSheet.create({
   cardDeleteBtn: {
     justifyContent: "center",
     alignItems: "center",
-    width: 30,
-    height:30
   },
   deleteAllImage: {
     width: "100%",

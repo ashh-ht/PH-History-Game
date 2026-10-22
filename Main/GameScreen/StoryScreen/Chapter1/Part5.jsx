@@ -512,7 +512,8 @@ export const Chapter1_Part5 = [
       "Rizal returned from exile",
       "The Spanish army abandoned Manila"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part5-1"]
   },
   {
     type: "quiz",
@@ -523,7 +524,8 @@ export const Chapter1_Part5 = [
       "The beginning of a new tax system",
       "A celebration of Spanish citizenship"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part5-2"]
   },
   {
     type: "quiz",
@@ -534,7 +536,8 @@ export const Chapter1_Part5 = [
       "San Juan del Monte",
       "Cebu"
     ],
-    correctIndex: 2
+    correctIndex: 2,
+    unlock: ["remnant-part5-3"]
   },
   {
     type: "quiz",
@@ -545,7 +548,8 @@ export const Chapter1_Part5 = [
       "The revolutionaries suffered heavy\nlosses and retreated",
       "The Katipunan disbanded"
     ],
-    correctIndex: 2
+    correctIndex: 2,
+    unlock: ["remnant-part5-4"]
   },
   {
     type: "quiz",
@@ -556,7 +560,8 @@ export const Chapter1_Part5 = [
       "Philippine independence",
       "The restoration of La Liga Filipina"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part5-5"]
   },
   // NEW QUESTION ADDED
   {
@@ -568,7 +573,8 @@ export const Chapter1_Part5 = [
       "Intramuros",
       "Casa Hacienda"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part5-6"]
   },
 
   {

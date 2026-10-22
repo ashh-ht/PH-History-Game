@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { Animated, Easing, ImageBackground, ScrollView, Text, View, Pressable, Image, useWindowDimensions, StyleSheet } from 'react-native';
+import { Animated, Easing, ImageBackground, Text, View, Pressable, Image, useWindowDimensions, StyleSheet, PanResponder, Modal } from 'react-native';
 import Journal from './Journal.json';
 import styles from '../../Styles/Others/StyleJournal';
 import { useJournal } from '../../Main/Others/JournalContext'; 
-import { REMNANT_DATA } from '../GameScreen/RemnantData'; // Import the new Remnant Data
+import { REMNANT_DATA } from '../GameScreen/RemnantData';
 
 // ==================================== IMAGES OF TABS ====================================
 const TABS = ['Timeline', 'Character Profiles', 'Minigame Collections', 'Glossary'];
@@ -14,6 +14,8 @@ const TAB_IMAGES = {
   'Glossary': require('../../assets/Journal_Assets/Glossary_closed.png'),
 };
 const EXIT_IMAGE = require('../../assets/Journal_Assets/Exit.png');
+const CLOSE_BUTTON_IMAGE = require('../../assets/icons/x_button.png');
+const CLOSE_BUTTON_PRESSED_IMAGE = require('../../assets/icons/x_buttonpressed.png');
 
 const STAGE_W = 1.15;
 const TAB_TOP = 5;
@@ -30,6 +32,11 @@ const TAB_OPEN_IMAGES = {
 const BOOK_IMAGE = require('../../assets/Journal_Assets/Journal_Book.png');
 const FLIP_DURATION = 750;
 const FLIP_SHADE = 0.3;
+
+const SWIPE_MIN_DIST = 60;
+const SWIPE_MIN_VELOCITY = 0.3;
+const SWIPE_CAPTURE_DIST = 20;
+const SWIPE_DIRECTION_RATIO = 1.5;
 
 // ==================================== LAMAN NG TABS SECTION ====================================
 const TIMELINE_TITLE = require('../../assets/Journal_Assets/Timeline_Title.png');
@@ -53,6 +60,9 @@ const REMNANTS_TITLE = require('../../assets/Journal_Assets/Remnants_Title.png')
 const REMNANTS_BOX_LOCKED = require('../../assets/Journal_Assets/Remnants_Box_locked.png');
 const REMNANTS_BOX_UNLOCKED = require('../../assets/Journal_Assets/Remnants_Box_unlocked.png');
 
+const REMNANTS_BOXCOMPLETE_LOCKED = require('../../assets/Journal_Assets/Remnants_BoxComplete_locked.png');
+const REMNANTS_BOXCOMPLETE_UNLOCKED = require('../../assets/Journal_Assets/Remnants_BoxComplete_unlocked.png');
+
 const GLOSSARY_TITLE = require('../../assets/Journal_Assets/Glossary_Title.png');
 const GLOSSARY_DIVIDER = require('../../assets/Journal_Assets/Glossary_Line.png');
 
@@ -61,7 +71,6 @@ const PORTRAITS = {
   'Dr. José Rizal': require('../../Character Images/Temporary Placeholders/Rizal.png'),
   'Apolinario Mabini': require('../../Character Images/Temporary Placeholders/Mabini.png'),
 };
-
 
 function BookmarkTab({ image, openImage, index, active, onPress }) {
   const showOpen = active && openImage;
@@ -130,6 +139,31 @@ function PagedSpread({ page, totalPages, onPageChange, renderLeft, renderRight, 
     });
   };
 
+  const startFlipRef = useRef(startFlip);
+  startFlipRef.current = startFlip;
+
+  const panResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => false,
+        onMoveShouldSetPanResponderCapture: (_, gs) => {
+          if (flip) return false;
+          return (
+            Math.abs(gs.dx) > SWIPE_CAPTURE_DIST &&
+            Math.abs(gs.dx) > Math.abs(gs.dy) * SWIPE_DIRECTION_RATIO
+          );
+        },
+        onPanResponderRelease: (_, gs) => {
+          if (gs.dx < -SWIPE_MIN_DIST || gs.vx < -SWIPE_MIN_VELOCITY) {
+            startFlipRef.current('next');
+          } else if (gs.dx > SWIPE_MIN_DIST || gs.vx > SWIPE_MIN_VELOCITY) {
+            startFlipRef.current('prev');
+          }
+        },
+      }),
+    [flip]
+  );
+
   const shownLeft = flip ? (flip.dir === 'next' ? flip.from : flip.to) : page;
   const shownRight = flip ? (flip.dir === 'next' ? flip.to : flip.from) : page;
 
@@ -178,24 +212,17 @@ function PagedSpread({ page, totalPages, onPageChange, renderLeft, renderRight, 
   };
 
   return (
-    <View style={styles.spreadRow} pointerEvents="box-none" onLayout={(e) => setRowRect(e.nativeEvent.layout)}>
+    <View
+      style={styles.spreadRow}
+      onLayout={(e) => setRowRect(e.nativeEvent.layout)}
+      {...panResponder.panHandlers}
+    >
       <View style={styles.spreadPage} pointerEvents={flip ? 'none' : 'box-none'} onLayout={(e) => setLeftRect(e.nativeEvent.layout)}>
         {renderLeft(shownLeft)}
       </View>
       <View style={styles.spreadPage} pointerEvents={flip ? 'none' : 'box-none'} onLayout={(e) => setRightRect(e.nativeEvent.layout)}>
         {renderRight(shownRight)}
       </View>
-
-      {!flip && page > 0 && (
-        <Pressable style={[styles.sideArrow, styles.sideArrowLeft]} onPress={() => startFlip('prev')}>
-          <Text style={styles.arrowText}>◀</Text>
-        </Pressable>
-      )}
-      {!flip && page < totalPages - 1 && (
-        <Pressable style={[styles.sideArrow, styles.sideArrowRight]} onPress={() => startFlip('next')}>
-          <Text style={styles.arrowText}>▶</Text>
-        </Pressable>
-      )}
 
       {flip && rowRect && leftRect && rightRect && renderLeaf()}
     </View>
@@ -293,7 +320,6 @@ function getAppearance(c) {
   return `${chapter} · Part${parts.length > 1 ? 's' : ''} ${parts.join(', ')}`;
 }
 
-
 function Journalbook({ navigation }) {
   const { unlockedIds } = useJournal();
   const { width: screenW, height: screenH } = useWindowDimensions();
@@ -311,27 +337,24 @@ function Journalbook({ navigation }) {
   const [timelinepage, setTimelinePage] = useState(0);
   
   // Remnant States
-  const [selectedRemnantPart, setSelectedRemnantPart] = useState(null);
+  const [remnantpage, setRemnantPage] = useState(0);
   const [selectedRemnant, setSelectedRemnant] = useState(null);
   
   const [bookSize, setBookSize] = useState({ w: 0, h: 0 });
 
   // ==================================== FILTERED DATA ====================================
 
-  // 1. Filter Timeline (Only show if the entry's ID is in the Set)
   const filteredTimelineContent = useMemo(() => {
     const timelineData = Journal.find((s) => s.title === 'Timeline')?.content || [];
 
     return timelineData
-      .filter((entry) => unlockedIds.has(entry.id)) // Only keep unlocked entries
+      .filter((entry) => unlockedIds.has(entry.id)) 
       .map((entry) => ({
         ...entry,
-        // Filter the sub-content as well
         'sub-content': entry['sub-content']?.filter(sub => unlockedIds.has(sub.id)) || []
       }));
   }, [unlockedIds]);
 
-  // Group the *filtered* timeline
   const groupedTimeline = {};
   filteredTimelineContent.forEach((entry) => {
     const key = `Ch. ${entry.chapter} - Part ${entry.part}`;
@@ -342,7 +365,7 @@ function Journalbook({ navigation }) {
   const allKeys = Object.keys(groupedTimeline);
   const Timeline_per_side = 4;
   const timeline_per_spread = Timeline_per_side * 2;
-  const totalTimespread = Math.max(1, Math.ceil(allKeys.length / timeline_per_spread)); // At least 1 page
+  const totalTimespread = Math.max(1, Math.ceil(allKeys.length / timeline_per_spread));
 
   const timelineKeysFor = (p) => {
     const s = allKeys.slice(p * timeline_per_spread, (p + 1) * timeline_per_spread);
@@ -370,13 +393,11 @@ function Journalbook({ navigation }) {
   const [leftEntries, rightEntries] = splitByLength(selectedEntries, 150);
   const chapterTitle = selectedEntries[0] ? `Chapter ${selectedEntries[0].chapter} · Part ${selectedEntries[0].part}` : '';
 
-  // 2. Filter Character Profiles (Stitch unlocked tiers together)
   const characters = useMemo(() => {
     const charData = Journal.find((s) => s.title === 'Character Profiles')?.content || [];
 
     return charData
       .map((char) => {
-        // Get only the unlocked tiers for this character
          const tiers = char.tiers ?? [{ id: char.id, content: char.content }];
          const unlockedTiers = tiers.filter((tier) => unlockedIds.has(tier.id));
 
@@ -386,7 +407,7 @@ function Journalbook({ navigation }) {
           content: unlockedTiers.map((t) => t.content).join('\n\n')
         };
       })
-      .filter((char) => char.content.length > 0); // Hide characters if 0 tiers are unlocked
+      .filter((char) => char.content.length > 0);
   }, [unlockedIds]);
 
   const totalSpreads = Math.max(1, Math.ceil(characters.length / PER_SPREAD));
@@ -411,7 +432,104 @@ function Journalbook({ navigation }) {
     </>
   );
 
-  // 4. Glossary (Untouched)
+  // ==================================== REMNANTS PAGINATION ====================================
+  const totalRemnantSpreads = 8;
+
+  const renderRemnantPiece = (chapNum, partNum) => {
+    const id = `remnant-part${chapNum}-${partNum}`;
+    const isUnlocked = unlockedIds.has(id);
+    const image = REMNANT_DATA[chapNum]?.pieces[partNum - 1];
+
+    return (
+      <Pressable 
+        key={id} 
+        style={styles.remnantCard} 
+        onPress={() => isUnlocked ? setSelectedRemnant(image) : null}
+      >
+        <View style={styles.remnantBoxWrap}>
+          <Image 
+            source={isUnlocked ? REMNANTS_BOX_UNLOCKED : REMNANTS_BOX_LOCKED} 
+            style={styles.remnantBoxImage} 
+            resizeMode="contain" 
+          />
+          {isUnlocked && (
+            <Image 
+              source={image} 
+              style={styles.remnantInnerImage} 
+              resizeMode="contain" 
+            />
+          )}
+        </View>
+        <Text style={styles.remnantLabel} numberOfLines={1} adjustsFontSizeToFit>
+          Chapter {chapNum} - Part {partNum}
+        </Text>
+      </Pressable>
+    );
+  };
+
+  const renderCompleteRemnant = (chapNum) => {
+    const isComplete = [1, 2, 3, 4, 5, 6].every(i => unlockedIds.has(`remnant-part${chapNum}-${i}`));
+    const completeImage = REMNANT_DATA[chapNum]?.complete;
+
+    return (
+      <Pressable 
+        style={styles.remnantCompleteCard} 
+        onPress={() => isComplete ? setSelectedRemnant(completeImage) : null}
+      >
+        <View style={styles.remnantBoxWrap}>
+          <Image 
+            source={isComplete ? REMNANTS_BOXCOMPLETE_UNLOCKED : REMNANTS_BOXCOMPLETE_LOCKED} 
+            style={styles.remnantBoxImage} 
+            resizeMode="contain" 
+          />
+          {isComplete && (
+            <Image 
+              source={completeImage} 
+              style={styles.remnantInnerImage} 
+              resizeMode="contain" 
+            />
+          )}
+        </View>
+        <Text style={styles.remnantCompleteLabel} numberOfLines={1} adjustsFontSizeToFit>
+          Chapter {chapNum} - Complete
+        </Text>
+      </Pressable>
+    );
+  };
+
+  const renderRemnantLeft = (p) => {
+    const chapNum = p + 1; 
+    return (
+      <>
+        <Image source={REMNANTS_TITLE} style={styles.remnantsTitle} resizeMode="contain" />
+        <View style={[styles.leftPage, styles.pageContent]}>
+          <View style={{ height: 230 * unit }} />
+          <View style={styles.Remnancegrid}>
+            {[1, 2, 3, 4].map(partNum => renderRemnantPiece(chapNum, partNum))}
+          </View>
+        </View>
+      </>
+    );
+  };
+
+  const renderRemnantRight = (p) => {
+    const chapNum = p + 1;
+    return (
+      <View style={[styles.rightPage, styles.pageContent]}>
+        <View style={{ height: 90 * unit }} />
+
+        <View style={styles.Remnancegrid}>
+          {[5, 6].map(partNum => renderRemnantPiece(chapNum, partNum))}
+        </View>
+        
+        <View style={{ alignItems: 'center'}}>
+          {renderCompleteRemnant(chapNum)}
+        </View>
+      </View>
+    );
+  };
+
+  // ==================================== GLOSSARY ====================================
   const glossaryterm = Journal.find((s) => s.title === 'Glossary')?.content ?? [];
   const sortglossary = [...glossaryterm].sort((a, b) => a.term.localeCompare(b.term));
   const Glossary_per_side = 2;
@@ -425,17 +543,17 @@ function Journalbook({ navigation }) {
   const renderGlossaryLeft = (p) => (
     <>
       <Image source={GLOSSARY_TITLE} style={styles.glossaryTitle} resizeMode="contain" />
-      <ScrollView style={styles.leftPage} contentContainerStyle={styles.pageContent}>
+      <View style={[styles.leftPage, styles.pageContent]}>
         <View style={{ height: 260 * unit }} />
         {glossaryFor(p)[0].map((g) => <GlossaryEntry key={g.term} term={g.term} meaning={g.meaning} unit={unit} />)}
-      </ScrollView>
+      </View>
     </>
   );
   const renderGlossaryRight = (p) => (
-    <ScrollView style={styles.rightPage} contentContainerStyle={styles.pageContent}>
+    <View style={[styles.rightPage, styles.pageContent]}>
       <View style={{ height: 260 * unit }} />
       {glossaryFor(p)[1].map((g) => <GlossaryEntry key={g.term} term={g.term} meaning={g.meaning} unit={unit} />)}
-    </ScrollView>
+    </View>
   );
 
   const renderTab = (tab, index) => (
@@ -450,10 +568,10 @@ function Journalbook({ navigation }) {
         setSelectedEntry(null);
         setSelectedChar(null);
         setSelectedRemnant(null);
-        setSelectedRemnantPart(null); // Reset the remnant part view
         setTimelinePage(0);
         setCharPage(0);
         setGlossarypPage(0);
+        setRemnantPage(0);
       }}
     />
   );
@@ -461,196 +579,129 @@ function Journalbook({ navigation }) {
   return (
     <View style={[styles.container, styles.overlay]}>
       <View style={{ width: stageW, height: stageH }}>
-      <View
-        style={styles.bookFrame}
-        onLayout={(e) => setBookSize({ w: e.nativeEvent.layout.width, h: e.nativeEvent.layout.height })}
-      >
-      <ImageBackground
-        source={BOOK_IMAGE}
-        style={styles.book}
-        resizeMode="contain">
+        <View
+          style={styles.bookFrame}
+          onLayout={(e) => setBookSize({ w: e.nativeEvent.layout.width, h: e.nativeEvent.layout.height })}
+        >
+          <ImageBackground
+            source={BOOK_IMAGE}
+            style={styles.book}
+            resizeMode="contain">
 
-        {activeTab === 'Timeline' && !selectedEntry && (
-          <PagedSpread
-            key="timeline-list"
-            page={timelinepage}
-            totalPages={totalTimespread}
-            onPageChange={setTimelinePage}
-            renderLeft={renderTimelineLeft}
-            renderRight={renderTimelineRight}
-            bookSize={bookSize}
-          />
-        )}
+            {activeTab === 'Timeline' && !selectedEntry && (
+              <PagedSpread
+                key="timeline-list"
+                page={timelinepage}
+                totalPages={totalTimespread}
+                onPageChange={setTimelinePage}
+                renderLeft={renderTimelineLeft}
+                renderRight={renderTimelineRight}
+                bookSize={bookSize}
+              />
+            )}
 
-        {activeTab === 'Timeline' && selectedEntry && (
-          <View style={styles.pageRow}>
-            <ScrollView style={styles.leftPage} contentContainerStyle={styles.pageContent}>
-              <Pressable onPress={() => setSelectedEntry(null)}><Text style={styles.backLink}>← Back to timeline</Text></Pressable>
-              <Text style={styles.chapterTitle}>{chapterTitle}</Text>
-              <Text style={styles.chapterRange}>{getDateLabel(selectedEntries)}</Text>
-              {leftEntries.map((entry, i) => <TimelineEntry key={i} entry={entry} />)}
-            </ScrollView>
-            <ScrollView style={styles.rightPage} contentContainerStyle={styles.pageContent}>
-              {rightEntries.map((entry, i) => <TimelineEntry key={i} entry={entry} />)}
-            </ScrollView>
-          </View>
-        )}
-
-        {activeTab === 'Character Profiles' && !selectedChar && (
-          <PagedSpread
-            key="char-list"
-            page={charPage}
-            totalPages={totalSpreads}
-            onPageChange={setCharPage}
-            renderLeft={renderCharLeft}
-            renderRight={renderCharRight}
-            bookSize={bookSize}
-          />
-        )}
-
-        {activeTab === 'Character Profiles' && selectedChar && (
-          <View key="char-detail" style={styles.spreadRow} pointerEvents="box-none">
-            <View style={styles.spreadPage} pointerEvents="box-none">
-              <View style={styles.detailFrame}>
-                <Image source={PROFILE_FRAME} style={styles.fillAll} resizeMode="stretch" />
-                {PORTRAITS[selectedChar.name] && <Image source={PORTRAITS[selectedChar.name]} style={styles.detailPortraitSlot} resizeMode="cover" />}
+            {activeTab === 'Timeline' && selectedEntry && (
+              <View style={styles.pageRow}>
+                <View style={[styles.leftPage, styles.pageContent]}>
+                  <Pressable onPress={() => setSelectedEntry(null)}><Text style={styles.backLink}>← Back to timeline</Text></Pressable>
+                  <Text style={styles.chapterTitle}>{chapterTitle}</Text>
+                  <Text style={styles.chapterRange}>{getDateLabel(selectedEntries)}</Text>
+                  {leftEntries.map((entry, i) => <TimelineEntry key={i} entry={entry} />)}
+                </View>
+                <View style={[styles.rightPage, styles.pageContent]}>
+                  {rightEntries.map((entry, i) => <TimelineEntry key={i} entry={entry} />)}
+                </View>
               </View>
-              <View style={styles.detailNameBox}>
-                <Text style={[styles.detailName, { fontSize: Math.max(12, 64 * unit) }]} numberOfLines={2} adjustsFontSizeToFit>{selectedChar.name}</Text>
+            )}
+
+            {activeTab === 'Character Profiles' && !selectedChar && (
+              <PagedSpread
+                key="char-list"
+                page={charPage}
+                totalPages={totalSpreads}
+                onPageChange={setCharPage}
+                renderLeft={renderCharLeft}
+                renderRight={renderCharRight}
+                bookSize={bookSize}
+              />
+            )}
+
+            {activeTab === 'Character Profiles' && selectedChar && (
+              <View key="char-detail" style={styles.spreadRow} pointerEvents="box-none">
+                <View style={styles.spreadPage} pointerEvents="box-none">
+                  <View style={styles.detailFrame}>
+                    <Image source={PROFILE_FRAME} style={styles.fillAll} resizeMode="stretch" />
+                    {PORTRAITS[selectedChar.name] && <Image source={PORTRAITS[selectedChar.name]} style={styles.detailPortraitSlot} resizeMode="cover" />}
+                  </View>
+                  <View style={styles.detailNameBox}>
+                    <Text style={[styles.detailName, { fontSize: Math.max(12, 64 * unit) }]} numberOfLines={2} adjustsFontSizeToFit>{selectedChar.name}</Text>
+                  </View>
+                  <Text style={[styles.detailInfo, { fontSize: Math.max(9, 34 * unit) }]}>{getAppearance(selectedChar)}</Text>
+                  <Pressable style={styles.detailBack} onPress={() => setSelectedChar(null)}><Text style={styles.backLink}>← Back to profiles</Text></Pressable>
+                </View>
+                <View style={styles.spreadPage} pointerEvents="box-none">
+                  <View style={[styles.detailBodyScroll, styles.detailBodyContent]}>
+                    <Text style={[styles.detailBody, { fontSize: Math.max(9, 26 * unit), lineHeight: Math.max(13, 38 * unit) }]}>{selectedChar.content}</Text>
+                  </View>
+                </View>
               </View>
-              <Text style={[styles.detailInfo, { fontSize: Math.max(9, 34 * unit) }]}>{getAppearance(selectedChar)}</Text>
-              <Pressable style={styles.detailBack} onPress={() => setSelectedChar(null)}><Text style={styles.backLink}>← Back to profiles</Text></Pressable>
-            </View>
-            <View style={styles.spreadPage} pointerEvents="box-none">
-              <ScrollView style={styles.detailBodyScroll} contentContainerStyle={styles.detailBodyContent}>
-                <Text style={[styles.detailBody, { fontSize: Math.max(9, 26 * unit), lineHeight: Math.max(13, 38 * unit) }]}>{selectedChar.content}</Text>
-              </ScrollView>
-            </View>
-          </View>
-        )}
+            )}
 
-        {/* ================= REMNANTS TAB ================= */}
-        {activeTab === 'Minigame Collections' && !selectedRemnantPart && (
-          <View style={styles.spreadRow} pointerEvents="box-none">
-            <View style={styles.spreadPage} pointerEvents="box-none">
-              <Image source={REMNANTS_TITLE} style={styles.remnantsTitle} resizeMode="contain" />
-              <ScrollView style={styles.leftPage} contentContainerStyle={styles.pageContent}>
-                <View style={{ height: 260 * unit }} />
-                <View style={styles.Remnancegrid}>
-                  {[1, 2, 3, 4].map((partNum) => {
-                    const isComplete = [1, 2, 3, 4, 5, 6].every(i => unlockedIds.has(`remnant-part${partNum}-${i}`));
-                    return (
-                       <Pressable key={partNum} style={styles.remnantCard} onPress={() => setSelectedRemnantPart(partNum)}>
-                         <View style={styles.remnantBoxWrap}>
-                            <Image 
-                              source={isComplete ? REMNANT_DATA[partNum].complete : REMNANTS_BOX_UNLOCKED} 
-                              style={styles.remnantBoxImage} 
-                              resizeMode="contain" 
-                            />
-                         </View>
-                         <Text style={styles.remnantLabel}>Part {partNum}</Text>
-                       </Pressable>
-                    )
-                  })}
-                </View>
-              </ScrollView>
-            </View>
-            <View style={styles.spreadPage} pointerEvents="box-none">
-              <ScrollView style={styles.rightPage} contentContainerStyle={styles.pageContent}>
-                <View style={{ height: 260 * unit }} />
-                <View style={styles.Remnancegrid}>
-                  {[5, 6, 7, 8].map((partNum) => {
-                    const isComplete = [1, 2, 3, 4, 5, 6].every(i => unlockedIds.has(`remnant-part${partNum}-${i}`));
-                    return (
-                       <Pressable key={partNum} style={styles.remnantCard} onPress={() => setSelectedRemnantPart(partNum)}>
-                         <View style={styles.remnantBoxWrap}>
-                            <Image 
-                              source={isComplete ? REMNANT_DATA[partNum].complete : REMNANTS_BOX_UNLOCKED} 
-                              style={styles.remnantBoxImage} 
-                              resizeMode="contain" 
-                            />
-                         </View>
-                         <Text style={styles.remnantLabel}>Part {partNum}</Text>
-                       </Pressable>
-                    )
-                  })}
-                </View>
-              </ScrollView>
-            </View>
-          </View>
-        )}
+            {/* ================= REMNANTS TAB ================= */}
+            {activeTab === 'Minigame Collections' && (
+              <PagedSpread
+                key="remnants-list"
+                page={remnantpage}
+                totalPages={totalRemnantSpreads}
+                onPageChange={setRemnantPage}
+                renderLeft={renderRemnantLeft}
+                renderRight={renderRemnantRight}
+                bookSize={bookSize}
+              />
+            )}
 
-        {activeTab === 'Minigame Collections' && selectedRemnantPart && (
-          <View style={styles.spreadRow} pointerEvents="box-none">
-            <View style={styles.spreadPage} pointerEvents="box-none">
-               <Pressable onPress={() => setSelectedRemnantPart(null)} style={{ position: 'absolute', top: 40, left: 40, zIndex: 10 }}>
-                 <Text style={styles.backLink}>← Back to Parts</Text>
-               </Pressable>
-               
-               {/* Shows the Complete Image if all 6 are unlocked */}
-               <Image 
-                 source={
-                   [1, 2, 3, 4, 5, 6].every(i => unlockedIds.has(`remnant-part${selectedRemnantPart}-${i}`)) 
-                   ? REMNANT_DATA[selectedRemnantPart].complete 
-                   : REMNANTS_BOX_LOCKED
-                 } 
-                 style={{ width: '70%', height: '70%', marginTop: 60 }} 
-                 resizeMode="contain" 
-               />
-            </View>
-            
-            <View style={styles.spreadPage} pointerEvents="box-none">
-               <ScrollView style={styles.rightPage} contentContainerStyle={styles.pageContent}>
-                <View style={{ height: 260 * unit }} />
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10, width: '100%', paddingHorizontal: 20 }}>
-                  {REMNANT_DATA[selectedRemnantPart].pieces.map((piece, index) => {
-                    const isUnlocked = unlockedIds.has(`remnant-part${selectedRemnantPart}-${index + 1}`);
-                    return (
-                      <Pressable 
-                        key={index} 
-                        style={{ width: '30%', aspectRatio: 1, margin: 5 }} 
-                        onPress={() => isUnlocked ? setSelectedRemnant(piece) : null}
-                      >
-                        <Image 
-                          source={isUnlocked ? REMNANTS_BOX_UNLOCKED : REMNANTS_BOX_LOCKED} 
-                          style={{ width: '100%', height: '100%', position: 'absolute' }} 
-                          resizeMode="contain" 
-                        />
-                        {isUnlocked && (
-                          <Image source={piece} style={{ width: '80%', height: '80%', alignSelf: 'center', marginTop: '10%' }} resizeMode="contain" />
-                        )}
-                      </Pressable>
-                    )
-                  })}
-                </View>
-              </ScrollView>
-            </View>
-          </View>
-        )}
-
-        {activeTab === 'Glossary' && (
-          <PagedSpread
-            key="glossary"
-            page={glossarypage}
-            totalPages={toal_glossary_spread}
-            onPageChange={setGlossarypPage}
-            renderLeft={renderGlossaryLeft}
-            renderRight={renderGlossaryRight}
-            bookSize={bookSize}
-          />
-        )}
-      </ImageBackground>
-      </View>
+            {activeTab === 'Glossary' && (
+              <PagedSpread
+                key="glossary"
+                page={glossarypage}
+                totalPages={toal_glossary_spread}
+                onPageChange={setGlossarypPage}
+                renderLeft={renderGlossaryLeft}
+                renderRight={renderGlossaryRight}
+                bookSize={bookSize}
+              />
+            )}
+          </ImageBackground>
+        </View>
 
         {TABS.map((tab, i) => renderTab(tab, i))}
         <BookmarkTab image={EXIT_IMAGE} index={TABS.length} onPress={() => navigation.goBack()} />
-
-        {selectedRemnant && (
-          <Pressable style={styles.remnantViewer} onPress={() => setSelectedRemnant(null)}>
-            <Image source={selectedRemnant} style={styles.remnantViewerImage} resizeMode="contain" />
-          </Pressable>
-        )}
       </View>
+
+      {/* ================= ZOOMED IN REMNANT OVERLAY ================= */}
+      <Modal
+        visible={!!selectedRemnant}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setSelectedRemnant(null)}
+      >
+        <View style={styles.remnantViewer}>
+          <Pressable 
+            style={styles.closeButton} 
+            onPress={() => setSelectedRemnant(null)}
+          >
+            {({ pressed }) => (
+              <Image 
+                source={pressed ? CLOSE_BUTTON_PRESSED_IMAGE : CLOSE_BUTTON_IMAGE} 
+                style={styles.closeButtonImage} 
+                resizeMode="contain" 
+              />
+            )}
+          </Pressable>
+          <Image source={selectedRemnant} style={styles.remnantViewerImage} resizeMode="contain" />
+        </View>
+      </Modal>
+
     </View>
   );
 }

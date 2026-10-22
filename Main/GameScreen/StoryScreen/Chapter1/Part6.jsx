@@ -481,7 +481,8 @@ export const Chapter1_Part6 = [
       "Leyte",
       "Ilocos"
     ],
-    correctIndex: 0
+    correctIndex: 0,
+    unlock: ["remnant-part6-1"]
   },
   {
     type: "quiz",
@@ -492,7 +493,8 @@ export const Chapter1_Part6 = [
       "La Liga and Katipunan",
       "Cavite and Manila"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part6-2"]
   },
   {
     type: "quiz",
@@ -503,7 +505,8 @@ export const Chapter1_Part6 = [
       "He was executed at Bagumbayan",
       "He became a revolutionary commander"
     ],
-    correctIndex: 2
+    correctIndex: 2,
+    unlock: ["remnant-part6-3"]
   },
   {
     type: "quiz",
@@ -514,7 +517,8 @@ export const Chapter1_Part6 = [
       "They were fighting over control of Manila",
       "They refused to fight Spain"
     ],
-    correctIndex: 0
+    correctIndex: 0,
+    unlock: ["remnant-part6-4"]
   },
   {
     type: "quiz",
@@ -525,7 +529,8 @@ export const Chapter1_Part6 = [
       "They faced military pressure, shortages,\nand divisions over leadership",
       "They had already defeated Spain"
     ],
-    correctIndex: 2
+    correctIndex: 2,
+    unlock: ["remnant-part6-5"]
   },
   // NEW QUESTION ADDED
   {
@@ -537,7 +542,8 @@ export const Chapter1_Part6 = [
       "Mariano Álvarez",
       "Daniel Tirona"
     ],
-    correctIndex: 2
+    correctIndex: 2,
+    unlock: ["remnant-part6-6"]
   },
 
   {

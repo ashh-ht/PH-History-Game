@@ -517,7 +517,8 @@ export const Chapter1_Part7 = [
       "To restore Spanish rule in Cavite",
       "To establish the Katipunan"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part7-1"]
   },
 
   {
@@ -529,7 +530,8 @@ export const Chapter1_Part7 = [
       "Emilio Aguinaldo",
       "Artemio Ricarte"
     ],
-    correctIndex: 2
+    correctIndex: 2,
+    unlock: ["remnant-part7-2"]
   },
 
   {
@@ -541,7 +543,8 @@ export const Chapter1_Part7 = [
       "He wanted to surrender to Spain",
       "He opposed the creation of a\nrevolutionary government"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part7-3"]
   },
 
   {
@@ -553,7 +556,8 @@ export const Chapter1_Part7 = [
       "He was arrested and brought\nbefore a military court",
       "He became President of the\nnew government"
     ],
-    correctIndex: 2
+    correctIndex: 2,
+    unlock: ["remnant-part7-4"]
   },
 
   {
@@ -565,7 +569,8 @@ export const Chapter1_Part7 = [
       "They were executed at Mount Buntis",
       "They surrendered to Spanish forces"
     ],
-    correctIndex: 2
+    correctIndex: 2,
+    unlock: ["remnant-part7-5"]
   },
 
 // NEW QUESTION ADDED
@@ -578,7 +583,8 @@ export const Chapter1_Part7 = [
       "Maragondon",
       "Naik"
     ],
-    correctIndex: 2
+    correctIndex: 2,
+    unlock: ["remnant-part7-6"]
   },
 
   {
