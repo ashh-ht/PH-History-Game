@@ -166,7 +166,6 @@ export default function SavesScreen({ navigation }) {
   const [confirm, setConfirm] = useState(null);
   const { s, insets } = useScale();
   const { width: winW, height: winH } = useWindowDimensions();
-  const { playSfx } = useAudio();
 
   const panelH = Math.min(winH * 0.92, 700, (winW * 0.9) / PANEL_ASPECT);
   const panelW = panelH * PANEL_ASPECT;
@@ -297,26 +296,18 @@ export default function SavesScreen({ navigation }) {
           </View>
 
           {saves.length > 0 && (
-            // Full-width row pinned to the bottom; alignItems centers the button
-            <View
-              pointerEvents="box-none"
-              style={[styles.deleteAllRow, { bottom: delBottom }]}
-            >
-              <Sound_clicks
-                style={{
-                  width: delW,
-                  height: delH,
-                  transform: [{ translateX: DELETE_NUDGE_X }],
-                }}
-                onPress={() => setConfirm({ type: "all" })}
-              >
-                <Image
-                  source={BTN_DELETE_ALL}
-                  style={styles.deleteAllImage}
-                  resizeMode="contain"
-                />
-              </Sound_clicks>
-            </View>
+            // FIXED: Replaced <Sound_clicks> with <AnimatedButton>
+            <AnimatedButton
+              normalSource={BTN_DELETE_ALL}
+              pressedSource={BTN_DELETE_ALL_C}
+              onPress={() => setConfirm({ type: "all" })}
+              containerStyle={[styles.deleteAllRow, { bottom: delBottom }]}
+              imageStyle={{
+                width: delW,
+                height: delH,
+                transform: [{ translateX: DELETE_NUDGE_X }],
+              }}
+            />
           )}
         </ImageBackground>
       </View>

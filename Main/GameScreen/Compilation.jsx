@@ -12,7 +12,6 @@ import {
 
 import { useGameProgress } from "../../GameProgress";
 import { useAudio } from "../../Audiostore";
-import { useAudio } from "../../Audiostore";
 import { useGameplaySettings } from "../Others/GameplaySetting";
 import { useDisplaySettings, FONT_SCALE } from "../Others/DisplaySetting";
 import { saveCheckpoint, markPartReached } from "../Others/saveProgress";

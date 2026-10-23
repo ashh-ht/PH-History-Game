@@ -2,17 +2,21 @@ buildscript {
   ext {
     buildToolsVersion = "35.0.0"
     minSdkVersion = 24
-    compileSdkVersion = 36
-    targetSdkVersion = 36
+    compileSdkVersion = 35
+    targetSdkVersion = 35
     ndkVersion = "27.1.12297006"
+    kotlinVersion = "2.1.0" // <--- Changed to 2.1.0 to satisfy AsyncStorage
   }
   repositories {
     google()
     mavenCentral()
   }
   dependencies {
-    classpath('com.facebook.react:react-native-gradle-plugin')
-    classpath('org.jetbrains.kotlin:kotlin-gradle-plugin:2.2.0')
+    // <--- Updated to AGP 8.7.2 to support SDK 35
+    classpath("com.android.tools.build:gradle:8.7.2") 
+    
+    classpath("com.facebook.react:react-native-gradle-plugin")
+    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     classpath('com.google.gms:google-services:4.4.2')
   }
 }
