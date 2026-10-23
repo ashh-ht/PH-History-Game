@@ -12,6 +12,7 @@ import {
 
 import { useGameProgress } from "../../GameProgress";
 import { useAudio } from "../../Audiostore";
+import { useAudio } from "../../Audiostore";
 import { useGameplaySettings } from "../Others/GameplaySetting";
 import { useDisplaySettings, FONT_SCALE } from "../Others/DisplaySetting";
 import { saveCheckpoint, markPartReached } from "../Others/saveProgress";
@@ -24,15 +25,15 @@ import { REMNANT_DATA } from "./RemnantData";
 // =====================================================
 // MINIGAMES
 // =====================================================
-import VoyageMinigame from "./Minigames/VoyageMinigame";
-import SantoNinoMinigame from "./Minigames/SantoNinoMinigame";
-import CedulaMinigame from "./Minigames/CedulaMinigame";
-import DecipherMinigame from "./Minigames/DecipherMinigame";
-import CharacterMatchingMinigame from "./Minigames/CharacterMatchingMinigame";
-import ChronologicalOrderMinigame from "./Minigames/ChronologicalOrderMinigame";
-import WhoSaidItMinigame from "./Minigames/WhoSaidItMinigame";
-import TimelineSort from "./Minigames/Timelinesort";
-import { BloodTrace, OathTrace } from "./Minigames/TracingMinigame";
+import VoyageMinigame from "../GameScreen/Minigames/VoyageMinigame";
+import SantoNinoMinigame from "../GameScreen/Minigames/SantoNinoMinigame";
+import CedulaMinigame from "../GameScreen/Minigames/CedulaMinigame";
+import DecipherMinigame from "../GameScreen/Minigames/DecipherMinigame";
+import CharacterMatchingMinigame from "../GameScreen/Minigames/CharacterMatchingMinigame";
+import ChronologicalOrderMinigame from "../GameScreen/Minigames/ChronologicalOrderMinigame";
+import WhoSaidItMinigame from "../GameScreen/Minigames/WhoSaidItMinigame";
+import TimelineSort from "../GameScreen/Minigames/Timelinesort";
+import { BloodTrace, OathTrace } from "../GameScreen/Minigames/TracingMinigame";
 
 // =====================================================
 // HELPERS
@@ -413,6 +414,7 @@ function PartRenderer(props) {
 
   const hasMoreScenes = sceneIdx < sceneData.length;
   const current = hasMoreScenes ? sceneData[sceneIdx] : null;
+  console.log("part", partNumber, "idx", sceneIdx, "type", current?.type);
 
   const isMinigame = current ? MINIGAME_TYPES.has(current.type) : false;
 

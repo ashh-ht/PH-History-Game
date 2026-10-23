@@ -16,6 +16,8 @@ const TAB_IMAGES = {
 const EXIT_IMAGE = require('../../assets/Journal_Assets/Exit.png');
 const CLOSE_BUTTON_IMAGE = require('../../assets/icons/x_button.png');
 const CLOSE_BUTTON_PRESSED_IMAGE = require('../../assets/icons/x_buttonpressed.png');
+const CLOSE_BUTTON_IMAGE = require('../../assets/icons/x_button.png');
+const CLOSE_BUTTON_PRESSED_IMAGE = require('../../assets/icons/x_buttonpressed.png');
 
 const STAGE_W = 1.15;
 const TAB_TOP = 5;
@@ -32,6 +34,11 @@ const TAB_OPEN_IMAGES = {
 const BOOK_IMAGE = require('../../assets/Journal_Assets/Journal_Book.png');
 const FLIP_DURATION = 750;
 const FLIP_SHADE = 0.3;
+
+const SWIPE_MIN_DIST = 60;
+const SWIPE_MIN_VELOCITY = 0.3;
+const SWIPE_CAPTURE_DIST = 20;
+const SWIPE_DIRECTION_RATIO = 1.5;
 
 const SWIPE_MIN_DIST = 60;
 const SWIPE_MIN_VELOCITY = 0.3;
@@ -225,6 +232,26 @@ function PagedSpread({ page, totalPages, onPageChange, renderLeft, renderRight, 
       </View>
 
       {flip && rowRect && leftRect && rightRect && renderLeaf()}
+
+      {/* Tap arrows: same page-turn animation as swiping */}
+      {!flip && page > 0 && (
+        <Pressable
+          onPress={() => startFlip('prev')}
+          hitSlop={12}
+          style={{ position: 'absolute', left: '4%', bottom: '3%', zIndex: 30 }}
+        >
+          <Text style={{ fontSize: 34, color: '#5A4A32', fontWeight: 'bold' }}>‹</Text>
+        </Pressable>
+      )}
+      {!flip && page < totalPages - 1 && (
+        <Pressable
+          onPress={() => startFlip('next')}
+          hitSlop={12}
+          style={{ position: 'absolute', right: '4%', bottom: '3%', zIndex: 30 }}
+        >
+          <Text style={{ fontSize: 34, color: '#5A4A32', fontWeight: 'bold' }}>›</Text>
+        </Pressable>
+      )}
     </View>
   );
 }

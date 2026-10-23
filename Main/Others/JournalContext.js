@@ -47,23 +47,27 @@ export const JournalProvider = ({ children }) => {
     );
   }, [unlockedIds, loaded]);
 
-  // Add new unlocks.
-  // useCallback keeps this function's identity stable, and returning `prev` when nothing
-  // is new means React skips the re-render. Without both, any component that calls
-  // unlock() from a useEffect([unlock]) re-triggers itself forever.
+  // Add new unlocks (stable identity + returns `prev` when nothing is new)
   const unlock = useCallback((ids) => {
     if (!ids || ids.length === 0) return;
 
     setUnlockedIds((prev) => {
-      if (ids.every((id) => prev.has(id))) return prev; // nothing new -> same reference
+      if (ids.every((id) => prev.has(id))) return prev;
       const next = new Set(prev);
       ids.forEach((id) => next.add(id));
       return next;
     });
   }, []);
 
-  // Optional: call this from your New Game screen if a new game should start with an empty Journal
-  const resetUnlocks = useCallback(() => setUnlockedIds(new Set()), []);
+  // Wipes memory AND storage. Used by the New Game screen.
+  const resetUnlocks = useCallback(async () => {
+    setUnlockedIds(new Set());
+    try {
+      await AsyncStorage.removeItem(STORAGE_KEY);
+    } catch (e) {
+      console.error('[JournalContext] Failed to reset journal progress', e);
+    }
+  }, []);
 
   const value = useMemo(
     () => ({ unlockedIds, unlock, resetUnlocks }),

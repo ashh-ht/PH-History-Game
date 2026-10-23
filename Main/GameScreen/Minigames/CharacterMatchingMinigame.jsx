@@ -1,24 +1,61 @@
 import React, {
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
 } from "react";
 
 import {
-    View,
-    Text,
-    Image,
-    Pressable,
-    StyleSheet,
-    SafeAreaView,
-    StatusBar,
-    ScrollView,
-    useWindowDimensions,
-    PanResponder,
-    Animated,
+  View,
+  Text,
+  Image,
+  Pressable,
+  TouchableOpacity,
+  ImageBackground,
+  StyleSheet,
+  SafeAreaView,
+  ScrollView,
+  useWindowDimensions,
+  PanResponder,
+  Animated,
 } from "react-native";
+
+import { useAudio } from "../../../Audiostore"; // same file PartRenderer uses
+
+// =====================================================
+// ARTWORK
+// Same images and paths as DecipherMinigame. Adjust the
+// paths if your folders are laid out differently.
+// =====================================================
+
+const IMG = {
+  background: require("../../../Background Images/Usuals/Paper_scroll.png"),
+  panel: require("../../../Background Images/Usuals/Minigames_Foreground.png"),
+  button: require("../../../assets/buttons/choice_button.png"),
+};
+
+// Does the panel image have a name tab built in (like dialogue_box.png)?
+//  true  -> labels sit on the tab
+//  false -> plain framed image: the label shows as a small heading inside
+//           the panel, and padding is wider to clear a decorative border
+const PANEL_HAS_TAB = false;
+const PANEL_PAD_TOP = PANEL_HAS_TAB ? 58 : 38;
+const PANEL_PAD_BOTTOM = PANEL_HAS_TAB ? 26 : 42;
+const PANEL_PAD_SIDE = PANEL_HAS_TAB ? 34 : 54;
+
+// How much blank/transparent space the panel PNG has around its visible
+// frame, as a fraction of the image (0.1 = 10%). Tune these if the content
+// still looks off-center. Use all zeros for an image with no blank margins.
+const PANEL_INSET = PANEL_HAS_TAB
+  ? { left: 0, right: 0, top: 0, bottom: 0 }
+  : { left: 0.023, right: 0.01, top: 0.06, bottom: 0.06 };
+
+const INK = "#352313"; // same brown the speaker names use
+const BUTTON_INK = "#371f10"; // same as quiz buttons
+const GOLD = "#7a5a2a";
+const GREEN = "#3d6b45";
+const RED = "#a3281b";
 
 const STARTING_TIME = 45;
 const TIME_BONUS = 10;
@@ -26,1647 +63,1323 @@ const WRONG_ANSWER_PENALTY = 2;
 const POINTS_PER_CORRECT = 100;
 const MAX_ROUND_CHOICES = 4;
 
-const COLORS = {
-    // Cream is the main surface; green is reserved for structure and actions.
-    background: "#F5EEDF",
-    parchment: "#FFF9EC",
-    parchmentDeep: "#F2EAD8",
-    parchmentShadow: "#E6D8BC",
-    panelBorder: "#D2BD8F",
-
-    green: "#34483D",
-    greenLight: "#506A58",
-    greenSoft: "#E1E9DD",
-    greenDeep: "#25382D",
-
-    gold: "#C4A66A",
-    goldDark: "#98783D",
-
-    text: "#25312C",
-    body: "#50574F",
-    muted: "#778178",
-    mutedLight: "#A6A89C",
-
-    red: "#B94E3B",
-    redSoft: "#F8E5DE",
-
-    white: "#FFFFFF",
-};
-
 const CHARACTER_INFO = [
-    { id: "rizal", name: "Dr. José Rizal" },
-    { id: "bonifacio", name: "Andrés Bonifacio" },
-    { id: "mabini", name: "Apolinario Mabini" },
-    { id: "franco", name: "Domingo Franco" },
-    { id: "dagohoy", name: "Francisco Dagohoy" },
-    { id: "legazpi", name: "Miguel López de Legazpi" },
-    { id: "dula", name: "Lakan Dula" },
-    { id: "sulayman", name: "Rajah Sulayman" },
+  { id: "rizal", name: "Dr. José Rizal" },
+  { id: "bonifacio", name: "Andrés Bonifacio" },
+  { id: "mabini", name: "Apolinario Mabini" },
+  { id: "franco", name: "Domingo Franco" },
+  { id: "dagohoy", name: "Francisco Dagohoy" },
+  { id: "legazpi", name: "Miguel López de Legazpi" },
+  { id: "dula", name: "Lakan Dula" },
+  { id: "sulayman", name: "Rajah Sulayman" },
 ];
 
 function shuffle(items) {
-    const result = [...items];
+  const result = [...items];
 
-    for (let i = result.length - 1; i > 0; i -= 1) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [result[i], result[j]] = [result[j], result[i]];
-    }
+  for (let i = result.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
 
-    return result;
+  return result;
 }
 
 function formatTime(seconds) {
-    const safeSeconds = Math.max(0, seconds);
-    const minutes = Math.floor(safeSeconds / 60);
-    const remainingSeconds = safeSeconds % 60;
+  const safeSeconds = Math.max(0, seconds);
+  const minutes = Math.floor(safeSeconds / 60);
+  const remainingSeconds = safeSeconds % 60;
 
-    return `${String(minutes).padStart(2, "0")}:${String(
-        remainingSeconds
-    ).padStart(2, "0")}`;
+  return `${String(minutes).padStart(2, "0")}:${String(
+    remainingSeconds
+  ).padStart(2, "0")}`;
 }
+
+// =====================================================
+// SHARED UI PIECES
+// =====================================================
+
+function GameButton({ label, onPress, secondary }) {
+  const scale = useRef(new Animated.Value(1)).current;
+  const translateY = useRef(new Animated.Value(0)).current;
+
+  const animate = (isPressed) => {
+    Animated.parallel([
+      Animated.spring(scale, {
+        toValue: isPressed ? 0.94 : 1,
+        speed: 20,
+        bounciness: 12,
+        useNativeDriver: true,
+      }),
+      Animated.spring(translateY, {
+        toValue: isPressed ? 3 : 0,
+        speed: 20,
+        bounciness: 10,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  return (
+    <Animated.View
+      style={[
+        styles.buttonWrap,
+        secondary && styles.buttonSecondary,
+        { transform: [{ scale }, { translateY }] },
+      ]}
+    >
+      <TouchableOpacity
+        activeOpacity={1}
+        accessibilityRole="button"
+        onPressIn={() => animate(true)}
+        onPressOut={() => animate(false)}
+        onPress={onPress}
+      >
+        <ImageBackground
+          source={IMG.button}
+          style={styles.buttonBg}
+          resizeMode="stretch"
+        >
+          <Text style={styles.buttonText}>{label}</Text>
+        </ImageBackground>
+      </TouchableOpacity>
+    </Animated.View>
+  );
+}
+
+// The panel image is drawn slightly oversized and shifted so that its
+// VISIBLE frame lines up exactly with the box, even when the PNG has blank
+// transparent margins. Content is then centered inside the visible frame.
+function Panel({ children, style }) {
+  // The box is measured after layout, and the image is sized in real pixels
+  // from that measurement. (Percent sizes can come out short when the box
+  // grows with its content.)
+  const [size, setSize] = useState({ w: 0, h: 0 });
+
+  const L = PANEL_INSET.left;
+  const R = PANEL_INSET.right;
+  const T = PANEL_INSET.top;
+  const B = PANEL_INSET.bottom;
+  const w = 1 - L - R;
+  const h = 1 - T - B;
+
+  const onLayout = (event) => {
+    const { width, height } = event.nativeEvent.layout;
+
+    setSize((previous) =>
+      Math.abs(previous.w - width) < 0.5 && Math.abs(previous.h - height) < 0.5
+        ? previous
+        : { w: width, h: height }
+    );
+  };
+
+  const imgW = size.w / w;
+  const imgH = size.h / h;
+
+  return (
+    <View
+      onLayout={onLayout}
+      style={[styles.panel, style, { overflow: "visible" }]}
+    >
+      {size.w > 0 ? (
+        <Image
+          source={IMG.panel}
+          resizeMode="stretch"
+          pointerEvents="none"
+          style={{
+            position: "absolute",
+            width: imgW,
+            height: imgH,
+            left: -L * imgW,
+            top: -T * imgH,
+          }}
+        />
+      ) : null}
+      {children}
+    </View>
+  );
+}
+
+// Text that sits on the little name tab built into the box art.
+function PanelTab({ children }) {
+  if (!PANEL_HAS_TAB) {
+    return <Text style={styles.kicker}>{children}</Text>;
+  }
+
+  return (
+    <View style={styles.tab} pointerEvents="none">
+      <Text style={styles.tabText} numberOfLines={1}>
+        {children}
+      </Text>
+    </View>
+  );
+}
+
+function Screen({ children }) {
+  return (
+    <ImageBackground
+      source={IMG.background}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <SafeAreaView style={styles.safeArea}>
+        <ScrollView
+          style={styles.flex}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          nestedScrollEnabled
+        >
+          {children}
+        </ScrollView>
+      </SafeAreaView>
+    </ImageBackground>
+  );
+}
+
+// =====================================================
+// MINIGAME
+// =====================================================
 
 export default function CharacterMatchingMinigame({
-    characters = [],
-    onComplete,
+  characters = [],
+  onComplete,
 }) {
-    const { width, height } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
+  const audio = useAudio();
 
-    const isNarrow = width < 380;
-    const isCompact = height < 680;
+  const landscape = width > height;
+  const isNarrow = width < 380;
+  const isCompact = height < 680;
 
-    const choicesPerRound = useMemo(() => {
-        if (isNarrow || isCompact) return 2;
-        if (width < 600) return 3;
-        return MAX_ROUND_CHOICES;
-    }, [width, isNarrow, isCompact]);
+  const choicesPerRound = useMemo(() => {
+    if (isNarrow || isCompact) return 2;
+    if (width < 600) return 3;
+    return MAX_ROUND_CHOICES;
+  }, [width, isNarrow, isCompact]);
 
-    const [gameCharacters, setGameCharacters] = useState([]);
-    const [roundStart, setRoundStart] = useState(0);
-    const [roundChoiceOrder, setRoundChoiceOrder] = useState([]);
+  const [gameCharacters, setGameCharacters] = useState([]);
+  const [roundStart, setRoundStart] = useState(0);
+  const [roundChoiceOrder, setRoundChoiceOrder] = useState([]);
 
-    const [matchedIds, setMatchedIds] = useState([]);
-    const [selectedNameId, setSelectedNameId] = useState(null);
+  const [matchedIds, setMatchedIds] = useState([]);
+  const [selectedNameId, setSelectedNameId] = useState(null);
 
-    const [timeLeft, setTimeLeft] = useState(STARTING_TIME);
-    const [score, setScore] = useState(0);
-    const [status, setStatus] = useState("ready");
+  const [timeLeft, setTimeLeft] = useState(STARTING_TIME);
+  const [score, setScore] = useState(0);
+  const [status, setStatus] = useState("ready");
 
-    const [feedback, setFeedback] = useState(null);
-    const [lastCorrectId, setLastCorrectId] = useState(null);
-    const [lastWrongId, setLastWrongId] = useState(null);
+  const [feedback, setFeedback] = useState(null);
+  const [lastCorrectId, setLastCorrectId] = useState(null);
+  const [lastWrongId, setLastWrongId] = useState(null);
 
-    const [startedAt, setStartedAt] = useState(null);
-    const [finishedAt, setFinishedAt] = useState(null);
+  const [startedAt, setStartedAt] = useState(null);
+  const [finishedAt, setFinishedAt] = useState(null);
 
-    const feedbackTimeout = useRef(null);
-    const transitionTimeout = useRef(null);
+  const feedbackTimeout = useRef(null);
+  const transitionTimeout = useRef(null);
 
-    const roundLock = useRef(false);
-    const matchedRef = useRef([]);
-    const scoreRef = useRef(0);
-    const finishTimeRef = useRef(null);
+  const roundLock = useRef(false);
+  const matchedRef = useRef([]);
+  const scoreRef = useRef(0);
+  const finishTimeRef = useRef(null);
 
-    const targetRefs = useRef({});
-    const dragValues = useRef({});
-    const dragStartedRef = useRef(false);
+  const targetRefs = useRef({});
+  const dragValues = useRef({});
+  const dragStartedRef = useRef(false);
 
-    const normalizedCharacters = useMemo(() => {
-        const supplied = Array.isArray(characters) ? characters : [];
-        const byId = new Map(
-            supplied.map((character) => [character.id, character])
-        );
+  // Sound helper that never crashes if audio isn't ready
+  const sfx = useCallback(
+    (key) => {
+      try {
+        audio?.playSfx?.(key);
+      } catch (e) {}
+    },
+    [audio]
+  );
 
-        return CHARACTER_INFO.map((info) => {
-            const provided = byId.get(info.id);
+  const normalizedCharacters = useMemo(() => {
+    const supplied = Array.isArray(characters) ? characters : [];
+    const byId = new Map(
+      supplied.map((character) => [character.id, character])
+    );
 
-            return {
-                ...info,
-                ...(provided || {}),
-                id: info.id,
-                name: info.name,
-                image: provided?.image ?? provided?.portrait,
-            };
+    return CHARACTER_INFO.map((info) => {
+      const provided = byId.get(info.id);
+
+      return {
+        ...info,
+        ...(provided || {}),
+        id: info.id,
+        name: info.name,
+        image: provided?.image ?? provided?.portrait,
+      };
+    });
+  }, [characters]);
+
+  const validCharacters = useMemo(
+    () => normalizedCharacters.filter((character) => character.image != null),
+    [normalizedCharacters]
+  );
+
+  const currentRound = useMemo(
+    () => gameCharacters.slice(roundStart, roundStart + choicesPerRound),
+    [gameCharacters, roundStart, choicesPerRound]
+  );
+
+  const currentRoundIds = useMemo(
+    () => currentRound.map((character) => character.id),
+    [currentRound]
+  );
+
+  // The order is stored in state rather than randomly regenerated on
+  // every render. Timer ticks therefore cannot reshuffle the choices.
+  const roundChoices = useMemo(() => {
+    const byId = new Map(
+      currentRound.map((character) => [character.id, character])
+    );
+
+    return roundChoiceOrder.map((id) => byId.get(id)).filter(Boolean);
+  }, [roundChoiceOrder, currentRound]);
+
+  const matchedSet = useMemo(() => new Set(matchedIds), [matchedIds]);
+
+  const completedCount = matchedIds.length;
+  const totalCharacters = gameCharacters.length || 8;
+  const progress = totalCharacters ? completedCount / totalCharacters : 0;
+
+  const clearPendingTimeouts = useCallback(() => {
+    if (feedbackTimeout.current) {
+      clearTimeout(feedbackTimeout.current);
+      feedbackTimeout.current = null;
+    }
+
+    if (transitionTimeout.current) {
+      clearTimeout(transitionTimeout.current);
+      transitionTimeout.current = null;
+    }
+  }, []);
+
+  useEffect(
+    () => () => {
+      clearPendingTimeouts();
+    },
+    [clearPendingTimeouts]
+  );
+
+  const finishGame = useCallback((result) => {
+    if (finishTimeRef.current !== null) return;
+
+    const now = Date.now();
+
+    finishTimeRef.current = now;
+    setFinishedAt(now);
+    setSelectedNameId(null);
+    roundLock.current = true;
+    setStatus(result);
+  }, []);
+
+  const startGame = useCallback(() => {
+    clearPendingTimeouts();
+
+    const playable = shuffle(
+      normalizedCharacters.filter((character) => character.image != null)
+    );
+
+    setSelectedNameId(null);
+    setFeedback(null);
+    setLastCorrectId(null);
+    setLastWrongId(null);
+    setFinishedAt(null);
+    finishTimeRef.current = null;
+    roundLock.current = false;
+    matchedRef.current = [];
+    scoreRef.current = 0;
+    targetRefs.current = {};
+
+    if (playable.length !== 8) {
+      setGameCharacters(playable);
+      setStatus("setupError");
+      return;
+    }
+
+    setGameCharacters(playable);
+    setRoundStart(0);
+    setRoundChoiceOrder(
+      shuffle(playable.slice(0, choicesPerRound)).map(
+        (character) => character.id
+      )
+    );
+
+    setMatchedIds([]);
+    setTimeLeft(STARTING_TIME);
+    setScore(0);
+    setStartedAt(Date.now());
+    setStatus("playing");
+  }, [clearPendingTimeouts, normalizedCharacters, choicesPerRound]);
+
+  // One countdown interval is active while a game is in progress.
+  useEffect(() => {
+    if (status !== "playing") return undefined;
+
+    const interval = setInterval(() => {
+      setTimeLeft((previous) => {
+        if (previous <= 1) {
+          clearInterval(interval);
+
+          if (finishTimeRef.current === null) {
+            finishGame("gameover");
+          }
+
+          return 0;
+        }
+
+        return previous - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [status, finishGame]);
+
+  const elapsedSeconds = useMemo(() => {
+    if (!startedAt) return 0;
+
+    const endTime = finishedAt ?? Date.now();
+
+    return Math.max(0, Math.floor((endTime - startedAt) / 1000));
+  }, [startedAt, finishedAt]);
+
+  const selectName = useCallback(
+    (character) => {
+      if (status !== "playing" || roundLock.current) return;
+      if (matchedSet.has(character.id)) return;
+
+      setSelectedNameId((previous) =>
+        previous === character.id ? null : character.id
+      );
+
+      setFeedback(null);
+      setLastWrongId(null);
+      setLastCorrectId(null);
+    },
+    [status, matchedSet]
+  );
+
+  const selectPortrait = useCallback(
+    (target, draggedNameId = null) => {
+      if (status !== "playing" || roundLock.current) return;
+      if (matchedSet.has(target.id)) return;
+
+      const nameId = draggedNameId || selectedNameId;
+
+      if (!nameId) {
+        setFeedback({
+          type: "hint",
+          text: "Choose a name, then tap its portrait or matching box.",
         });
-    }, [characters]);
+        return;
+      }
 
-    const validCharacters = useMemo(
-        () =>
-            normalizedCharacters.filter(
-                (character) => character.image != null
-            ),
-        [normalizedCharacters]
-    );
-
-    const currentRound = useMemo(
-        () =>
-            gameCharacters.slice(
-                roundStart,
-                roundStart + choicesPerRound
-            ),
-        [gameCharacters, roundStart, choicesPerRound]
-    );
-
-    const currentRoundIds = useMemo(
-        () => currentRound.map((character) => character.id),
-        [currentRound]
-    );
-
-    // The order is stored in state rather than randomly regenerated on
-    // every render. Timer ticks therefore cannot reshuffle the choices.
-    const roundChoices = useMemo(() => {
-        const byId = new Map(
-            currentRound.map((character) => [character.id, character])
-        );
-
-        return roundChoiceOrder
-            .map((id) => byId.get(id))
-            .filter(Boolean);
-    }, [roundChoiceOrder, currentRound]);
-
-    const matchedSet = useMemo(
-        () => new Set(matchedIds),
-        [matchedIds]
-    );
-
-    const completedCount = matchedIds.length;
-    const totalCharacters = gameCharacters.length || 8;
-    const progress = totalCharacters
-        ? completedCount / totalCharacters
-        : 0;
-
-    const clearPendingTimeouts = useCallback(() => {
-        if (feedbackTimeout.current) {
-            clearTimeout(feedbackTimeout.current);
-            feedbackTimeout.current = null;
-        }
-
-        if (transitionTimeout.current) {
-            clearTimeout(transitionTimeout.current);
-            transitionTimeout.current = null;
-        }
-    }, []);
-
-    useEffect(
-        () => () => {
-            clearPendingTimeouts();
-        },
-        [clearPendingTimeouts]
-    );
-
-    const finishGame = useCallback((result) => {
-        if (finishTimeRef.current !== null) return;
-
-        const now = Date.now();
-
-        finishTimeRef.current = now;
-        setFinishedAt(now);
+      if (matchedSet.has(nameId)) {
         setSelectedNameId(null);
-        roundLock.current = true;
-        setStatus(result);
-    }, []);
+        return;
+      }
 
-    const startGame = useCallback(() => {
-        clearPendingTimeouts();
+      if (nameId === target.id) {
+        const nextMatched = [...matchedRef.current];
 
-        const playable = shuffle(
-            normalizedCharacters.filter(
-                (character) => character.image != null
-            )
-        );
+        // Prevent double scoring from rapid or repeated touches.
+        if (nextMatched.includes(target.id)) return;
 
+        nextMatched.push(target.id);
+        matchedRef.current = nextMatched;
+
+        sfx("correct");
+
+        setMatchedIds(nextMatched);
         setSelectedNameId(null);
-        setFeedback(null);
-        setLastCorrectId(null);
+        setLastCorrectId(target.id);
         setLastWrongId(null);
-        setFinishedAt(null);
-        finishTimeRef.current = null;
-        roundLock.current = false;
-        matchedRef.current = [];
-        scoreRef.current = 0;
-        targetRefs.current = {};
 
-        if (playable.length !== 8) {
-            setGameCharacters(playable);
-            setStatus("setupError");
-            return;
+        const pointsEarned = POINTS_PER_CORRECT + Math.max(0, timeLeft) * 2;
+
+        scoreRef.current += pointsEarned;
+        setScore(scoreRef.current);
+
+        setTimeLeft((previous) => previous + TIME_BONUS);
+
+        setFeedback({
+          type: "correct",
+          text: `Correct! +${pointsEarned} points · +${TIME_BONUS}s`,
+        });
+
+        if (nextMatched.length === gameCharacters.length) {
+          roundLock.current = true;
+
+          transitionTimeout.current = setTimeout(() => {
+            finishGame("complete");
+          }, 450);
+
+          return;
         }
 
-        setGameCharacters(playable);
-        setRoundStart(0);
-        setRoundChoiceOrder(
-            shuffle(playable.slice(0, choicesPerRound)).map(
-                (character) => character.id
-            )
+        const roundComplete = currentRoundIds.every((id) =>
+          nextMatched.includes(id)
         );
 
-        setMatchedIds([]);
-        setTimeLeft(STARTING_TIME);
-        setScore(0);
-        setStartedAt(Date.now());
-        setStatus("playing");
-    }, [
-        clearPendingTimeouts,
-        normalizedCharacters,
-        choicesPerRound,
-    ]);
+        if (roundComplete) {
+          roundLock.current = true;
 
-    // One countdown interval is active while a game is in progress.
-    useEffect(() => {
-        if (status !== "playing") return undefined;
+          transitionTimeout.current = setTimeout(() => {
+            const nextStart = roundStart + choicesPerRound;
 
-        const interval = setInterval(() => {
-            setTimeLeft((previous) => {
-                if (previous <= 1) {
-                    clearInterval(interval);
+            setRoundStart(nextStart);
 
-                    if (finishTimeRef.current === null) {
-                        finishGame("gameover");
-                    }
-
-                    return 0;
-                }
-
-                return previous - 1;
-            });
-        }, 1000);
-
-        return () => clearInterval(interval);
-    }, [status, finishGame]);
-
-    const elapsedSeconds = useMemo(() => {
-        if (!startedAt) return 0;
-
-        const endTime = finishedAt ?? Date.now();
-
-        return Math.max(
-            0,
-            Math.floor((endTime - startedAt) / 1000)
-        );
-    }, [startedAt, finishedAt]);
-
-    const selectName = useCallback(
-        (character) => {
-            if (status !== "playing" || roundLock.current) return;
-            if (matchedSet.has(character.id)) return;
-
-            setSelectedNameId((previous) =>
-                previous === character.id ? null : character.id
+            const nextRound = gameCharacters.slice(
+              nextStart,
+              nextStart + choicesPerRound
             );
 
-            setFeedback(null);
+            setRoundChoiceOrder(
+              shuffle(nextRound).map((character) => character.id)
+            );
+
+            setLastCorrectId(null);
             setLastWrongId(null);
-            setLastCorrectId(null);
-        },
-        [status, matchedSet]
-    );
-
-    const selectPortrait = useCallback(
-        (target, draggedNameId = null) => {
-            if (status !== "playing" || roundLock.current) return;
-            if (matchedSet.has(target.id)) return;
-
-            const nameId = draggedNameId || selectedNameId;
-
-            if (!nameId) {
-                setFeedback({
-                    type: "hint",
-                    text: "Choose a name, then tap its portrait or matching box.",
-                });
-                return;
-            }
-
-            if (matchedSet.has(nameId)) {
-                setSelectedNameId(null);
-                return;
-            }
-
-            if (nameId === target.id) {
-                const nextMatched = [...matchedRef.current];
-
-                // Prevent double scoring from rapid or repeated touches.
-                if (nextMatched.includes(target.id)) return;
-
-                nextMatched.push(target.id);
-                matchedRef.current = nextMatched;
-
-                setMatchedIds(nextMatched);
-                setSelectedNameId(null);
-                setLastCorrectId(target.id);
-                setLastWrongId(null);
-
-                const pointsEarned =
-                    POINTS_PER_CORRECT + Math.max(0, timeLeft) * 2;
-
-                scoreRef.current += pointsEarned;
-                setScore(scoreRef.current);
-
-                setTimeLeft((previous) => previous + TIME_BONUS);
-
-                setFeedback({
-                    type: "correct",
-                    text: `Correct! +${pointsEarned} points · +${TIME_BONUS}s`,
-                });
-
-                if (nextMatched.length === gameCharacters.length) {
-                    roundLock.current = true;
-
-                    transitionTimeout.current = setTimeout(() => {
-                        finishGame("complete");
-                    }, 450);
-
-                    return;
-                }
-
-                const roundComplete = currentRoundIds.every((id) =>
-                    nextMatched.includes(id)
-                );
-
-                if (roundComplete) {
-                    roundLock.current = true;
-
-                    transitionTimeout.current = setTimeout(() => {
-                        const nextStart =
-                            roundStart + choicesPerRound;
-
-                        setRoundStart(nextStart);
-
-                        const nextRound = gameCharacters.slice(
-                            nextStart,
-                            nextStart + choicesPerRound
-                        );
-
-                        setRoundChoiceOrder(
-                            shuffle(nextRound).map(
-                                (character) => character.id
-                            )
-                        );
-
-                        setLastCorrectId(null);
-                        setLastWrongId(null);
-                        setFeedback(null);
-                        roundLock.current = false;
-                    }, 450);
-                } else {
-                    feedbackTimeout.current = setTimeout(() => {
-                        setFeedback((previous) =>
-                            previous?.type === "correct"
-                                ? null
-                                : previous
-                        );
-                    }, 1600);
-                }
-
-                return;
-            }
-
-            // Incorrect matches keep the original penalty and scoring rules.
-            setLastWrongId(target.id);
-            setLastCorrectId(null);
-            setSelectedNameId(null);
-
-            setTimeLeft((previous) =>
-                Math.max(0, previous - WRONG_ANSWER_PENALTY)
+            setFeedback(null);
+            roundLock.current = false;
+          }, 450);
+        } else {
+          feedbackTimeout.current = setTimeout(() => {
+            setFeedback((previous) =>
+              previous?.type === "correct" ? null : previous
             );
-
-            setFeedback({
-                type: "wrong",
-                text: `Not quite. Try another match. −${WRONG_ANSWER_PENALTY}s`,
-            });
-
-            if (feedbackTimeout.current) {
-                clearTimeout(feedbackTimeout.current);
-            }
-
-            feedbackTimeout.current = setTimeout(() => {
-                setLastWrongId(null);
-                setFeedback((previous) =>
-                    previous?.type === "wrong" ? null : previous
-                );
-            }, 1000);
-        },
-        [
-            status,
-            matchedSet,
-            selectedNameId,
-            timeLeft,
-            gameCharacters,
-            currentRoundIds,
-            roundStart,
-            choicesPerRound,
-            finishGame,
-        ]
-    );
-
-    // Measures the visible portrait targets in screen coordinates.
-    // This works with native touch gestures on Android and iOS.
-    const dropNameOnPortrait = useCallback(
-        async (character, screenX, screenY) => {
-            if (status !== "playing" || roundLock.current) return;
-
-            const measurements = await Promise.all(
-                currentRound.map(
-                    (target) =>
-                        new Promise((resolve) => {
-                            const node = targetRefs.current[target.id];
-
-                            if (
-                                !node ||
-                                typeof node.measureInWindow !== "function"
-                            ) {
-                                resolve(null);
-                                return;
-                            }
-
-                            node.measureInWindow((x, y, w, h) => {
-                                resolve({
-                                    target,
-                                    x,
-                                    y,
-                                    width: w,
-                                    height: h,
-                                });
-                            });
-                        })
-                )
-            );
-
-            const hit = measurements.find(
-                (rect) =>
-                    rect &&
-                    screenX >= rect.x &&
-                    screenX <= rect.x + rect.width &&
-                    screenY >= rect.y &&
-                    screenY <= rect.y + rect.height
-            );
-
-            if (hit) {
-                selectPortrait(hit.target, character.id);
-            } else {
-                // If the drag misses, select the name so the player can
-                // finish with a simple tap on the intended portrait.
-                selectName(character);
-            }
-        },
-        [status, currentRound, selectPortrait, selectName]
-    );
-
-    const getDragValue = (id) => {
-        if (!dragValues.current[id]) {
-            dragValues.current[id] = new Animated.ValueXY({
-                x: 0,
-                y: 0,
-            });
+          }, 1600);
         }
 
-        return dragValues.current[id];
-    };
+        return;
+      }
 
-    const renderHeader = () => (
-        <View style={styles.header}>
-            <Text style={styles.eyebrow}>PHILIPPINE HISTORY</Text>
-            <Text style={styles.title}>Who Am I?</Text>
-            <Text style={styles.subtitle}>
-                Match each historical figure to the correct name.
+      // Incorrect matches keep the original penalty and scoring rules.
+      sfx("wrong");
+      setLastWrongId(target.id);
+      setLastCorrectId(null);
+      setSelectedNameId(null);
+
+      setTimeLeft((previous) => Math.max(0, previous - WRONG_ANSWER_PENALTY));
+
+      setFeedback({
+        type: "wrong",
+        text: `Not quite. Try another match. −${WRONG_ANSWER_PENALTY}s`,
+      });
+
+      if (feedbackTimeout.current) {
+        clearTimeout(feedbackTimeout.current);
+      }
+
+      feedbackTimeout.current = setTimeout(() => {
+        setLastWrongId(null);
+        setFeedback((previous) =>
+          previous?.type === "wrong" ? null : previous
+        );
+      }, 1000);
+    },
+    [
+      status,
+      matchedSet,
+      selectedNameId,
+      timeLeft,
+      gameCharacters,
+      currentRoundIds,
+      roundStart,
+      choicesPerRound,
+      finishGame,
+      sfx,
+    ]
+  );
+
+  // Measures the visible portrait targets in screen coordinates.
+  // This works with native touch gestures on Android and iOS.
+  const dropNameOnPortrait = useCallback(
+    async (character, screenX, screenY) => {
+      if (status !== "playing" || roundLock.current) return;
+
+      const measurements = await Promise.all(
+        currentRound.map(
+          (target) =>
+            new Promise((resolve) => {
+              const node = targetRefs.current[target.id];
+
+              if (!node || typeof node.measureInWindow !== "function") {
+                resolve(null);
+                return;
+              }
+
+              node.measureInWindow((x, y, w, h) => {
+                resolve({ target, x, y, width: w, height: h });
+              });
+            })
+        )
+      );
+
+      const hit = measurements.find(
+        (rect) =>
+          rect &&
+          screenX >= rect.x &&
+          screenX <= rect.x + rect.width &&
+          screenY >= rect.y &&
+          screenY <= rect.y + rect.height
+      );
+
+      if (hit) {
+        selectPortrait(hit.target, character.id);
+      } else {
+        // If the drag misses, select the name so the player can
+        // finish with a simple tap on the intended portrait.
+        selectName(character);
+      }
+    },
+    [status, currentRound, selectPortrait, selectName]
+  );
+
+  const getDragValue = (id) => {
+    if (!dragValues.current[id]) {
+      dragValues.current[id] = new Animated.ValueXY({ x: 0, y: 0 });
+    }
+
+    return dragValues.current[id];
+  };
+
+  // Row sizes shrink in landscape so more of the board fits on screen
+  const rowMin = landscape ? 78 : 92;
+  const imgW = landscape ? 50 : 52;
+  const imgH = landscape ? 64 : 80;
+
+  // ---------------------------------------------------
+  // PIECES
+  // ---------------------------------------------------
+
+  const timeIsLow = timeLeft <= 10;
+
+  const renderHeader = (showStats) => (
+    <View style={styles.header}>
+      <Text style={styles.title}>Who Am I?</Text>
+
+      {showStats ? (
+        <View style={styles.pills}>
+          <View style={[styles.pill, timeIsLow && styles.pillLow]}>
+            <Text style={[styles.pillText, timeIsLow && styles.pillTextLow]}>
+              {formatTime(timeLeft)}
             </Text>
+          </View>
+
+          <View style={styles.pill}>
+            <Text style={styles.pillText}>{score.toLocaleString()} pts</Text>
+          </View>
+
+          <View style={styles.pill}>
+            <Text style={styles.pillText}>
+              {completedCount}/{totalCharacters}
+            </Text>
+          </View>
         </View>
-    );
+      ) : null}
+    </View>
+  );
 
-    const renderProgress = () => (
-        <View style={styles.statsPanel}>
-            <View style={styles.statCell}>
-                <Text style={styles.statLabel}>TIME LEFT</Text>
-                <Text
-                    style={[
-                        styles.statValue,
-                        timeLeft <= 10 && styles.dangerText,
-                    ]}
-                >
-                    {formatTime(timeLeft)}
-                </Text>
-            </View>
+  const renderGameBoard = () => (
+    <>
+      <View style={styles.progressTrack}>
+        <View
+          style={[styles.progressFill, { width: `${progress * 100}%` }]}
+        />
+      </View>
 
-            <View style={styles.statDivider} />
+      <Panel style={styles.boardPanel}>
+        <PanelTab>MATCH THE FIGURES</PanelTab>
 
-            <View style={styles.statCell}>
-                <Text style={styles.statLabel}>SCORE</Text>
-                <Text style={styles.statValue}>
-                    {score.toLocaleString()}
-                </Text>
-            </View>
+        <Text style={styles.instruction}>
+          Drag a name onto a portrait, or tap a name and then a portrait.
+        </Text>
 
-            <View style={styles.statDivider} />
+        <View style={styles.matchingColumns}>
+          {/* Portraits and their answer targets */}
+          <View style={styles.portraitColumn}>
+            {currentRound.map((character, index) => {
+              const isMatched = matchedSet.has(character.id);
+              const isCorrect = lastCorrectId === character.id;
+              const isWrong = lastWrongId === character.id;
 
-            <View style={styles.statCell}>
-                <Text style={styles.statLabel}>MATCHED</Text>
-                <Text style={styles.statValue}>
-                    {completedCount}/{totalCharacters}
-                </Text>
-            </View>
-
-            <View style={styles.progressTrack}>
-                <View
-                    style={[
-                        styles.progressFill,
-                        { width: `${progress * 100}%` },
-                    ]}
-                />
-            </View>
-        </View>
-    );
-
-    const renderGameBoard = () => (
-        <View style={styles.board}>
-            <View style={styles.boardHeading}>
-                <Text style={styles.sectionTitle}>
-                    MATCH THE HISTORICAL FIGURES
-                </Text>
-                <Text style={styles.instruction}>
-                    Drag a name to a portrait, or tap a name and then a portrait.
-                </Text>
-            </View>
-
-            <View style={styles.matchingColumns}>
-                {/* Portraits and their answer targets */}
-                <View style={styles.portraitColumn}>
-                    {currentRound.map((character, index) => {
-                        const isMatched = matchedSet.has(character.id);
-                        const isCorrect = lastCorrectId === character.id;
-                        const isWrong = lastWrongId === character.id;
-
-                        return (
-                            <Pressable
-                                key={character.id}
-                                ref={(node) => {
-                                    if (node) {
-                                        targetRefs.current[character.id] = node;
-                                    } else {
-                                        delete targetRefs.current[character.id];
-                                    }
-                                }}
-                                onPress={() => selectPortrait(character)}
-                                disabled={
-                                    isMatched || status !== "playing"
-                                }
-                                accessibilityRole="button"
-                                accessibilityLabel={
-                                    isMatched
-                                        ? `${character.name}, matched`
-                                        : `Portrait ${index + 1}, matching target`
-                                }
-                                style={({ pressed }) => [
-                                    styles.portraitRow,
-                                    isMatched && styles.portraitRowMatched,
-                                    isCorrect && styles.portraitRowCorrect,
-                                    isWrong && styles.portraitRowWrong,
-                                    pressed &&
-                                    !isMatched &&
-                                    styles.portraitRowPressed,
-                                ]}
-                            >
-                                <View style={styles.imageFrame}>
-                                    <Image
-                                        source={character.image}
-                                        style={styles.portrait}
-                                        resizeMode="cover"
-                                        accessibilityLabel={
-                                            isMatched
-                                                ? character.name
-                                                : "Historical portrait"
-                                        }
-                                    />
-
-                                    {isMatched ? (
-                                        <View
-                                            pointerEvents="none"
-                                            style={styles.matchedOverlay}
-                                        />
-                                    ) : null}
-                                </View>
-
-                                <View
-                                    style={[
-                                        styles.answerBox,
-                                        isMatched &&
-                                        styles.answerBoxMatched,
-                                        isWrong && styles.answerBoxWrong,
-                                    ]}
-                                >
-                                    <Text
-                                        style={[
-                                            styles.answerText,
-                                            isMatched &&
-                                            styles.answerTextMatched,
-                                        ]}
-                                        numberOfLines={3}
-                                        adjustsFontSizeToFit
-                                        minimumFontScale={0.78}
-                                    >
-                                        {isMatched
-                                            ? character.name
-                                            : "Drop name here"}
-                                    </Text>
-                                </View>
-                            </Pressable>
-                        );
-                    })}
-                </View>
-
-                {/* Available names stay immediately beside the targets */}
-                <View style={styles.namesColumn}>
-                    <Text style={styles.namesHeading}>AVAILABLE NAMES</Text>
-
-                    {roundChoices.map((character) => {
-                        const isMatched = matchedSet.has(character.id);
-                        const isSelected =
-                            selectedNameId === character.id;
-
-                        const pan = getDragValue(character.id);
-
-                        const panResponder = PanResponder.create({
-                            onStartShouldSetPanResponder: () => false,
-
-                            onMoveShouldSetPanResponder: (_, gesture) =>
-                                !isMatched &&
-                                status === "playing" &&
-                                (Math.abs(gesture.dx) > 5 ||
-                                    Math.abs(gesture.dy) > 5),
-
-                            onPanResponderGrant: () => {
-                                dragStartedRef.current = true;
-                                setSelectedNameId(character.id);
-                                setFeedback(null);
-                            },
-
-                            onPanResponderMove: Animated.event(
-                                [null, { dx: pan.x, dy: pan.y }],
-                                { useNativeDriver: false }
-                            ),
-
-                            onPanResponderRelease: (_, gesture) => {
-                                const dropX = gesture.moveX;
-                                const dropY = gesture.moveY;
-
-                                dropNameOnPortrait(
-                                    character,
-                                    dropX,
-                                    dropY
-                                );
-
-                                Animated.spring(pan, {
-                                    toValue: { x: 0, y: 0 },
-                                    useNativeDriver: false,
-                                    speed: 24,
-                                    bounciness: 3,
-                                }).start();
-
-                                setTimeout(() => {
-                                    dragStartedRef.current = false;
-                                }, 80);
-                            },
-
-                            onPanResponderTerminate: () => {
-                                Animated.spring(pan, {
-                                    toValue: { x: 0, y: 0 },
-                                    useNativeDriver: false,
-                                    speed: 24,
-                                    bounciness: 3,
-                                }).start();
-
-                                dragStartedRef.current = false;
-                            },
-                        });
-
-                        return (
-                            <Animated.View
-                                key={character.id}
-                                {...panResponder.panHandlers}
-                                style={[
-                                    styles.nameOptionWrapper,
-                                    {
-                                        transform: [
-                                            { translateX: pan.x },
-                                            { translateY: pan.y },
-                                        ],
-                                    },
-                                    isSelected &&
-                                    styles.nameOptionWrapperSelected,
-                                    isMatched &&
-                                    styles.nameOptionWrapperMatched,
-                                ]}
-                            >
-                                <Pressable
-                                    onPress={() => {
-                                        if (dragStartedRef.current) return;
-                                        selectName(character);
-                                    }}
-                                    disabled={
-                                        isMatched || status !== "playing"
-                                    }
-                                    accessibilityRole="button"
-                                    accessibilityLabel={character.name}
-                                    accessibilityState={{
-                                        selected: isSelected,
-                                        disabled: isMatched,
-                                    }}
-                                    style={({ pressed }) => [
-                                        styles.nameOption,
-                                        isSelected &&
-                                        styles.nameOptionSelected,
-                                        isMatched &&
-                                        styles.nameOptionMatched,
-                                        pressed &&
-                                        !isMatched &&
-                                        styles.nameOptionPressed,
-                                    ]}
-                                >
-                                    <Text
-                                        style={[
-                                            styles.nameText,
-                                            isSelected &&
-                                            styles.nameTextSelected,
-                                            isMatched &&
-                                            styles.nameTextMatched,
-                                        ]}
-                                        numberOfLines={3}
-                                        adjustsFontSizeToFit
-                                        minimumFontScale={0.78}
-                                    >
-                                        {isMatched ? "✓  " : ""}
-                                        {character.name}
-                                    </Text>
-                                </Pressable>
-                            </Animated.View>
-                        );
-                    })}
-                </View>
-            </View>
-
-            {feedback ? (
-                <View
-                    accessibilityLiveRegion="polite"
-                    style={[
-                        styles.feedbackBox,
-                        feedback.type === "correct" &&
-                        styles.feedbackCorrect,
-                        feedback.type === "wrong" &&
-                        styles.feedbackWrong,
-                        feedback.type === "hint" &&
-                        styles.feedbackHint,
-                    ]}
-                >
-                    <Text style={styles.feedbackText}>
-                        {feedback.text}
-                    </Text>
-                </View>
-            ) : null}
-        </View>
-    );
-
-    const renderEndScreen = (isComplete) => (
-        <View style={styles.endPanel}>
-            <Text style={styles.endIcon}>
-                {isComplete ? "✦" : "⌛"}
-            </Text>
-
-            <Text style={styles.endTitle}>
-                {isComplete ? "Well Done!" : "Time’s Up"}
-            </Text>
-
-            <Text style={styles.endDescription}>
-                {isComplete
-                    ? "You identified all eight historical figures."
-                    : "Your time has run out. Review your score and try again."}
-            </Text>
-
-            <View style={styles.resultStats}>
-                <View style={styles.resultStat}>
-                    <Text style={styles.resultLabel}>FINAL SCORE</Text>
-                    <Text style={styles.resultValue}>
-                        {score.toLocaleString()}
-                    </Text>
-                </View>
-
-                <View style={styles.resultStat}>
-                    <Text style={styles.resultLabel}>TIME ELAPSED</Text>
-                    <Text style={styles.resultValue}>
-                        {formatTime(elapsedSeconds)}
-                    </Text>
-                </View>
-
-                <View style={styles.resultStat}>
-                    <Text style={styles.resultLabel}>MATCHED</Text>
-                    <Text style={styles.resultValue}>
-                        {completedCount}/8
-                    </Text>
-                </View>
-            </View>
-
-            <Pressable
-                style={({ pressed }) => [
-                    styles.primaryButton,
-                    pressed && styles.primaryButtonPressed,
-                ]}
-                onPress={startGame}
-                accessibilityRole="button"
-            >
-                <Text style={styles.primaryButtonText}>
-                    {isComplete ? "PLAY AGAIN" : "RETRY"}
-                </Text>
-            </Pressable>
-
-            {isComplete && onComplete ? (
+              return (
                 <Pressable
-                    style={({ pressed }) => [
-                        styles.secondaryButton,
-                        pressed && styles.secondaryButtonPressed,
+                  key={character.id}
+                  ref={(node) => {
+                    if (node) {
+                      targetRefs.current[character.id] = node;
+                    } else {
+                      delete targetRefs.current[character.id];
+                    }
+                  }}
+                  onPress={() => selectPortrait(character)}
+                  disabled={isMatched || status !== "playing"}
+                  accessibilityRole="button"
+                  accessibilityLabel={
+                    isMatched
+                      ? `${character.name}, matched`
+                      : `Portrait ${index + 1}, matching target`
+                  }
+                  style={({ pressed }) => [
+                    styles.portraitRow,
+                    { minHeight: rowMin },
+                    isMatched && styles.portraitRowMatched,
+                    isCorrect && styles.portraitRowCorrect,
+                    isWrong && styles.portraitRowWrong,
+                    pressed && !isMatched && styles.pressed,
+                  ]}
+                >
+                  <View
+                    style={[styles.imageFrame, { width: imgW, height: imgH }]}
+                  >
+                    <Image
+                      source={character.image}
+                      style={styles.portrait}
+                      resizeMode="cover"
+                      accessibilityLabel={
+                        isMatched ? character.name : "Historical portrait"
+                      }
+                    />
+
+                    {isMatched ? (
+                      <View
+                        pointerEvents="none"
+                        style={styles.matchedOverlay}
+                      />
+                    ) : null}
+                  </View>
+
+                  <View
+                    style={[
+                      styles.answerBox,
+                      { minHeight: imgH },
+                      isMatched && styles.answerBoxMatched,
+                      isWrong && styles.answerBoxWrong,
                     ]}
-                    onPress={onComplete}
-                    accessibilityRole="button"
-                >
-                    <Text style={styles.secondaryButtonText}>
-                        CONTINUE STORY
+                  >
+                    <Text
+                      style={[
+                        styles.answerText,
+                        isMatched && styles.answerTextMatched,
+                      ]}
+                      numberOfLines={3}
+                      adjustsFontSizeToFit
+                      minimumFontScale={0.78}
+                    >
+                      {isMatched ? character.name : "Drop name here"}
                     </Text>
+                  </View>
                 </Pressable>
-            ) : null}
+              );
+            })}
+          </View>
+
+          {/* Available names stay immediately beside the targets */}
+          <View style={styles.namesColumn}>
+            <Text style={styles.namesHeading}>AVAILABLE NAMES</Text>
+
+            {roundChoices.map((character) => {
+              const isMatched = matchedSet.has(character.id);
+              const isSelected = selectedNameId === character.id;
+
+              const pan = getDragValue(character.id);
+
+              const panResponder = PanResponder.create({
+                onStartShouldSetPanResponder: () => false,
+
+                onMoveShouldSetPanResponder: (_, gesture) =>
+                  !isMatched &&
+                  status === "playing" &&
+                  (Math.abs(gesture.dx) > 5 || Math.abs(gesture.dy) > 5),
+
+                onPanResponderGrant: () => {
+                  dragStartedRef.current = true;
+                  setSelectedNameId(character.id);
+                  setFeedback(null);
+                },
+
+                onPanResponderMove: Animated.event(
+                  [null, { dx: pan.x, dy: pan.y }],
+                  { useNativeDriver: false }
+                ),
+
+                onPanResponderRelease: (_, gesture) => {
+                  const dropX = gesture.moveX;
+                  const dropY = gesture.moveY;
+
+                  dropNameOnPortrait(character, dropX, dropY);
+
+                  Animated.spring(pan, {
+                    toValue: { x: 0, y: 0 },
+                    useNativeDriver: false,
+                    speed: 24,
+                    bounciness: 3,
+                  }).start();
+
+                  setTimeout(() => {
+                    dragStartedRef.current = false;
+                  }, 80);
+                },
+
+                onPanResponderTerminate: () => {
+                  Animated.spring(pan, {
+                    toValue: { x: 0, y: 0 },
+                    useNativeDriver: false,
+                    speed: 24,
+                    bounciness: 3,
+                  }).start();
+
+                  dragStartedRef.current = false;
+                },
+              });
+
+              return (
+                <Animated.View
+                  key={character.id}
+                  {...panResponder.panHandlers}
+                  style={[
+                    styles.nameOptionWrapper,
+                    {
+                      transform: [
+                        { translateX: pan.x },
+                        { translateY: pan.y },
+                      ],
+                    },
+                    isSelected && styles.nameOptionWrapperSelected,
+                    isMatched && styles.nameOptionWrapperMatched,
+                  ]}
+                >
+                  <Pressable
+                    onPress={() => {
+                      if (dragStartedRef.current) return;
+                      selectName(character);
+                    }}
+                    disabled={isMatched || status !== "playing"}
+                    accessibilityRole="button"
+                    accessibilityLabel={character.name}
+                    accessibilityState={{
+                      selected: isSelected,
+                      disabled: isMatched,
+                    }}
+                    style={({ pressed }) => [
+                      styles.nameOption,
+                      { minHeight: rowMin },
+                      isSelected && styles.nameOptionSelected,
+                      isMatched && styles.nameOptionMatched,
+                      pressed && !isMatched && styles.pressed,
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.nameText,
+                        isSelected && styles.nameTextSelected,
+                        isMatched && styles.nameTextMatched,
+                      ]}
+                      numberOfLines={3}
+                      adjustsFontSizeToFit
+                      minimumFontScale={0.78}
+                    >
+                      {isMatched ? "✓  " : ""}
+                      {character.name}
+                    </Text>
+                  </Pressable>
+                </Animated.View>
+              );
+            })}
+          </View>
         </View>
-    );
 
-    if (status === "ready") {
-        return (
-            <SafeAreaView style={styles.safeArea}>
-                <StatusBar
-                    barStyle="dark-content"
-                    backgroundColor={COLORS.background}
-                />
+        {feedback ? (
+          <View
+            accessibilityLiveRegion="polite"
+            style={[
+              styles.feedbackBox,
+              feedback.type === "correct" && styles.feedbackCorrect,
+              feedback.type === "wrong" && styles.feedbackWrong,
+              feedback.type === "hint" && styles.feedbackHint,
+            ]}
+          >
+            <Text style={styles.feedbackText}>{feedback.text}</Text>
+          </View>
+        ) : null}
+      </Panel>
+    </>
+  );
 
-                <ScrollView
-                    style={styles.scrollView}
-                    contentContainerStyle={styles.introScrollContent}
-                    showsVerticalScrollIndicator={false}
-                    keyboardShouldPersistTaps="handled"
-                >
-                    <View style={styles.container}>
-                        {renderHeader()}
+  const renderEndScreen = (isComplete) => (
+    <Panel style={styles.centerPanel}>
+      <PanelTab>{isComplete ? "WELL DONE" : "TIME’S UP"}</PanelTab>
 
-                        <View style={styles.introPanel}>
-                            <View style={styles.introAccent} />
+      <Text style={styles.panelTitle}>
+        {isComplete ? "All Figures Identified" : "The Clock Ran Out"}
+      </Text>
 
-                            <Text style={styles.introEyebrow}>
-                                YOUR NEXT CHALLENGE
-                            </Text>
+      <Text style={styles.bodyText}>
+        {isComplete
+          ? "You identified all eight historical figures."
+          : "Your time has run out. Review your score and try again."}
+      </Text>
 
-                            <Text style={styles.introTitle}>
-                                Know Your History
-                            </Text>
+      <View style={styles.resultStats}>
+        <View style={styles.resultStat}>
+          <Text style={styles.resultLabel}>FINAL SCORE</Text>
+          <Text style={styles.resultValue}>{score.toLocaleString()}</Text>
+        </View>
 
-                            <Text style={styles.introText}>
-                                Match eight important figures from Philippine
-                                history with their portraits.
-                            </Text>
+        <View style={styles.resultStat}>
+          <Text style={styles.resultLabel}>TIME ELAPSED</Text>
+          <Text style={styles.resultValue}>{formatTime(elapsedSeconds)}</Text>
+        </View>
 
-                            <View style={styles.rulesList}>
-                                <View style={styles.ruleRow}>
-                                    <Text style={styles.ruleBullet}>01</Text>
-                                    <Text style={styles.ruleText}>
-                                        Start with {STARTING_TIME} seconds.
-                                    </Text>
-                                </View>
+        <View style={styles.resultStat}>
+          <Text style={styles.resultLabel}>MATCHED</Text>
+          <Text style={styles.resultValue}>{completedCount}/8</Text>
+        </View>
+      </View>
 
-                                <View style={styles.ruleRow}>
-                                    <Text style={styles.ruleBullet}>02</Text>
-                                    <Text style={styles.ruleText}>
-                                        Correct matches earn points and add{" "}
-                                        {TIME_BONUS} seconds.
-                                    </Text>
-                                </View>
+      {isComplete && onComplete ? (
+        <GameButton label="Continue Story" onPress={() => onComplete()} />
+      ) : null}
 
-                                <View style={styles.ruleRow}>
-                                    <Text style={styles.ruleBullet}>03</Text>
-                                    <Text style={styles.ruleText}>
-                                        Wrong matches cost{" "}
-                                        {WRONG_ANSWER_PENALTY} seconds.
-                                    </Text>
-                                </View>
-                            </View>
+      <GameButton
+        label={isComplete ? "Play Again" : "Retry"}
+        onPress={startGame}
+        secondary={isComplete && !!onComplete}
+      />
+    </Panel>
+  );
 
-                            {validCharacters.length !== 8 ? (
-                                <Text style={styles.setupWarning}>
-                                    Portrait setup incomplete:{" "}
-                                    {validCharacters.length}/8 images received.
-                                    Check the character asset mapping in
-                                    compilation.jsx.
-                                </Text>
-                            ) : null}
+  // ---------------------------------------------------
+  // SCREENS
+  // ---------------------------------------------------
 
-                            <Pressable
-                                onPress={startGame}
-                                style={({ pressed }) => [
-                                    styles.primaryButton,
-                                    styles.beginButton,
-                                    pressed &&
-                                    styles.primaryButtonPressed,
-                                ]}
-                                accessibilityRole="button"
-                            >
-                                <Text style={styles.primaryButtonText}>
-                                    BEGIN CHALLENGE
-                                </Text>
-                                <Text style={styles.buttonArrow}>→</Text>
-                            </Pressable>
-                        </View>
-                    </View>
-                </ScrollView>
-            </SafeAreaView>
-        );
-    }
-
-    if (status === "setupError") {
-        return (
-            <SafeAreaView style={styles.safeArea}>
-                <StatusBar
-                    barStyle="dark-content"
-                    backgroundColor={COLORS.background}
-                />
-
-                <ScrollView
-                    contentContainerStyle={styles.introScrollContent}
-                    showsVerticalScrollIndicator={false}
-                >
-                    <View style={styles.container}>
-                        {renderHeader()}
-
-                        <View style={styles.endPanel}>
-                            <Text style={styles.endIcon}>!</Text>
-                            <Text style={styles.endTitle}>
-                                Portraits Missing
-                            </Text>
-
-                            <Text style={styles.endDescription}>
-                                This game needs all eight character portraits.
-                                Check that each character in compilation.jsx
-                                has the correct id and an image property
-                                referencing its existing asset.
-                            </Text>
-
-                            <Pressable
-                                style={styles.primaryButton}
-                                onPress={() => setStatus("ready")}
-                                accessibilityRole="button"
-                            >
-                                <Text style={styles.primaryButtonText}>
-                                    BACK
-                                </Text>
-                            </Pressable>
-                        </View>
-                    </View>
-                </ScrollView>
-            </SafeAreaView>
-        );
-    }
-
+  if (status === "ready") {
     return (
-        <SafeAreaView style={styles.safeArea}>
-            <StatusBar
-                barStyle="dark-content"
-                backgroundColor={COLORS.background}
-            />
+      <Screen>
+        <View style={styles.container}>
+          {renderHeader(false)}
 
-            <ScrollView
-                style={styles.scrollView}
-                contentContainerStyle={styles.gameScrollContent}
-                showsVerticalScrollIndicator={false}
-                nestedScrollEnabled
-            >
-                <View style={styles.container}>
-                    {renderHeader()}
+          <Panel style={styles.centerPanel}>
+            <PanelTab>PHILIPPINE HISTORY</PanelTab>
 
-                    {status === "playing" ? (
-                        <>
-                            {renderProgress()}
-                            {renderGameBoard()}
-                        </>
-                    ) : (
-                        renderEndScreen(status === "complete")
-                    )}
-                </View>
-            </ScrollView>
-        </SafeAreaView>
+            <Text style={styles.panelTitle}>Know Your History</Text>
+
+            <Text style={styles.bodyText}>
+              Match eight important figures from Philippine history with their
+              portraits.
+            </Text>
+
+            <View style={styles.ruleBox}>
+              <Text style={styles.ruleText}>
+                • Start with {STARTING_TIME} seconds.
+              </Text>
+              <Text style={styles.ruleText}>
+                • Correct matches earn points and add {TIME_BONUS} seconds.
+              </Text>
+              <Text style={styles.ruleText}>
+                • Wrong matches cost {WRONG_ANSWER_PENALTY} seconds.
+              </Text>
+            </View>
+
+            {validCharacters.length !== 8 ? (
+              <Text style={styles.setupWarning}>
+                Portrait setup incomplete: {validCharacters.length}/8 images
+                received. Check the character asset mapping in
+                compilation.jsx.
+              </Text>
+            ) : null}
+
+            <GameButton label="Begin Challenge" onPress={startGame} />
+          </Panel>
+        </View>
+      </Screen>
     );
+  }
+
+  if (status === "setupError") {
+    return (
+      <Screen>
+        <View style={styles.container}>
+          {renderHeader(false)}
+
+          <Panel style={styles.centerPanel}>
+            <PanelTab>SETUP</PanelTab>
+
+            <Text style={styles.panelTitle}>Portraits Missing</Text>
+
+            <Text style={styles.bodyText}>
+              This game needs all eight character portraits. Check that each
+              character in compilation.jsx has the correct id and an image
+              property referencing its existing asset.
+            </Text>
+
+            <GameButton label="Back" onPress={() => setStatus("ready")} />
+          </Panel>
+        </View>
+      </Screen>
+    );
+  }
+
+  return (
+    <Screen>
+      <View style={styles.container}>
+        {renderHeader(status === "playing")}
+
+        {status === "playing"
+          ? renderGameBoard()
+          : renderEndScreen(status === "complete")}
+      </View>
+    </Screen>
+  );
 }
 
+// =====================================================
+// STYLES
+// =====================================================
+
 const styles = StyleSheet.create({
-    safeArea: {
-        flex: 1,
-        backgroundColor: COLORS.background,
-    },
-
-    scrollView: {
-        flex: 1,
-    },
-
-    introScrollContent: {
-        flexGrow: 1,
-        paddingBottom: 20,
-    },
-
-    gameScrollContent: {
-        flexGrow: 1,
-        paddingBottom: 18,
-    },
-
-    container: {
-        width: "100%",
-        maxWidth: 620,
-        alignSelf: "center",
-        paddingHorizontal: 14,
-        paddingTop: 12,
-        paddingBottom: 10,
-    },
-
-    // Header
-    header: {
-        alignItems: "center",
-        marginBottom: 12,
-    },
-
-    eyebrow: {
-        color: COLORS.goldDark,
-        fontSize: 10,
-        letterSpacing: 2.2,
-        fontWeight: "800",
-        marginBottom: 3,
-        textAlign: "center",
-    },
-
-    title: {
-        color: COLORS.green,
-        fontSize: 27,
-        fontWeight: "900",
-        letterSpacing: 0.2,
-        textAlign: "center",
-    },
-
-    subtitle: {
-        color: COLORS.body,
-        fontSize: 12,
-        lineHeight: 17,
-        textAlign: "center",
-        marginTop: 3,
-        paddingHorizontal: 8,
-    },
-
-    // Compact parchment stats card
-    statsPanel: {
-        flexDirection: "row",
-        flexWrap: "wrap",
-        alignItems: "center",
-        backgroundColor: COLORS.parchment,
-        borderColor: COLORS.panelBorder,
-        borderWidth: 1,
-        borderRadius: 14,
-        paddingHorizontal: 9,
-        paddingTop: 9,
-        paddingBottom: 11,
-        marginBottom: 12,
-    },
-
-    statCell: {
-        flex: 1,
-        minWidth: 60,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-
-    statDivider: {
-        height: 27,
-        width: 1,
-        backgroundColor: COLORS.parchmentShadow,
-    },
-
-    statLabel: {
-        color: COLORS.muted,
-        fontSize: 9,
-        fontWeight: "800",
-        letterSpacing: 0.8,
-    },
-
-    statValue: {
-        color: COLORS.green,
-        fontSize: 18,
-        fontWeight: "900",
-        marginTop: 2,
-        fontVariant: ["tabular-nums"],
-    },
-
-    dangerText: {
-        color: COLORS.red,
-    },
-
-    progressTrack: {
-        height: 5,
-        backgroundColor: COLORS.parchmentShadow,
-        borderRadius: 5,
-        width: "100%",
-        marginTop: 9,
-        overflow: "hidden",
-    },
-
-    progressFill: {
-        height: "100%",
-        backgroundColor: COLORS.greenLight,
-        borderRadius: 5,
-    },
-
-    // Game board
-    board: {
-        backgroundColor: COLORS.parchment,
-        borderColor: COLORS.panelBorder,
-        borderWidth: 1,
-        borderRadius: 18,
-        padding: 10,
-        shadowColor: "#4B3E27",
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.08,
-        shadowRadius: 6,
-        elevation: 2,
-    },
-
-    boardHeading: {
-        alignItems: "center",
-        marginBottom: 10,
-    },
-
-    sectionTitle: {
-        color: COLORS.green,
-        fontSize: 11,
-        fontWeight: "900",
-        letterSpacing: 0.8,
-        textAlign: "center",
-    },
-
-    instruction: {
-        color: COLORS.body,
-        fontSize: 11,
-        lineHeight: 15,
-        textAlign: "center",
-        marginTop: 4,
-        paddingHorizontal: 2,
-    },
-
-    matchingColumns: {
-        flexDirection: "row",
-        alignItems: "stretch",
-    },
-
-    portraitColumn: {
-        flex: 1,
-        minWidth: 0,
-        paddingRight: 5,
-        paddingTop: 23,
-    },
-
-    namesColumn: {
-        flex: 1,
-        minWidth: 0,
-        paddingLeft: 5,
-    },
-
-    namesHeading: {
-        color: COLORS.goldDark,
-        fontSize: 9,
-        fontWeight: "900",
-        letterSpacing: 0.5,
-        textAlign: "center",
-        marginBottom: 7,
-        minHeight: 16,
-        textAlignVertical: "center",
-    },
-
-    portraitRow: {
-        flexDirection: "row",
-        alignItems: "stretch",
-        minWidth: 0,
-        minHeight: 92,
-        padding: 5,
-        marginBottom: 7,
-        borderRadius: 11,
-        borderWidth: 1,
-        borderColor: COLORS.panelBorder,
-        backgroundColor: COLORS.parchmentDeep,
-    },
-
-    portraitRowMatched: {
-        borderColor: COLORS.greenLight,
-        backgroundColor: COLORS.greenSoft,
-    },
-
-    portraitRowCorrect: {
-        borderColor: COLORS.greenLight,
-        borderWidth: 2,
-    },
-
-    portraitRowWrong: {
-        borderColor: COLORS.red,
-        borderWidth: 2,
-    },
-
-    portraitRowPressed: {
-        opacity: 0.78,
-    },
-
-    imageFrame: {
-        width: 52,
-        minWidth: 42,
-        height: 80,
-        borderRadius: 7,
-        backgroundColor: COLORS.parchmentShadow,
-        overflow: "hidden",
-        alignItems: "center",
-        justifyContent: "center",
-        position: "relative",
-        alignSelf: "center",
-    },
-
-    portrait: {
-        width: "100%",
-        height: "100%",
-    },
-
-    matchedOverlay: {
-        ...StyleSheet.absoluteFillObject,
-        backgroundColor: "rgba(52, 72, 61, 0.48)",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-
-    checkmark: {
-        color: COLORS.white,
-        fontSize: 27,
-        fontWeight: "900",
-        textShadowColor: "#26352B",
-        textShadowRadius: 4,
-    },
-
-    answerBox: {
-        flex: 1,
-        minWidth: 0,
-        minHeight: 80,
-        marginLeft: 5,
-        paddingVertical: 5,
-        paddingHorizontal: 3,
-        borderRadius: 7,
-        borderWidth: 1,
-        borderStyle: "dashed",
-        borderColor: COLORS.gold,
-        backgroundColor: COLORS.parchment,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-
-    answerBoxMatched: {
-        backgroundColor: COLORS.greenSoft,
-        borderColor: COLORS.greenLight,
-        borderStyle: "solid",
-    },
-
-    answerBoxWrong: {
-        borderColor: COLORS.red,
-    },
-
-    answerText: {
-        color: COLORS.muted,
-        fontSize: 10,
-        lineHeight: 13,
-        fontWeight: "700",
-        textAlign: "center",
-    },
-
-    answerTextMatched: {
-        color: COLORS.greenDeep,
-        fontSize: 10,
-        fontWeight: "800",
-    },
-
-    // Name chips
-    nameOptionWrapper: {
-        marginBottom: 7,
-        borderRadius: 9,
-        zIndex: 1,
-    },
-
-    nameOptionWrapperSelected: {
-        zIndex: 10,
-        elevation: 5,
-    },
-
-    nameOptionWrapperMatched: {
-        opacity: 0.72,
-    },
-
-    nameOption: {
-        minHeight: 92,
-        paddingVertical: 7,
-        paddingHorizontal: 5,
-        alignItems: "center",
-        justifyContent: "center",
-        borderRadius: 9,
-        borderWidth: 1,
-        borderColor: COLORS.panelBorder,
-        backgroundColor: COLORS.parchmentDeep,
-    },
-
-    nameOptionSelected: {
-        backgroundColor: "#E5D5AE",
-        borderColor: COLORS.goldDark,
-        borderWidth: 2,
-    },
-
-    nameOptionMatched: {
-        backgroundColor: COLORS.greenSoft,
-        borderColor: COLORS.greenLight,
-    },
-
-    nameOptionPressed: {
-        opacity: 0.78,
-    },
-
-    nameText: {
-        color: COLORS.text,
-        textAlign: "center",
-        fontSize: 12,
-        lineHeight: 16,
-        fontWeight: "800",
-    },
-
-    nameTextSelected: {
-        color: COLORS.greenDeep,
-        fontWeight: "900",
-    },
-
-    nameTextMatched: {
-        color: COLORS.green,
-    },
-
-    // Feedback
-    feedbackBox: {
-        paddingVertical: 9,
-        paddingHorizontal: 10,
-        marginTop: 5,
-        borderRadius: 9,
-        borderWidth: 1,
-    },
-
-    feedbackCorrect: {
-        backgroundColor: COLORS.greenSoft,
-        borderColor: COLORS.greenLight,
-    },
-
-    feedbackWrong: {
-        backgroundColor: COLORS.redSoft,
-        borderColor: COLORS.red,
-    },
-
-    feedbackHint: {
-        backgroundColor: COLORS.parchmentDeep,
-        borderColor: COLORS.panelBorder,
-    },
-
-    feedbackText: {
-        color: COLORS.text,
-        textAlign: "center",
-        fontSize: 11,
-        lineHeight: 16,
-        fontWeight: "700",
-    },
-
-    // Intro
-    introPanel: {
-        width: "100%",
-        alignItems: "center",
-        backgroundColor: COLORS.parchment,
-        borderRadius: 20,
-        borderColor: COLORS.panelBorder,
-        borderWidth: 1,
-        paddingHorizontal: 19,
-        paddingTop: 18,
-        paddingBottom: 20,
-        shadowColor: "#4B3E27",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.09,
-        shadowRadius: 8,
-        elevation: 3,
-    },
-
-    introAccent: {
-        width: 44,
-        height: 4,
-        borderRadius: 4,
-        backgroundColor: COLORS.gold,
-        marginBottom: 15,
-    },
-
-    introEyebrow: {
-        color: COLORS.goldDark,
-        fontSize: 10,
-        letterSpacing: 1.8,
-        fontWeight: "900",
-        textAlign: "center",
-    },
-
-    introTitle: {
-        color: COLORS.green,
-        fontSize: 23,
-        lineHeight: 29,
-        fontWeight: "900",
-        textAlign: "center",
-        marginTop: 5,
-    },
-
-    introText: {
-        color: COLORS.body,
-        fontSize: 13,
-        lineHeight: 19,
-        textAlign: "center",
-        marginTop: 9,
-        maxWidth: 340,
-    },
-
-    rulesList: {
-        width: "100%",
-        marginTop: 19,
-        marginBottom: 10,
-        padding: 12,
-        borderRadius: 12,
-        backgroundColor: "#EDE2CC",
-        borderWidth: 1,
-        borderColor: "#E1D0AD",
-    },
-
-    ruleRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginVertical: 5,
-    },
-
-    ruleBullet: {
-        width: 29,
-        color: COLORS.goldDark,
-        fontSize: 11,
-        fontWeight: "900",
-    },
-
-    ruleText: {
-        flex: 1,
-        color: COLORS.text,
-        fontSize: 12,
-        lineHeight: 17,
-    },
-
-    setupWarning: {
-        color: COLORS.red,
-        fontSize: 12,
-        lineHeight: 18,
-        textAlign: "center",
-        marginTop: 10,
-        marginBottom: 4,
-    },
-
-    // Buttons
-    primaryButton: {
-        minHeight: 48,
-        minWidth: 190,
-        paddingHorizontal: 22,
-        paddingVertical: 13,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: COLORS.green,
-        borderWidth: 1,
-        borderColor: COLORS.greenLight,
-        borderRadius: 12,
-        marginTop: 12,
-    },
-
-    beginButton: {
-        width: "100%",
-        flexDirection: "row",
-        marginTop: 14,
-    },
-
-    primaryButtonPressed: {
-        backgroundColor: COLORS.greenDeep,
-        transform: [{ scale: 0.985 }],
-    },
-
-    primaryButtonText: {
-        color: COLORS.parchment,
-        fontSize: 12,
-        fontWeight: "900",
-        letterSpacing: 1,
-        textAlign: "center",
-    },
-
-    buttonArrow: {
-        position: "absolute",
-        right: 18,
-        color: COLORS.parchment,
-        fontSize: 20,
-        fontWeight: "700",
-    },
-
-    secondaryButton: {
-        minHeight: 46,
-        minWidth: 190,
-        paddingHorizontal: 18,
-        paddingVertical: 12,
-        alignItems: "center",
-        justifyContent: "center",
-        borderWidth: 1,
-        borderColor: COLORS.greenLight,
-        backgroundColor: COLORS.parchment,
-        borderRadius: 12,
-        marginTop: 10,
-    },
-
-    secondaryButtonPressed: {
-        backgroundColor: COLORS.greenSoft,
-    },
-
-    secondaryButtonText: {
-        color: COLORS.green,
-        fontSize: 11,
-        fontWeight: "900",
-        letterSpacing: 1,
-    },
-
-    // Results
-    endPanel: {
-        width: "100%",
-        alignItems: "center",
-        justifyContent: "center",
-        paddingHorizontal: 18,
-        paddingVertical: 24,
-        backgroundColor: COLORS.parchment,
-        borderRadius: 20,
-        borderWidth: 1,
-        borderColor: COLORS.panelBorder,
-    },
-
-    endIcon: {
-        color: COLORS.goldDark,
-        fontSize: 38,
-        fontWeight: "800",
-        marginBottom: 6,
-    },
-
-    endTitle: {
-        color: COLORS.green,
-        fontSize: 27,
-        lineHeight: 34,
-        fontWeight: "900",
-        textAlign: "center",
-    },
-
-    endDescription: {
-        color: COLORS.body,
-        fontSize: 13,
-        lineHeight: 20,
-        textAlign: "center",
-        maxWidth: 350,
-        marginTop: 8,
-    },
-
-    resultStats: {
-        width: "100%",
-        flexDirection: "row",
-        justifyContent: "space-around",
-        backgroundColor: COLORS.parchmentDeep,
-        borderColor: COLORS.panelBorder,
-        borderWidth: 1,
-        borderRadius: 12,
-        paddingVertical: 15,
-        marginTop: 22,
-        marginBottom: 12,
-    },
-
-    resultStat: {
-        flex: 1,
-        alignItems: "center",
-        paddingHorizontal: 3,
-    },
-
-    resultLabel: {
-        color: COLORS.body,
-        fontSize: 9,
-        letterSpacing: 0.5,
-        fontWeight: "800",
-        textAlign: "center",
-    },
-
-    resultValue: {
-        color: COLORS.green,
-        fontSize: 18,
-        fontWeight: "900",
-        marginTop: 5,
-        textAlign: "center",
-    },
+  flex: { flex: 1 },
+  background: { flex: 1, width: "100%", height: "100%", backgroundColor: "#000" },
+  safeArea: { flex: 1 },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+  },
+  container: {
+    width: "100%",
+    maxWidth: 760,
+    alignSelf: "center",
+  },
+  pressed: { opacity: 0.78 },
+
+  // HEADER
+  header: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 10,
+    gap: 8,
+  },
+  title: {
+    color: INK,
+    fontSize: 22,
+    fontWeight: "bold",
+  },
+  pills: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  pill: {
+    minWidth: 54,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 12,
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    borderWidth: 1,
+    borderColor: "#d7cfbe",
+  },
+  pillLow: { borderColor: "#ff9b82", backgroundColor: "rgba(90, 20, 10, 0.75)" },
+  pillText: { color: "#FFFFFF", fontSize: 14, fontWeight: "bold" },
+  pillTextLow: { color: "#ff9b82" },
+
+  progressTrack: {
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: "rgba(53, 35, 19, 0.2)",
+    overflow: "hidden",
+    marginBottom: 10,
+  },
+  progressFill: {
+    height: "100%",
+    borderRadius: 3,
+    backgroundColor: GOLD,
+  },
+
+  // PANELS
+  panel: {
+    paddingTop: PANEL_PAD_TOP,
+    paddingBottom: PANEL_PAD_BOTTOM,
+    paddingHorizontal: PANEL_PAD_SIDE,
+    justifyContent: "center",
+  },
+  boardPanel: { width: "100%" },
+  centerPanel: {
+    width: "100%",
+    maxWidth: 560,
+    alignSelf: "center",
+    minHeight: 240,
+  },
+  kicker: {
+    color: "#7a5a2a",
+    fontSize: 11,
+    fontWeight: "bold",
+    letterSpacing: 1.6,
+    textAlign: "center",
+    marginBottom: 6,
+  },
+  tab: {
+    position: "absolute",
+    top: 0,
+    left: "2.5%",
+    width: "38%",
+    height: "20%",
+    minHeight: 36,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 8,
+  },
+  tabText: {
+    color: INK,
+    fontSize: 13,
+    fontWeight: "bold",
+    letterSpacing: 1.2,
+    textAlign: "center",
+  },
+  panelTitle: {
+    color: INK,
+    fontSize: 22,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  bodyText: {
+    color: "#0f0f0f",
+    fontSize: 15,
+    lineHeight: 22,
+    textAlign: "center",
+  },
+  instruction: {
+    color: "#141414",
+    fontSize: 12,
+    lineHeight: 17,
+    fontStyle: "italic",
+    textAlign: "center",
+    marginBottom: 10,
+  },
+  ruleBox: { marginVertical: 14, alignSelf: "center" },
+  ruleText: { color: INK, fontSize: 14, lineHeight: 22 },
+  setupWarning: {
+    color: RED,
+    fontSize: 12,
+    lineHeight: 18,
+    textAlign: "center",
+    marginBottom: 6,
+  },
+
+  // MATCHING BOARD
+  matchingColumns: {
+    flexDirection: "row",
+    alignItems: "stretch",
+  },
+  portraitColumn: {
+    flex: 1,
+    minWidth: 0,
+    paddingRight: 5,
+    paddingTop: 23,
+  },
+  namesColumn: {
+    flex: 1,
+    minWidth: 0,
+    paddingLeft: 5,
+  },
+  namesHeading: {
+    color: GOLD,
+    fontSize: 10,
+    fontWeight: "bold",
+    letterSpacing: 0.8,
+    textAlign: "center",
+    marginBottom: 7,
+    minHeight: 16,
+    textAlignVertical: "center",
+  },
+
+  portraitRow: {
+    flexDirection: "row",
+    alignItems: "stretch",
+    minWidth: 0,
+    padding: 5,
+    marginBottom: 7,
+    borderRadius: 9,
+    borderWidth: 1.5,
+    borderColor: GOLD,
+    backgroundColor: "rgba(120, 85, 40, 0.12)",
+  },
+  portraitRowMatched: {
+    borderColor: GREEN,
+    backgroundColor: "rgba(61, 107, 69, 0.18)",
+  },
+  portraitRowCorrect: { borderColor: GREEN, borderWidth: 2.5 },
+  portraitRowWrong: { borderColor: RED, borderWidth: 2.5 },
+
+  imageFrame: {
+    minWidth: 42,
+    borderRadius: 6,
+    backgroundColor: "rgba(120, 85, 40, 0.25)",
+    overflow: "hidden",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+    alignSelf: "center",
+  },
+  portrait: { width: "100%", height: "100%" },
+  matchedOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(61, 107, 69, 0.35)",
+  },
+
+  answerBox: {
+    flex: 1,
+    minWidth: 0,
+    marginLeft: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 3,
+    borderRadius: 6,
+    borderWidth: 1.5,
+    borderStyle: "dashed",
+    borderColor: GOLD,
+    backgroundColor: "rgba(255, 248, 232, 0.6)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  answerBoxMatched: {
+    backgroundColor: "rgba(61, 107, 69, 0.12)",
+    borderColor: GREEN,
+    borderStyle: "solid",
+  },
+  answerBoxWrong: { borderColor: RED },
+  answerText: {
+    color: "#6a5a42",
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  answerTextMatched: { color: INK },
+
+  // NAME CHIPS
+  nameOptionWrapper: {
+    marginBottom: 7,
+    borderRadius: 9,
+    zIndex: 1,
+  },
+  nameOptionWrapperSelected: { zIndex: 10, elevation: 5 },
+  nameOptionWrapperMatched: { opacity: 0.72 },
+  nameOption: {
+    paddingVertical: 7,
+    paddingHorizontal: 6,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 9,
+    borderWidth: 1.5,
+    borderColor: GOLD,
+    backgroundColor: "rgba(255, 248, 232, 0.85)",
+  },
+  nameOptionSelected: {
+    backgroundColor: "rgba(214, 180, 106, 0.6)",
+    borderColor: INK,
+    borderWidth: 2.5,
+  },
+  nameOptionMatched: {
+    backgroundColor: "rgba(61, 107, 69, 0.18)",
+    borderColor: GREEN,
+  },
+  nameText: {
+    color: INK,
+    textAlign: "center",
+    fontSize: 13,
+    lineHeight: 17,
+    fontWeight: "bold",
+  },
+  nameTextSelected: { color: INK },
+  nameTextMatched: { color: GREEN },
+
+  // FEEDBACK
+  feedbackBox: {
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    marginTop: 4,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  feedbackCorrect: {
+    backgroundColor: "rgba(61, 107, 69, 0.16)",
+    borderColor: GREEN,
+  },
+  feedbackWrong: {
+    backgroundColor: "rgba(163, 40, 27, 0.12)",
+    borderColor: RED,
+  },
+  feedbackHint: {
+    backgroundColor: "rgba(120, 85, 40, 0.12)",
+    borderColor: GOLD,
+  },
+  feedbackText: {
+    color: INK,
+    textAlign: "center",
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: "bold",
+  },
+
+  // BUTTONS
+  buttonWrap: { alignSelf: "center", width: "80%", maxWidth: 300, marginTop: 8 },
+  buttonSecondary: { opacity: 0.85 },
+  buttonBg: {
+    width: "100%",
+    minHeight: 56,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  buttonText: {
+    color: BUTTON_INK,
+    fontSize: 16,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+
+  // RESULTS
+  resultStats: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    backgroundColor: "rgba(120, 85, 40, 0.14)",
+    borderColor: GOLD,
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingVertical: 12,
+    marginVertical: 14,
+  },
+  resultStat: {
+    flex: 1,
+    alignItems: "center",
+    paddingHorizontal: 3,
+  },
+  resultLabel: {
+    color: "#50402a",
+    fontSize: 9,
+    letterSpacing: 0.5,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  resultValue: {
+    color: INK,
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 4,
+    textAlign: "center",
+  },
 });

@@ -8,14 +8,16 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import Sound_clicks from '../../Components/Sound_clicks';
 import { useGameProgress } from '../../GameProgress';
-import { getCheckpoints, clearCheckpoints } from '../Others/saveProgress';
+import { getCheckpoints, clearCheckpoints ,restartProgress  } from '../Others/saveProgress';
 import { useAudio } from '../../Audiostore'; // Added for Quitapp
+import { useJournal } from './JournalContext';
 
 function MainMenuScreen({ navigation }) {
   const [selectedButton, setSelectedButton] = useState(null);
   const [hasSave, setHasSave] = useState(false); // Added state for saving
   const game = useGameProgress();
-  const { Quitapp } = useAudio(); // Extracted Quitapp
+  const { Quitapp } = useAudio();
+  const { resetUnlocks } = useJournal(); // Extracted Quitapp
 
   useFocusEffect(
     useCallback(() => {
@@ -28,13 +30,14 @@ function MainMenuScreen({ navigation }) {
   );
 
   // FIXED: Defined startFresh to wipe data and start at Part 1
-  const startFresh = async () => {
-    await clearCheckpoints();
-    game.setChapter(1);
-    game.setPart(1);
-    game.setScene(0);
-    navigation.navigate('Part1', { startScene: 0 });
-  };
+ const startFresh = async () => {
+  await restartProgress();   // clears saves + unlocked parts
+  await resetUnlocks();      // clears remnants, timeline, profiles, glossary
+  game.setChapter(1);
+  game.setPart(1);
+  game.setScene(0);
+  navigation.navigate('Part1', { startScene: 0 });
+};
 
   const menuButtons = [
     {
