@@ -14,6 +14,7 @@ import {
 
 import Sound_clicks from '../../Components/Sound_clicks';
 import useScale from '../../Components/ScreenScaler';
+import { useAudio } from '../../Audiostore'; 
 
 const BG_MAIN = require('../../assets/Settings_Assets/About_Base.png');
 const BTN_TEAM = require('../../assets/Settings_Assets/About_Team.png');
@@ -36,6 +37,7 @@ const TEXT_BOTTOM = 0.08;
 const TEXT_SIDE = 0.12;
 
 function SpringImageButton({ image, pressedImage, onPress, imageStyle }) {
+  const { playSfx } = useAudio();
   const [pressed, setPressed] = useState(false);
   const scale = useRef(new Animated.Value(1)).current;
   const translateY = useRef(new Animated.Value(0)).current;
@@ -63,7 +65,10 @@ function SpringImageButton({ image, pressedImage, onPress, imageStyle }) {
       <Sound_clicks
         onPressIn={() => animatePress(true)}
         onPressOut={() => animatePress(false)}
-        onPress={onPress}
+        onPress={() => {
+          playSfx("dialogueClick");
+          onPress();
+        }}
       >
         <Image source={pressed ? pressedImage : image} style={imageStyle} resizeMode="stretch" />
       </Sound_clicks>

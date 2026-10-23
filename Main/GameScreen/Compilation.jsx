@@ -495,8 +495,6 @@ function PartRenderer(props) {
     if (!hasMoreScenes && !isLastPart) markPartReached(partNumber + 1);
   }, [hasMoreScenes, isLastPart, partNumber]);
 
-   const { unlock } = useJournal();
-
   useEffect(() => {
     if (current && current.unlock && current.type !== "quiz") {
       unlock(current.unlock);

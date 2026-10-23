@@ -23,14 +23,12 @@ const CIRCLE_THUMB_CHECKED = require('../../assets/Settings_Assets/CircleButton_
 
 const PANEL_ASPECT = 1205 / 630;
 
-// ===== RADIO CIRCLES (per your request) =====
-const CIRCLE_W = 80/1920;
-const ROW_H = 80/1080;
-
-// Positioning (kept the same so the circles land on the baked-in labels)
+// ===== RADIO CIRCLES =====
+const CIRCLE_W = 300/1920;
+const ROW_H = 300/1080;
 const ROW_LEFT = 200/1920;
 const ROW_W = 400/1920;
-const CIRCLE_CX = 250/1920;
+const CIRCLE_CX = 300/1920;
 
 const FONT_OPTIONS = [
   { value: 'Small', y: 473/1080 },
@@ -100,7 +98,7 @@ function OpacitySlider({ panelW, panelH, value, onChange }) {
         style={{
           position: 'absolute',
           top: -percentFont * 0.8,
-          left: handleLeft + thumb / 2 - percentFont * 1.,
+          left: handleLeft + thumb / 2 - percentFont * 1.5,
           width: percentFont * 3,
           alignItems: 'center',
         }}
@@ -229,7 +227,6 @@ export default function DisplayScreen({ navigation }) {
               >
                 <Image
                   source={selected ? CIRCLE_THUMB_CHECKED : CIRCLE_THUMB}
-                  // CHANGED: resizeMode is now "stretch" so both images force-match the same box
                   resizeMode="stretch"
                   style={{
                     position: 'absolute',

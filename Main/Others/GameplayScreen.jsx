@@ -22,8 +22,8 @@ const IMG_CIRCLE_CHECKED = require('../../assets/Settings_Assets/CircleButton_Ch
 const PANEL_ASPECT = 1205 / 630;
 
 // BIGGER RADIO CIRCLES
-const CIRCLE_W = 80/1920;  
-const ROW_H = 80/1080;     
+const CIRCLE_W = 300/1920;  
+const ROW_H = 300/1080;     
 
 const SPEED_ROW = { left: 240/1920, w: 410/1920, cx: 318/1920 };
 const AUTO_ROW = { left: 855/1920, w: 350/1920, cx: 921/1920 };
@@ -84,9 +84,8 @@ function RadioRow({ panelW, panelH, row, y, selected, onPress, disabled }) {
       }}
     >
       <Image
-        // FIXED: Uses your specific checked image when selected
         source={selected ? IMG_CIRCLE_CHECKED : IMG_CIRCLE}
-        resizeMode="contain"
+        resizeMode="stretch"
         style={{
           position: 'absolute',
           left: (row.cx - CIRCLE_W / 2 - row.left) * panelW,
