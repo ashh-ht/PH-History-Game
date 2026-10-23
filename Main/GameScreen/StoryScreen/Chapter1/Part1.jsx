@@ -752,13 +752,12 @@ export const Chapter1_Part1 = [
       "Cebu",
       "Cibabao, Samar",
       "Bohol",
-      "Manila",
+      "Manila"
     ],
-    // FIXED: Removed duplicate correctIndex and music keys
     correctIndex: 1,
-    music: "traditional"
+    music: "traditional",
+    unlock: ["remnant-part1-1"]
   },
-
   {
     type: "quiz",
     question: "What did Legazpi plant on Leyte to formally claim the territory for Spain?",
@@ -768,9 +767,9 @@ export const Chapter1_Part1 = [
       "A cross",
       "A cannon"
     ],
-    correctIndex: 2
+    correctIndex: 2,
+    unlock: ["remnant-part1-2"]
   },
-
   {
     type: "quiz",
     question: "Who welcomed Legazpi in Bohol and sealed their friendship with a sandugo?",
@@ -780,9 +779,9 @@ export const Chapter1_Part1 = [
       "Rajah Sulayman",
       "Datu Sikatuna"
     ],
-    correctIndex: 3
+    correctIndex: 3,
+    unlock: ["remnant-part1-3"]
   },
-
   {
     type: "quiz",
     question: "What important object did Juan de Camus discover inside a house in Cebu?",
@@ -792,9 +791,9 @@ export const Chapter1_Part1 = [
       "A gold crown",
       "A map of Manila"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part1-4"]
   },
-
   {
     type: "quiz",
     question: "Who urged Rajah Sulayman to negotiate with Legazpi when\nthe Spanish arrived in Manila?",
@@ -804,15 +803,21 @@ export const Chapter1_Part1 = [
       "Lakan Dula",
       "Juan de Salcedo"
     ],
-    correctIndex: 2
+    correctIndex: 2,
+    unlock: ["remnant-part1-5"]
   },
-
+  // NEW QUESTION ADDED
   {
-    type: "scene",
-    title: "Chapter Complete.",
-    date: "You survived the first encounters.\nBut the story doesn't end here...",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
-    music: "somber"
+    type: "quiz",
+    question: "What did Legazpi declare Manila as on June 24, 1571?",
+    options: [
+      "A military outpost",
+      "The capital of the colony",
+      "An independent city-state",
+      "A trade route hub"
+    ],
+    correctIndex: 1,
+    unlock: ["remnant-part1-6"]
   },
 
   {

@@ -11,31 +11,32 @@ import {
 } from "react-native";
 
 import { useGameProgress } from "../../GameProgress";
-import { useAudio } from "../../Audiostore"; // FIXED: Removed duplicate import
+import { useAudio } from "../../Audiostore";
 import { useGameplaySettings } from "../Others/GameplaySetting";
 import { useDisplaySettings, FONT_SCALE } from "../Others/DisplaySetting";
 import { saveCheckpoint, markPartReached } from "../Others/saveProgress";
 import { Chapter1 } from "./StoryScreen/Chapter1";
 import { useJournal } from "../../Main/Others/JournalContext";
 
+// IMPORT THE REMNANT DATA
+import { REMNANT_DATA } from "../RemnantData"; 
+
 // =====================================================
 // MINIGAMES
 // =====================================================
-import VoyageMinigame from "./Minigames/VoyageMinigame";
-import SantoNinoMinigame from "./Minigames/SantoNinoMinigame";
-import CedulaMinigame from "./Minigames/CedulaMinigame";
-import DecipherMinigame from "./Minigames/DecipherMinigame";
-import CharacterMatchingMinigame from "./Minigames/CharacterMatchingMinigame";
-import ChronologicalOrderMinigame from "./Minigames/ChronologicalOrderMinigame";
-import WhoSaidItMinigame from "./Minigames/WhoSaidItMinigame";
-import TimelineSort from "./Minigames/Timelinesort";
-import { BloodTrace, OathTrace } from "./Minigames/TracingMinigame";
+import VoyageMinigame from "../GameScreen/Minigames/VoyageMinigame";
+import SantoNinoMinigame from "../GameScreen/Minigames/SantoNinoMinigame";
+import CedulaMinigame from "../GameScreen/Minigames/CedulaMinigame";
+import DecipherMinigame from "../GameScreen/Minigames/DecipherMinigame";
+import CharacterMatchingMinigame from "../GameScreen/Minigames/CharacterMatchingMinigame";
+import ChronologicalOrderMinigame from "../GameScreen/Minigames/ChronologicalOrderMinigame";
+import WhoSaidItMinigame from "../GameScreen/Minigames/WhoSaidItMinigame";
+import TimelineSort from "../GameScreen/Minigames/Timelinesort";
+import { BloodTrace, OathTrace } from "../GameScreen/Minigames/TracingMinigame";
 
 // =====================================================
 // HELPERS
 // =====================================================
-
-// Moved outside to fix ESLint dependency warning
 const getMusicFor = (sceneData, idx) => {
   for (let i = Math.min(idx, sceneData.length - 1); i >= 0; i--) {
     const m = sceneData[i].music ?? sceneData[i].Music;
@@ -226,8 +227,6 @@ const MINIGAMES = {
   oathtrace: OathTrace,
 };
 
-// Every scene type that runs its own minigame UI (no typed line).
-// Used so Auto Play never skips them and they never get a typewriter line.
 const MINIGAME_TYPES = new Set([
   "voyage",
   "santoNino",
@@ -374,6 +373,10 @@ function PartRenderer(props) {
   const [picked, setPicked] = useState(null);
   const [quizAnswer, setQuizAnswer] = useState(null);
 
+  // --- REMNANT POPUP STATES ---
+  const [showRewardPopup, setShowRewardPopup] = useState(false);
+  const [rewardImage, setRewardImage] = useState(null);
+
   const introProgress = useRef(new Animated.Value(1)).current;
   const [introChanging, setIntroChanging] = useState(false);
   const [introNextIndex, setIntroNextIndex] = useState(null);
@@ -383,7 +386,7 @@ function PartRenderer(props) {
     game.setChapter(chapterNumber);
     game.setPart(partNumber);
     game.setInGame(true);
-    markPartReached(partNumber); // saved to storage so Part Select stays unlocked after closing the app
+    markPartReached(partNumber);
 
     console.log(`loaded ch${chapterNumber} part${partNumber}`);
 
@@ -395,7 +398,6 @@ function PartRenderer(props) {
   }, []);
 
   const startScene = route?.params?.startScene;
-  // FIXED: Added a ref so it only applies the startScene once and doesn't loop
   const lastAppliedStartScene = useRef(null);
 
   useEffect(() => {
@@ -411,33 +413,29 @@ function PartRenderer(props) {
 
   const hasMoreScenes = sceneIdx < sceneData.length;
   const current = hasMoreScenes ? sceneData[sceneIdx] : null;
+  console.log("part", partNumber, "idx", sceneIdx, "type", current?.type);
 
-  // FIXED: covers every minigame type, not just the ones in MINIGAMES
   const isMinigame = current ? MINIGAME_TYPES.has(current.type) : false;
 
-  // Finishing a part unlocks the next one right away,
-  // even if the player quits on the "Part complete!" screen
   useEffect(() => {
     if (!hasMoreScenes && !isLastPart) markPartReached(partNumber + 1);
   }, [hasMoreScenes, isLastPart, partNumber]);
 
   const { unlock } = useJournal();
 
+  // FIXED: Exclude "quiz" so it doesn't auto-unlock when the screen loads. 
+  // Quizzes unlock their items via handleQuizSelect.
   useEffect(() => {
-    if (current && current.unlock) {
+    if (current && current.unlock && current.type !== "quiz") {
       unlock(current.unlock);
     }
   }, [current, unlock]);
 
-  // Music Effect
   useEffect(() => {
     const track = getMusicFor(sceneData, sceneIdx);
     if (track) playMusic(track);
   }, [sceneIdx, sceneData, playMusic]);
 
-  // SFX Effect: fires once whenever a new scene becomes current.
-  // In Chapter1 data use:  sfx: "cannonFire"  or  sfx: ["churchBell", "footstepsSand"]
-  // Add  stopSfx: true  to cut looping sounds (oilLamp, tar) at that scene.
   useEffect(() => {
     const scene = sceneData[sceneIdx];
     if (!scene) return;
@@ -446,7 +444,6 @@ function PartRenderer(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sceneIdx, sceneData]);
 
-  // Chapter Title Effect
   useEffect(() => {
     if (current?.type !== "chapterIntro") {
       return;
@@ -598,7 +595,7 @@ function PartRenderer(props) {
   // Auto Play
   useEffect(() => {
     if (!settings?.autoPlay || !done || !current) return;
-    if (isMinigame) return; // FIXED: Auto Play must never skip a minigame
+    if (isMinigame) return; 
     if (current.type === "quiz") return;
     if (current.type === "choice" && picked === null) return;
 
@@ -685,7 +682,6 @@ function PartRenderer(props) {
       <View style={styles.introScreen}>
         <ImageBackground source={current.background} style={styles.introBackground} resizeMode="cover">
           <View style={styles.introTextBox}>
-            {/* CHANGED: typewriter instead of plain Text */}
             <TypedText style={scaled(styles.introText)} full={lineText} shown={shown} />
           </View>
         </ImageBackground>
@@ -693,21 +689,49 @@ function PartRenderer(props) {
           <Animated.View pointerEvents="none" style={[styles.introNextLayer, { opacity: introProgress }]}>
             <ImageBackground source={nextIntro.background} style={styles.introBackground} resizeMode="cover">
               <View style={styles.introTextBox}>
-                {/* CHANGED: keep the box size but hide the text so the next line types in after the crossfade */}
                 <TypedText style={scaled(styles.introText)} full={nextIntro.text} shown="" />
               </View>
             </ImageBackground>
           </Animated.View>
         )}
-        {/* CHANGED: first tap completes the typing, next tap continues */}
         <TouchableOpacity style={styles.introTouchable} activeOpacity={1} onPress={() => { playSfx("dialogueClick"); advance(); }} />
       </View>
     );
   }
 
+  // =====================================================
+  // QUIZ SECTION - FIXED AND CLEANED UP
+  // =====================================================
   if (current.type === "quiz") {
     const isAnswered = quizAnswer !== null;
     const isCorrect = quizAnswer === current.correctIndex;
+
+    const handleQuizSelect = (index) => {
+      if (isAnswered) return; // Prevent double clicking
+      
+      setQuizAnswer(index);
+      playSfx(index === current.correctIndex ? "correct" : "wrong");
+
+      if (index === current.correctIndex) {
+        // Check if the quiz has an unlock array (e.g., ["remnant-part1-1"])
+        if (current.unlock && current.unlock.length > 0) {
+          unlock(current.unlock);
+          
+          // Find the specific remnant ID to show the popup image
+          const remnantId = current.unlock.find(id => id.startsWith('remnant-part'));
+          if (remnantId) {
+            const parts = remnantId.split('-');
+            const partNum = parseInt(parts[1].replace('part', ''), 10);
+            const pieceNum = parseInt(parts[2], 10);
+            
+            if (REMNANT_DATA[partNum] && REMNANT_DATA[partNum].pieces[pieceNum - 1]) {
+              setRewardImage(REMNANT_DATA[partNum].pieces[pieceNum - 1]);
+              setShowRewardPopup(true);
+            }
+          }
+        }
+      }
+    };
 
     return withOverlay(
       <View style={[styles.choiceScreen, styles.quizBackground]}>
@@ -721,20 +745,34 @@ function PartRenderer(props) {
             )}
           </ImageBackground>
         </View>
+        
         <View style={styles.quizButtonsGrid}>
           {current.options.map((option, index) => (
-            <AnimatedQuizButton key={index} style={styles.quizImageButton} onPress={() => {
-              if (isAnswered) return;
-              setQuizAnswer(index);
-              playSfx(index === current.correctIndex ? "correct" : "wrong");
-            }}>
+            <AnimatedQuizButton key={index} style={styles.quizImageButton} onPress={() => handleQuizSelect(index)}>
               <ImageBackground source={require("../../assets/buttons/choice_button.png")} style={styles.quizImageButtonBg} resizeMode="stretch">
                 <Text style={scaled(styles.quizButtonText)}>{option}</Text>
               </ImageBackground>
             </AnimatedQuizButton>
           ))}
         </View>
+        
         {isAnswered && <AnimatedNextButton onPress={goNext} />}
+
+        {/* REMNANT CONGRATULATIONS POPUP */}
+        {showRewardPopup && (
+          <View style={styles.rewardPopupOverlay}>
+            <View style={styles.rewardPopupBox}>
+              <Text style={styles.rewardTitle}>CONGRATULATIONS!</Text>
+              <Text style={styles.rewardSubtitle}>You received a Remnant piece!</Text>
+              {rewardImage && (
+                <Image source={rewardImage} style={styles.rewardImage} resizeMode="contain" />
+              )}
+              <TouchableOpacity style={styles.rewardButton} onPress={() => setShowRewardPopup(false)}>
+                <Text style={styles.rewardButtonText}>CLAIM</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
       </View>
     );
   }
@@ -1276,5 +1314,66 @@ const styles = StyleSheet.create({
     color: "#000000",
     fontSize: 18,
     fontWeight: "bold",
+  },
+
+  // =====================================================
+  // REMNANT REWARD POPUP STYLES
+  // =====================================================
+  rewardPopupOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.85)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 9999,
+    elevation: 999, // Required for Android z-index
+  },
+  rewardPopupBox: {
+    backgroundColor: '#F4E4C8',
+    padding: 30,
+    borderRadius: 15,
+    borderWidth: 2,
+    borderColor: '#A87C5E',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '50%',       // Widened to fit the bigger image
+    maxWidth: 450,      // Increased max width
+  },
+  rewardTitle: {
+    fontSize: 24,
+    fontFamily: 'serif',
+    fontWeight: 'bold',
+    color: '#5A4A32',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  rewardSubtitle: {
+    fontSize: 15,
+    fontFamily: 'serif',
+    color: '#5A4A32',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  rewardImage: {
+    width: 150,
+    height: 150, 
+    marginBottom: 25,
+  },
+  rewardButton: {
+    backgroundColor: '#A87C5E',
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#5A4A32',
+  },
+  rewardButtonText: {
+    color: '#FFF',
+    fontFamily: 'serif',
+    fontWeight: 'bold',
+    fontSize: 18,
   },
 });
