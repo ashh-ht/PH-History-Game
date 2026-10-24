@@ -7,6 +7,7 @@ import {
   ImageBackground,
   Image,
   Animated,
+  Easing,
   StyleSheet,
 } from "react-native";
 
@@ -17,7 +18,7 @@ import { useDisplaySettings, FONT_SCALE } from "../Others/DisplaySetting";
 import { saveCheckpoint, markPartReached } from "../Others/saveProgress";
 import { Chapter1 } from "./StoryScreen/Chapter1";
 import { useJournal } from "../../Main/Others/JournalContext";
-
+import { useFocusEffect } from "@react-navigation/native";
 // IMPORT THE REMNANT DATA
 import { REMNANT_DATA } from "../RemnantData"; 
 
@@ -33,6 +34,7 @@ import ChronologicalOrderMinigame from "../GameScreen/Minigames/ChronologicalOrd
 import WhoSaidItMinigame from "../GameScreen/Minigames/WhoSaidItMinigame";
 import TimelineSort from "../GameScreen/Minigames/Timelinesort";
 import { BloodTrace, OathTrace } from "../GameScreen/Minigames/TracingMinigame";
+import MinigameOverlay from "../../Components/Minigameoverlay";
 
 // =====================================================
 // HELPERS
@@ -219,12 +221,12 @@ function AnimatedImageButton({ normalSource, pressedSource, onPress, style, imag
   );
 }
 
+// NOTE: bloodtrace / oathtrace are NOT in this map anymore.
+// They are rendered in PartRenderer with the pause overlay (see below).
 const MINIGAMES = {
   voyage: VoyageMinigame,
   santoNino: SantoNinoMinigame,
   sortingtimeline: TimelineSort,
-  bloodtrace: BloodTrace,
-  oathtrace: OathTrace,
 };
 
 const MINIGAME_TYPES = new Set([
@@ -308,32 +310,88 @@ function GameplayMenuOverlay({ navigation }) {
 }
 
 // =====================================================
-// CHARACTER LAYER
+// CHARACTER LAYER (with head bobbing)
 // =====================================================
-function CharacterLayer({ characters }) {
+
+// How the characters move. Change these to tune the feel.
+const BOB_IDLE_PX = 8; // how far up an idle character moves
+const BOB_IDLE_MS = 1200; // time for one half-bob while idle
+const BOB_TALK_PX = 80; // how far up the speaking character moves
+const BOB_TALK_MS = 1200; // time for one half-bob while talking
+
+// One character that bobs up and down.
+// Idle: a slow, small bob. Talking: a faster, bigger bob.
+function CharacterSprite({ char, talking }) {
+  const bob = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const amount = talking ? -BOB_TALK_PX : -BOB_IDLE_PX;
+    const duration = talking ? BOB_TALK_MS : BOB_IDLE_MS;
+
+    bob.setValue(0);
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(bob, {
+          toValue: amount,
+          duration,
+          easing: Easing.inOut(Easing.quad),
+          useNativeDriver: true,
+        }),
+        Animated.timing(bob, {
+          toValue: 0,
+          duration,
+          easing: Easing.inOut(Easing.quad),
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    loop.start();
+
+    return () => loop.stop();
+  }, [talking, bob]);
+
+  const isLeft = char.position === "left";
+  const isCenter = char.position === "center";
+
+  return (
+    <Animated.Image
+      source={char.source}
+      resizeMode="contain"
+      style={[
+        styles.characterImage,
+        isLeft
+          ? styles.characterLeft
+          : isCenter
+            ? styles.characterCenter
+            : styles.characterRight,
+        { transform: [{ translateY: bob }] },
+      ]}
+    />
+  );
+}
+
+// `speaker` = the name shown on the dialogue box
+// `typing`  = true while the text is still being typed out
+function CharacterLayer({ characters, speaker, typing }) {
   if (!characters || characters.length === 0) return null;
+
+  const speakerName = (speaker || "").toLowerCase();
+  const isSpeaker = (char) => {
+    const name = (char?.name || "").toLowerCase();
+    if (!name || !speakerName) return false;
+    return speakerName.includes(name) || name.includes(speakerName);
+  };
 
   return (
     <View style={styles.characterLayer} pointerEvents="none">
       {characters.map((char, index) => {
         if (!char?.source) return null;
 
-        const isLeft = char.position === "left";
-        const isCenter = char.position === "center";
-
         return (
-          <Image
+          <CharacterSprite
             key={`${char.name || "character"}-${index}`}
-            source={char.source}
-            resizeMode="contain"
-            style={[
-              styles.characterImage,
-              isLeft
-                ? styles.characterLeft
-                : isCenter
-                  ? styles.characterCenter
-                  : styles.characterRight,
-            ]}
+            char={char}
+            talking={!!typing && isSpeaker(char)}
           />
         );
       })}
@@ -372,6 +430,22 @@ function PartRenderer(props) {
   const [sceneIdx, setSceneIdx] = useState(startIdx);
   const [picked, setPicked] = useState(null);
   const [quizAnswer, setQuizAnswer] = useState(null);
+
+  // --- MINIGAME PAUSE ---
+  const [paused, setPaused] = useState(false);
+  // Reported by the minigame on screen: "intro" (instructions),
+  // "playing", or "result" (win / lose screen)
+  const [minigamePhase, setMinigamePhase] = useState("intro");
+
+  useEffect(() => {
+    setPaused(false);
+  }, [sceneIdx]);
+
+  useFocusEffect(
+  useCallback(() => {
+    setPaused(false);
+  }, [])
+);
 
   // --- REMNANT POPUP STATES ---
   const [showRewardPopup, setShowRewardPopup] = useState(false);
@@ -513,6 +587,7 @@ function PartRenderer(props) {
     }
     setPicked(null);
     setQuizAnswer(null);
+    setMinigamePhase("intro"); // a new minigame starts on its instructions
     setSceneIdx(index);
     game.setScene(index);
   };
@@ -609,25 +684,119 @@ function PartRenderer(props) {
   // MINIGAMES
   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  if (current?.type === "voyage") return <VoyageMinigame onComplete={goNext} />;
+  // Adds the pause + settings buttons (top right) on top of a minigame.
+  // Only the minigames that understand the `paused` prop use this.
+  // The pause + settings buttons only show while the minigame is actually
+  // being played (not on the instructions or the win / lose screens).
+  // Options: { hideSettings: true } = no menu button at the top right
+  //          (the PAUSED panel still has Settings),
+  //          { top, right } = where the buttons sit (default 20 / 20).
+  const withMinigameOverlay = (
+    node,
+    { hideSettings = false, top = 20, right = 20 } = {}
+  ) => (
+    <>
+      {node}
+      {minigamePhase === "playing" && (
+        <MinigameOverlay
+          paused={paused}
+          hideSettings={hideSettings}
+          top={top}
+          right={right}
+          onPause={() => setPaused(true)}
+          onResume={() => setPaused(false)}
+          onSettings={() => {
+            setPaused(true);
+            navigation.navigate("Second");
+          }}
+        />
+      )}
+    </>
+  );
+
+  if (current?.type === "voyage") {
+    return withMinigameOverlay(
+      <VoyageMinigame
+        paused={paused}
+        onPhaseChange={setMinigamePhase}
+        onComplete={goNext}
+      />
+    );
+  }
+
   if (current?.type === "santoNino") return <SantoNinoMinigame onComplete={goNext} />;
 
   if (current?.type === "cedula") {
-    return <CedulaMinigame key={`cedula-${sceneIdx}`} onComplete={goNext} />;
+    return withMinigameOverlay(
+      <CedulaMinigame
+        key={`cedula-${chapterNumber}-${partNumber}-${sceneIdx}`}
+        paused={paused}
+        onPhaseChange={setMinigamePhase}
+        onComplete={goNext}
+      />,
+      // Cedula: pause only, tucked into the corner (same as Decipher)
+      { hideSettings: true, top: 6, right: 12 }
+    );
   }
 
   if (current?.type === "decipher") {
-    return <DecipherMinigame key={`decipher-${chapterNumber}-${partNumber}-${sceneIdx}`} onComplete={goNext} />;
+    return withMinigameOverlay(
+      <DecipherMinigame
+        key={`decipher-${chapterNumber}-${partNumber}-${sceneIdx}`}
+        paused={paused}
+        onPhaseChange={setMinigamePhase}
+        onComplete={goNext}
+      />,
+      // Decipher: no top-right menu button, pause tucked into the corner
+      { hideSettings: true, top: 6, right: 12 }
+    );
   }
 
   if (current?.type === "matching") {
-    return <CharacterMatchingMinigame key={`matching-${chapterNumber}-${partNumber}-${sceneIdx}`} characters={current.characters} onComplete={goNext} />;
+    return withMinigameOverlay(
+      <CharacterMatchingMinigame
+        key={`matching-${chapterNumber}-${partNumber}-${sceneIdx}`}
+        characters={current.characters}
+        paused={paused}
+        onPhaseChange={setMinigamePhase}
+        onComplete={goNext}
+      />,
+      // Matching: same as Decipher - pause only, tucked into the corner
+      { hideSettings: true, top: 6, right: 12 }
+    );
   }
 
   if (current?.type === "chronological") {
-    return <ChronologicalOrderMinigame key={`chronological-${chapterNumber}-${partNumber}-${sceneIdx}`} events={current.events} onComplete={goNext} />;
+    return withMinigameOverlay(
+      <ChronologicalOrderMinigame
+        key={`chronological-${chapterNumber}-${partNumber}-${sceneIdx}`}
+        events={current.events}
+        paused={paused}
+        onPhaseChange={setMinigamePhase}
+        onComplete={goNext}
+      />,
+      // Timeline: pause only, tucked into the corner (same as Decipher)
+      { hideSettings: true, top: 6, right: 12 }
+    );
   }
 
+  // Tracing games (Blood Trace / Oath Trace): instructions screen first,
+  // pause button only while tracing.
+  if (current?.type === "bloodtrace" || current?.type === "oathtrace") {
+    const TraceGame = current.type === "bloodtrace" ? BloodTrace : OathTrace;
+    return withMinigameOverlay(
+      <TraceGame
+        key={`trace-${chapterNumber}-${partNumber}-${sceneIdx}`}
+        paused={paused}
+        onPhaseChange={setMinigamePhase}
+        onComplete={goNext}
+      />,
+      // Tracing: pause button only (no settings button at the top right)
+      { hideSettings: true }
+    );
+  }
+
+  // Who Said It has its own built-in pause button (see WhoSaidItMinigame.js)
   if (current?.type === "whoSaidIt") {
     return <WhoSaidItMinigame key={`who-said-it-${chapterNumber}-${partNumber}-${sceneIdx}`} onComplete={(results) => { console.log("Who Said It results:", results); goNext(); }} />;
   }
@@ -860,7 +1029,11 @@ function PartRenderer(props) {
     const selectedChoice = current.choices[picked];
     const responseContent = (
       <>
-        <CharacterLayer characters={selectedChoice.characters} />
+        <CharacterLayer
+          characters={selectedChoice.characters}
+          speaker={selectedChoice.speaker}
+          typing={!done}
+        />
         <View style={styles.dialogueWrapper}>
           <ImageBackground source={require("../../assets/foreground/dialogue_box.png")} style={styles.dialogueBox} imageStyle={boxImage} resizeMode="stretch">
             <Text style={scaled(styles.speakerName)}>{selectedChoice.speaker}</Text>
@@ -880,7 +1053,11 @@ function PartRenderer(props) {
 
   const dialogueContent = (
     <>
-      <CharacterLayer characters={current.characters} />
+      <CharacterLayer
+        characters={current.characters}
+        speaker={current.speaker}
+        typing={!done}
+      />
       <View style={styles.dialogueWrapper}>
         <ImageBackground source={require("../../assets/foreground/dialogue_box.png")} style={styles.dialogueBox} imageStyle={boxImage} resizeMode="stretch">
           <Text style={scaled(styles.speakerName)}>{current.speaker}</Text>

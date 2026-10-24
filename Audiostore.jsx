@@ -37,7 +37,7 @@ const SFX = {
   quillWriting: { file: 'quill_writing' },
   cannonFire: { file: 'cannon_fire' },
   tar: { file: 'bar', loop: true },
-  hoots: { file: 'shot' },
+  shoots: { file: 'shot' },
   chairSit: { file: 'chair_sit' },
   groundThud: { file: 'ground_thud' },
   windyFlag: { file: 'windy_flag' },

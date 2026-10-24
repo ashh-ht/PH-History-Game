@@ -5,7 +5,6 @@ import {
   ImageBackground,
   PanResponder,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -163,7 +162,11 @@ function PanelTab({ children }) {
 // MINIGAME
 // =====================================================
 
-export default function CedulaMinigame({ onComplete }) {
+export default function CedulaMinigame({
+  onComplete,
+  paused = false, // set by PartRenderer when the pause panel is open
+  onPhaseChange, // tells PartRenderer: "playing" | "result"
+}) {
   const { width, height } = useWindowDimensions();
   const compact = height < 700;
   const horizontalPadding = width < 360 ? 12 : 20;
@@ -188,6 +191,11 @@ export default function CedulaMinigame({ onComplete }) {
   const [paperArea, setPaperArea] = useState({ width: 0, height: 0 });
   const [paperSize, setPaperSize] = useState({ width: 1, height: 1 });
 
+  // Fit-to-screen for the result screens: no scrolling. If the content is
+  // taller than the space available it is scaled down a little instead.
+  const [areaH, setAreaH] = useState(0);
+  const [contentH, setContentH] = useState(0);
+
   const screenRef = useRef("playing");
   const startRef = useRef(null);
   const tearCountRef = useRef(0);
@@ -197,6 +205,36 @@ export default function CedulaMinigame({ onComplete }) {
 
   const shake = useRef(new Animated.Value(0)).current;
   const flash = useRef(new Animated.Value(0)).current;
+
+  // Pause support: the clock is frozen while `paused` is true, and the
+  // deadline is pushed back by however long the pause lasted.
+  const pausedRef = useRef(false);
+  const pausedAtRef = useRef(null);
+
+  useEffect(() => {
+    if (paused) {
+      pausedRef.current = true;
+      pausedAtRef.current = Date.now();
+      // cancel a swipe that was in progress
+      startRef.current = null;
+      setSlash(null);
+    } else if (pausedRef.current) {
+      pausedRef.current = false;
+
+      if (pausedAtRef.current != null && deadlineRef.current != null) {
+        deadlineRef.current += Date.now() - pausedAtRef.current;
+      }
+
+      pausedAtRef.current = null;
+    }
+  }, [paused]);
+
+  // Tells the parent which screen we are on, so the pause button
+  // only shows while the player is actually playing.
+  useEffect(() => {
+    if (!onPhaseChange) return;
+    onPhaseChange(screen === "playing" ? "playing" : "result");
+  }, [screen, onPhaseChange]);
 
   const changeScreen = (next) => {
     screenRef.current = next;
@@ -261,6 +299,7 @@ export default function CedulaMinigame({ onComplete }) {
 
     const tick = () => {
       if (screenRef.current !== "playing" || deadlineRef.current == null) return;
+      if (pausedRef.current) return; // clock is stopped while paused
 
       const remainingMs = Math.max(0, deadlineRef.current - Date.now());
       setTimeLeft(Math.ceil(remainingMs / 1000));
@@ -326,6 +365,7 @@ export default function CedulaMinigame({ onComplete }) {
       if (screenRef.current !== "playing" || finishingRef.current || !start || !end) {
         return;
       }
+      if (pausedRef.current) return;
 
       const dx = end.x - start.x;
       const dy = end.y - start.y;
@@ -389,21 +429,20 @@ export default function CedulaMinigame({ onComplete }) {
     [paperSize.width, paperSize.height, animateTear, sfx]
   );
 
+  const canSwipe = () =>
+    screenRef.current === "playing" && !finishingRef.current && !pausedRef.current;
+
   const responder = useMemo(
     () =>
       PanResponder.create({
-        onStartShouldSetPanResponder: () =>
-          screenRef.current === "playing" && !finishingRef.current,
-        onMoveShouldSetPanResponder: () =>
-          screenRef.current === "playing" && !finishingRef.current,
-        onStartShouldSetPanResponderCapture: () =>
-          screenRef.current === "playing" && !finishingRef.current,
-        onMoveShouldSetPanResponderCapture: () =>
-          screenRef.current === "playing" && !finishingRef.current,
+        onStartShouldSetPanResponder: canSwipe,
+        onMoveShouldSetPanResponder: canSwipe,
+        onStartShouldSetPanResponderCapture: canSwipe,
+        onMoveShouldSetPanResponderCapture: canSwipe,
         onPanResponderTerminationRequest: () => false,
 
         onPanResponderGrant: (event) => {
-          if (screenRef.current !== "playing" || finishingRef.current) return;
+          if (!canSwipe()) return;
 
           // First touch starts the 30-second clock.
           if (deadlineRef.current == null) {
@@ -419,7 +458,7 @@ export default function CedulaMinigame({ onComplete }) {
         },
 
         onPanResponderMove: (_, gesture) => {
-          if (!startRef.current || screenRef.current !== "playing" || finishingRef.current) {
+          if (!startRef.current || !canSwipe()) {
             return;
           }
           setSlash({
@@ -431,7 +470,7 @@ export default function CedulaMinigame({ onComplete }) {
         },
 
         onPanResponderRelease: (_, gesture) => {
-          if (!startRef.current || screenRef.current !== "playing" || finishingRef.current) {
+          if (!startRef.current || !canSwipe()) {
             startRef.current = null;
             setSlash(null);
             return;
@@ -522,8 +561,10 @@ export default function CedulaMinigame({ onComplete }) {
 
   const lowTime = timeLeft <= 10;
 
+  // While playing there is a pause button in the top-right corner, so the
+  // timer pill gets some extra room on the right to stay out of its way.
   const header = (showTimer) => (
-    <View style={styles.header}>
+    <View style={[styles.header, showTimer && styles.headerWithPause]}>
       <Text style={styles.title}>The Cry of Pugad Lawin</Text>
       {showTimer ? (
         <View
@@ -545,34 +586,54 @@ export default function CedulaMinigame({ onComplete }) {
     </ImageBackground>
   );
 
+  // 1 = fits as is. Smaller = shrink to fit (never below 0.4).
+  const FIT_PADDING = 28;
+  const fitScale =
+    areaH > 0 && contentH > 0
+      ? Math.min(1, Math.max(0.4, (areaH - FIT_PADDING) / contentH))
+      : 1;
+
+  // Result screens: centered, never scrolls, shrinks a little if too tall.
+  const fit = (body) => (
+    <View
+      style={[styles.fitArea, { paddingHorizontal: horizontalPadding }]}
+      onLayout={(e) => setAreaH(e.nativeEvent.layout.height)}
+    >
+      <View
+        style={{ transform: [{ scale: fitScale }] }}
+        onLayout={(e) => setContentH(e.nativeEvent.layout.height)}
+      >
+        {body}
+      </View>
+    </View>
+  );
+
   // ---------------------------------------------------
   // WON
   // ---------------------------------------------------
   if (screen === "won") {
     return shell(
-      <ScrollView
-        contentContainerStyle={[styles.scrollContent, { paddingHorizontal: horizontalPadding }]}
-        showsVerticalScrollIndicator={false}
-      >
-        {header(false)}
-        <Panel style={styles.centerPanel}>
-          <PanelTab>A SYMBOL TORN</PanelTab>
-          <Text style={styles.panelTitle}>There Is No Turning Back</Text>
+      fit(
+        <>
+          {header(false)}
+          <Panel style={styles.centerPanel}>
+            <PanelTab>A SYMBOL TORN</PanelTab>
+            <Text style={styles.panelTitle}>There Is No Turning Back</Text>
 
-          <View style={[styles.completionImageWrap, { height: compact ? 170 : 210 }]}>
-            <Image source={CEDULA_TORN} resizeMode="contain" style={styles.completionImage} />
-          </View>
+            <View style={[styles.completionImageWrap, { height: compact ? 170 : 210 }]}>
+              <Image source={CEDULA_TORN} resizeMode="contain" style={styles.completionImage} />
+            </View>
 
-          <Text style={styles.bodyText}>
-            Under Spanish rule, the cédula served as an identification document and tax
-            certificate. Tearing it became a rejection of colonial authority, and a
-            declaration that freedom was worth fighting for.
-          </Text>
-          <Text style={styles.timeSummary}>Five swipes · one statement</Text>
+            <Text style={styles.bodyText}>
+              Under Spanish rule, the cédula served as an identification document and tax
+              certificate. Tearing it became a rejection of colonial authority, and a
+              declaration that freedom was worth fighting for.
+            </Text>
 
-          <GameButton label="Continue Story" onPress={() => onComplete?.()} />
-        </Panel>
-      </ScrollView>
+            <GameButton label="Continue Story" onPress={() => onComplete?.()} />
+          </Panel>
+        </>
+      )
     );
   }
 
@@ -581,24 +642,23 @@ export default function CedulaMinigame({ onComplete }) {
   // ---------------------------------------------------
   if (screen === "failed") {
     return shell(
-      <ScrollView
-        contentContainerStyle={[styles.scrollContent, { paddingHorizontal: horizontalPadding }]}
-        showsVerticalScrollIndicator={false}
-      >
-        {header(false)}
-        <Panel style={styles.centerPanel}>
-          <PanelTab>TIME EXPIRED</PanelTab>
-          <Text style={styles.panelTitle}>The Moment Slips Away</Text>
-          <Text style={styles.bodyText}>
-            Tear it before the crowd moves on. Start anywhere on the document and make five
-            long swipes within 30 seconds.
-          </Text>
-          <Text style={styles.bigNumber}>
-            {tears.length}/{REQUIRED_TEARS}
-          </Text>
-          <GameButton label="Try Again" onPress={startGame} />
-        </Panel>
-      </ScrollView>
+      fit(
+        <>
+          {header(false)}
+          <Panel style={styles.centerPanel}>
+            <PanelTab>TIME EXPIRED</PanelTab>
+            <Text style={styles.panelTitle}>The Moment Slips Away</Text>
+            <Text style={styles.bodyText}>
+              Tear it before the crowd moves on. Start anywhere on the document and make five
+              long swipes within 30 seconds.
+            </Text>
+            <Text style={styles.bigNumber}>
+              {tears.length}/{REQUIRED_TEARS}
+            </Text>
+            <GameButton label="Try Again" onPress={startGame} />
+          </Panel>
+        </>
+      )
     );
   }
 
@@ -653,8 +713,9 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.05)",
   },
   safeArea: { flex: 1 },
-  scrollContent: {
-    flexGrow: 1,
+  // Result screens: centered, no scrolling (scaled down if too tall)
+  fitArea: {
+    flex: 1,
     justifyContent: "center",
     paddingVertical: 14,
   },
@@ -667,6 +728,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 10,
   },
+  // leaves room for the pause button in the top-right corner
+  headerWithPause: { paddingRight: 46 },
   title: { color: INK, fontSize: 22, fontWeight: "bold", flexShrink: 1 },
   timerPill: {
     minWidth: 64,

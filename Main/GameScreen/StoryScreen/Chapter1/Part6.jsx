@@ -145,7 +145,7 @@ export const Chapter1_Part6 = [
     ],
     text: "Consummatum est.",
     translation: "It is finished.",
-    sfx:'gunShot'
+    sfx:'shoots'
   },
 
   {
