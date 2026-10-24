@@ -1,26 +1,6 @@
 export const Chapter1_Part5 = [
 
   {
-    type: "system",
-    intro: true,
-    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
-    text: "The Katipunan had spent years preparing in secret."
-  },
-
-  {
-    type: "system",
-    intro: true,
-    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
-    text: "Now, its secret was out. There's no turning back."
-  },
-
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 1
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  {
     type: "scene",
     title: "The Catalyst",
     date: "August 19, 1896",
@@ -30,7 +10,7 @@ export const Chapter1_Part5 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 5/19th century hand press printing shop ransacked.png"),
-    text: "The Katipunan has been exposed. Father Gil sends people to Diario de Manila."
+    text: "On August 19, 1896, Spanish authorities discover the Katipunan. Arrests\nspread through Manila. Bonifacio knows the members must act quickly."
   },
 
   {
@@ -48,34 +28,17 @@ export const Chapter1_Part5 = [
 
   {
     type: "narrator",
-    background: require("../../../../Background Images/Part 5/19th century hand press printing shop ransacked.png"),
-    text: "Arrests spread through Manila, and Bonifacio knows the Spanish authorities\nwill soon come for more of his men."
-  },
-
-  {
-    type: "narrator",
     background: require("../../../../Background Images/Part 5/Katipunan hideout 1896,.png"),
-    text: "Bonifacio knows there is no time left for quiet planning. He leaves Manila\nand calls the Katipunan leaders to an emergency meeting."
+    text: "Bonifacio calls an emergency meeting. The leaders must decide what to do next."
   },
-
 
   //T2_5 here
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 2
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
     title: "The Emergency Council",
     date: "August 1896",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg")
-  },
-
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 5/Katipunan hideout 1896,.png"),
-    text: "At the meeting, the leaders face a difficult choice. They can act with the\nweapons they have, or wait and risk being arrested one by one."
   },
 
   {
@@ -103,17 +66,14 @@ export const Chapter1_Part5 = [
     ],
     text: "And waiting is risky too, Teodoro. They already know our names. Do we\nwait to be arrested one by one, or do we stand together and fight?"
   },
-  //T4_5 here
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 5.1 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  //T4_5 here
 
   {
     type: "choice",
     title: "Choice 5.1: You are Andrés Bonifacio",
-    background: require("../../../../Background Images/Part 5/Katipunan hideout 1896,.png"),
     question: "Teodoro Plata worries that starting the revolution without\nenough weapons is too dangerous.",
+    background: require("../../../../Background Images/Part 5/Katipunan hideout 1896,.png"),
     choices: [
       {
         text: "Overrule Plata and call for the revolution to begin now.",
@@ -137,24 +97,18 @@ export const Chapter1_Part5 = [
             position: "right"
           }
         ],
-        dialogue: "Baka mas mabuting maghintay tayo ng ilang araw, hanggang sa marami na tayong sandata.",
+        dialogue: "Baka mas mabuting maghintay tayo ng ilang araw,\nhanggang sa marami na tayong sandata.",
         translation: "Maybe it's better to wait a few days, until we have more weapons."
       }
     ],
-    nextScene: 12
+    nextScene: 8
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 5/Katipunan hideout 1896,.png"),
-    text: "Either way, there is little time left. The Katipunan has been exposed, and the\ndecision to rise against Spanish rule is already taking shape."
+    text: "The Katipunan has little time left. Its leaders\nprepare to make a stand against Spanish rule."
   },
-
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 3
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
@@ -165,7 +119,7 @@ export const Chapter1_Part5 = [
   {
     type: "system",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    text: "History is not always perfectly clear-cut. Historians have given different\naccounts of exactly when and where the Cry took place."
+    text: "Historians disagree about the exact date and place of the Cry."
   },
 
   {
@@ -180,7 +134,6 @@ export const Chapter1_Part5 = [
     text: "General Artemio Ricarte,\nalso gives August 23, but identifies Balintawak as the location."
   },
 
-
   {
     type: "system",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
@@ -193,12 +146,13 @@ export const Chapter1_Part5 = [
     text: "The exact date and location remains debated. But the significance is clear:\nthe Katipunan was no longer staying in the shadows."
   },
 
+  {
+    type: "system",
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    text: "Although accounts differ, the Cry became a symbol of\nthe Filipinos' decision to fight for freedom."
+  },
+
   //T1_5 here
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 4
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
@@ -210,13 +164,7 @@ export const Chapter1_Part5 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 5/Cry of Pugad Lawin.png"),
-    text: "At Pugad Lawin, Bonifacio and about a thousand Katipuneros gather at the\nhome of Melchora Aquino, known as Tandang Sora."
-  },
-
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 5/Cry of Pugad Lawin.png"),
-    text: "They face a choice that will make their break with Spanish rule impossible to hide."
+    text: "At Pugad Lawin, Bonifacio and about a thousand Katipuneros gather. They\nhold their cédulas, identity papers issued under Spanish rule."
   },
 
   {
@@ -245,16 +193,11 @@ export const Chapter1_Part5 = [
     text: "Show me your cédulas!"
   },
 
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 5.2
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   {
     type: "choice",
     title: "Choice 5.2: You are a Katipunan Soldier",
-    background: require("../../../../Background Images/Part 5/Cry of Pugad Lawin.png"),
     question: "You know that tearing your cédula means openly\nbreaking with Spanish rule.",
+    background: require("../../../../Background Images/Part 5/Cry of Pugad Lawin.png"),
     choices: [
       {
         text: "Tear the cédula without hesitation.",
@@ -282,7 +225,7 @@ export const Chapter1_Part5 = [
         translation: "This is a big step... but it's time."
       }
     ],
-    nextScene: 25
+    nextScene: 21
   },
 
   //Q1_5 here
@@ -292,14 +235,8 @@ export const Chapter1_Part5 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 5/Cry of Pugad Lawin.png"),
-    text: "You tear your cédula along with the others. The act becomes a powerful symbol of\ntheir decision to rise against Spanish rule."
+    text: "The Katipuneros tear their cédulas. This act shows that they reject\nSpanish rule and are ready to fight for independence."
   },
-
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 5
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
@@ -311,7 +248,13 @@ export const Chapter1_Part5 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 5/Battle of San Juan del Monte 1896.png"),
-    text: "A week after the cry, the Katipuneros launch a major attack at San Juan del\nMonte, hoping to capture the Spanish weapons depot at the Polvorín."
+    text: "On August 30, 1896, revolutionaries attack the\nSpanish weapons depot at San Juan del Monte."
+  },
+
+  {
+    type: "narrator",
+    background: require("../../../../Background Images/Part 5/Battle of San Juan del Monte 1896.png"),
+    text: "They hope to capture guns and ammunition."
   },
 
   {
@@ -328,15 +271,11 @@ export const Chapter1_Part5 = [
     translation: "Let's take their weapons. If we don't have arms today, we'll have them tomorrow."
   },
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 5.3
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   {
     type: "choice",
     title: "Choice 5.3: You are Andrés Bonifacio",
-    background: require("../../../../Background Images/Part 5/Battle of San Juan del Monte 1896.png"),
     question: "Your fighters are preparing to attack the Spanish weapons depot in San Juan.",
+    background: require("../../../../Background Images/Part 5/Battle of San Juan del Monte 1896.png"),
     choices: [
       {
         text: "Launch the assault immediately.",
@@ -364,68 +303,31 @@ export const Chapter1_Part5 = [
         translation: "Let's wait for them. We'll surround the Polvorín."
       }
     ],
-    nextScene: 30
+    nextScene: 27
   },
-
 
   // CONTINUE
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 5/Battle of San Juan del Monte 1896.png"),
-    text: "The Revolution begins. After the Cry of Pugad Lawin, Bonifacio and the Katipunan\nleaders move quickly to organize their first attacks."
-  },
-
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 5/Battle of San Juan del Monte 1896.png"),
-    text: "One of their plans is a coordinated attack on Manila, with different groups\nentering from several directions."
-  },
-
-  {
-    type: "dialogue",
-    speaker: "ANDRÉS BONIFACIO",
-    background: require("../../../../Background Images/Part 5/Battle of San Juan del Monte 1896.png"),
-    characters: [
-      {
-        source: require("../../../../Character Images/Temporary Placeholders/Bonifacio.png"),
-        position: "right"
-      }
-    ],
-    text: "Tatlong daan. Tatlong direksyon. Kung sabay tayong tatama sa Maynila,\nhindi nila kayang ipagtanggol ang lahat.",
-    translation: "Three routes. Three directions. If we strike Manila together, they won't be able to defend everything."
-  },
-
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 5/Battle of San Juan del Monte 1896.png"),
-    text: "But the plan fails. The attack at San Juan del Monte ends in heavy losses, and\nthe revolutionaries are forced to retreat."
+    text: "The attack fails, and the revolutionaries retreat. The\nfighting marks the start of a wider war against Spain."
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 5/Map of the eight provinces under martial law.png"),
-    text: "On August 30, Governor-General Ramón Blanco places eight provinces\nunder a state of war."
-  },
-
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 5/Map of the eight provinces under martial law.png"),
-    text: "The Spanish government now knows the rebellion is no longer a small, hidden movement."
-  },
-
-  {
-    type: "scene",
-    title: "The fighting at San Juan del Monte makes one thing clear:",
-    date: "the Revolution has begun.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    text: "On August 30, Governor-General Ramón Blanco places\neight provinces under a state of war."
   },
 
   //T3_5 here
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // QUIZ TIME
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  {
+    type: "system",
+    intro: true,
+    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    text: "The Katipunan has openly challenged Spain. The Revolution has begun,\nbut the first battles show how difficult the fight will be."
+  },
 
   {
     type: "scene",
@@ -506,6 +408,6 @@ export const Chapter1_Part5 = [
     title: "The first battles were only the beginning.",
     date: " ",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
-  }
+  },
 
 ];

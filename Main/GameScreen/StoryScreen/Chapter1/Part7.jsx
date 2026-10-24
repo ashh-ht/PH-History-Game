@@ -1,67 +1,25 @@
 export const Chapter1_Part7 = [
 
-
-  {
-    type: "system",
-    intro: true,
-    text: "The Revolution had begun to divide against itself.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
-  },
-
-  {
-    type: "system",
-    intro: true,
-    text: "At Tejeros, a dispute over leadership would change the course of the Revolution.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
-  },
-
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 1
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
   {
     type: "scene",
     title: "The Tejeros Convention",
-    date: "March 22, 1897",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
 
   {
     type: "narrator",
-    text: "As Spanish forces push deeper into Cavite, revolutionary leaders gather at a house\nin Tejeros, San Francisco de Malabon.",
+    text: "On March 22, 1897, revolutionary leaders meet at Tejeros to discuss the defense of\nCavite. Instead, they hold an election for a new revolutionary government.",
     background: require("../../../../Background Images/Part 7/Casa Hacienda Tejeros.png")
   },
 
   {
     type: "narrator",
-    text: "The meeting is supposed to focus on the province's defense.",
-    background: require("../../../../Background Images/Part 7/Casa Hacienda Tejeros.png")
-  },
-
-
-  {
-    type: "narrator",
-    text: "Instead, the leaders decide to organize a new revolutionary government\nand hold an election.",
-    background: require("../../../../Background Images/Part 7/Casa Hacienda Tejeros.png")
-  },
-
-  {
-    type: "narrator",
-    text: "Bonifacio, still the Supremo of the Katipunan, oversees the proceedings.\nThe results surprise everyone.",
-    background: require("../../../../Background Images/Part 7/Casa Hacienda Tejeros.png")
-  },
-
-  {
-    type: "narrator",
-    text: "Emilio Aguinaldo is elected President, even though he is not present.\nBonifacio is elected Director of the Interior.",
+    text: "Emilio Aguinaldo is elected president. Bonifacio\nis elected Director of the Interior.",
     background: require("../../../../Background Images/Part 7/Casa Hacienda Tejeros.png")
   },
 
   // Q1_7 here
-  
+
   {
     type: "dialogue",
     speaker: "DANIEL TIRONA",
@@ -75,10 +33,6 @@ export const Chapter1_Part7 = [
     translation: "It isn't appropriate for someone without a diploma to lead the Department of the Interior.\nA lawyer should hold that position.",
     background: require("../../../../Background Images/Part 7/Casa Hacienda Tejeros.png")
   },
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 7.1
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "choice",
@@ -98,6 +52,7 @@ export const Chapter1_Part7 = [
           }
         ]
       },
+
       {
         text: "Demand that the issue be settled fairly.",
         speaker: "ANDRÉS BONIFACIO",
@@ -111,7 +66,7 @@ export const Chapter1_Part7 = [
         ]
       }
     ],
-    nextScene: 10
+    nextScene: 5
   },
 
   // Q2_7 here
@@ -120,15 +75,9 @@ export const Chapter1_Part7 = [
 
   {
     type: "narrator",
-    text: "The dispute is not settled. Bonifacio refuses to accept the election as legitimate,\nand the divide among the revolutionaries only grows.",
+    text: "Bonifacio objects to the election after Tirona questions his qualifications.\nThe disagreement deepens the division among the revolutionaries.",
     background: require("../../../../Background Images/Part 7/Casa Hacienda Tejeros.png")
   },
-
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 2
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
@@ -139,7 +88,7 @@ export const Chapter1_Part7 = [
 
   {
     type: "narrator",
-    text: "The following day, Bonifacio meets with his supporters at the same place and\nformally records his objection to the Tejeros election.",
+    text: "The next day, Bonifacio rejects the election results. Aguinaldo and\nother officials continue organizing the new government.",
     background: require("../../../../Background Images/Part 7/Aguinaldo's HQ exterior.png")
   },
 
@@ -159,15 +108,11 @@ export const Chapter1_Part7 = [
 
   {
     type: "narrator",
-    text: "That same night, Aguinaldo, Mariano Trías, and Artemio Ricarte take their\noaths of office at the Tanza convent.",
+    text: "Artemio Ricarte later takes his oath of office,\ndespite his concerns about the election.",
     background: require("../../../../Background Images/Part 7/Tanza parish convent, night (oath-taking).png")
   },
 
   //Q3_7 here
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 7.2 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "choice",
@@ -187,6 +132,7 @@ export const Chapter1_Part7 = [
           }
         ]
       },
+
       {
         text: "Refuse the oath and stand with Bonifacio.",
         speaker: "ARTEMIO RICARTE",
@@ -200,7 +146,7 @@ export const Chapter1_Part7 = [
         ]
       }
     ],
-    nextScene: 16
+    nextScene: 11
   },
 
   // T1_7 here
@@ -209,15 +155,9 @@ export const Chapter1_Part7 = [
 
   {
     type: "narrator",
-    text: "Ricarte ultimately takes the oath and later records his account of what happened.\nAguinaldo's new government continues to organize the revolution.",
+    text: "Ricarte ultimately takes the oath and later records his account of what\nhappened. Aguinaldo's new government continues to organize the revolution.",
     background: require("../../../../Background Images/Part 7/Tanza parish convent, night (oath-taking).png")
   },
-
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 3
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
@@ -228,13 +168,7 @@ export const Chapter1_Part7 = [
 
   {
     type: "narrator",
-    text: "Bonifacio and those who remain loyal to him move to Naic, Cavite.",
-    background: require("../../../../Background Images/Part 7/Naik camp (Bonifacio addresses loyalists).png")
-  },
-
-  {
-    type: "narrator",
-    text: "They continue operating under their own leadership rather than\nrecognizing Aguinaldo's new government.",
+    text: "Bonifacio and his supporters move to Naic and continue operating under their\nown leadership. Aguinaldo's group sees this as a threat to unity.",
     background: require("../../../../Background Images/Part 7/Naik camp (Bonifacio addresses loyalists).png")
   },
 
@@ -253,18 +187,6 @@ export const Chapter1_Part7 = [
   },
 
   {
-    type: "narrator",
-    text: "However, Auinaldo and his supporters see Bonifacio's separate\ncommand as a threat to the unity of the revolution.",
-    background: require("../../../../Background Images/Part 7/Naik camp (Bonifacio addresses loyalists).png")
-  },
-
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 4
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  {
     type: "scene",
     title: "The Limbon Confrontation",
     date: "April 1897",
@@ -273,13 +195,13 @@ export const Chapter1_Part7 = [
 
   {
     type: "narrator",
-    text: "Aguinaldo's soldiers eventually find Bonifacio's group at Limbon, a barrio of Indang.\nThe confrontation quickly turns violent.",
+    text: "In April 1897, Aguinaldo's soldiers find Bonifacio's\ngroup at Limbon. A violent confrontation follows.",
     background: require("../../../../Background Images/Part 7/Limbon camp, Indang (Bonifacio captured).png")
   },
 
   {
     type: "narrator",
-    text: "Bonifacio's brother, Ciriaco, is killed. Andrés is badly wounded, while he, Procopio,\nand Gregoria de Jesús are taken into custody.",
+    text: "Bonifacio's brother Ciriaco is killed, and Andrés,\nProcopio, and Gregoria are taken into custody.",
     background: require("../../../../Background Images/Part 7/Limbon camp, Indang (Bonifacio captured).png")
   },
 
@@ -298,16 +220,10 @@ export const Chapter1_Part7 = [
   },
 
   {
-    type: "narrator",
-    text: "The conflict that began as a dispute over leadership has now turned\ninto violence between revolutionaries.",
+    type: "system",
+    text: "A disagreement among fellow revolutionaries has\nnow turned into a serious conflict.",
     background: require("../../../../Background Images/Part 7/Limbon camp, Indang (Bonifacio captured).png")
   },
-
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 5
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
@@ -318,19 +234,13 @@ export const Chapter1_Part7 = [
 
   {
     type: "narrator",
-    text: "Andrés and Procopio Bonifacio are brought to Maragondon, Cavite, where they face a\nmilitary court made up of officers serving the new revolutionary government.",
+    text: "The Bonifacio brothers face a military court in Maragondon.\nBoth are found guilty and sentenced to death.",
     background: require("../../../../Background Images/Part 7/Maragondon court-martial room.png")
   },
 
   {
     type: "narrator",
-    text: "Both brothers are found guilty and end up sentenced to death.",
-    background: require("../../../../Background Images/Part 7/Maragondon court-martial room.png")
-  },
-
-  {
-    type: "narrator",
-    text: "Aguinaldo initially changes the sentence to exile, hoping to prevent another execution\nwithin the revolutionary movement.",
+    text: "Aguinaldo first changes the sentence to exile, hoping\nto prevent more bloodshed among Filipinos.",
     background: require("../../../../Background Images/Part 7/Aguinaldo's HQ interior.png")
   },
 
@@ -347,10 +257,6 @@ export const Chapter1_Part7 = [
     translation: "They are also sons of the nation. I cannot bear to spill more Filipino blood.",
     background: require("../../../../Background Images/Part 7/Aguinaldo's HQ interior.png")
   },
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 7.3
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "choice",
@@ -370,6 +276,7 @@ export const Chapter1_Part7 = [
           }
         ]
       },
+
       {
         text: "Hold firm and insist that the exile order remain.",
         speaker: "EMILIO AGUINALDO",
@@ -383,23 +290,16 @@ export const Chapter1_Part7 = [
         ]
       }
     ],
-    nextScene: 33
+    nextScene: 25
   },
-
 
   // CONTINUE
 
   {
     type: "narrator",
-    text: "The order for exile does not hold. Bonifacio and Procopio are taken away,\nand the sentence is carried out.",
+    text: "Despite the change in sentence, the execution order is carried out.",
     background: require("../../../../Background Images/Part 7/Maragondon court-martial room.png")
   },
-
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 6
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
@@ -410,35 +310,32 @@ export const Chapter1_Part7 = [
 
   {
     type: "narrator",
-    text: "On May 10, 1897, Andrés and Procopio Bonifacio are taken to the slopes\nof Mount Buntis in Maragondon.",
-    background: require("../../../../Background Images/Part 7/Mount Buntis Maragondon.png")
-  },
-
-  {
-    type: "narrator",
-    text: "There, Andrés Bonifacio, founder of the Katipunan,",
+    text: "On May 10, 1897, Andrés and Procopio Bonifacio are\nexecuted near Mount Buntis in Maragondon, Cavite.",
     background: require("../../../../Background Images/Part 7/Mount Buntis Maragondon.png")
   },
 
   {
     type: "system",
     intro: true,
-    text: "is executed alongside his brother.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
-  },
-
-  {
-    type: "scene",
-    title: "A Revolution Changed Forever.",
-    date: "May 10, 1897",
+    text: "Bonifacio's death becomes one of the most painful\nevents in the history of the Revolution.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
 
   //Q4_7 here
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // QUIZ TIME
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  {
+    type: "system",
+    intro: true,
+    text: "The Revolution continues under Aguinaldo, but the division\namong Filipino leaders has come at a great cost.",
+    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+  },
+
+  {
+    type: "system",
+    intro: true,
+    text: "The fight for independence is not only a struggle against\nforeign rule. It is also a struggle to remain united.",
+    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+  },
 
   {
     type: "scene",
@@ -519,6 +416,6 @@ export const Chapter1_Part7 = [
     title: "The Revolution has now entered a new chapter.",
     date: " ",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
-  }
+  },
 
 ];

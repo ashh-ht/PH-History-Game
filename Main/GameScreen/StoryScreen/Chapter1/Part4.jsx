@@ -1,26 +1,6 @@
 export const Chapter1_Part4 = [
 
   {
-    type: "system",
-    intro: true,
-    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
-    text: "Rizal has left Manila, but the struggle did not leave with him."
-  },
-
-  {
-    type: "system",
-    intro: true,
-    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
-    text: "Soon, Bonifacio and his companions would give that struggle a new name."
-  },
-
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 1
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  {
     type: "scene",
     title: "The Founding Night",
     date: "July 7, 1892",
@@ -30,13 +10,7 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
-    text: "After Rizal's exile, Andrés Bonifacio and the others realize that peaceful requests\nalone have not been enough to bring change."
-  },
-
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
-    text: "With their pact made, the six men turn to the question of what their\nnew brotherhood should become."
+    text: "The Katipunan begins as a secret brotherhood. Its members promise to\nhelp one another and work for the freedom of the Philippines."
   },
 
   {
@@ -72,26 +46,8 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
-    text: "They agree on its full name: Kataastaasan Kagalang-galangang\nKatipunan ng mga Anak ng Bayan. "
-  },
-
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
     text: "Each man makes a small, symbolic cut on his arm and signs the founding\nregister, making a solemn promise to their new brotherhood and its cause."
   },
-
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
-    text: "The KKK is born, dedicated to independence, mutual support,\ngood values, and education."
-  },
-
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 2
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
@@ -103,13 +59,7 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Tondo_Caloocan street and market.png"),
-    text: "In the weeks that follow, Bonifacio and his young adviser, Emilio Jacinto, begin\nredefining who belongs to the nation."
-  },
-
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 4/Tondo_Caloocan street and market.png"),
-    text: "At the time, the word Filipino was mostly used for Spaniards born in the islands."
+    text: "Bonifacio and Emilio Jacinto want people from different\nparts of the islands to share one national identity."
   },
 
   //T3_4 here
@@ -165,25 +115,8 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
-    text: "The nation they imagine is called Katagalugan, a homeland\nbelonging to everyone in the archipelago."
+    text: "The nation they imagine is called Katagalugan, a\nhomeland belonging to everyone in the archipelago."
   },
-
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
-    text: "To protect the movement from discovery, new members are recruited through\nthe Sistemang Patatsulok, or the \"Triangle System.\""
-  },
-
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
-    text: "Each member brings in only two others, who never learn each other's names.\nThis system was slow but kept it difficult for Spanish spies to discover the alliance"
-  },
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 4.1 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "choice",
@@ -203,6 +136,7 @@ export const Chapter1_Part4 = [
           }
         ]
       },
+
       {
         text: "Keep the system a while longer and weigh the risks.",
         speaker: "ANDRÉS BONIFACIO",
@@ -216,35 +150,28 @@ export const Chapter1_Part4 = [
         ]
       }
     ],
-
-    nextScene: 21
+    nextScene: 12
   },
-
-  
 
   // CONTINUE
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Tondo_Caloocan street and market.png"),
-    text: "Either way, the slow system cannot keep up with the movement's needs."
+    text: "At first, the Katipunan uses the Triangle System. Each member recruits two\npeople. This helps protect the group, but it also slows its growth."
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Tondo_Caloocan street and market.png"),
-    text: "Open recruiting begins around October 1892, and the Katipunan's membership\ngrows to the tens of thousands by 1896."
+    text: "The Katipunan later begins recruiting more openly. By 1896,\nits membership has grown to tens of thousands."
   },
 
   //T1_4 here
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 3
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   {
     type: "scene",
-    title: "Degrees, Passwords, and the Chamber of Reflection",
+    title: "Degrees, Passwords, and Secret Signs",
     date: "1892–1894",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg")
   },
@@ -252,42 +179,18 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
-    text: "Because many of the founders belonged to Masonic groups, the Katipunan borrows\nsome of the same style of ceremony and structure."
+    text: "Members join at different levels: Katipon, Kawal, and\nBayani. Each level has its own signs and passwords."
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
-    text: "Three levels of membership take shape, each with its own hood, sash, and password."
+    text: "New members take part in a ceremony that asks them to think\nabout the nation's past, present, and future."
   },
-
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
-    text: "The first level is Katipon, marked by a black hood with a white triangle. The second is\nKawal, with a green hood and ribbon. The third is Bayani, with a red mask and sash."
-  },
-
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
-    text: "New members go through a quiet initiation ceremony."
-  },
-
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
-    text: "This was meant to make them reflect on the nation's past, present, and future\nbefore reading and signing the Kartilya and making their own promise to the group."
-  },
-
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 4
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
-    title: "The Kartilya and the Decalogue",
+    title: "The Kartilya",
     date: "1892–1893",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg")
   },
@@ -295,13 +198,13 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
-    text: "Bonifacio has already written his own set of rules for the society, the Decalogue."
+    text: "Bonifacio writes a set of rules called the Decalogue. Jacinto\ncreates another guide called the Kartilya ng Katipunan."
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
-    text: "But Emilio Jacinto offers an alternative: the Kartilya ng Katipunan. Thirteen\nideas about honor, kindness, sacrifice, and treating people as equals."
+    text: "The Kartilya teaches members to act with honor,\nhelp others, and treat people as equals."
   },
 
   {
@@ -314,7 +217,7 @@ export const Chapter1_Part4 = [
         position: "left"
       }
     ],
-    text: "Read this line, Andrés: 'All people are equal, whether their skin is light or dark."
+    text: "Read this line, Andrés: 'All people are equal,\nwhether their skin is light or dark."
   },
 
   {
@@ -329,10 +232,6 @@ export const Chapter1_Part4 = [
     ],
     text: "One person may be wiser, richer, or more skilled than another, but that\ndoesn't make them more human. This is what should guide every member."
   },
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 4.2
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "choice",
@@ -356,6 +255,7 @@ export const Chapter1_Part4 = [
           }
         ]
       },
+
       {
         text: "Ask Jacinto to help improve your Decalogue first.",
         speaker: "ANDRÉS BONIFACIO",
@@ -373,8 +273,7 @@ export const Chapter1_Part4 = [
         ]
       }
     ],
-
-    nextScene: 35
+    nextScene: 23
   },
 
   // CONTINUE
@@ -382,14 +281,10 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
-    text: "Jacinto's Kartilya becomes the Katipunan's official guide, helping unite members from different parts of the archipelago under one shared set of values."
+    text: "The Kartilya becomes the Katipunan's main guide. It reminds members\nthat a person's worth does not depend on wealth or skin color."
   },
 
   //Q2_4 here
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 5
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
@@ -400,18 +295,12 @@ export const Chapter1_Part4 = [
 
   {
     type: "narrator",
-    background: require("../../../../Background Images/Part 4/Tondo_Caloocan street and market.png"),
-    text: "As the society grows, so does Spanish suspicion. Spanish authorities\nbegin searching homes across Caloocan and Tondo."
-  },
-
-  {
-    type: "narrator",
     background: require("../../../../Background Images/Part 4/Safe-house interior (Gregoria's scenes).png"),
-    text: "Gregoria de Jesús, Bonifacio's wife and the Lakambini of the KKK,\nbecomes the keeper of the group's secret papers, seals, and supplies."
+    text: "Gregoria de Jesús, Bonifacio's wife, helps protect the Katipunan's\nsecret papers and supplies as Spanish authorities search homes."
   },
 
   //T4_4 here
-  
+
   {
     type: "dialogue",
     speaker: "GREGORIA DE JESÚS",
@@ -425,10 +314,6 @@ export const Chapter1_Part4 = [
     text: "Kung mahuli ako, mahuhuli ang buong Katipunan kasama ko.",
     translation: "If I'm caught, the whole Katipunan gets caught with me."
   },
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 4.3 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "choice",
@@ -448,6 +333,7 @@ export const Chapter1_Part4 = [
           }
         ]
       },
+
       {
         text: "Hide everything in one well-concealed place.",
         speaker: "GREGORIA DE JESÚS",
@@ -461,21 +347,16 @@ export const Chapter1_Part4 = [
         ]
       }
     ],
-
-    nextScene: 40
+    nextScene: 28
   },
-
 
   // CONTINUE
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Tandang Sora Melchora Aquino house.png"),
-    text: "Gregoria protects the Katipunan's documents and supplies, keeping the movement's\nplans safe until the time comes for the Cry of Pugad Lawin."
+    text: "Gregoria protects the Katipunan's documents and supplies, keeping the\nmovement's plans safe until the time comes for the Cry of Pugad Lawin."
   },
-
-
-  // -----!!!!!!!!!! SCENE 6 !!!!!!!!!!-----
 
   {
     type: "scene",
@@ -487,23 +368,14 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/19th century hand press printing shop.png"),
-    text: "To spread the society's ideas, Emilio Jacinto edits a secret newspaper called\nKalayaan, meaning Freedom."
-  },
-
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 4/19th century hand press printing shop.png"),
-    text: "To confuse Spanish investigators, it is printed with a false location and a decoy\neditor's name. Only one edition is printed, but it is enough."
+    text: "In March 1896, the Katipunan spreads its message through a\nsecret newspaper called Kalayaan, meaning \"Freedom.\""
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Tondo_Caloocan street and market.png"),
-    text: "Membership grows quickly across the country, reaching tens of thousands by 1896."
+    text: "The newspaper helps attract more members."
   },
-
-
-  // -----!!!!!!!!!! SCENE 7 !!!!!!!!!!-----
 
   {
     type: "scene",
@@ -515,7 +387,7 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Tondo_Caloocan street and market.png"),
-    text: "On August 19, 1896, the Katipunan's existence is revealed to Spanish\nauthorities. Raids and arrests follow within hours."
+    text: "On August 19, 1896, Spanish authorities discover the Katipunan.\nArrests begin, and the secret movement is in danger."
   },
 
   {
@@ -535,13 +407,7 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Melchora's barn, Banlat, Kalookan.png"),
-    text: "On August 24, 1896, Bonifacio gathers Katipunan leaders in a barn in Banlat,\nKalookan, owned by Melchora Aquino."
-  },
-
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 4/Melchora's barn, Banlat, Kalookan.png"),
-    text: "Together, they decide to declare a nationwide movement for independence\nand turn the secret society into an organized, self-governing nation."
+    text: "On August 24, Katipunan leaders meet in Banlat, Kalookan. They\ndecide to move forward with the struggle for independence."
   },
 
   {
@@ -559,22 +425,18 @@ export const Chapter1_Part4 = [
   },
 
   {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 4/Melchora's barn, Banlat, Kalookan.png"),
-    text: "With Bonifacio chosen as its leader, the Katipunan becomes a self-governing\nmovement and takes another major step toward the independence still to come."
+    type: "system",
+    intro: true,
+    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    text: "The Katipunan has grown from a small secret group into a large movement."
   },
-
 
   {
-    type: "scene",
-    title: "The Katipunan is no longer a secret.",
-    date: "Its dream of independence is about to become a revolution.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+    type: "system",
+    intro: true,
+    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    text: "Its members are ready to fight for independence.\nBut Spain has discovered their secret."
   },
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // QUIZ TIME
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
@@ -655,6 +517,6 @@ export const Chapter1_Part4 = [
     title: "What began in secret would soon shake the entire country.",
     date: " ",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
-  }
+  },
 
 ];

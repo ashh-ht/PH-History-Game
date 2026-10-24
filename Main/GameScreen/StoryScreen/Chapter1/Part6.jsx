@@ -1,26 +1,6 @@
 export const Chapter1_Part6 = [
 
   {
-    type: "system",
-    intro: true,
-    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
-    text: "The Revolution had begun, but the first battles had come at a heavy cost."
-  },
-
-  {
-    type: "system",
-    intro: true,
-    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
-    text: "As the fighting spread to Cavite, a new question began to emerge: who would lead?"
-  },
-
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 1
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  {
     type: "scene",
     title: "The Sword of War",
     date: "August 24–30, 1896",
@@ -30,20 +10,10 @@ export const Chapter1_Part6 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/San Mateo Rizal 1896 revolution.png"),
-    text: "The Revolution has now begun, but its first attacks have already shown how\ndifficult the fight against Spain will be."
-  },
-
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 6/San Mateo Rizal 1896 revolution.png"),
-    text: "Bonifacio's forces have suffered heavy losses, and Governor-General Ramón\nBlanco has placed eight provinces under a state of war."
+    text: "The Revolution has begun, but the Katipuneros face a powerful\nSpanish army. Their early attacks have brought heavy losses."
   },
 
   //T3_6 here
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 2
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
@@ -55,25 +25,13 @@ export const Chapter1_Part6 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Cavite revolution 1896 plaza.png"),
-    text: "While Bonifacio's forces struggle around Manila, the revolution gains ground in Cavite."
-  },
-
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 6/Cavite revolution 1896 plaza.png"),
-    text: "Revolutionary forces capture Spanish positions and take control of several towns.\nBut their victories also bring an old problem into the open: who should lead?"
+    text: "While Bonifacio's forces struggle near Manila,\nFilipino revolutionaries win battles in Cavite."
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Magdiwang HQ (Noveleta), outside.png"),
-    text: "Two factions emerge. The Magdiwang, led by Mariano Álvarez,\nremains closely aligned with Bonifacio."
-  },
-
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 6/Magdiwang HQ (Noveleta), outside.png"),
-    text: "The Magdalo, led by Baldomero Aguinaldo, is gaining influence\nunder his cousin Emilio Aguinaldo."
+    text: "Two groups gain influence. The Magdiwang is led by Mariano\nÁlvarez, while the Magdalo is led by Baldomero Aguinaldo and\nsupports Emilio Aguinaldo's growing leadership."
   },
 
   {
@@ -92,14 +50,10 @@ export const Chapter1_Part6 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Magdiwang HQ (Noveleta), outside.png"),
-    text: "As Spanish reinforcements arrive, the rivalry between the two factions\nmakes cooperation increasingly difficult."
+    text: "Both groups want independence, but they disagree\nabout who should lead the Revolution."
   },
 
   //Q1_6 here
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 3
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
@@ -111,13 +65,7 @@ export const Chapter1_Part6 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Rizal execution.png"),
-    text: "Months earlier, José Rizal had been arrested and exiled for his\nalleged connection to the revolution."
-  },
-
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 6/Rizal execution.png"),
-    text: "On December 30, 1896, Rizal is executed at Bagumbayan."
+    text: "On December 30, 1896, José Rizal is executed at Bagumbayan. His death\nshocks Filipinos and strengthens the desire for freedom."
   },
 
   {
@@ -135,22 +83,12 @@ export const Chapter1_Part6 = [
   },
 
   {
-    type: "narrator",
+    type: "system",
     background: require("../../../../Background Images/Part 6/Rizal execution.png"),
-    text: "His death shocks Filipinos across the colony. Rizal becomes a powerful symbol\nof the growing struggle against Spanish rule."
-  },
-
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 6/Rizal execution.png"),
-    text: "To this day, Rizal is remembered each year on December 30 as a national hero\nand a symbol of the Filipino people's fight for freedom."
+    text: "Rizal's death becomes an important symbol in the fight against Spanish rule."
   },
 
   //T4_6 here
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 4
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
@@ -162,13 +100,7 @@ export const Chapter1_Part6 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Naik camp hut interior.png"),
-    text: "By early 1897, Bonifacio is in Cavite, trying to deal with the growing\nconflict between the Magdiwang and Magdalo factions."
-  },
-
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 6/Naik camp hut interior.png"),
-    text: "From Naic, he writes to Emilio Jacinto about an alleged offer of amnesty\nand the possibility of negotiations."
+    text: "In early 1897, the revolutionary leaders face growing pressure from Spain.\nOffers of pardon and negotiations create more disagreements."
   },
 
   {
@@ -187,15 +119,11 @@ export const Chapter1_Part6 = [
 
   //T5_6 here
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 6.1
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   {
     type: "choice",
     title: "Choice 6.1: You are Emilio Aguinaldo",
-    background: require("../../../../Background Images/Part 6/Naik camp hut interior.png"),
     question: "Father Pio Pi offers a full pardon if you surrender, but you want to know\nwhether real terms can be negotiated.",
+    background: require("../../../../Background Images/Part 6/Naik camp hut interior.png"),
     choices: [
       {
         text: "Contact the Magdiwang leaders first without telling Bonifacio.",
@@ -223,23 +151,18 @@ export const Chapter1_Part6 = [
         translation: "I won't make a secret deal, Supremo. Here's their offer. Let's discuss it."
       }
     ],
-    nextScene: 23
+    nextScene: 15
   },
-
 
   // CONTINUE
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Naik camp hut interior.png"),
-    text: "The offer does not resolve the deeper conflict between the revolutionary factions.\nCavite's leaders continue to build separate centers of support."
+    text: "The offer does not solve the conflict between the revolutionary\nleaders. Their groups continue to build separate centers of power."
   },
 
   //Q2_6 here
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 5
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
@@ -251,7 +174,7 @@ export const Chapter1_Part6 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Magdiwang HQ (Noveleta), outside.png"),
-    text: "As Spanish forces put more pressure on Cavite, Emilio Aguinaldo pushes\nfor a more unified command."
+    text: "Aguinaldo wants the revolutionary forces in Cavite to follow one\ncommand. Mariano Álvarez remains loyal to Bonifacio."
   },
 
   {
@@ -283,16 +206,12 @@ export const Chapter1_Part6 = [
   },
 
   //T1_6 here
-  
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 6.2
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "choice",
     title: "Choice 6.2: You are Mariano Álvarez",
-    background: require("../../../../Background Images/Part 6/Magdiwang HQ (Noveleta), inside.png"),
     question: "Aguinaldo wants a unified command in Cavite, but you remain loyal to Bonifacio.",
+    background: require("../../../../Background Images/Part 6/Magdiwang HQ (Noveleta), inside.png"),
     choices: [
       {
         text: "Keep your forces under Bonifacio's authority.",
@@ -320,7 +239,7 @@ export const Chapter1_Part6 = [
         translation: "We can fight together, but my men will remain under my command."
       }
     ],
-    nextScene: 29
+    nextScene: 21
   },
 
   // CONTINUE
@@ -328,14 +247,8 @@ export const Chapter1_Part6 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Magdiwang HQ (Noveleta), outside.png"),
-    text: "The two factions continue working side by side when necessary, but the\nrivalry between them remains."
+    text: "The groups sometimes cooperate, but their disagreement over leadership remains."
   },
-
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 6
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
@@ -347,7 +260,7 @@ export const Chapter1_Part6 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/st augustine church tanza (surrender scene).png"),
-    text: "Spanish forces continue their advance through Cavite, putting the revolutionary\nforces under increasing pressure."
+    text: "Spanish forces continue advancing through Cavite. The revolutionaries struggle with a\nlack of weapons, tired soldiers, and disagreements among their leaders."
   },
 
   {
@@ -364,15 +277,11 @@ export const Chapter1_Part6 = [
     translation: "We don't have enough weapons. If we keep going, we may only lose more."
   },
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 6.3
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   {
     type: "choice",
     title: "Choice 6.3: You are Daniel Tirona",
-    background: require("../../../../Background Images/Part 6/st augustine church tanza (surrender scene).png"),
     question: "Spanish forces are pushing deeper into Cavite.\nYour men are exhausted and short on weapons.",
+    background: require("../../../../Background Images/Part 6/st augustine church tanza (surrender scene).png"),
     choices: [
       {
         text: "Surrender and save the men who are left.",
@@ -400,32 +309,30 @@ export const Chapter1_Part6 = [
         translation: "Let's hold on a little longer. We may still find a way out."
       }
     ],
-    nextScene: 34
+    nextScene: 26
   },
 
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 6/st augustine church tanza (surrender scene).png"),
-    text: "The situation in Cavite grows more desperate. Revolutionary forces retreat from the\nadvancing Spanish army, and the struggle over leadership becomes harder to ignore."
-  },
+  // CONTINUE
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Cavite revolution 1896 plaza.png"),
-    text: "The revolution has survived its first months, but defeating Spain is only one challenge.\nThe revolutionaries must also decide who will lead them."
+    text: "The Revolution faces two challenges: defeating\nSpain and keeping its own leaders united."
   },
-
 
   {
-    type: "scene",
-    title: "Defeating spain is only one challenge.",
-    date: "The revolutionaries must also decide who will lead them.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+    type: "system",
+    intro: true,
+    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    text: "The revolutionaries share one goal, but they do not agree on who should lead."
   },
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // QUIZ TIME
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  {
+    type: "system",
+    intro: true,
+    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    text: "Their next meeting will change the course of the Revolution."
+  },
 
   {
     type: "scene",
@@ -506,6 +413,6 @@ export const Chapter1_Part6 = [
     title: "Soon, the question of leadership would be decided.",
     date: " ",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
-  }
+  },
 
 ];

@@ -1,26 +1,5 @@
 export const Chapter1_Part2 = [
 
-
-  {
-    type: "system",
-    intro: true,
-    text: "The arrival of the Spanish changed life across the islands.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
-  },
-
-  {
-    type: "system",
-    intro: true,
-    text: "For some, accepting their rule was never an option.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
-  },
-
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 1 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   {
     type: "scene",
     title: "The Refusal at Inabanga",
@@ -30,13 +9,13 @@ export const Chapter1_Part2 = [
 
   {
     type: "narrator",
-    text: "The afternoon air in Bohol is heavy. Outside the parish church, Francisco Dagohoy\nstands grieving for his brother, Sagarino.",
+    text: "In 1744, Francisco Dagohoy loses his brother, Sagarino.",
     background: require("../../../../Background Images/Part 2/saint paul inabanga church exterior.png")
   },
 
   {
     type: "narrator",
-    text: "Sagarino died while carrying out Father Morales's orders. Yet the priest\nrefuses to give him a proper burial.",
+    text: "Sagarino dies while carrying out a priest's orders, but Father\nGaspar Morales refuses to give him a proper burial.",
     background: require("../../../../Background Images/Part 2/saint paul inabanga church interior.png")
   },
 
@@ -121,16 +100,11 @@ export const Chapter1_Part2 = [
 
   //Q2_1 here
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 2.1
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   {
     type: "choice",
     title: "Choice 2.1: You are Francisco Dagohoy",
     question: "Father Gaspar Morales has refused your brother a proper burial.",
     background: require("../../../../Background Images/Part 2/saint paul inabanga church interior.png"),
-
     choices: [
       {
         text: "Speak out and lead your people to the mountains.",
@@ -158,24 +132,18 @@ export const Chapter1_Part2 = [
         ]
       }
     ],
-
-    nextScene: 11
+    nextScene: 9
   },
-
 
   // CONTINUE
 
   {
     type: "narrator",
-    text: "No compromise is reached. Dagohoy gathers about three thousand Boholanos\nand leads them into the mountains.",
+    text: "Dagohoy and about 3,000 Boholanos leave for the mountains. They\nwant to live free from Spanish control and forced labor.",
     background: require("../../../../Background Images/Part 2/Bohol highlands jungle pass.png")
   },
 
   //Q2_2 here
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 2
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
@@ -186,21 +154,15 @@ export const Chapter1_Part2 = [
 
   {
     type: "narrator",
-    text: "In the mountains, Dagohoy along with the three thousand Boholanos build farms\nand organize their own community.",
+    text: "The rebels build farms and form their own community in the mountains.",
     background: require("../../../../Background Images/Part 2/Mountain settlement.png")
   },
 
   {
     type: "narrator",
-    text: "There, they start a new outside of Spanish control and forced labor.",
-    background: require("../../../../Background Images/Part 2/Mountain settlement.png")
+    text: "Their community grows. Spanish forces try again and again to\ndefeat them, but the rebels hold their ground.",
+    background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png")
   },
-
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 3
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
@@ -209,37 +171,19 @@ export const Chapter1_Part2 = [
     background: require("../../../../Background Images/Usuals/Brown Background.jpg")
   },
 
-  {
-    type: "narrator",
-    text: "Decades pass. The mountain community grows from a around three thousand\npeople into a population of around twenty thousand.",
-    background: require("../../../../Background Images/Part 2/Mountain settlement.png")
-  },
-
-  {
-    type: "narrator",
-    text: "Spanish expeditions return again and again to regain control, but to no avail.",
-    background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png")
-  },
-
   //T1_2 here
 
   {
     type: "narrator",
-    text: "Officials begin to make attempts to negotiate with the community.",
+    text: "By 1827, Spanish forces still cannot defeat Dagohoy's movement. An expedition\nof 2,200 soldiers enters the mountains, but it eventually withdraws.",
     background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png")
   },
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 2.2
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "choice",
     title: "Choice 2.2: You are Francisco Dagohoy",
     question: "Spain is weakened after the British take Manila.",
     background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png"),
-
     choices: [
       {
         text: "Stay focused on protecting your mountain community.",
@@ -267,38 +211,18 @@ export const Chapter1_Part2 = [
         ]
       }
     ],
-
-    nextScene: 20
+    nextScene: 16
   },
 
   // CONTINUE
 
-
   {
     type: "narrator",
-    text: "No large alliance forms. The mountain community remains on its own.",
+    text: "The rebels receive no large alliance from other islands. They\ncontinue to defend their community on their own.",
     background: require("../../../../Background Images/Part 2/Mountain settlement.png")
   },
 
-  {
-    type: "narrator",
-    text: "In 1827, a Spanish expedition of 2,200 soldiers enters the mountains.",
-    background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png")
-  },
-
-  //T3_2 here 
-
-  {
-    type: "narrator",
-    text: "After a difficult standoff, the expedition withdraws. The Boholanos\nsuccessfully defend their territory.",
-    background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png")
-  },
-
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 4
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  //T3_2 here
 
   {
     type: "scene",
@@ -309,22 +233,23 @@ export const Chapter1_Part2 = [
 
   {
     type: "narrator",
-    text: "Governor-General Mariano Ricafort sends Captain Manuel Sanz to lead 6,000\nsoldiers into Bohol as a final campaign to retake control.",
+    text: "In 1828, Governor-General Mariano Ricafort sends Captain Manuel\nSanz with 6,000 soldiers to regain control of Bohol.",
+    background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png")
+  },
+
+  {
+    type: "narrator",
+    text: "By 1829, the long struggle has lasted about 85 years. The rebels\nmust decide whether to accept peace or keep fighting.",
     background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png")
   },
 
   //Q3_2 here
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 2.3
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "choice",
     title: "Choice 2.3: You are a Boholano Rebel Leader",
     question: "In 1829, Captain Manuel Sanz's army arrives. After spending 85 years in the\nmountains, the Spanish offer peace and pardon or war.",
     background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png"),
-
     choices: [
       {
         text: "Accept the offer to spare your people from more fighting.",
@@ -352,35 +277,30 @@ export const Chapter1_Part2 = [
         ]
       }
     ],
-
-    nextScene: 26
+    nextScene: 21
   },
 
   // CONTINUE
 
-
   {
     type: "narrator",
-    text: "The community ends up choosing peace. Governor-General Ricafort pardons the\n19,420 people living in the mountain state.",
+    text: "The rebellion ends in 1829. Ricafort pardons 19,420 people\nliving in the mountain community. They return to lowland towns,\nincluding Batuan, Cabulao, Catigbian, and Bilar.",
     background: require("../../../../Background Images/Part 2/bohol 19th century town plaza.png")
   },
 
   {
-    type: "narrator",
-    text: "They resettle in lowland towns including Batuan, Cabulao, Catigbian, and Bilar.",
-    background: require("../../../../Background Images/Part 2/bohol 19th century town plaza.png")
+    type: "system",
+    intro: true,
+    text: "Dagohoy's rebellion lasted about 85 years.",
+    background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
 
   {
-    type: "scene",
-    title: "After 85 years,",
-    date: "the Dagohoy rebellion comes to an end.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    type: "system",
+    intro: true,
+    text: "His story reminds us that people will fight to\nprotect their families, homes, and freedom.",
+    background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // QUIZ TIME
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
@@ -449,7 +369,6 @@ export const Chapter1_Part2 = [
     correctIndex: 1
   },
 
-  
   {
     type: "scene",
     title: "Chapter Complete.",
@@ -462,6 +381,6 @@ export const Chapter1_Part2 = [
     title: "But the story of resistance is far from over.",
     date: " ",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
-  }
+  },
 
 ];

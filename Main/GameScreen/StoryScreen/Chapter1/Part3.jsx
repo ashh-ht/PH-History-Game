@@ -1,26 +1,6 @@
 export const Chapter1_Part3 = [
 
   {
-    type: "system",
-    intro: true,
-    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
-    text: "Decades after the Dagohoy rebellion, a new generation begins to challenge Spanish rule."
-  },
-
-  {
-    type: "system",
-    intro: true,
-    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
-    text: "In 1892, a returning novelist will turn his words into a movement."
-  },
-
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 1
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  {
     type: "scene",
     title: "The Novelist's Return",
     date: "June 26, 1892",
@@ -30,13 +10,7 @@ export const Chapter1_Part3 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 3/manila port 1890s.png"),
-    text: "After many years abroad, Dr. José Rizal returns to Manila."
-  },
-
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 3/Rizal's home.png"),
-    text: "His novels Noli Me Tángere and El Filibusterismo have already made him known\nacross the islands, but this time, he wants to do more than write from afar."
+    text: "On June 26, 1892, Dr. José Rizal returns to Manila. His books, Noli Me Tángere and\nEl Filibusterismo, have encouraged Filipinos to question Spanish rule."
   },
 
   {
@@ -65,29 +39,16 @@ export const Chapter1_Part3 = [
     text: "If we want a better future for our people, we cannot wait for the government\nto change. We must build it ourselves."
   },
 
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 2
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   {
     type: "scene",
-    title: "The Covenant in Tondo",
-    date: "July 3, 1892",
+    title: "La Liga Filipina",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg")
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 3/Liga Filipina founding 1892 Ongjunco.png"),
-    text: "A few days later, around thirty people gather at the home of\nDoroteo Ongjunco in Tondo."
-  },
-
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 3/Liga Filipina founding 1892 Ongjunco.png"),
-    text: "A rare mix of wealthy reformers, professionals, and working-class merchants\nmeet to form a new organization: La Liga Filipina."
+    text: "On July 3, 1892, Rizal meets with about 30 people in Tondo.\nTogether, they form La Liga Filipina, an organization that\nsupports unity, education, and the welfare of Filipinos."
   },
 
   {
@@ -148,10 +109,6 @@ export const Chapter1_Part3 = [
     text: "I trust we will build something strong among our own people. Let's sign\nthis agreement and prove that we can stand together as equals."
   },
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 3.1
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   {
     type: "choice",
     title: "Choice 3.1: You are Dr. José Rizal",
@@ -184,7 +141,7 @@ export const Chapter1_Part3 = [
         ]
       }
     ],
-    nextScene: 15
+    nextScene: 11
   },
 
   // CONTINUE
@@ -194,13 +151,8 @@ export const Chapter1_Part3 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 3/Liga Filipina founding 1892 Ongjunco.png"),
-    text: "La Liga Filipina begins as a peaceful organization focused on unity, mutual support,\neducation, and the welfare of Filipinos."
+    text: "La Liga Filipina begins as a peaceful organization. Its members\nhope to improve life for Filipinos by working together."
   },
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 3
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
@@ -212,18 +164,9 @@ export const Chapter1_Part3 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 3/Governor-General's office.png"),
-    text: "Three days later, the Spanish authorities move against Rizal, claiming they found\nanti-friar pamphlets hidden in his sister's luggage."
+    text: "Just three days later, Spanish authorities arrest Rizal and\nsend him to Dapitan in Mindanao without a trial."
   },
 
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 3/Governor-General's office.png"),
-    text: "Governor-General Eulogio Despujol orders his arrest and exile."
-  },
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 3.2 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   {
     type: "choice",
     title: "Choice 3.2: You are Dr. José Rizal",
@@ -254,7 +197,7 @@ export const Chapter1_Part3 = [
         ]
       }
     ],
-    nextScene: 20
+    nextScene: 15
   },
 
   // CONTINUE
@@ -262,15 +205,10 @@ export const Chapter1_Part3 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 3/manila port 1890s.png"),
-    text: "Either way, nothing changes. Rizal is taken away and exiled to Dapitan in Mindanao,\nleaving La Liga without its founder."
+    text: "Rizal is sent to Dapitan. His exile makes it\nharder for the Liga to continue its work."
   },
 
   //Q3_3 here
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 4
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
@@ -282,17 +220,17 @@ export const Chapter1_Part3 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 3/Reformist meeting hall, 1893 (Liga revival debate).png"),
-    text: "Rizal is far away in Dapitan, and the original Liga has paused its activities."
+    text: "In 1893, the Liga's members disagree about what to do next.\nSome want to continue asking Spain for reforms."
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 3/Reformist meeting hall, 1893 (Liga revival debate).png"),
-    text: "Domingo Franco and Andrés Bonifacio step forward to bring it back to life,\nbut soon, the members start to disagree about how to move forward."
+    text: "Bonifacio believes Filipinos must prepare for independence."
   },
 
   //T1_3 here
-  
+
   {
     type: "dialogue",
     speaker: "DOMINGO FRANCO",
@@ -340,10 +278,6 @@ export const Chapter1_Part3 = [
     text: "We need a different approach."
   },
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 3.3
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   {
     type: "choice",
     title: "Choice 3.3: You are Andrés Bonifacio",
@@ -376,29 +310,16 @@ export const Chapter1_Part3 = [
         ]
       }
     ],
-    nextScene: 28
+    nextScene: 23
   },
-
 
   // CONTINUE
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 3/Reformist meeting hall, 1893 (Liga revival debate).png"),
-    text: "Either way, the disagreement can't be resolved. La Liga Filipina\nofficially ends in October 1893."
+    text: "The disagreement divides the organization. Bonifacio and his\ncompanions begin forming a secret group dedicated to independence."
   },
-
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 3/Reformist meeting hall, 1893 (Liga revival debate).png"),
-    text: "Bonifacio, together with Plata, Diwa, Diaz, and Dizon, moves forward to build a new\norganization dedicated to full independence."
-  },
-
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 5
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
@@ -410,13 +331,7 @@ export const Chapter1_Part3 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 3/Arellano house, Calle Elcano, Tondo.png"),
-    text: "Inside the small home of Deodato Arellano on Calle Elcano, Bonifacio, Plata,\nand the others gather around a single oil lamp."
-  },
-
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 3/Arellano house, Calle Elcano, Tondo.png"),
-    text: "Together, they sign their names to a new, secret brotherhood dedicated to\nwinning independence for their country."
+    text: "On July 7, 1892, Bonifacio and his companions establish the Katipunan, a\nsecret organization that aims to free the Philippines from Spain."
   },
 
   {
@@ -433,15 +348,18 @@ export const Chapter1_Part3 = [
   },
 
   {
-    type: "scene",
+    type: "system",
     intro: true,
     background: require("../../../../Background Images/Usuals/Black Background.jpg"),
-    text: "From today, we work only for the freedom of our country."
+    text: "Rizal worked for change through peaceful reform. Bonifacio and\nthe Katipunan prepared to fight for independence."
   },
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // QUIZ TIME
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  {
+    type: "system",
+    intro: true,
+    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    text: "Their methods were different, but both became\nimportant figures in Philippine history."
+  },
 
   {
     type: "scene",
@@ -516,12 +434,12 @@ export const Chapter1_Part3 = [
     date: "The call for change had become a call for freedom.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
-  
+
   {
     type: "scene",
     title: "And soon, that call would no longer remain in secret.",
     date: " ",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
-  }
+  },
 
 ];

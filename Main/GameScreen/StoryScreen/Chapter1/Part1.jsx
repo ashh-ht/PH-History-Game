@@ -3,42 +3,23 @@ export const Chapter1_Part1 = [
   {
     type: "system",
     intro: true,
-    text: "Before the names in our history books, there were people.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
-  },
-
-  {
-    type: "system",
-    intro: true,
-    text: "They lived on these islands long before they were ever called a colony.",
+    text: "Long before Spain arrived, people already lived on these islands.",
     background: require("../../../../Background Images/Intro/Intro 2.png")
   },
 
   {
     type: "system",
     intro: true,
-    text: "They built homes, sailed between islands, traded with distant shores, and raised families.",
+    text: "They built homes, sailed between islands, traded goods, and formed communities.",
     background: require("../../../../Background Images/Intro/Intro 3.png")
   },
 
   {
     type: "system",
     intro: true,
-    text: "And then, one day...",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
-  },
-
-  {
-    type: "system",
-    intro: true,
-    text: "Mysterious ships appeared on the horizon.",
+    text: "Then, in 1565, Spanish ships arrived. What would happen next?",
     background: require("../../../../Background Images/Intro/Intro 4.png")
   },
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 1
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
@@ -49,21 +30,14 @@ export const Chapter1_Part1 = [
 
   {
     type: "narrator",
-    text: "After weeks at sea, five Spanish ships under General Miguel López de Legazpi\nanchor off Cibabao, Samar.",
+    text: "Miguel López de Legazpi arrives in Samar with five Spanish ships.",
     background: require("../../../../Background Images/Part 1/Spanish Arrival.png")
   },
 
   {
     type: "narrator",
-    text: "The local people gather along the shore, watching the unfamiliar ships from a distance.",
-    background: require("../../../../Background Images/Part 1/Spanish Arrival.png")
-  },
-
-  {
-    type: "system",
-    intro: true,
-    text: "In 1565, Legazpi arrived at Samar to continue what Magellan started.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+    text: "The people watch from the shore. They do not\nknow if the visitors can be trusted.",
+    background: require("../../../../Background Images/Part 1/Spanish Coast.png")
   },
 
   {
@@ -80,18 +54,6 @@ export const Chapter1_Part1 = [
   },
 
   {
-    type: "narrator",
-    text: "The people of Samar remain near the trees.",
-    background: require("../../../../Background Images/Part 1/Spanish Coast.png")
-  },
-
-  {
-    type: "narrator",
-    text: "They have heard stories of foreign ships before, but don't know yet\nwhether these visitors mean peace or trouble.",
-    background: require("../../../../Background Images/Part 1/Spanish Coast.png")
-  },
-
-  {
     type: "dialogue",
     speaker: "FRANCISCO GOMEZ",
     background: require("../../../../Background Images/Part 1/Spanish Coast.png"),
@@ -105,23 +67,10 @@ export const Chapter1_Part1 = [
   },
 
   {
-    type: "narrator",
-    text: "A warrior steps from the trees and blocks Gomez's path with his spear.\nHe does not attack. He simply refuses to let him pass.",
-    background: require("../../../../Background Images/Part 1/Spanish Coast.png")
-  },
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 1.1
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  {
     type: "choice",
     title: "Choice 1.1: You are a Chieftain of Samar",
-    background: require("../../../../Background Images/Part 1/Spanish Coast.png"),
-
     question: "A Spanish sailor has offered a blood compact.\nYour people are not sure whether to trust these strangers.",
-
+    background: require("../../../../Background Images/Part 1/Spanish Coast.png"),
     choices: [
       {
         text: "Turn him away for now.",
@@ -149,23 +98,16 @@ export const Chapter1_Part1 = [
         ]
       }
     ],
-
-    nextScene: 15
+    nextScene: 9
   },
 
   // CONTINUE
 
   {
     type: "narrator",
-    text: "No Spanish settlement is established in Samar.\nLegazpi's fleet continues toward Leyte and Bohol.",
+    text: "The people of Samar choose to be careful. No Spanish settlement is\nbuilt there. Legazpi's fleet sails toward Leyte and Bohol.",
     background: require("../../../../Background Images/Part 1/Spanish Coast.png")
   },
-
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 2
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
@@ -176,11 +118,17 @@ export const Chapter1_Part1 = [
 
   {
     type: "narrator",
-    text: "Two days after leaving Samar, Legazpi and his fleet reached Leyte. He lands on shore\nand plants a cross to formally claim the territory for Spain.",
+    text: "In Leyte, Legazpi claims the land for Spain by planting a cross.",
     background: require("../../../../Background Images/Part 1/Spanish Coast.png")
   },
 
   //Q3_1 here
+
+  {
+    type: "narrator",
+    text: "In Bohol, Datu Sikatuna welcomes him. They make a\nsandugo, or blood compact, to show friendship.",
+    background: require("../../../../Background Images/Part 1/Bohol Coast.png")
+  },
 
   {
     type: "dialogue",
@@ -192,19 +140,7 @@ export const Chapter1_Part1 = [
         position: "right"
       }
     ],
-    text: "Let this cross mark the start of our mission here, in the name of King Philip II."
-  },
-
-  {
-    type: "narrator",
-    text: "The fleet continues on to Bohol, where Legazpi meets Datu Sikatuna.",
-    background: require("../../../../Background Images/Part 1/Bohol Coast.png")
-  },
-
-  {
-    type: "narrator",
-    text: "Unlike their tense arrival in Samar, Datu Sikatuna welcomes the Spaniards.\nThe two seal their friendship with a sandugo, a traditional blood compact.",
-    background: require("../../../../Background Images/Part 1/Bohol Coast.png")
+    text: "Let this cross mark the start of our mission\nhere, in the name of King Philip II."
   },
 
   {
@@ -241,11 +177,6 @@ export const Chapter1_Part1 = [
     text: "If you're looking for Cebu, sail west. But be careful. Rajah Tupas is proud.\nHe guards his shores fiercely."
   },
 
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 3
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   {
     type: "scene",
     title: "The Ultimatum in Cebu",
@@ -255,20 +186,14 @@ export const Chapter1_Part1 = [
 
   {
     type: "narrator",
-    text: "Forty-four years after Magellan's fleet passed nearby, Legazpi enters Cebu's harbor.",
-    background: require("../../../../Background Images/Part 1/Cebu Village.png")
-  },
-
-  {
-    type: "narrator",
     background: require("../../../../Background Images/Part 1/Cebu Village.png"),
     characters: [
       {
         source: require("../../../../Character Images/Temporary Placeholders/Tupas.png"),
         position: "left"
-      },
+      }
     ],
-    text: "Rajah Tupas waits on shore with more than two thousand warriors behind him."
+    text: "At last, Legazpi reaches Cebu. Rajah Tupas and his two\nthousand warriors are ready to defend their home."
   },
 
   {
@@ -323,17 +248,11 @@ export const Chapter1_Part1 = [
     text: "I offer you three days to consider a peace agreement with me. My men\nare hungry. I hope we can share this port peacefully."
   },
 
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 1.2
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   {
     type: "choice",
     title: "Choice 1.2: You are Rajah Tupas of Cebu",
     question: "The three-day deadline is almost up.\nSpanish messengers return to ask for peace.",
     background: require("../../../../Background Images/Part 1/Cebu Village.png"),
-
     choices: [
       {
         text: "Refuse, and retreat to the mountains to prepare for battle.",
@@ -361,55 +280,22 @@ export const Chapter1_Part1 = [
         ]
       }
     ],
-
-    nextScene: 32
+    nextScene: 22
   },
 
   // CONTINUE
 
   {
     type: "narrator",
-    text: "Tupas and his people leave the settlement and retreat into the hills. When\nthe Spanish arrive and re-enter Cebu, they find the village largely abandoned.",
+    text: "Tupas and his people retreat to the hills. The Spanish\nenter Cebu and begin building a settlement.",
     background: require("../../../../Background Images/Part 1/Cebu hills Tupas's retreat.png")
-  },
-
-  {
-    type: "dialogue",
-    speaker: "MIGUEL LÓPEZ DE LEGAZPI",
-    background: require("../../../../Background Images/Part 1/Cebu Burned.png"),
-    characters: [
-      {
-        source: require("../../../../Character Images/Temporary Placeholders/Legazpi.png"),
-        position: "right"
-      }
-    ],
-    text: "We offered peace, and I wish this could have gone differently.\nStill, we must persevere and survive."
-  },
-
-  {
-    type: "narrator",
-    text: "Construction begins on Fort San Pedro. Cebu becomes Spain's first\nlasting settlement in the islands.",
-    background: require("../../../../Background Images/Part 1/Construction.png")
-  },
-
-  {
-    type: "dialogue",
-    speaker: "MIGUEL LÓPEZ DE LEGAZPI",
-    background: require("../../../../Background Images/Part 1/Construction.png"),
-    characters: [
-      {
-        source: require("../../../../Character Images/Temporary Placeholders/Legazpi.png"),
-        position: "center"
-      }
-    ],
-    text: "We'll build our settlement here and call it Villa de Santísimo\nNombre de Jesús."
   },
 
   //Q2_1 here
 
   {
     type: "narrator",
-    text: "As the Spanish explore the empty houses, Juan de Camus discovers something\nunexpected inside one of them.",
+    text: "Juan de Camus finds an image of the Santo Niño,\nleft behind by Magellan's crew in 1521.",
     background: require("../../../../Background Images/Part 1/nipa hut interior santo nino discovery.png")
   },
 
@@ -454,41 +340,16 @@ export const Chapter1_Part1 = [
     text: "The discovery becomes an important moment for the new Spanish settlement.",
     background: require("../../../../Background Images/Part 1/nipa hut interior santo nino discovery.png")
   },
-  
-  {
-    type: "narrator",
-    text: "However, life in Cebu remains difficult due to food shortages and tensions between\nthe Spanish and local communities.",
-    background: require("../../../../Background Images/Part 1/Cebu Village.png")
-  },
-
-  {
-    type: "dialogue",
-    speaker: "MIGUEL LÓPEZ DE LEGAZPI",
-    background: require("../../../../Background Images/Part 1/Cebu Village.png"),
-    characters: [
-      {
-        source: require("../../../../Character Images/Temporary Placeholders/Legazpi.png"),
-        position: "center"
-      }
-    ],
-    text: "We cannot keep surviving on so little. Panay has more food. We will\nmove the settlement somewhere else."
-  },
 
   {
     type: "narrator",
-    text: "After years of struggling to survive in Cebu, the Spanish move their settlement to\nPanay, where food is more plentiful.",
+    text: "Food soon becomes scarce. The Spanish move their\nsettlement to Panay, where food is easier to find.",
     background: require("../../../../Background Images/Part 1/Bohol Coast.png")
   },
 
   {
     type: "narrator",
-    text: "The settlement moves to the Panay River, where life becomes more stable.",
-    background: require("../../../../Background Images/Part 1/Bohol Coast.png")
-  },
-
-  {
-    type: "narrator",
-    text: "Soon, traders begin talking about a wealthy settlement farther north named Maynila.",
+    text: "Later, they hear about a wealthy settlement called Maynila.",
     background: require("../../../../Background Images/Part 1/Manila Shoreline.png")
   },
 
@@ -534,12 +395,6 @@ export const Chapter1_Part1 = [
     text: "Offer peace and friendship first. If we can avoid a fight, we will."
   },
 
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 4
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   {
     type: "scene",
     title: "The Sandugo of Manila",
@@ -549,13 +404,7 @@ export const Chapter1_Part1 = [
 
   {
     type: "narrator",
-    text: "After early clashes with Rajah Sulayman's forces, Legazpi arrives\nin Manila Bay with a large fleet.",
-    background: require("../../../../Background Images/Part 1/Manila Shoreline.png")
-  },
-
-  {
-    type: "narrator",
-    text: "Lakan Dula of Tondo senses danger and urges his nephew to negotiate.",
+    text: "In Manila, Rajah Sulayman and Lakan Dula face a difficult choice.\nShould they fight the Spanish or try to make peace?",
     background: require("../../../../Background Images/Part 1/Sulayman's council space.png")
   },
 
@@ -592,20 +441,14 @@ export const Chapter1_Part1 = [
       }
     ],
     text: "Kung lalabanan natin sila nang tuwiran, mawawala ang lahat sa atin.\nMakipag-usap muna tayo.",
-    translation: "My nephew, look at their ships and weapons. If we fight them head-on, we could lose\neverything. Let's talk first."
+    translation: "My nephew, look at their ships and weapons. If we fight them head-on, we could lose everything. Let's talk first."
   },
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 1.3
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "choice",
     title: "Choice 1.3: You are Rajah Sulayman",
     question: "Legazpi has arrived with a large force. Your uncle is urging you to negotiate.",
     background: require("../../../../Background Images/Part 1/Sulayman's council space.png"),
-
     choices: [
       {
         text: "Agree right away and go speak with Legazpi.",
@@ -633,31 +476,28 @@ export const Chapter1_Part1 = [
         ]
       }
     ],
-
-
-    nextScene: 52
+    nextScene: 37
   },
-
-
 
   // END OF STORY
 
   {
     type: "narrator",
-    text: "Sulayman agrees to negotiate with Legazpi. The two sides settle for peace\nand seal the agreement with a sandugo.",
+    text: "Sulayman agrees to talk with Legazpi. On June 24, 1571, Legazpi\ndeclares Manila the capital of Spanish rule in the Philippines.",
     background: require("../../../../Background Images/Part 1/Inside hut sandugo part.png")
   },
 
   {
-    type: "narrator",
-    text: "On June 24, 1571, Legazpi declares Manila the capital of the colony.",
-    background: require("../../../../Background Images/Part 1/Manila Shoreline.png")
+    type: "system",
+    intro: true,
+    text: "You have seen the first meetings between Spanish visitors and Filipino leaders.",
+    background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
 
   {
-    type: "scene",
-    title: "Their story does not end here.",
-    date: "It will continue for centuries. Through generations of change, resistance,\nand eventually the fight for independence.",
+    type: "system",
+    intro: true,
+    text: "Some chose peace. Others chose caution. But Spain's rule was only beginning.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
 
@@ -671,11 +511,6 @@ export const Chapter1_Part1 = [
   {
     type: "voyage"
   },
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // QUIZ TIME
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
