@@ -32,40 +32,46 @@ const PANEL_INSET = PANEL_HAS_TAB
   ? { left: 0, right: 0, top: 0, bottom: 0 }
   : { left: 0.023, right: 0.01, top: 0.06, bottom: 0.06 };
 
-const START_SECONDS = 45;
+const START_SECONDS = 60;
 const BONUS_SECONDS = 10;
 const TICK_MS = 200;
 
+// Each puzzle's `scrambled` list contains every letter of the answer
+// PLUS a few decoy letters that don't belong. The number of answer boxes
+// comes from answer.length, so decoys just stay unused in the tray.
 const PUZZLES = [
   {
     answer: "DAGOHOY",
-    scrambled: ["O", "H", "Y", "A", "G", "O", "D"],
+    // + decoys: K, S, R
+    scrambled: ["O", "K", "H", "Y", "S", "A", "G", "R", "O", "D"],
     clue: "The leader who resisted Spanish rule in Bohol.",
     hint: "His rebellion began in 1744.",
   },
   {
     answer: "BOHOL",
-    scrambled: ["L", "O", "B", "H", "O"],
+    // + decoys: T, N, E
+    scrambled: ["L", "T", "O", "B", "N", "H", "E", "O"],
     clue: "The island where the long rebellion took place.",
     hint: "It is in the Central Visayas region.",
   },
   {
     answer: "MOUNTAIN",
-    scrambled: ["N", "I", "A", "T", "U", "M", "O", "N"],
+    // + decoys: E, S, R
+    scrambled: ["N", "I", "E", "A", "T", "U", "S", "M", "O", "N", "R"],
     clue: "The rugged terrain where Dagohoy's community found refuge.",
     hint: "It is a high area of land.",
   },
   {
     answer: "REBELLION",
-    // (The old list was missing one "E", which made this impossible to
-    // solve by dragging. REBELLION has two E's.)
-    scrambled: ["L", "I", "O", "N", "B", "E", "L", "R", "E"],
+    // + decoys: T, A  (REBELLION has two E's and two L's)
+    scrambled: ["L", "T", "I", "O", "N", "B", "A", "E", "L", "R", "E"],
     clue: "An organized resistance against an authority.",
     hint: "It describes Dagohoy's long resistance.",
   },
   {
     answer: "PARDON",
-    scrambled: ["D", "O", "N", "R", "A", "P"],
+    // + decoys: M, S, E
+    scrambled: ["D", "M", "O", "N", "S", "R", "A", "E", "P"],
     clue: "Forgiveness of an offense; the rebels were granted this when peace was accepted.",
     hint: "It begins with P and has six letters.",
   },
@@ -588,7 +594,7 @@ export default function DecipherMinigame({
     }
 
     if (normalizeAnswer(answer) !== puzzle.answer) {
-      setFeedback("Not quite. Tap a box to take a letter back.");
+      setFeedback("Not quite. Some letters are decoys! Tap a box to take one back.");
       setFeedbackType("error");
       sfx("wrong");
       return;
@@ -668,12 +674,14 @@ export default function DecipherMinigame({
       <Text style={styles.panelTitle}>Decode the Story</Text>
       <Text style={styles.bodyText}>
         Unscramble five words connected to Francisco Dagohoy's rebellion.
+        Watch out for extra letters!
       </Text>
 
       <View style={styles.ruleBox}>
         <Text style={styles.ruleText}>• You start with 45 seconds.</Text>
         <Text style={styles.ruleText}>• Each correct word adds 10 seconds.</Text>
         <Text style={styles.ruleText}>• Drag the letters into the boxes.</Text>
+        <Text style={styles.ruleText}>• Beware: some extra letters don't belong!</Text>
         <Text style={styles.ruleText}>• The clock never stops, so be quick!</Text>
       </View>
 
@@ -855,7 +863,7 @@ export default function DecipherMinigame({
               onLayout={(e) => setContentH(e.nativeEvent.layout.height)}
             >
               <View style={styles.header}>
-                <Text style={styles.title}>The Cipher Trail</Text>
+                <Text style={styles.title}>Decipher Trail</Text>
 
                 {screen === "active" ? (
                   <View
