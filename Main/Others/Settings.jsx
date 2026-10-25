@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import useScale from '../../Components/ScreenScaler';
 import styles from '../../Styles/Others/StyleSettings';
-import { useAudio } from '../../Audiostore';
 import { useAudio } from '../../Audiostore'; // ADDED: for menu music on exit
 
 // --- IMAGE IMPORTS ---

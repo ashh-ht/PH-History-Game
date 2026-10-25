@@ -500,6 +500,17 @@ function PartRenderer(props) {
   const display = useDisplaySettings();
   const { unlock } = useJournal();
 
+  // "Latest value" refs. They let effects call the newest game / audio
+  // functions without listing them as dependencies (which would re-run the
+  // effects every render, because these objects change identity).
+  const gameRef = useRef(game);
+  gameRef.current = game;
+  const stopLoopsRef = useRef(stopLoops);
+  stopLoopsRef.current = stopLoops;
+  const playSfxRef = useRef(playSfx);
+  playSfxRef.current = playSfx;
+  const nextRef = useRef(null);
+
   const fontScale = FONT_SCALE[display?.fontSize] ?? 1;
   const boxImage = { opacity: display?.boxOpacity ?? 1 };
 
@@ -532,10 +543,10 @@ function PartRenderer(props) {
   }, [sceneIdx]);
 
   useFocusEffect(
-  useCallback(() => {
-    setPaused(false);
-  }, [])
-);
+    useCallback(() => {
+      setPaused(false);
+    }, [])
+  );
 
   // --- REMNANT POPUP STATES ---
   const [showRewardPopup, setShowRewardPopup] = useState(false);
@@ -547,16 +558,17 @@ function PartRenderer(props) {
   const chapterTitleOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    game.setChapter(chapterNumber);
-    game.setPart(partNumber);
-    game.setInGame(true);
+    const g = gameRef.current;
+    g.setChapter(chapterNumber);
+    g.setPart(partNumber);
+    g.setInGame(true);
     markPartReached(partNumber);
 
     return () => {
-      game.setInGame(false);
-      stopLoops();
+      gameRef.current.setInGame(false);
+      stopLoopsRef.current();
     };
-  }, []);
+  }, [chapterNumber, partNumber]);
 
   const startScene = props.route?.params?.startScene;
   const lastAppliedStartScene = useRef(null);
@@ -595,8 +607,8 @@ function PartRenderer(props) {
   useEffect(() => {
     const scene = sceneData[sceneIdx];
     if (!scene) return;
-    if (scene.stopSfx) stopLoops();
-    [].concat(scene.sfx ?? []).forEach((key) => playSfx(key));
+    if (scene.stopSfx) stopLoopsRef.current();
+    [].concat(scene.sfx ?? []).forEach((key) => playSfxRef.current(key));
   }, [sceneIdx, sceneData]);
 
   useEffect(() => {
@@ -699,6 +711,10 @@ function PartRenderer(props) {
     return goNext();
   };
 
+  // Always points at the newest `next`, so the auto-play timer below
+  // never calls an out-of-date version.
+  nextRef.current = next;
+
   const advance = () => (done ? next() : skip());
 
   useEffect(() => {
@@ -706,7 +722,7 @@ function PartRenderer(props) {
     if (isMinigame) return undefined;
     if (current.type === "quiz") return undefined;
     if (current.type === "choice" && picked === null) return undefined;
-    const id = setTimeout(next, settings.autoDelay * 1000);
+    const id = setTimeout(() => nextRef.current?.(), settings.autoDelay * 1000);
     return () => clearTimeout(id);
   }, [sceneIdx, picked, done, settings?.autoPlay, settings?.autoDelay, current, isMinigame]);
 
@@ -903,6 +919,7 @@ function PartRenderer(props) {
   if (current.type === "quiz") {
     const isAnswered = quizAnswer !== null;
     const isCorrect = quizAnswer === current.correctIndex;
+    const submitVisible = !isAnswered && selectedOption !== null;
 
     const quizIndex = sceneData.slice(0, sceneIdx).filter(s => s.type === 'quiz').length;
     const questionParchment = QUIZ_QUESTION_IMAGES[quizIndex % QUIZ_QUESTION_IMAGES.length];
@@ -975,9 +992,9 @@ function PartRenderer(props) {
         <View 
           style={[
             styles.quizSubmitWrapper, 
-            { opacity: (!isAnswered && selectedOption !== null) ? 1 : 0 }
+            submitVisible ? styles.quizSubmitVisible : styles.quizSubmitHidden,
           ]} 
-          pointerEvents={(!isAnswered && selectedOption !== null) ? 'auto' : 'none'}
+          pointerEvents={submitVisible ? 'auto' : 'none'}
         >
           <AnimatedImageButton
             normalSource={QUIZ_SUBMIT}
@@ -1221,11 +1238,10 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-  opacityZero: { opacity: 0 },
-  quizBackground: { backgroundColor: "#fffca0" },
   opacityZero: {
     opacity: 0,
   },
+  quizBackground: { backgroundColor: "#fffca0" },
 
   chapterIntroScreen: {
     flex: 1,
@@ -1630,6 +1646,12 @@ const styles = StyleSheet.create({
     marginTop: 5,
     alignItems: "center",
     justifyContent: "center",
+  },
+  quizSubmitVisible: {
+    opacity: 1,
+  },
+  quizSubmitHidden: {
+    opacity: 0,
   },
   quizSubmitBtn: {
     width: 120,
