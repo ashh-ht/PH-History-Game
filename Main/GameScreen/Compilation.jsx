@@ -1595,7 +1595,7 @@ const styles = StyleSheet.create({
 
   // 1. Question Parchment Image Sizing
   quizQuestionWrapper: {
-    width: "102%",
+    width: "85%",
     marginTop: 90,
     marginBottom: 10,
     alignItems: "center",
@@ -1624,7 +1624,7 @@ const styles = StyleSheet.create({
   },
   quizImageButton: {
     width: "45%",
-    height: 48,
+    height: 50,
   },
   quizImageButtonBg: {
     width: "100%",
