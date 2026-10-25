@@ -176,9 +176,9 @@ export default function SavesScreen({ navigation }) {
   const listH = panelH * 0.48;
 
   // Delete All button: bigger, centered, pinned to the bottom of the panel
-  const delW = panelW * 0.52;             // raise/lower to resize
+  const delW = panelW * 0.32;             // raise/lower to resize
   const delH = delW / DELETE_ASPECT;
-  const delBottom = panelH * 0.085;       // raise/lower to move up/down
+  const delBottom = panelH * 0.11;       // raise/lower to move up/down
 
   const cardH = Math.max(50, panelH * 0.17);
   const cardFont = Math.max(12, panelH * 0.05);

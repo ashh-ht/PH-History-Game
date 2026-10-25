@@ -24,11 +24,11 @@ const CIRCLE_THUMB_CHECKED = require('../../assets/Settings_Assets/CircleButton_
 const PANEL_ASPECT = 1205 / 630;
 
 // ===== RADIO CIRCLES =====
-const CIRCLE_W = 300/1920;
+const CIRCLE_W = 90/1920;
 const ROW_H = 300/1080;
 const ROW_LEFT = 200/1920;
 const ROW_W = 400/1920;
-const CIRCLE_CX = 300/1920;
+const CIRCLE_CX = 250/1920;
 
 const FONT_OPTIONS = [
   { value: 'Small', y: 473/1080 },

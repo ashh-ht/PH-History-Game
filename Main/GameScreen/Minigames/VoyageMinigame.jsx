@@ -17,50 +17,55 @@ const TICK_MS = 50;
 const BASE_SPEED = 3.5;
 const MAX_SPEED = 6;
 
-// NOTE: RATE AT WHICH THINGS SPAWN. HIGHER NUMBER = SLOWER SPAWN. LOWER NUMBER = FASTER SPAWN.
 const ROCK_SPAWN_MS = 2000;
 const SUPPLY_SPAWN_MS = 1700;
 const WAVE_SPAWN_MS = 2200;
 
-const SHIP_WIDTH = 78;
-const SHIP_HEIGHT = 104;
+const SHIP_WIDTH = 130;
+const SHIP_HEIGHT = 120;
 
-const ROCK_WIDTH = 68;
+const ROCK_WIDTH = 50;
 const ROCK_HEIGHT = 50;
 
-const SUPPLY_WIDTH = 95;
+const SUPPLY_WIDTH = 65;
 const SUPPLY_HEIGHT = 60;
 
-const WAVE_WIDTH = 120;
-const WAVE_HEIGHT = 38;
+const WAVE_WIDTH = 90;
+const WAVE_HEIGHT = 68;
+
+// =====================================================
+// OBSTACLE IMAGES
+// =====================================================
+const ROCK_IMAGES = [
+    require('../../../assets/Minigames/Part1/Rock.png'),
+    require('../../../assets/Minigames/Part1/Rock2.png'),
+    require('../../../assets/Minigames/Part1/Rock3.png'),
+];
+
+const WAVE_IMAGES = [
+    require('../../../assets/Minigames/Part1/Waves.png'),
+    require('../../../assets/Minigames/Part1/Waves2.png'),
+];
 
 // =====================================================
 // HITBOXES
-// All values are fractions (0 to 1) of the sprite size.
-// Higher number = that side moves further INWARD (smaller hitbox).
 // =====================================================
-
-// Ship hull (what gets DAMAGED by rocks and waves)
 const HIT_LEFT = 0.15;
 const HIT_RIGHT = 0.15;
-const HIT_TOP = 0.58;     // skips sails and mast
-const HIT_BOTTOM = 0.06;  // skips foam at the bottom
+const HIT_TOP = 0.58;
+const HIT_BOTTOM = 0.06;
 
-// Ship pickup area (what COLLECTS supplies) - more forgiving, includes the sails
 const PICK_LEFT = 0.05;
 const PICK_RIGHT = 0.05;
 const PICK_TOP = 0.25;
 const PICK_BOTTOM = 0.05;
 
-// Objects: x = trim from left AND right, top / bottom = trim from those sides
 const ROCK_HIT = { x: 0.15, top: 0.2, bottom: 0.1 };
 const WAVE_HIT = { x: 0.15, top: 0.3, bottom: 0.3 };
 const SUPPLY_HIT = { x: 0.1, top: 0.1, bottom: 0.1 };
 
-// Set to true to see the colored hitboxes while tuning
 const DEBUG_HITBOX = false;
 
-// Builds a collision rectangle from a sprite position/size and trims
 const makeRect = (x, y, w, h, trimLeft, trimRight, trimTop, trimBottom) => ({
     left: x + w * trimLeft,
     right: x + w * (1 - trimRight),
@@ -84,7 +89,6 @@ function VoyageMinigame({ onComplete }) {
     const playTop = 88;
     const playBottom = height - controlsHeight;
 
-    // Where the ship image is drawn (also used by the hitbox)
     const shipTop = playBottom - SHIP_HEIGHT - 12;
 
     const [shipX, setShipX] = useState(
@@ -100,11 +104,7 @@ function VoyageMinigame({ onComplete }) {
     const [seconds, setSeconds] = useState(0);
     const [gameState, setGameState] = useState('playing');
 
-    // -1 = moving left
-    //  0 = not steering
-    //  1 = moving right
     const directionRef = useRef(0);
-
     const [shipDirection, setShipDirection] = useState(0);
 
     const shipXRef = useRef(shipX);
@@ -128,23 +128,18 @@ function VoyageMinigame({ onComplete }) {
         }
 
         startTimeRef.current = Date.now();
-
         lastRockSpawnRef.current = Date.now();
         lastSupplySpawnRef.current = Date.now();
         lastWaveSpawnRef.current = Date.now();
-
         lastSecondRef.current = -1;
 
         const timer = setInterval(() => {
             const now = Date.now();
-
             const elapsed = (now - startTimeRef.current) / 1000;
-
             const currentSecond = Math.floor(elapsed);
 
             if (currentSecond !== lastSecondRef.current) {
                 lastSecondRef.current = currentSecond;
-
                 setSeconds(Math.min(currentSecond, GAME_SECONDS));
             }
 
@@ -153,74 +148,38 @@ function VoyageMinigame({ onComplete }) {
                 MAX_SPEED
             );
 
-            // =================================================
-            // MOVE PLAYER SHIP
-            // =================================================
-
             let nextX = shipXRef.current + directionRef.current * 7;
-
-            nextX = Math.max(
-                8,
-                Math.min(width - SHIP_WIDTH - 8, nextX)
-            );
+            nextX = Math.max(8, Math.min(width - SHIP_WIDTH - 8, nextX));
 
             shipXRef.current = nextX;
             setShipX(nextX);
 
-            // =================================================
-            // MOVE ROCKS
-            // =================================================
-
             let nextRocks = rocksRef.current
-                .map((item) => ({
-                    ...item,
-                    y: item.y + speed * 0.7,
-                }))
+                .map((item) => ({ ...item, y: item.y + speed * 0.7 }))
                 .filter((item) => item.y < playBottom + ROCK_HEIGHT);
 
-            // =================================================
-            // MOVE SUPPLIES
-            // =================================================
-
             let nextSupplies = suppliesRef.current
-                .map((item) => ({
-                    ...item,
-                    y: item.y + speed * 0.9,
-                }))
+                .map((item) => ({ ...item, y: item.y + speed * 0.9 }))
                 .filter((item) => item.y < playBottom + SUPPLY_HEIGHT);
 
-            // =================================================
-            // MOVE WAVES
-            // =================================================
-
             let nextWaves = wavesRef.current
-                .map((item) => ({
-                    ...item,
-                    y: item.y + speed * 0.55,
-                }))
+                .map((item) => ({ ...item, y: item.y + speed * 0.55 }))
                 .filter((item) => item.y < playBottom + WAVE_HEIGHT);
 
-            // =================================================
-            // SPAWN ROCKS
-            // =================================================
-
+            // Spawn Rocks (Randomly picks one of the 3 rock images)
             if (now - lastRockSpawnRef.current > ROCK_SPAWN_MS) {
                 lastRockSpawnRef.current = now;
-
                 nextRocks.push({
                     id: `rock-${now}-${Math.random()}`,
                     x: 10 + Math.random() * Math.max(1, width - ROCK_WIDTH - 20),
                     y: playTop - ROCK_HEIGHT,
+                    type: Math.floor(Math.random() * ROCK_IMAGES.length),
                 });
             }
 
-            // =================================================
-            // SPAWN SUPPLIES
-            // =================================================
-
+            // Spawn Supplies
             if (now - lastSupplySpawnRef.current > SUPPLY_SPAWN_MS) {
                 lastSupplySpawnRef.current = now;
-
                 nextSupplies.push({
                     id: `supply-${now}-${Math.random()}`,
                     x: 10 + Math.random() * Math.max(1, width - SUPPLY_WIDTH - 20),
@@ -228,24 +187,17 @@ function VoyageMinigame({ onComplete }) {
                 });
             }
 
-            // =================================================
-            // SPAWN WAVES
-            // =================================================
-
+            // Spawn Waves (Randomly picks between Waves.png and Waves2.png)
             if (now - lastWaveSpawnRef.current > WAVE_SPAWN_MS) {
                 lastWaveSpawnRef.current = now;
-
                 nextWaves.push({
                     id: `wave-${now}-${Math.random()}`,
                     x: Math.random() * Math.max(1, width - WAVE_WIDTH),
                     y: playTop - WAVE_HEIGHT,
                     opacity: 0.7 + Math.random() * 0.2,
+                    type: Math.floor(Math.random() * WAVE_IMAGES.length),
                 });
             }
-
-            // =================================================
-            // SHIP COLLISION BOXES
-            // =================================================
 
             const shipRect = makeRect(
                 shipXRef.current, shipTop, SHIP_WIDTH, SHIP_HEIGHT,
@@ -257,59 +209,29 @@ function VoyageMinigame({ onComplete }) {
                 PICK_LEFT, PICK_RIGHT, PICK_TOP, PICK_BOTTOM
             );
 
-            // =================================================
-            // ROCK COLLISION
-            // =================================================
-
             let hitRock = false;
-
             nextRocks = nextRocks.filter((item) => {
-                const hit = overlaps(
-                    shipRect,
-                    objectRect(item, ROCK_WIDTH, ROCK_HEIGHT, ROCK_HIT)
-                );
+                const hit = overlaps(shipRect, objectRect(item, ROCK_WIDTH, ROCK_HEIGHT, ROCK_HIT));
                 if (hit) hitRock = true;
                 return !hit;
             });
 
-            // =================================================
-            // WAVE COLLISION
-            // =================================================
-
             let hitWave = false;
-
             nextWaves = nextWaves.filter((item) => {
-                const hit = overlaps(
-                    shipRect,
-                    objectRect(item, WAVE_WIDTH, WAVE_HEIGHT, WAVE_HIT)
-                );
+                const hit = overlaps(shipRect, objectRect(item, WAVE_WIDTH, WAVE_HEIGHT, WAVE_HIT));
                 if (hit) hitWave = true;
                 return !hit;
             });
 
-            // =================================================
-            // SUPPLY COLLISION
-            // =================================================
-
             let gotSupply = false;
-
             nextSupplies = nextSupplies.filter((item) => {
-                const hit = overlaps(
-                    pickupRect,
-                    objectRect(item, SUPPLY_WIDTH, SUPPLY_HEIGHT, SUPPLY_HIT)
-                );
+                const hit = overlaps(pickupRect, objectRect(item, SUPPLY_WIDTH, SUPPLY_HEIGHT, SUPPLY_HIT));
                 if (hit) gotSupply = true;
                 return !hit;
             });
 
-            // =================================================
-            // APPLY DAMAGE
-            // (change to `if (hitRock)` if waves should be harmless)
-            // =================================================
-
             if (hitRock || hitWave) {
                 const nextHull = hullRef.current - 1;
-
                 hullRef.current = nextHull;
                 setHull(nextHull);
 
@@ -318,13 +240,8 @@ function VoyageMinigame({ onComplete }) {
                 }
             }
 
-            // =================================================
-            // COLLECT SUPPLY
-            // =================================================
-
             if (gotSupply) {
                 const nextCollected = collectedRef.current + 1;
-
                 collectedRef.current = nextCollected;
                 setCollected(nextCollected);
 
@@ -333,10 +250,6 @@ function VoyageMinigame({ onComplete }) {
                 }
             }
 
-            // =================================================
-            // SAVE OBJECT ARRAYS
-            // =================================================
-
             rocksRef.current = nextRocks;
             suppliesRef.current = nextSupplies;
             wavesRef.current = nextWaves;
@@ -344,10 +257,6 @@ function VoyageMinigame({ onComplete }) {
             setRocks(nextRocks);
             setSupplies(nextSupplies);
             setWaves(nextWaves);
-
-            // =================================================
-            // TIME LIMIT
-            // =================================================
 
             if (elapsed >= GAME_SECONDS) {
                 setGameState((currentState) =>
@@ -359,13 +268,8 @@ function VoyageMinigame({ onComplete }) {
         return () => clearInterval(timer);
     }, [gameState, height, width, playBottom, shipTop]);
 
-    // =====================================================
-    // RESTART
-    // =====================================================
-
     const restart = () => {
         const startX = Math.max(0, width / 2 - SHIP_WIDTH / 2);
-
         directionRef.current = 0;
         shipXRef.current = startX;
 
@@ -384,58 +288,41 @@ function VoyageMinigame({ onComplete }) {
         collectedRef.current = 0;
 
         setShipX(startX);
-
         setRocks([]);
         setSupplies([]);
         setWaves([]);
-
         setHull(START_HULL);
         setCollected(0);
         setSeconds(0);
-
         setShipDirection(0);
-
         setGameState('playing');
     };
 
     const isWon = gameState === 'won';
-
-    // =====================================================
-    // SHIP IMAGE
-    // =====================================================
 
     const shipSource =
         shipDirection === 1
             ? require('../../../assets/Minigames/Part1/Ship Right.png')
             : require('../../../assets/Minigames/Part1/Ship.png');
 
-    // =====================================================
-    // DEBUG HITBOX LIST (only used when DEBUG_HITBOX = true)
-    // =====================================================
-
     const debugBoxes = DEBUG_HITBOX
         ? [
-            // ship hull (red)
             [
                 makeRect(shipX, shipTop, SHIP_WIDTH, SHIP_HEIGHT, HIT_LEFT, HIT_RIGHT, HIT_TOP, HIT_BOTTOM),
                 'rgba(255,0,0,0.35)',
             ],
-            // ship pickup area (green)
             [
                 makeRect(shipX, shipTop, SHIP_WIDTH, SHIP_HEIGHT, PICK_LEFT, PICK_RIGHT, PICK_TOP, PICK_BOTTOM),
                 'rgba(0,255,0,0.25)',
             ],
-            // rocks (orange)
             ...rocks.map((i) => [
                 objectRect(i, ROCK_WIDTH, ROCK_HEIGHT, ROCK_HIT),
                 'rgba(255,165,0,0.45)',
             ]),
-            // waves (blue)
             ...waves.map((i) => [
                 objectRect(i, WAVE_WIDTH, WAVE_HEIGHT, WAVE_HIT),
                 'rgba(0,120,255,0.45)',
             ]),
-            // supplies (yellow)
             ...supplies.map((i) => [
                 objectRect(i, SUPPLY_WIDTH, SUPPLY_HEIGHT, SUPPLY_HIT),
                 'rgba(255,255,0,0.45)',
@@ -446,44 +333,28 @@ function VoyageMinigame({ onComplete }) {
     return (
         <View style={styles.root}>
             <ImageBackground
-                source={require('../../../assets/Minigames/Part1/Part1_Voyage_BG.jpg')}
+                source={require('../../../assets/Minigames/Part1/VoyageBG.png')}
                 resizeMode="cover"
                 style={styles.background}
             >
                 <View style={styles.darkOverlay} />
 
-                {/* =================================================
-                    HUD
-                ================================================= */}
-
                 <View style={styles.header}>
                     <Text style={styles.title}>THE VOYAGE CONTINUES</Text>
-
                     <Text style={styles.subtitle}>The next shore awaits.</Text>
 
                     <View style={styles.statsRow}>
-                        <Text style={styles.stat}>
-                            HULL: {hull}/{START_HULL}
-                        </Text>
-
-                        <Text style={styles.stat}>
-                            SUPPLIES: {collected}/{TARGET_SUPPLIES}
-                        </Text>
-
-                        <Text style={styles.stat}>
-                            TIME: {Math.max(0, GAME_SECONDS - seconds)}s
-                        </Text>
+                        <Text style={styles.stat}>HULL: {hull}/{START_HULL}</Text>
+                        <Text style={styles.stat}>SUPPLIES: {collected}/{TARGET_SUPPLIES}</Text>
+                        <Text style={styles.stat}>TIME: {Math.max(0, GAME_SECONDS - seconds)}s</Text>
                     </View>
                 </View>
 
-                {/* =================================================
-                    WAVES
-                ================================================= */}
-
+                {/* WAVES */}
                 {waves.map((item) => (
                     <Image
                         key={item.id}
-                        source={require('../../../assets/Minigames/Part1/Waves.png')}
+                        source={WAVE_IMAGES[item.type]}
                         style={[
                             styles.wave,
                             {
@@ -495,62 +366,29 @@ function VoyageMinigame({ onComplete }) {
                     />
                 ))}
 
-                {/* =================================================
-                    ROCKS
-                ================================================= */}
-
+                {/* ROCKS */}
                 {rocks.map((item) => (
                     <Image
                         key={item.id}
-                        source={require('../../../assets/Minigames/Part1/Rock.png')}
-                        style={[
-                            styles.rock,
-                            {
-                                left: item.x,
-                                top: item.y,
-                            },
-                        ]}
+                        source={ROCK_IMAGES[item.type]}
+                        style={[styles.rock, { left: item.x, top: item.y }]}
                     />
                 ))}
 
-                {/* =================================================
-                    SUPPLIES
-                ================================================= */}
-
+                {/* SUPPLIES */}
                 {supplies.map((item) => (
                     <Image
                         key={item.id}
                         source={require('../../../assets/Minigames/Part1/Supply.png')}
-                        style={[
-                            styles.supply,
-                            {
-                                left: item.x,
-                                top: item.y,
-                            },
-                        ]}
+                        style={[styles.supply, { left: item.x, top: item.y }]}
                     />
                 ))}
 
-                {/* =================================================
-                    PLAYER SHIP
-                ================================================= */}
-
+                {/* PLAYER SHIP */}
                 <Image
                     source={shipSource}
-                    style={[
-                        styles.ship,
-                        {
-                            left: shipX,
-                            top: shipTop,
-                        },
-                    ]}
+                    style={[styles.ship, { left: shipX, top: shipTop }]}
                 />
-
-                {/* =================================================
-                    DEBUG HITBOXES (set DEBUG_HITBOX = true at the top)
-                    red = ship hull, green = pickup area, orange = rocks,
-                    blue = waves, yellow = supplies
-                ================================================= */}
 
                 {debugBoxes.map(([r, color], index) => (
                     <View
@@ -568,23 +406,12 @@ function VoyageMinigame({ onComplete }) {
                     />
                 ))}
 
-                {/* =================================================
-                    INSTRUCTIONS
-                ================================================= */}
-
                 <View pointerEvents="none" style={styles.instructions}>
-                    <Text style={styles.instructionText}>
-                        HOLD ◀ OR ▶ TO STEER
-                    </Text>
-
+                    <Text style={styles.instructionText}>HOLD ◀ OR ▶ TO STEER</Text>
                     <Text style={styles.smallInstruction}>
                         Collect {TARGET_SUPPLIES} supplies. Avoid rocks and waves.
                     </Text>
                 </View>
-
-                {/* =================================================
-                    CONTROLS
-                ================================================= */}
 
                 <View style={styles.controls}>
                     <Pressable
@@ -614,17 +441,11 @@ function VoyageMinigame({ onComplete }) {
                     </Pressable>
                 </View>
 
-                {/* =================================================
-                    RESULT SCREEN
-                ================================================= */}
-
                 {gameState !== 'playing' && (
                     <View style={styles.resultOverlay}>
                         <View style={styles.resultBox}>
                             <Text style={styles.resultTitle}>
-                                {isWon
-                                    ? 'VOYAGE COMPLETE!'
-                                    : 'THE FLEET COULD NOT CONTINUE'}
+                                {isWon ? 'VOYAGE COMPLETE!' : 'THE FLEET COULD NOT CONTINUE'}
                             </Text>
 
                             <Text style={styles.resultText}>
@@ -636,17 +457,11 @@ function VoyageMinigame({ onComplete }) {
                             </Text>
 
                             {isWon ? (
-                                <Pressable
-                                    style={styles.actionButton}
-                                    onPress={onComplete}
-                                >
+                                <Pressable style={styles.actionButton} onPress={onComplete}>
                                     <Text style={styles.actionText}>CONTINUE</Text>
                                 </Pressable>
                             ) : (
-                                <Pressable
-                                    style={styles.actionButton}
-                                    onPress={restart}
-                                >
+                                <Pressable style={styles.actionButton} onPress={restart}>
                                     <Text style={styles.actionText}>TRY AGAIN</Text>
                                 </Pressable>
                             )}
@@ -663,16 +478,13 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#0b2732',
     },
-
     background: {
         flex: 1,
     },
-
     darkOverlay: {
         ...StyleSheet.absoluteFillObject,
         backgroundColor: 'rgba(0, 20, 30, 0.10)',
     },
-
     header: {
         position: 'absolute',
         top: 0,
@@ -682,7 +494,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 14,
         zIndex: 20,
     },
-
     title: {
         color: '#fff4cf',
         fontSize: 21,
@@ -691,7 +502,6 @@ const styles = StyleSheet.create({
         textShadowColor: '#000',
         textShadowRadius: 4,
     },
-
     subtitle: {
         color: '#fff',
         fontSize: 12,
@@ -700,13 +510,11 @@ const styles = StyleSheet.create({
         textShadowColor: '#000',
         textShadowRadius: 3,
     },
-
     statsRow: {
         marginTop: 9,
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
-
     stat: {
         color: '#fff',
         fontSize: 11,
@@ -714,7 +522,6 @@ const styles = StyleSheet.create({
         textShadowColor: '#000',
         textShadowRadius: 3,
     },
-
     ship: {
         position: 'absolute',
         width: SHIP_WIDTH,
@@ -722,7 +529,6 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
         zIndex: 10,
     },
-
     wave: {
         position: 'absolute',
         width: WAVE_WIDTH,
@@ -730,7 +536,6 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
         zIndex: 5,
     },
-
     rock: {
         position: 'absolute',
         width: ROCK_WIDTH,
@@ -738,7 +543,6 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
         zIndex: 8,
     },
-
     supply: {
         position: 'absolute',
         width: SUPPLY_WIDTH,
@@ -746,8 +550,6 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
         zIndex: 7,
     },
-
-    // zIndex is below the ship (10) so the text never covers it
     instructions: {
         position: 'absolute',
         bottom: 91,
@@ -756,7 +558,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         zIndex: 9,
     },
-
     instructionText: {
         color: '#fff',
         fontSize: 13,
@@ -764,7 +565,6 @@ const styles = StyleSheet.create({
         textShadowColor: '#000',
         textShadowRadius: 4,
     },
-
     smallInstruction: {
         color: '#fff',
         fontSize: 11,
@@ -772,7 +572,6 @@ const styles = StyleSheet.create({
         textShadowColor: '#000',
         textShadowRadius: 3,
     },
-
     controls: {
         position: 'absolute',
         bottom: 10,
@@ -782,7 +581,6 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly',
         zIndex: 30,
     },
-
     controlButton: {
         width: 105,
         height: 58,
@@ -793,13 +591,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-
     controlText: {
         color: '#fff4cf',
         fontSize: 28,
         fontWeight: 'bold',
     },
-
     resultOverlay: {
         position: 'absolute',
         top: 0,
@@ -811,7 +607,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         zIndex: 100,
     },
-
     resultBox: {
         width: '84%',
         padding: 24,
@@ -821,14 +616,12 @@ const styles = StyleSheet.create({
         borderRadius: 14,
         alignItems: 'center',
     },
-
     resultTitle: {
         color: '#fff4cf',
         fontSize: 22,
         fontWeight: 'bold',
         textAlign: 'center',
     },
-
     resultText: {
         color: '#fff',
         fontSize: 15,
@@ -836,7 +629,6 @@ const styles = StyleSheet.create({
         marginTop: 12,
         lineHeight: 22,
     },
-
     actionButton: {
         marginTop: 20,
         paddingHorizontal: 30,
@@ -846,7 +638,6 @@ const styles = StyleSheet.create({
         borderColor: '#f0d58a',
         borderRadius: 8,
     },
-
     actionText: {
         color: '#fff',
         fontSize: 15,

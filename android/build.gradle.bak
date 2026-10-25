@@ -1,0 +1,65 @@
+buildscript {
+  ext {
+    buildToolsVersion = "35.0.0"
+    minSdkVersion = 24
+    compileSdkVersion = 35
+    targetSdkVersion = 35
+    ndkVersion = "27.1.12297006"
+    kotlinVersion = "2.1.0"
+  }
+  repositories {
+    google()
+    mavenCentral()
+  }
+  dependencies {
+    classpath("com.android.tools.build:gradle:8.7.2")
+    classpath("com.facebook.react:react-native-gradle-plugin")
+    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+    classpath('com.google.gms:google-services:4.4.2')
+  }
+}
+
+allprojects {
+  repositories {
+    google()
+    mavenCentral()
+    maven { url 'https://www.jitpack.io' }
+  }
+}
+
+apply plugin: "com.facebook.react.rootproject"
+
+
+// Project-wide Gradle settings.
+
+// 1. INCREASED MEMORY
+org.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m
+
+// 2. GRADLE PERFORMANCE BOOSTS
+org.gradle.parallel=true
+org.gradle.daemon=true
+org.gradle.configureondemand=true
+org.gradle.caching=true
+org.gradle.configuration-cache=true
+
+// AndroidX package structure
+android.useAndroidX=true
+
+// Enable AAPT2 PNG crunching
+android.enablePngCrunchInReleaseBuilds=true
+
+// 3. BUILD ONLY FOR EMULATOR
+// reactNativeArchitectures=arm64-v8a,x86_64
+reactNativeArchitectures=x86_64
+
+// New Architecture
+newArchEnabled=true
+
+// Hermes JS engine
+hermesEnabled=true
+
+// Edge-to-edge display support
+edgeToEdgeEnabled=true
+
+// AsyncStorage KSP override (must match kotlinVersion 2.1.0)
+AsyncStorage_next_kspVersion=2.1.0-1.0.28

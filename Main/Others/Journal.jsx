@@ -18,7 +18,7 @@ const CLOSE_BUTTON_IMAGE = require('../../assets/icons/x_button.png');
 const CLOSE_BUTTON_PRESSED_IMAGE = require('../../assets/icons/x_buttonpressed.png');
 
 const STAGE_W = 1.15;
-const TAB_TOP = 5;
+const TAB_TOP = 9;
 const TAB_STEP = 15;
 
 const TAB_OPEN_IMAGES = {
@@ -41,9 +41,9 @@ const SWIPE_DIRECTION_RATIO = 1.5;
 // ==================================== LAMAN NG TABS SECTION ====================================
 const TIMELINE_TITLE = require('../../assets/Journal_Assets/Timeline_Title.png');
 const TIMELINE_BOX = require('../../assets/Journal_Assets/Timeline_box.png');
-const BOX_STEP = 16.5;
-const LEFT_BOX_TOP = 22;
-const RIGHT_BOX_TOP = 22;
+const BOX_STEP = 18.5;
+const LEFT_BOX_TOP = 24;
+const RIGHT_BOX_TOP = 24;
 
 const PROFILE_TITLE = require('../../assets/Journal_Assets/Profile_Title.png');
 const PROFILE_CARD = require('../../assets/Journal_Assets/Profile_w_Details_Box.png');
@@ -52,9 +52,9 @@ const CARDS_LEFT = 2;
 const CARDS_RIGHT = 3;
 const PER_SPREAD = CARDS_LEFT + CARDS_RIGHT;
 const LEFT_CARD_TOP = 30;
-const LEFT_CARD_STEP = 25;
-const RIGHT_CARD_TOP = 13.5;
-const RIGHT_CARD_STEP = 26.0;
+const LEFT_CARD_STEP = 30;
+const RIGHT_CARD_TOP = 10.5;
+const RIGHT_CARD_STEP = 29.0;
 
 const REMNANTS_TITLE = require('../../assets/Journal_Assets/Remnants_Title.png');
 const REMNANTS_BOX_LOCKED = require('../../assets/Journal_Assets/Remnants_Box_locked.png');
@@ -64,12 +64,43 @@ const REMNANTS_BOXCOMPLETE_LOCKED = require('../../assets/Journal_Assets/Remnant
 const REMNANTS_BOXCOMPLETE_UNLOCKED = require('../../assets/Journal_Assets/Remnants_BoxComplete_unlocked.png');
 
 const GLOSSARY_TITLE = require('../../assets/Journal_Assets/Glossary_Title.png');
-const GLOSSARY_DIVIDER = require('../../assets/Journal_Assets/Glossary_Line.png');
 
 const PORTRAITS = {
-  'Andrés Bonifacio': require('../../Character Images/Temporary Placeholders/Bonifacio.png'),
-  'Dr. José Rizal': require('../../Character Images/Temporary Placeholders/Rizal.png'),
-  'Apolinario Mabini': require('../../Character Images/Temporary Placeholders/Mabini.png'),
+  'Rajah Tupas': require('../../assets/Journal_Profiles/Rajah Tupas.png'),
+  'Martín de Goiti': require('../../assets/Journal_Profiles/Martin de Goiti.png'),
+  'Juan de Salcedo': require('../../assets/Journal_Profiles/Juan de Salcedo.png'),
+  'Francisco Dagohoy (Francisco Sendrijas)': require('../../assets/Journal_Profiles/Francisco Dagohoy.png'),
+  'Father Gaspar Morales': require('../../assets/Journal_Profiles/Father Gaspar Morales.png'),
+  'Captain Manuel Sanz': require('../../assets/Journal_Profiles/Captain Manuel Sanz.png'),
+  'Governor-General Mariano Ricafort': require('../../assets/Journal_Profiles/Mariano Ricafort.png'),
+  'Dr. José Rizal': require('../../assets/Journal_Profiles/Rizal.png'),
+  'Andrés Bonifacio': require('../../assets/Journal_Profiles/Bonifacio.png'),
+  'Apolinario Mabini': require('../../assets/Journal_Profiles/Mabini.png'),
+  'Deodato Arellano': require('../../assets/Journal_Profiles/Deodato Arellano.png'),
+  'Eulogio Despujol': require('../../assets/Journal_Profiles/Eulogio Despujol.png'),
+  'Domingo Franco': require('../../assets/Journal_Profiles/Domingo Franco.png'),
+  //'Valentin Diaz': require('../../assets/Journal_Profiles/Valentin Diaz.png'),
+  'Ladislao Diwa': require('../../assets/Journal_Profiles/Ladislao Diwa.png'),
+  'Jose Dizon': require('../../assets/Journal_Profiles/Jose Dizon.png'),
+  'Teodoro Plata': require('../../assets/Journal_Profiles/Teodoro Plata.png'),
+  "Emilio Jacinto ('Brains of the Katipunan')": require('../../assets/Journal_Profiles/Emilio Jacinto.png'),
+  'Gregoria de Jesús': require('../../assets/Journal_Profiles/Gregoria de Jesus.png'),
+  "Melchora Aquino ('Tandang Sora')": require('../../assets/Journal_Profiles/Melchora Aquino.png'),
+  //'Teodoro Patiño': require('../../assets/Journal_Profiles/Teodoro Patino.png'),
+  //'Honoria Patiño': require('../../assets/Journal_Profiles/Honoria Patino.png'),
+  //'Sor Teresa de Jesús': require('../../assets/Journal_Profiles/Sor Teresa de Jesus.png'),
+  'Father Mariano Gil': require('../../assets/Journal_Profiles/Father Mariano Gil.png'),
+  'Mariano Álvarez': require('../../assets/Journal_Profiles/Mariano Alvarez.png'),
+  'Emilio Aguinaldo': require('../../assets/Journal_Profiles/Emilio Aguinaldo.png'),
+  'Daniel Tirona': require('../../assets/Journal_Profiles/Daniel Tirona.png'),
+  "General Artemio Ricarte ('Vibora')": require('../../assets/Journal_Profiles/Artemio Ricarte.png'),
+  'General Mariano Noriel': require('../../assets/Journal_Profiles/Mariano Noriel.png'),
+  'Mariano Trías': require('../../assets/Journal_Profiles/Mariano Trias.png'),
+  'Ambrosio Rianzares Bautista': require('../../assets/Journal_Profiles/Ambrosio Bautista.png'),
+  'Admiral George Dewey': require('../../assets/Journal_Profiles/Admiral Dewey.png'),
+  'E. Spencer Pratt': require('../../assets/Journal_Profiles/E. Spencer Pratt.png'),
+  //'Rounsevelle Wildman': require('../../assets/Journal_Profiles/Rounsevelle Wildman.png'),
+  //'U.S. President William McKinley': require('../../assets/Journal_Profiles/William McKinley.png'),
 };
 
 function BookmarkTab({ image, openImage, index, active, onPress }) {
@@ -312,7 +343,6 @@ function GlossaryEntry({ term, meaning, unit }) {
       <Text style={[styles.glossaryMeaning, { fontSize: Math.max(8, 22 * unit), lineHeight: Math.max(12, 30 * unit) }]}>
         {meaning}
       </Text>
-      <Image source={GLOSSARY_DIVIDER} style={styles.glossaryDivider} resizeMode="contain" />
     </View>
   );
 }

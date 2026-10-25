@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
 
   bookFrame: {
     position: 'absolute',
-    left: '2%',
+    left: '9%',
     top: 0,
     width: '93%',
     height: '100%',
@@ -29,18 +29,18 @@ const styles = StyleSheet.create({
 // =================================== Journal Tabs ===================================
   tab: {
     position: 'absolute',
-    right: '79%',
+    right: '77%',
     zIndex: 10,
   },
 
   tabClosed: {
-    width: '14%',
+    width: '9%',
     aspectRatio: 400 / 300,
   },
 
   tabOpen: {
-    right: '70.5%',
-    width: '48%',
+    right: '77%',
+    width: '25%',
     aspectRatio: 850 / 231,
   },
 
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
       position: 'absolute',
       left: '15%',
       width: '70%',
-      height: '25%',
+      height: '14%',
    },
 
   timelineBoxBg: {
@@ -367,7 +367,7 @@ const styles = StyleSheet.create({
   remnantCompleteCard: {
     width: '80%',
     aspectRatio: 10.5, 
-    marginTop: -30, // negative = moves the box up; make it more negative to go higher
+    marginTop: -30,
     marginBottom: 10,
     alignItems: 'center',
   },
@@ -396,7 +396,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  // NEW: Separate style for the Complete Remnant text
   remnantCompleteLabel: {
     fontSize: 9, 
     fontWeight: 'bold',
@@ -406,11 +405,10 @@ const styles = StyleSheet.create({
   },
 
   remnantViewer: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.85)',
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.95)',
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 100,
   },
   closeButton: {
     position: 'absolute',
@@ -420,8 +418,8 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   closeButtonImage: {
-    width: 40,
-    height: 40,
+    width: 50,
+    height: 50,
     resizeMode: 'contain',
   },
   remnantViewerImage: {
@@ -439,7 +437,7 @@ const styles = StyleSheet.create({
     zIndex: 5,
   },
   glossaryBlock: {
-    marginBottom: 14,
+    marginBottom: 6,
     alignItems: 'center',
   },
   glossaryTerm: {
@@ -456,11 +454,6 @@ const styles = StyleSheet.create({
     color: '#5a4a35',
     textAlign: 'center',
     paddingHorizontal: '4%',
-  },
-  glossaryDivider: {
-    width: '80%',
-    aspectRatio: 1920 / 180,
-    marginTop: 10,
   },
 });
 

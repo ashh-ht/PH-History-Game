@@ -22,7 +22,7 @@ const IMG_CIRCLE_CHECKED = require('../../assets/Settings_Assets/CircleButton_Ch
 const PANEL_ASPECT = 1205 / 630;
 
 // BIGGER RADIO CIRCLES
-const CIRCLE_W = 300/1920;  
+const CIRCLE_W = 90/1920;  
 const ROW_H = 300/1080;     
 
 const SPEED_ROW = { left: 240/1920, w: 410/1920, cx: 318/1920 };

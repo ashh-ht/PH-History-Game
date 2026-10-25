@@ -157,7 +157,7 @@ export const Chapter1_Part1 = [
             position: "left"
           },
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Chieftain.png"),
+            source: require("../../../../Character Images/Chapter 1/Chieftain.png"),
             position: "right"
           }
         ]
