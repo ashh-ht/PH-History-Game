@@ -48,8 +48,8 @@ const SFX = {
 
 export function AudioProvider({ children }) {
   const [masterVolume, setMasterVolume] = useState(0.8);
-  const [musicVolume, setMusicVolume] = useState(0.8);
-  const [soundVolume, setSoundVolume] = useState(0.8);
+  const [musicVolume, setMusicVolume] = useState(0.4);
+  const [soundVolume, setSoundVolume] = useState(0.3);
 
   const bgmRef = useRef(null);
   const clickref = useRef(null);
@@ -61,6 +61,13 @@ export function AudioProvider({ children }) {
   const musicEffectiveVolume = masterVolume * musicVolume;
   const soundEffectiveVolume = masterVolume * soundVolume;
 
+  const bgmDuckedRef = useRef(false);
+  const duckTimeoutRef = useRef(null);
+
+  const applyBgmVolume = () => {
+    const duckMultiplier = bgmDuckedRef.current ? 0.5 : 1;
+    bgmRef.current?.setVolume(musicEffectiveVolume * duckMultiplier);
+  };
   // Always-current volumes so async callbacks never use a stale value
   const volumeRef = useRef(musicEffectiveVolume);
   volumeRef.current = musicEffectiveVolume;
@@ -151,8 +158,14 @@ export function AudioProvider({ children }) {
     }
 
     const fire = (snd) => {
-      snd.setVolume(sfxVolRef.current);
-      snd.stop(() => snd.play());
+      console.log('[sfx] playing:', key, 'volume:', sfxVolRef.current);
+
+      snd.setVolume(Math.min(sfxVolRef.current * 2, 1));
+      snd.stop(() => {
+        snd.play((success) => {
+          console.log('[sfx] playback result:', key, success);
+        });
+      });
     };
 
     const existing = sfxRef.current[key];
@@ -227,7 +240,7 @@ useEffect(() => {
 
   const Playclick = () => {
     if (clickref.current) {
-      clickref.current.setVolume(soundEffectiveVolume);
+      clickref.current.setVolume(soundEffectiveVolume * 0.4);
       clickref.current.stop();
       clickref.current.play();
     } else {

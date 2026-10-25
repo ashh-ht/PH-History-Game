@@ -1,135 +1,132 @@
+
 export const Chapter1_Part6 = [
 
+  // INTRO
+
   {
     type: "system",
     intro: true,
     background: require("../../../../Background Images/Usuals/Black Background.jpg"),
-    text: "The Revolution had begun, but the first battles had come at a heavy cost."
+    text: "The Revolution had begun, but the first battles came at a heavy cost."
   },
 
   {
     type: "system",
     intro: true,
     background: require("../../../../Background Images/Usuals/Black Background.jpg"),
-    text: "As the fighting spread to Cavite, a new question began to emerge: who would lead?",
-    sfx:'chairSit'
+    text: "As the fighting spread to Cavite, a new question emerged:\nwho would lead the Revolution?",
+    sfx: "chairSit"
   },
 
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 1
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // SCENE 1: THE SWORD OF WAR
 
   {
     type: "scene",
     title: "The Sword of War",
-    date: "August 24–30, 1896",
+    date: "August 24 to 30, 1896",
     background: require("../../../../Background Images/Usuals/Black Background.jpg"),
-    sfx:'tar'
+    sfx: "tar"
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/San Mateo Rizal 1896 revolution.png"),
-    text: "The Revolution has now begun, but its first attacks have already shown how\ndifficult the fight against Spain will be.",
+    text: "The Katipuneros face a powerful Spanish army.\nTheir first attacks have already brought heavy losses.",
     music: "war"
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/San Mateo Rizal 1896 revolution.png"),
-    text: "Bonifacio's forces have suffered heavy losses, and Governor-General Ramón\nBlanco has placed eight provinces under a state of war.",
+    text: "Governor-General Ramón Blanco places eight provinces under\na state of war. The struggle is spreading.",
     unlock: ["Timeline_1896_08-24", "Timeline_1896_08-29_30"],
     stopSfx: true
   },
 
-  //T3_6 here
+  // T3_6 HERE
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 2
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // SCENE 2: THE RISE OF CAVITE
 
   {
     type: "scene",
     title: "The Rise of Cavite",
     date: "Autumn 1896",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx:'tar'
+    sfx: "tar"
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Cavite revolution 1896 plaza.png"),
-    text: "While Bonifacio's forces struggle around Manila, the revolution gains ground in Cavite.",
+    text: "While Bonifacio's forces struggle near Manila, revolutionaries\nwin battles and capture Spanish positions in Cavite.",
     stopSfx: true
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Cavite revolution 1896 plaza.png"),
-    text: "Revolutionary forces capture Spanish positions and take control of several towns.\nBut their victories also bring an old problem into the open: who should lead?",
+    text: "Their victories bring another problem into the open.\nWho should lead the revolutionary forces?",
     unlock: ["Timeline_1896_Autumn"]
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Magdiwang HQ (Noveleta), outside.png"),
-    text: "Two factions emerge. The Magdiwang, led by Mariano Álvarez,\nremains closely aligned with Bonifacio.",
+    text: "Two factions rise in Cavite. The \"Magdiwang\", led by Mariano\nÁlvarez, remains closely aligned with Bonifacio.",
     unlock: ["alvarez-1"]
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Magdiwang HQ (Noveleta), outside.png"),
-    text: "The Magdalo, led by Baldomero Aguinaldo, is gaining influence\nunder his cousin Emilio Aguinaldo.",
+    text: "The \"Magdalo\", led by Baldomero Aguinaldo, gains influence\nas his cousin Emilio Aguinaldo's leadership grows.",
     unlock: ["aguinaldo-1", "aguinaldo-2"]
   },
 
   {
     type: "dialogue",
     speaker: "MARIANO ÁLVAREZ",
-    background: require("../../../../Background Images/Part 3/Governor-General's office.png"),
+    background: require("../../../../Background Images/Part 6/Magdiwang HQ (Noveleta), inside.png"),
     characters: [
       {
+        name: "MARIANO ÁLVAREZ",
         source: require("../../../../Character Images/Chapter 6/Alvarez Firm.png"),
-        position: "right"
+        position: "center"
       }
     ],
-    text: "Tell the Supremo that Cavite still stands with the Katipunan. We may have\nour own forces here, but we fight for the same cause.",
+    text: "Tell the Supremo that Cavite still stands with the Katipunan.\nWe may have our own forces, but we fight for the same cause.",
     unlock: ["alvarez-2"]
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Magdiwang HQ (Noveleta), outside.png"),
-    text: "As Spanish reinforcements arrive, the rivalry between the two factions\nmakes cooperation increasingly difficult."
+    text: "Both factions want independence. But as Spanish reinforcements\narrive, their rivalry makes cooperation harder."
   },
 
-  //Q1_6 here
+  // Q1_6 HERE
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 3
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // SCENE 3: REMEMBERING DR. JOSÉ RIZAL
 
   {
     type: "scene",
     title: "Remembering Dr. José Rizal",
     date: "December 30, 1896",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx:'footstepsGround'
+    sfx: "footstepsGround"
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Rizal execution.png"),
-    text: "Months earlier, José Rizal had been arrested and exiled for his\nalleged connection to the revolution.",
+    text: "José Rizal had been exiled to Dapitan in 1892. In 1896,\nhe was arrested while traveling to serve as a doctor in Cuba.",
     unlock: ["rizal-4"]
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Rizal execution.png"),
-    text: "On December 30, 1896, Rizal is executed at Bagumbayan.",
+    text: "On December 30, 1896, Rizal is executed at Bagumbayan.\nHis death shocks Filipinos across the colony.",
     unlock: ["Timeline_1896_12-30", "rizal-5"]
   },
 
@@ -139,56 +136,57 @@ export const Chapter1_Part6 = [
     background: require("../../../../Background Images/Part 6/Rizal execution.png"),
     characters: [
       {
+        name: "DR. JOSÉ RIZAL",
         source: require("../../../../Character Images/Chapter 6/Rizal Sad.png"),
         position: "center"
       }
     ],
     text: "Consummatum est.",
     translation: "It is finished.",
-    sfx:'shoots'
+    sfx: "shoots"
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Rizal execution.png"),
-    text: "His death shocks Filipinos across the colony. Rizal becomes a powerful symbol\nof the growing struggle against Spanish rule."
+    text: "Rizal's death becomes a powerful symbol in the growing\nstruggle against Spanish rule."
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Rizal execution.png"),
-    text: "To this day, Rizal is remembered each year on December 30 as a national hero\nand a symbol of the Filipino people's fight for freedom."
+    text: "He is remembered each December 30 as a national hero\nand as a symbol of the Filipino people's fight for freedom."
   },
 
-  //T4_6 here
-  // MINIGAME
+  // T4_6 HERE
+
+  // MINI-GAME
+
   {
-    type: "chronological",
+    type: "chronological"
   },
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 4
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // SCENE 4: THE NAIC LETTER
 
   {
     type: "scene",
     title: "The Naic Letter",
-    date: "Early 1897",
+    date: "April 16 to 19, 1897",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx:'quillWriting'
+    sfx: "quillWriting"
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Naik camp hut interior.png"),
-    text: "By early 1897, Bonifacio is in Cavite, trying to deal with the growing\nconflict between the Magdiwang and Magdalo factions.",
+    text: "By April 1897, Bonifacio is in Cavite, where tensions between\nthe Magdiwang and Magdalo have grown into a serious conflict.",
     unlock: ["Timeline_1896_12-1897_Early", "bonifacio-5"]
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Naik camp hut interior.png"),
-    text: "From Naic, he writes to Emilio Jacinto about an alleged offer of amnesty\nand the possibility of negotiations."
+    text: "On April 16, Bonifacio writes to Emilio Jacinto about a reported\noffer of amnesty and the growing divisions among the revolutionaries."
   },
 
   {
@@ -197,6 +195,7 @@ export const Chapter1_Part6 = [
     background: require("../../../../Background Images/Part 6/Naik camp hut interior.png"),
     characters: [
       {
+        name: "ANDRÉS BONIFACIO",
         source: require("../../../../Character Images/Chapter 6/Bonifacio Neutral R.png"),
         position: "center"
       }
@@ -205,149 +204,152 @@ export const Chapter1_Part6 = [
     translation: "Emilio, there's supposedly an offer of amnesty. But if surrender is the price, we can't simply accept it."
   },
 
-  //T5_6 here
+  // T5_6 HERE
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // CHOICE 6.1
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "choice",
     title: "Choice 6.1: You are Emilio Aguinaldo",
     background: require("../../../../Background Images/Part 6/Naik camp hut interior.png"),
-    question: "Father Pio Pi offers a full pardon if you surrender, but you want to know\nwhether real terms can be negotiated.",
+    question: "A Jesuit priest, Father Pio Pi, and Rafael Comenge reportedly\noffer amnesty to revolutionary leaders. How will you respond?",
     choices: [
       {
-        text: "Contact the Magdiwang leaders first\nwithout telling Bonifacio.",
+        text: "Consult the Magdiwang leaders first\nbefore deciding what to do.",
         speaker: "EMILIO AGUINALDO",
         characters: [
           {
+            name: "EMILIO AGUINALDO",
             source: require("../../../../Character Images/Chapter 6/Emilio Reading.png"),
             position: "center"
           }
         ],
-        dialogue: "Huwag munang sabihin kay Bonifacio. Kailangan nating\nmaghanda, hindi lamang siya.",
-        translation: "Don't tell Bonifacio yet. We need to prepare too, not just him."
+        dialogue: "Huwag muna tayong magpasya. Kailangan nating\nkumonsulta sa ibang pinuno bago kumilos.",
+        translation: "Let us not decide yet. We need to consult the other leaders before acting."
       },
 
       {
-        text: "Bring the offer to Bonifacio\nand discuss it openly.",
+        text: "Discuss the offer openly with Bonifacio\nand the other revolutionary leaders.",
         speaker: "EMILIO AGUINALDO",
         characters: [
           {
+            name: "EMILIO AGUINALDO",
             source: require("../../../../Character Images/Chapter 6/Emilio Serious.png"),
             position: "center"
           }
         ],
-        dialogue: "Hindi ako makikipagkasundo nang lihim, Supremo. Ito ang alok\nnila. Pag-usapan natin.",
-        translation: "I won't make a secret deal, Supremo. Here's their offer. Let's discuss it."
+        dialogue: "Hindi ako basta tatanggap ng alok. Kailangan nating\npag-usapan ang mga kondisyon nito.",
+        translation: "I will not simply accept the offer. We need to discuss its conditions."
       }
-    ],
+    ]
   },
-
 
   // CONTINUE
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Naik camp hut interior.png"),
-    text: "The offer does not resolve the deeper conflict between the revolutionary factions.\nCavite's leaders continue to build separate centers of support."
+    text: "The reported offer does not resolve the deeper conflict.\nThe revolutionary factions continue to pursue separate plans."
   },
 
-  //Q2_6 here
+  // Q2_6 HERE
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 5
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // SCENE 5: THE QUESTION OF LOYALTY
 
   {
     type: "scene",
     title: "The Question of Loyalty",
     date: "Early 1897",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx:'chairSit'
+    sfx: "chairSit"
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Magdiwang HQ (Noveleta), outside.png"),
-    text: "As Spanish forces put more pressure on Cavite, Emilio Aguinaldo pushes\nfor a more unified command."
+    text: "The leaders of Cavite struggle to establish a unified command.\nMariano Álvarez remains closely aligned with Bonifacio."
   },
 
   {
     type: "dialogue",
     speaker: "EMILIO AGUINALDO",
-    background: require("../../../../Background Images/Part 3/Governor-General's office.png"),
+    background: require("../../../../Background Images/Part 6/Magdiwang HQ (Noveleta), inside.png"),
     characters: [
       {
+        name: "EMILIO AGUINALDO",
         source: require("../../../../Character Images/Chapter 6/Emilio Serious.png"),
         position: "right"
       },
       {
+        name: "MARIANO ÁLVAREZ",
         source: require("../../../../Character Images/Chapter 6/Alvarez Thoughtful.png"),
         position: "left"
       }
     ],
-    text: "Kailangan natin ng iisang utos, Don Mariano. Hindi tayo mananalo\nkung magkakanya-kanya tayo.",
+    text: "Kailangan natin ng iisang utos, Don Mariano.\nHindi tayo mananalo kung magkakanya-kanya tayo.",
     translation: "We need one command, Don Mariano. We won't win if we're divided."
   },
 
   {
     type: "dialogue",
     speaker: "MARIANO ÁLVAREZ",
-    background: require("../../../../Background Images/Part 3/Governor-General's office.png"),
+    background: require("../../../../Background Images/Part 6/Magdiwang HQ (Noveleta), inside.png"),
     characters: [
       {
+        name: "MARIANO ÁLVAREZ",
         source: require("../../../../Character Images/Chapter 6/Alvarez Firm.png"),
         position: "left"
       },
       {
+        name: "EMILIO AGUINALDO",
         source: require("../../../../Character Images/Chapter 6/Emilio Serious.png"),
         position: "right"
       }
     ],
-    text: "Ang aking utos ay galing sa Supremo. Hindi ako maaaring sumunod sa\ndalawang pinuno nang sabay.",
+    text: "Ang aking utos ay galing sa Supremo. Hindi ako maaaring\nsumunod sa dalawang pinuno nang sabay.",
     translation: "My orders come from the Supremo. I can't follow two leaders at once."
   },
 
-  //T1_6 here
+  // T1_6 HERE
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // CHOICE 6.2
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "choice",
     title: "Choice 6.2: You are Mariano Álvarez",
-    background: require("../../../../Background Images/Part 3/Governor-General's office.png"),
-    question: "Aguinaldo wants a unified command in Cavite, but you remain loyal to Bonifacio.",
+    background: require("../../../../Background Images/Part 6/Magdiwang HQ (Noveleta), inside.png"),
+    question: "Aguinaldo wants a unified command in Cavite,\nbut you remain loyal to Bonifacio.",
     choices: [
       {
         text: "Keep your forces under\nBonifacio's authority.",
         speaker: "MARIANO ÁLVAREZ",
         characters: [
           {
+            name: "MARIANO ÁLVAREZ",
             source: require("../../../../Character Images/Chapter 6/Alvarez Firm.png"),
             position: "left"
           },
           {
+            name: "EMILIO AGUINALDO",
             source: require("../../../../Character Images/Chapter 6/Emilio Serious.png"),
             position: "right"
           }
         ],
-        dialogue: "Mananatili ako sa panig ng Supremo. Hindi ko siya tatalikuran ngayon.",
-        translation: "I will remain on the Supremo's side. I won't turn against him now."
+        dialogue: "Mananatili ako sa panig ng Supremo.\nHindi ko siya tatalikuran ngayon.",
+        translation: "I will remain on the Supremo's side.\nI won't turn against him now."
       },
 
       {
-        text: "Agree to cooperate in battle\nwithout giving up your command.",
+        text: "Cooperate in battle without\ngiving up your command.",
         speaker: "MARIANO ÁLVAREZ",
         characters: [
           {
+            name: "MARIANO ÁLVAREZ",
             source: require("../../../../Character Images/Chapter 6/Alvarez Firm.png"),
             position: "left"
           },
           {
+            name: "EMILIO AGUINALDO",
             source: require("../../../../Character Images/Chapter 6/Emilio Serious.png"),
             position: "right"
           }
@@ -355,7 +357,7 @@ export const Chapter1_Part6 = [
         dialogue: "Maaari tayong magtulungan sa labanan, pero mananatili\nsa akin ang aking mga tauhan.",
         translation: "We can fight together, but my men will remain under my command."
       }
-    ],
+    ]
   },
 
   // CONTINUE
@@ -363,27 +365,23 @@ export const Chapter1_Part6 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Magdiwang HQ (Noveleta), outside.png"),
-    text: "The two factions continue working side by side when necessary,\nbut the rivalry between them remains."
+    text: "The factions sometimes cooperate, but their disagreement\nover leadership remains unresolved."
   },
 
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 6
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // SCENE 6: THE BREAKING POINT IN CAVITE
 
   {
     type: "scene",
-    title: "The Breaking Point in Tanza",
+    title: "The Breaking Point in Cavite",
     date: "Early 1897",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx:'tar'
+    sfx: "tar"
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/st augustine church tanza (surrender scene).png"),
-    text: "Spanish forces continue their advance through Cavite, putting the revolutionary\nforces under increasing pressure.",
+    text: "Spanish forces advance through Cavite. Revolutionary fighters\nface dwindling supplies, exhaustion, and internal divisions.",
     stopSfx: true
   },
 
@@ -393,43 +391,44 @@ export const Chapter1_Part6 = [
     background: require("../../../../Background Images/Part 6/st augustine church tanza (surrender scene).png"),
     characters: [
       {
+        name: "DANIEL TIRONA",
         source: require("../../../../Character Images/Chapter 6/Tirona R.png"),
         position: "center"
       }
     ],
-    text: "Wala na tayong sapat na armas. Kung magpapatuloy tayo, baka\nlalo lang tayong malugi.",
+    text: "Wala na tayong sapat na armas. Kung magpapatuloy\ntayo, baka lalo lang tayong malugi.",
     translation: "We don't have enough weapons. If we keep going, we may only lose more.",
     unlock: ["tirona-1"]
   },
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // CHOICE 6.3
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "choice",
     title: "Choice 6.3: You are Daniel Tirona",
     background: require("../../../../Background Images/Part 6/st augustine church tanza (surrender scene).png"),
-    question: "Spanish forces are pushing deeper into Cavite. Your men\nare exhausted and short on weapons.",
+    question: "Spanish forces are pushing deeper into Cavite.\nYour men are exhausted and short on weapons.",
     choices: [
       {
-        text: "Surrender and save the\nmen who are left.",
+        text: "Withdraw and save the\nmen who are left.",
         speaker: "DANIEL TIRONA",
         characters: [
           {
+            name: "DANIEL TIRONA",
             source: require("../../../../Character Images/Chapter 6/Tirona Mad.png"),
             position: "center"
           }
         ],
-        dialogue: "Ibaba na natin ang mga armas. Hindi ko hahayaang mamatay\npa ang mga natitira.",
-        translation: "Lay down your weapons. I won't let the men who remain die."
+        dialogue: "Ilayo muna natin ang mga tauhan sa panganib.\nHindi ko hahayaang mamatay pa ang mga natitira.",
+        translation: "Let us move the men out of danger. I won't let the men who remain die."
       },
 
       {
-        text: "Hold your position a little longer\nand look for a way out.",
+        text: "Hold your position a little\nlonger and look for a way out.",
         speaker: "DANIEL TIRONA",
         characters: [
           {
+            name: "DANIEL TIRONA",
             source: require("../../../../Character Images/Chapter 6/Tirona Mad.png"),
             position: "center"
           }
@@ -437,33 +436,45 @@ export const Chapter1_Part6 = [
         dialogue: "Maghintay pa tayo nang kaunti. Baka makahanap pa tayo\nng paraan para makaalis.",
         translation: "Let's hold on a little longer. We may still find a way out."
       }
-    ],
-
+    ]
   },
+
+  // CONTINUE
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/st augustine church tanza (surrender scene).png"),
-    text: "The situation in Cavite grows more desperate. Revolutionary forces retreat from the\nadvancing Spanish army, and the struggle over leadership becomes harder to ignore."
+    text: "The situation grows more desperate. The revolutionaries must\nface both the Spanish army and divisions within their ranks."
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 6/Cavite revolution 1896 plaza.png"),
-    text: "The revolution has survived its first months, but defeating Spain is only one challenge.\nThe revolutionaries must also decide who will lead them."
+    text: "The Revolution has survived its first months, but defeating Spain\nis only one challenge. Who will lead the movement forward?"
   },
-
 
   {
     type: "scene",
-    title: "Defeating spain is only one challenge.",
-    date: "The revolutionaries must also decide who will lead them.",
+    title: "One Revolution, Divided Leadership",
+    date: "The struggle continues.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  {
+    type: "system",
+    intro: true,
+    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    text: "The revolutionaries share one goal, but they do not agree on who should lead."
+  },
+
+  {
+    type: "system",
+    intro: true,
+    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    text: "Their next meeting will change the course of the Revolution."
+  },
+
   // QUIZ TIME
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
@@ -484,6 +495,7 @@ export const Chapter1_Part6 = [
     correctIndex: 0,
     unlock: ["remnant-part6-1"]
   },
+
   {
     type: "quiz",
     question: "What were the two main factions that emerged in Cavite?",
@@ -496,6 +508,7 @@ export const Chapter1_Part6 = [
     correctIndex: 1,
     unlock: ["remnant-part6-2"]
   },
+
   {
     type: "quiz",
     question: "What happened to José Rizal on December 30, 1896?",
@@ -508,6 +521,7 @@ export const Chapter1_Part6 = [
     correctIndex: 2,
     unlock: ["remnant-part6-3"]
   },
+
   {
     type: "quiz",
     question: "Why did the rivalry between the Magdiwang and Magdalo become a problem?",
@@ -520,6 +534,7 @@ export const Chapter1_Part6 = [
     correctIndex: 0,
     unlock: ["remnant-part6-4"]
   },
+
   {
     type: "quiz",
     question: "What major problem faced the revolutionaries as Spanish forces advanced?",
@@ -532,10 +547,10 @@ export const Chapter1_Part6 = [
     correctIndex: 2,
     unlock: ["remnant-part6-5"]
   },
-  // NEW QUESTION ADDED
+
   {
     type: "quiz",
-    question: "Who was the leader of the Magdiwang faction in Cavite?",
+    question: "Who led the Magdiwang faction in Cavite?",
     options: [
       "Emilio Aguinaldo",
       "Baldomero Aguinaldo",
@@ -546,10 +561,20 @@ export const Chapter1_Part6 = [
     unlock: ["remnant-part6-6"]
   },
 
+  // ENDING
+
   {
     type: "scene",
     title: "Chapter Complete.",
-    date: "The Revolution is now under pressure from within and without.",
+    date: "The Revolution was under pressure from within and without.",
+    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+  },
+
+  {
+    type: "scene",
+    title: "Soon, the question of leadership would be decided.",
+    date: " ",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   }
+
 ];

@@ -13,12 +13,11 @@ import {
 } from "react-native";
 
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-
 import { useAudio } from "../../../Audiostore";
 import MinigameOverlay from "../../../Components/Minigameoverlay";
 
 // =====================================================
-// ARTWORK (same set as the Decipher minigame)
+// ARTWORK
 // =====================================================
 
 const IMG = {
@@ -31,6 +30,7 @@ const PANEL_HAS_TAB = false;
 const PANEL_PAD_TOP = PANEL_HAS_TAB ? 58 : 38;
 const PANEL_PAD_BOTTOM = PANEL_HAS_TAB ? 26 : 42;
 const PANEL_PAD_SIDE = PANEL_HAS_TAB ? 34 : 54;
+
 const PANEL_INSET = PANEL_HAS_TAB
   ? { left: 0, right: 0, top: 0, bottom: 0 }
   : { left: 0.023, right: 0.01, top: 0.06, bottom: 0.06 };
@@ -38,7 +38,13 @@ const PANEL_INSET = PANEL_HAS_TAB
 const START_SECONDS = 60;
 const CORRECT_TIME_BONUS = 5;
 const WRONG_TIME_PENALTY = 3;
-const FEEDBACK_MS = 2600; // how long the reveal overlay stays (tap to skip)
+const FEEDBACK_MS = 2600;
+
+// =====================================================
+// QUESTIONS
+// Script dialogue is dramatized unless otherwise noted.
+// "Consummatum est" is traditionally attributed to Rizal.
+// =====================================================
 
 const DEFAULT_QUESTIONS = [
   {
@@ -46,7 +52,7 @@ const DEFAULT_QUESTIONS = [
     chapter: 1,
     type: "quoteToCharacter",
     characterName: "Datu Sikatuna",
-    quote: "Legazpi, take this cup. From this moment, our blood is one.",
+    quote: "From this moment, our blood is one.",
     portrait: require("../../../Character Images/Chapter 1/Sikatuna Talk.png"),
     choices: [
       { id: "sikatuna", text: "Datu Sikatuna" },
@@ -62,24 +68,24 @@ const DEFAULT_QUESTIONS = [
     type: "characterToQuote",
     characterName: "Francisco Dagohoy",
     quote:
-      "Kung wala man lang paggalang ang inyong simbahan para sa mga tapat na lingkod, hindi na kami dapat manatiling tapat!",
+      "Kung walang katarungan, hindi kami susuko. Hindi kami titigil hangga't hindi naririnig ang aming tinig!",
     portrait: require("../../../Character Images/Chapter 2/Dagohoy Mad.png"),
     choices: [
       {
         id: "dagohoy",
-        text: "Kung wala man lang paggalang ang inyong simbahan para sa mga tapat na lingkod, hindi na kami dapat manatiling tapat!",
+        text: "Kung walang katarungan, hindi kami susuko. Hindi kami titigil hangga't hindi naririnig ang aming tinig!",
       },
       {
         id: "jacinto",
-        text: "One person may be wiser, richer, or more skilled than another, but that doesn't make them more human. This is what should guide every member.",
+        text: "Ang tunay na kabanalan ay ang pagkakawanggawa at pag-ibig sa kapwa.",
       },
       {
-        id: "alvarez",
-        text: "Ang aking utos ay galing sa Supremo. Hindi ako maaaring sumunod sa dalawang pinuno nang sabay.",
+        id: "aguinaldo",
+        text: "Kailangan natin ng iisang utos. Hindi tayo mananalo kung magkakanya-kanya tayo.",
       },
       {
         id: "bonifacio",
-        text: "This paper says we belong to Spain. Tonight, we say otherwise.",
+        text: "Mga Pilipino... kayo mismo ang gumawa nito sa akin.",
       },
     ],
     correctChoiceId: "dagohoy",
@@ -89,14 +95,13 @@ const DEFAULT_QUESTIONS = [
     chapter: 3,
     type: "quoteToCharacter",
     characterName: "Dr. José Rizal",
-    quote:
-      "If we want a better future for our people, we cannot wait for the government to change. We must build it ourselves.",
+    quote: "Consummatum est.",
     portrait: require("../../../Character Images/Chapter 3/Rizal.png"),
     choices: [
       { id: "rizal", text: "Dr. José Rizal" },
       { id: "bonifacio", text: "Andrés Bonifacio" },
       { id: "mabini", text: "Apolinario Mabini" },
-      { id: "franco", text: "Domingo Franco" },
+      { id: "jacinto", text: "Emilio Jacinto" },
     ],
     correctChoiceId: "rizal",
   },
@@ -106,24 +111,24 @@ const DEFAULT_QUESTIONS = [
     type: "characterToQuote",
     characterName: "Emilio Jacinto",
     quote:
-      "One person may be wiser, richer, or more skilled than another, but that doesn't make them more human. This is what should guide every member.",
+      "Ang tunay na kabanalan ay ang pagkakawanggawa, ang pag-ibig sa kapwa, at ang pagsunod sa katuwiran.",
     portrait: require("../../../Character Images/Chapter 4/Jacinto Talking R.png"),
     choices: [
       {
         id: "jacinto",
-        text: "One person may be wiser, richer, or more skilled than another, but that doesn't make them more human.\n This is what should guide every member.",
+        text: "Ang tunay na kabanalan ay ang pagkakawanggawa, ang pag-ibig sa kapwa, at ang pagsunod sa katuwiran.",
       },
       {
         id: "rizal",
-        text: "If we want a better future for our people, we cannot wait for the government to change. We must build \nit ourselves.",
+        text: "Consummatum est.",
       },
       {
         id: "sikatuna",
-        text: "Legazpi, take this cup. From this moment, our blood is one.",
+        text: "From this moment, our blood is one.",
       },
       {
         id: "dagohoy",
-        text: "Kung wala man lang paggalang ang inyong simbahan para sa mga tapat na lingkod, hindi na kami dapat manatiling tapat!",
+        text: "Kung walang katarungan, hindi kami susuko. Hindi kami titigil hangga't hindi naririnig ang aming tinig!",
       },
     ],
     correctChoiceId: "jacinto",
@@ -137,7 +142,7 @@ const DEFAULT_QUESTIONS = [
     portrait: require("../../../Character Images/Chapter 5/Bonifacio Cedula.png"),
     choices: [
       { id: "bonifacio", text: "Andrés Bonifacio" },
-      { id: "teodoro", text: "Teodoro Plata" },
+      { id: "plata", text: "Teodoro Plata" },
       { id: "jacinto", text: "Emilio Jacinto" },
       { id: "dagohoy", text: "Francisco Dagohoy" },
     ],
@@ -157,16 +162,16 @@ const DEFAULT_QUESTIONS = [
         text: "Kailangan natin ng iisang utos, Don Mariano. Hindi tayo mananalo kung magkakanya-kanya tayo.",
       },
       {
-        id: "alvarez",
-        text: "Ang aking utos ay galing sa Supremo. Hindi ako maaaring sumunod sa dalawang pinuno nang sabay.",
+        id: "bonifacio",
+        text: "Hindi ko tatanggapin ang isang halalang hindi tapat.",
       },
       {
         id: "tirona",
-        text: "Wala na tayong sapat na armas. Kung magpapatuloy tayo, baka lalo lang tayong malugi.",
+        text: "Hindi angkop na ang isang taong walang diploma ang mamuno sa Kagawaran ng Interior!",
       },
       {
-        id: "bonifacio",
-        text: "Emilio, may alok daw ng amnestiya. Pero kung pagsuko ang kapalit, hindi natin basta matatanggap iyon.",
+        id: "jacinto",
+        text: "Ang tunay na kabanalan ay ang pagkakawanggawa at pag-ibig sa kapwa.",
       },
     ],
     correctChoiceId: "aguinaldo",
@@ -202,15 +207,15 @@ const DEFAULT_QUESTIONS = [
       },
       {
         id: "tirona",
-        text: "Dapat abogado ang humawak ng puwestong iyan!",
+        text: "Hindi angkop na ang isang taong walang diploma ang mamuno sa Kagawaran ng Interior!",
       },
       {
         id: "aguinaldo",
         text: "Sila ay mga anak din ng bayan. Hindi ko kayang dagdagan pa ang dugong Pilipinong ibinubuhos natin.",
       },
       {
-        id: "bonifacio-limbon",
-        text: "Mga Pilipino... kayo mismo ang gumawa nito sa akin.",
+        id: "jacinto",
+        text: "Ang tunay na kabanalan ay ang pagkakawanggawa at pag-ibig sa kapwa.",
       },
     ],
     correctChoiceId: "bonifacio",
@@ -245,15 +250,15 @@ const DEFAULT_QUESTIONS = [
       },
       {
         id: "bonifacio",
-        text: "Hindi ko tatanggapin ang isang halalang hindi tapat. Dito, ipagpapatuloy natin ang laban.",
+        text: "Hindi ko tatanggapin ang isang halalang hindi tapat.",
       },
       {
         id: "tirona",
         text: "Hindi angkop na ang isang taong walang diploma ang mamuno sa Kagawaran ng Interior!",
       },
       {
-        id: "alvarez",
-        text: "Ang aking utos ay galing sa Supremo. Hindi ako maaaring sumunod sa dalawang pinuno nang sabay.",
+        id: "jacinto",
+        text: "Ang tunay na kabanalan ay ang pagkakawanggawa at pag-ibig sa kapwa.",
       },
     ],
     correctChoiceId: "aguinaldo",
@@ -262,20 +267,29 @@ const DEFAULT_QUESTIONS = [
 
 function shuffle(items) {
   const result = [...items];
+
   for (let i = result.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));
     [result[i], result[j]] = [result[j], result[i]];
   }
+
   return result;
 }
 
 function makeGameQuestions(sourceQuestions) {
   // One question from Chapters 1–6 and four from Chapter 7.
   const chosen = [];
+
   for (let chapter = 1; chapter <= 6; chapter += 1) {
-    const candidates = sourceQuestions.filter((question) => question.chapter === chapter);
-    if (candidates.length) chosen.push(shuffle(candidates)[0]);
+    const candidates = sourceQuestions.filter(
+      (question) => question.chapter === chapter
+    );
+
+    if (candidates.length) {
+      chosen.push(shuffle(candidates)[0]);
+    }
   }
+
   const chapterSeven = shuffle(
     sourceQuestions.filter((question) => question.chapter === 7)
   ).slice(0, 4);
@@ -286,9 +300,10 @@ function makeGameQuestions(sourceQuestions) {
   }));
 }
 
-// Inserts line breaks (\n) so long answers never run past the button border.
-// Change MAX_LINE_CHARS to make lines shorter (smaller number) or longer.
-// Any \n you already wrote in a choice text is kept.
+// =====================================================
+// TEXT HELPERS
+// =====================================================
+
 const MAX_LINE_CHARS = 58;
 
 function breakText(text, maxChars = MAX_LINE_CHARS) {
@@ -297,6 +312,7 @@ function breakText(text, maxChars = MAX_LINE_CHARS) {
     .map((part) => {
       const lines = [];
       let line = "";
+
       part
         .trim()
         .split(/\s+/)
@@ -308,6 +324,7 @@ function breakText(text, maxChars = MAX_LINE_CHARS) {
             line = line ? line + " " + word : word;
           }
         });
+
       if (line) lines.push(line);
       return lines.join("\n");
     })
@@ -318,11 +335,14 @@ function formatTime(seconds) {
   const safeSeconds = Math.max(0, seconds);
   const minutes = Math.floor(safeSeconds / 60);
   const remainingSeconds = safeSeconds % 60;
-  return `${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`;
+
+  return `${String(minutes).padStart(2, "0")}:${String(
+    remainingSeconds
+  ).padStart(2, "0")}`;
 }
 
 // =====================================================
-// SHARED UI (button + panel, same as Decipher)
+// SHARED UI
 // =====================================================
 
 function useSpringPress() {
@@ -346,7 +366,10 @@ function useSpringPress() {
     ]).start();
   };
 
-  return { animate, transform: [{ scale }, { translateY }] };
+  return {
+    animate,
+    transform: [{ scale }, { translateY }],
+  };
 }
 
 function GameButton({ label, onPress, secondary }) {
@@ -354,7 +377,11 @@ function GameButton({ label, onPress, secondary }) {
 
   return (
     <Animated.View
-      style={[styles.buttonWrap, secondary && styles.buttonSecondary, { transform }]}
+      style={[
+        styles.buttonWrap,
+        secondary && styles.buttonSecondary,
+        { transform },
+      ]}
     >
       <TouchableOpacity
         activeOpacity={1}
@@ -363,7 +390,11 @@ function GameButton({ label, onPress, secondary }) {
         onPressOut={() => animate(false)}
         onPress={onPress}
       >
-        <ImageBackground source={IMG.button} style={styles.buttonBg} resizeMode="stretch">
+        <ImageBackground
+          source={IMG.button}
+          style={styles.buttonBg}
+          resizeMode="stretch"
+        >
           <Text style={styles.buttonText}>{label}</Text>
         </ImageBackground>
       </TouchableOpacity>
@@ -371,8 +402,6 @@ function GameButton({ label, onPress, secondary }) {
   );
 }
 
-// Answer choice: same button art, with a letter and long-text support.
-// The correct / wrong feedback is shown only in the reveal overlay.
 function ChoiceButton({ letter, text, onPress, disabled }) {
   const { animate, transform } = useSpringPress();
 
@@ -387,7 +416,11 @@ function ChoiceButton({ letter, text, onPress, disabled }) {
         onPressOut={() => animate(false)}
         onPress={onPress}
       >
-        <ImageBackground source={IMG.button} style={styles.choiceBg} resizeMode="stretch">
+        <ImageBackground
+          source={IMG.button}
+          style={styles.choiceBg}
+          resizeMode="stretch"
+        >
           <Text style={styles.choiceLetter}>{letter}</Text>
           <Text style={styles.choiceText}>{breakText(text)}</Text>
         </ImageBackground>
@@ -408,8 +441,10 @@ function Panel({ children, style }) {
 
   const onLayout = (event) => {
     const { width, height } = event.nativeEvent.layout;
+
     setSize((previous) =>
-      Math.abs(previous.w - width) < 0.5 && Math.abs(previous.h - height) < 0.5
+      Math.abs(previous.w - width) < 0.5 &&
+      Math.abs(previous.h - height) < 0.5
         ? previous
         : { w: width, h: height }
     );
@@ -419,7 +454,10 @@ function Panel({ children, style }) {
   const imgH = size.h / h;
 
   return (
-    <View onLayout={onLayout} style={[styles.panel, style, { overflow: "visible" }]}>
+    <View
+      onLayout={onLayout}
+      style={[styles.panel, style, { overflow: "visible" }]}
+    >
       {size.w > 0 ? (
         <Image
           source={IMG.panel}
@@ -434,6 +472,7 @@ function Panel({ children, style }) {
           }}
         />
       ) : null}
+
       {children}
     </View>
   );
@@ -443,6 +482,7 @@ function PanelTab({ children }) {
   if (!PANEL_HAS_TAB) {
     return <Text style={styles.kicker}>{children}</Text>;
   }
+
   return (
     <View style={styles.tab} pointerEvents="none">
       <Text style={styles.tabText} numberOfLines={1}>
@@ -452,8 +492,6 @@ function PanelTab({ children }) {
   );
 }
 
-// Full-screen result overlay shown after every answer. It fades in, stays on
-// screen for FEEDBACK_MS, and can be tapped to continue right away.
 function RevealOverlay({ correct, question, onContinue }) {
   const opacity = useRef(new Animated.Value(0)).current;
 
@@ -467,7 +505,6 @@ function RevealOverlay({ correct, question, onContinue }) {
 
   return (
     <Animated.View style={[styles.overlay, { opacity }]}>
-      {/* Full-screen backdrop: tap anywhere to continue */}
       <TouchableOpacity
         activeOpacity={1}
         style={StyleSheet.absoluteFillObject}
@@ -476,7 +513,6 @@ function RevealOverlay({ correct, question, onContinue }) {
         accessibilityLabel="Continue"
       />
 
-      {/* Centered card */}
       <View style={styles.overlayCenter} pointerEvents="none">
         <Panel style={styles.overlayPanel}>
           <View
@@ -486,23 +522,35 @@ function RevealOverlay({ correct, question, onContinue }) {
               correct ? styles.tintCorrectStrong : styles.tintWrongStrong,
             ]}
           />
+
           <Text
-            style={[styles.overlayTitle, correct ? styles.successText : styles.errorText]}
+            style={[
+              styles.overlayTitle,
+              correct ? styles.successText : styles.errorText,
+            ]}
           >
             {correct ? "CORRECT!" : "WRONG!"}
           </Text>
-          <Text style={styles.kicker}>{correct ? "WELL DONE" : "THE CORRECT ANSWER"}</Text>
+
+          <Text style={styles.kicker}>
+            {correct ? "WELL DONE" : "THE CORRECT ANSWER"}
+          </Text>
+
           <View style={styles.revealIdentity}>
             <Image
               source={question.portrait}
               style={styles.revealPortrait}
               resizeMode="contain"
             />
+
             <View style={styles.revealIdentityText}>
               <Text style={styles.revealName}>{question.characterName}</Text>
-              <Text style={styles.revealChapter}>Chapter {question.chapter}</Text>
+              <Text style={styles.revealChapter}>
+                Chapter {question.chapter}
+              </Text>
             </View>
           </View>
+
           <Text style={styles.revealQuote}>“{question.quote}”</Text>
           <Text style={styles.tapHint}>Tap to continue</Text>
         </Panel>
@@ -525,14 +573,12 @@ export default function WhoSaidItMinigame({
   const compact = width < 380;
   const landscape = width > height;
 
-  // Built-in pause button. If the parent screen already manages pausing
-  // (it passes onPhaseChange), the parent shows its own button instead.
   const navigation = useNavigation();
   const parentControlsPause = typeof onPhaseChange === "function";
+
   const [localPaused, setLocalPaused] = useState(false);
   const paused = pausedProp || localPaused;
 
-  // Coming back from the Settings screen: resume the game
   useFocusEffect(
     useCallback(() => {
       setLocalPaused(false);
@@ -540,16 +586,21 @@ export default function WhoSaidItMinigame({
   );
 
   const audio = useAudio();
+
   const sfx = useCallback(
     (key) => {
       try {
         audio?.playSfx?.(key);
-      } catch (e) {}
+      } catch (e) {
+        // Audio failure should not interrupt the game.
+      }
     },
     [audio]
   );
 
-  const [gameQuestions, setGameQuestions] = useState(() => makeGameQuestions(questions));
+  const [gameQuestions, setGameQuestions] = useState(() =>
+    makeGameQuestions(questions)
+  );
   const [questionIndex, setQuestionIndex] = useState(0);
   const [secondsLeft, setSecondsLeft] = useState(START_SECONDS);
   const [score, setScore] = useState(0);
@@ -558,22 +609,19 @@ export default function WhoSaidItMinigame({
   const [revealing, setRevealing] = useState(false);
   const [finished, setFinished] = useState(false);
 
-  // Fit-to-screen: nothing scrolls. If the content is taller than the space
-  // available it is scaled down a little instead.
   const [areaH, setAreaH] = useState(0);
   const [contentH, setContentH] = useState(0);
 
   const feedbackTimeout = useRef(null);
   const advanceRef = useRef(null);
   const pausedRef = useRef(paused);
+
   pausedRef.current = paused;
 
   const currentQuestion = gameQuestions[questionIndex];
   const totalQuestions = gameQuestions.length;
   const correctCount = answers.filter((answer) => answer.correct).length;
 
-  // Tells the parent which screen we are on ("playing" or "result") so it
-  // can show the pause button only while the game is being played.
   useEffect(() => {
     if (!onPhaseChange) return;
     onPhaseChange(finished ? "result" : "playing");
@@ -584,20 +632,26 @@ export default function WhoSaidItMinigame({
     setRevealing(false);
   }, []);
 
-  // Countdown. It stops while the answer is being revealed and while paused.
   useEffect(() => {
     if (finished || revealing || paused) return undefined;
+
     if (secondsLeft <= 0) {
       finishGame();
       return undefined;
     }
-    const timer = setTimeout(() => setSecondsLeft((time) => time - 1), 1000);
+
+    const timer = setTimeout(() => {
+      setSecondsLeft((time) => time - 1);
+    }, 1000);
+
     return () => clearTimeout(timer);
   }, [secondsLeft, finished, revealing, paused, finishGame]);
 
   useEffect(
     () => () => {
-      if (feedbackTimeout.current) clearTimeout(feedbackTimeout.current);
+      if (feedbackTimeout.current) {
+        clearTimeout(feedbackTimeout.current);
+      }
     },
     []
   );
@@ -608,8 +662,12 @@ export default function WhoSaidItMinigame({
       if (selectedChoiceId !== null) return;
 
       const correct = choice.id === currentQuestion.correctChoiceId;
-      const pointsEarned = correct ? 100 + Math.max(0, secondsLeft) * 2 : 0;
+      const pointsEarned = correct
+        ? 100 + Math.max(0, secondsLeft) * 2
+        : 0;
+
       const nextScore = score + pointsEarned;
+
       const nextAnswers = [
         ...answers,
         {
@@ -622,16 +680,20 @@ export default function WhoSaidItMinigame({
       ];
 
       sfx(correct ? "correct" : "wrong");
+
       setSelectedChoiceId(choice.id);
       setAnswers(nextAnswers);
       setScore(nextScore);
+
       setSecondsLeft((time) =>
-        Math.max(0, time + (correct ? CORRECT_TIME_BONUS : -WRONG_TIME_PENALTY))
+        Math.max(
+          0,
+          time + (correct ? CORRECT_TIME_BONUS : -WRONG_TIME_PENALTY)
+        )
       );
+
       setRevealing(true);
 
-      // Move on after the reveal (or when the player taps the overlay).
-      // If the game is paused at that moment, wait until it is resumed.
       const advance = () => {
         if (pausedRef.current) {
           feedbackTimeout.current = setTimeout(advance, 200);
@@ -668,16 +730,23 @@ export default function WhoSaidItMinigame({
     ]
   );
 
-  // Tap on the overlay: skip the wait and go to the next question.
   const skipReveal = useCallback(() => {
     if (pausedRef.current || !advanceRef.current) return;
-    if (feedbackTimeout.current) clearTimeout(feedbackTimeout.current);
+
+    if (feedbackTimeout.current) {
+      clearTimeout(feedbackTimeout.current);
+    }
+
     advanceRef.current();
   }, []);
 
   const replay = useCallback(() => {
-    if (feedbackTimeout.current) clearTimeout(feedbackTimeout.current);
+    if (feedbackTimeout.current) {
+      clearTimeout(feedbackTimeout.current);
+    }
+
     advanceRef.current = null;
+
     setGameQuestions(makeGameQuestions(questions));
     setQuestionIndex(0);
     setSecondsLeft(START_SECONDS);
@@ -688,7 +757,9 @@ export default function WhoSaidItMinigame({
     setFinished(false);
   }, [questions]);
 
-  const accuracy = totalQuestions ? Math.round((correctCount / totalQuestions) * 100) : 0;
+  const accuracy = totalQuestions
+    ? Math.round((correctCount / totalQuestions) * 100)
+    : 0;
 
   const continueStory = useCallback(() => {
     if (typeof onComplete === "function") {
@@ -701,37 +772,40 @@ export default function WhoSaidItMinigame({
     }
   }, [onComplete, score, correctCount, totalQuestions, accuracy]);
 
-  // 1 = fits as is. Smaller = shrink to fit (never below 0.4).
-  const FIT_PADDING = 28; // top + bottom padding of the play area
+  const FIT_PADDING = 28;
+
   const fitScale =
     areaH > 0 && contentH > 0
       ? Math.min(1, Math.max(0.4, (areaH - FIT_PADDING) / contentH))
       : 1;
 
-  // The whole screen: background + a non-scrolling, centered, scaled area.
   const shell = (body, withOverlay = null) => (
-    <ImageBackground source={IMG.background} style={styles.background} resizeMode="cover">
+    <ImageBackground
+      source={IMG.background}
+      style={styles.background}
+      resizeMode="cover"
+    >
       <View style={styles.dim} />
+
       <SafeAreaView style={styles.safeArea}>
         <StatusBar barStyle="dark-content" />
 
         <View
           style={styles.fitArea}
-          onLayout={(e) => setAreaH(e.nativeEvent.layout.height)}
+          onLayout={(event) => setAreaH(event.nativeEvent.layout.height)}
         >
-          {/* While paused, nothing in the game can be touched */}
           <View
             pointerEvents={paused ? "none" : "auto"}
             style={[styles.content, { transform: [{ scale: fitScale }] }]}
-            onLayout={(e) => setContentH(e.nativeEvent.layout.height)}
+            onLayout={(event) =>
+              setContentH(event.nativeEvent.layout.height)
+            }
           >
             {body}
           </View>
         </View>
-
       </SafeAreaView>
 
-      {/* Pause button (top right) + PAUSED panel */}
       {!parentControlsPause && !finished && currentQuestion ? (
         <MinigameOverlay
           paused={localPaused}
@@ -762,13 +836,15 @@ export default function WhoSaidItMinigame({
     );
   }
 
-  // ---------------------------------------------------
+  // ===================================================
   // RESULTS
-  // ---------------------------------------------------
+  // ===================================================
+
   if (finished) {
     return shell(
       <Panel style={styles.centerPanel}>
         <PanelTab>HISTORY CHALLENGE</PanelTab>
+
         <Text style={styles.panelTitle}>Game Complete!</Text>
         <Text style={styles.bodyText}>The Revolution's words live on.</Text>
 
@@ -782,10 +858,12 @@ export default function WhoSaidItMinigame({
             </Text>
             <Text style={styles.statLabel}>Correct</Text>
           </View>
+
           <View style={styles.statBox}>
             <Text style={styles.statValue}>{accuracy}%</Text>
             <Text style={styles.statLabel}>Accuracy</Text>
           </View>
+
           <View style={styles.statBox}>
             <Text style={styles.statValue}>{formatTime(secondsLeft)}</Text>
             <Text style={styles.statLabel}>Time left</Text>
@@ -797,12 +875,13 @@ export default function WhoSaidItMinigame({
             ? "Excellent work, historian!"
             : accuracy >= 50
             ? "Good effort. Keep learning the voices of history."
-            : "Keep practicing—you'll recognize more voices next time."}
+            : "Keep practicing. You'll recognize more voices next time."}
         </Text>
 
         {typeof onComplete === "function" ? (
           <GameButton label="Continue Story" onPress={continueStory} />
         ) : null}
+
         <GameButton
           label="Play Again"
           onPress={replay}
@@ -812,22 +891,25 @@ export default function WhoSaidItMinigame({
     );
   }
 
-  const choiceIsCorrect = selectedChoiceId === currentQuestion.correctChoiceId;
+  const choiceIsCorrect =
+    selectedChoiceId === currentQuestion.correctChoiceId;
   const lowTime = secondsLeft <= 10;
 
-  // ---------------------------------------------------
-  // GAMEPLAY PIECES
-  // ---------------------------------------------------
+  // ===================================================
+  // GAMEPLAY
+  // ===================================================
 
   const header = (
     <View style={styles.header}>
       <Text style={styles.title}>Who Said It?</Text>
+
       <View style={styles.pillRow}>
         <View style={[styles.pill, lowTime && styles.pillLow]}>
           <Text style={[styles.pillValue, lowTime && styles.pillTextLow]}>
             {formatTime(secondsLeft)}
           </Text>
         </View>
+
         <View style={styles.pill}>
           <Text style={styles.pillValue}>{score.toLocaleString()}</Text>
         </View>
@@ -837,13 +919,13 @@ export default function WhoSaidItMinigame({
 
   const progressBar = (
     <View style={styles.progressTrack}>
-      {gameQuestions.map((q, i) => (
+      {gameQuestions.map((question, index) => (
         <View
-          key={q.id}
+          key={question.id}
           style={[
             styles.progressSegment,
-            i < answers.length && styles.progressComplete,
-            i === questionIndex && styles.progressCurrent,
+            index < answers.length && styles.progressComplete,
+            index === questionIndex && styles.progressCurrent,
           ]}
         />
       ))}
@@ -869,8 +951,14 @@ export default function WhoSaidItMinigame({
             style={styles.promptPortrait}
             resizeMode="contain"
           />
-          <Text style={styles.promptName}>{currentQuestion.characterName}</Text>
-          <Text style={styles.hintText}>Choose the line spoken by this character.</Text>
+
+          <Text style={styles.promptName}>
+            {currentQuestion.characterName}
+          </Text>
+
+          <Text style={styles.hintText}>
+            Choose the line spoken by this character.
+          </Text>
         </View>
       )}
     </Panel>
@@ -879,6 +967,7 @@ export default function WhoSaidItMinigame({
   const choiceList = (
     <>
       <Text style={styles.inputLabel}>Choose your answer</Text>
+
       {currentQuestion.choices.map((choice, index) => (
         <ChoiceButton
           key={`${currentQuestion.id}-${choice.id}`}
@@ -899,11 +988,6 @@ export default function WhoSaidItMinigame({
     />
   ) : null;
 
-  // ---------------------------------------------------
-  // GAMEPLAY
-  //   landscape: question on the left, answers on the right
-  //   portrait : everything stacked
-  // ---------------------------------------------------
   return shell(
     <>
       {header}
@@ -918,9 +1002,10 @@ export default function WhoSaidItMinigame({
         <>
           {questionPanel}
           {choiceList}
+
           <Text style={styles.footerHint}>
-            Correct answer: +5 seconds · Incorrect answer: −3 seconds · Fast answers earn
-            more points
+            Correct answer: +5 seconds · Incorrect answer: −3 seconds · Fast
+            answers earn more points
           </Text>
         </>
       )}
@@ -937,15 +1022,18 @@ const INK = "#352313";
 const BUTTON_INK = "#371f10";
 
 const styles = StyleSheet.create({
-  background: { flex: 1, width: "100%", height: "100%", backgroundColor: "#000" },
+  background: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "#000",
+  },
   dim: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0, 0, 0, 0.05)",
   },
   safeArea: { flex: 1 },
 
-  // The play area never scrolls. Content is centered and scaled down
-  // slightly when it doesn't fit (see fitScale).
   fitArea: {
     flex: 1,
     justifyContent: "center",
@@ -959,8 +1047,11 @@ const styles = StyleSheet.create({
   },
   centered: { justifyContent: "center" },
 
-  
-  row: { flexDirection: "row", alignItems: "center", gap: 14 },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
+  },
   leftCol: { flex: 1 },
   rightCol: { flex: 1.15 },
 
@@ -983,7 +1074,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#d7cfbe",
   },
-  pillLow: { borderColor: "#ff9b82", backgroundColor: "rgba(90, 20, 10, 0.75)" },
+  pillLow: {
+    borderColor: "#ff9b82",
+    backgroundColor: "rgba(90, 20, 10, 0.75)",
+  },
   pillValue: {
     color: "#FFFFFF",
     fontSize: 15,
@@ -992,8 +1086,11 @@ const styles = StyleSheet.create({
   },
   pillTextLow: { color: "#ff9b82" },
 
-  // PROGRESS
-  progressTrack: { flexDirection: "row", gap: 5, marginBottom: 10 },
+  progressTrack: {
+    flexDirection: "row",
+    gap: 5,
+    marginBottom: 10,
+  },
   progressSegment: {
     flex: 1,
     height: 6,
@@ -1003,7 +1100,6 @@ const styles = StyleSheet.create({
   progressComplete: { backgroundColor: "#7a5a2a" },
   progressCurrent: { backgroundColor: INK },
 
-  // PANELS
   panel: {
     paddingTop: PANEL_PAD_TOP,
     paddingBottom: PANEL_PAD_BOTTOM,
@@ -1016,7 +1112,10 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     minHeight: 240,
   },
-  fullPanel: { width: "100%", marginBottom: 6 },
+  fullPanel: {
+    width: "100%",
+    marginBottom: 6,
+  },
   kicker: {
     color: "#7a5a2a",
     fontSize: 11,
@@ -1057,7 +1156,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 
-  // QUESTION
   quoteText: {
     color: "#0f0f0f",
     fontSize: 15,
@@ -1067,9 +1165,18 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 4,
   },
-  quoteTextCompact: { fontSize: 14, lineHeight: 20 },
-  characterPrompt: { alignItems: "center" },
-  promptPortrait: { width: 90, height: 90, marginBottom: 6 },
+  quoteTextCompact: {
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  characterPrompt: {
+    alignItems: "center",
+  },
+  promptPortrait: {
+    width: 90,
+    height: 90,
+    marginBottom: 6,
+  },
   promptName: {
     color: INK,
     fontSize: 17,
@@ -1092,15 +1199,17 @@ const styles = StyleSheet.create({
     marginVertical: 6,
   },
 
-  // CHOICES
-  choiceWrap: { width: "100%", marginBottom: 6 },
+  choiceWrap: {
+    width: "100%",
+    marginBottom: 6,
+  },
   choiceBg: {
     width: "100%",
     minHeight: 46,
     flexDirection: "row",
     alignItems: "center",
     paddingLeft: 30,
-    paddingRight: 40, // keeps long text inside the button border
+    paddingRight: 40,
     paddingVertical: 10,
   },
   choiceLetter: {
@@ -1113,14 +1222,13 @@ const styles = StyleSheet.create({
     flex: 1,
     color: BUTTON_INK,
     fontSize: 9,
-    lineHeight: 14, // must be bigger than fontSize or lines overlap
+    lineHeight: 14,
     fontWeight: "bold",
   },
 
   successText: { color: "#1f6b34" },
   errorText: { color: "#a3281b" },
 
-  // REVEAL OVERLAY
   overlay: {
     position: "absolute",
     top: 0,
@@ -1139,7 +1247,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  overlayPanel: { width: "100%", maxWidth: 520, alignSelf: "center" },
+  overlayPanel: {
+    width: "100%",
+    maxWidth: 520,
+    alignSelf: "center",
+  },
   overlayTint: {
     position: "absolute",
     top: 18,
@@ -1148,8 +1260,12 @@ const styles = StyleSheet.create({
     right: 26,
     borderRadius: 10,
   },
-  tintCorrectStrong: { backgroundColor: "rgba(60, 160, 85, 0.40)" },
-  tintWrongStrong: { backgroundColor: "rgba(200, 50, 35, 0.40)" },
+  tintCorrectStrong: {
+    backgroundColor: "rgba(60, 160, 85, 0.40)",
+  },
+  tintWrongStrong: {
+    backgroundColor: "rgba(200, 50, 35, 0.40)",
+  },
   overlayTitle: {
     fontSize: 20,
     fontWeight: "bold",
@@ -1165,16 +1281,28 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
   },
 
-  // REVEAL
   revealIdentity: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 10,
   },
-  revealPortrait: { width: 70, height: 70, marginRight: 12 },
+  revealPortrait: {
+    width: 70,
+    height: 70,
+    marginRight: 12,
+  },
   revealIdentityText: { flex: 1 },
-  revealName: { color: INK, fontSize: 16, fontWeight: "bold" },
-  revealChapter: { color: "#7a5a2a", fontSize: 12, fontWeight: "bold", marginTop: 3 },
+  revealName: {
+    color: INK,
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  revealChapter: {
+    color: "#7a5a2a",
+    fontSize: 12,
+    fontWeight: "bold",
+    marginTop: 3,
+  },
   revealQuote: {
     color: "#0f0f0f",
     fontSize: 12.5,
@@ -1190,7 +1318,6 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
 
-  // RESULTS
   bigNumber: {
     color: INK,
     fontSize: 40,
@@ -1206,7 +1333,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 10,
   },
-  statsRow: { flexDirection: "row", gap: 8, marginBottom: 10 },
+  statsRow: {
+    flexDirection: "row",
+    gap: 8,
+    marginBottom: 10,
+  },
   statBox: {
     flex: 1,
     paddingVertical: 10,
@@ -1216,8 +1347,16 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: "#7a5a2a",
   },
-  statValue: { color: INK, fontSize: 16, fontWeight: "bold" },
-  statLabel: { color: "#141414", fontSize: 11, marginTop: 2 },
+  statValue: {
+    color: INK,
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  statLabel: {
+    color: "#141414",
+    fontSize: 11,
+    marginTop: 2,
+  },
   timeSummary: {
     color: "#141414",
     textAlign: "center",
@@ -1225,8 +1364,12 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
 
-  // BUTTONS
-  buttonWrap: { alignSelf: "center", width: "80%", maxWidth: 300, marginTop: 8 },
+  buttonWrap: {
+    alignSelf: "center",
+    width: "80%",
+    maxWidth: 300,
+    marginTop: 8,
+  },
   buttonSecondary: { opacity: 0.85 },
   buttonBg: {
     width: "100%",

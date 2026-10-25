@@ -505,7 +505,7 @@ export function OathTrace(props) {
       title="Initiation Oath Tracing"
       hint="Start at the glowing dot and trace without lifting your finger."
       doneText="The oath is taken."
-      inkColor="#1f1d1c"
+      inkColor="#d4bf33"
       {...props}
     />
   );
