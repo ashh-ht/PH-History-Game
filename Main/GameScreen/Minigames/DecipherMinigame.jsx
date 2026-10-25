@@ -949,9 +949,9 @@ const styles = StyleSheet.create({
   },
   centerPanel: {
     width: "100%",
-    maxWidth: 560,
+    maxWidth: 700,
     alignSelf: "center",
-    minHeight: 240,
+    minHeight: 100,
   },
 
   fullPanel: { width: "100%", zIndex: 2 },
