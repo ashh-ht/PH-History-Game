@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from "react";
 import {
     Animated,
@@ -19,29 +20,34 @@ const CONTINUE_BUTTON = require("../../Background Images/Intro/CONTINUEJOURNEY_C
 // =====================================================
 const BUTTON_WIDTH = 260;
 const BUTTON_HEIGHT = 100;
-const BUTTON_LIFT = 90;   // distance from the bottom edge (was 30)
+const BUTTON_LIFT = 90;
 const BG_FADE_MS = 500;
 
 // =====================================================
 // ANIMATED IMAGE BUTTON
-// Static until touched, then the same spring press as your other buttons.
+// Press: shrinks and dips slightly.
+// Release: springs back with a small bounce.
 // =====================================================
 function JourneyButton({ imageSource, onPress }) {
     const scale = useRef(new Animated.Value(1)).current;
     const translateY = useRef(new Animated.Value(0)).current;
 
     const animatePress = (isPressed) => {
+        // Stop the previous animation so rapid taps stay responsive.
+        scale.stopAnimation();
+        translateY.stopAnimation();
+
         Animated.parallel([
             Animated.spring(scale, {
-                toValue: isPressed ? 0.94 : 1,
-                speed: 20,
-                bounciness: 12,
+                toValue: isPressed ? 0.90 : 1,
+                speed: isPressed ? 28 : 16,
+                bounciness: isPressed ? 4 : 12,
                 useNativeDriver: true,
             }),
             Animated.spring(translateY, {
-                toValue: isPressed ? 3 : 0,
-                speed: 20,
-                bounciness: 10,
+                toValue: isPressed ? 4 : 0,
+                speed: isPressed ? 28 : 16,
+                bounciness: isPressed ? 3 : 10,
                 useNativeDriver: true,
             }),
         ]).start();
@@ -51,7 +57,12 @@ function JourneyButton({ imageSource, onPress }) {
         <Animated.View
             style={[
                 styles.buttonWrap,
-                { transform: [{ translateY }, { scale }] },
+                {
+                    transform: [
+                        { translateY },
+                        { scale },
+                    ],
+                },
             ]}
         >
             <Sound_clicks
@@ -71,7 +82,8 @@ function JourneyButton({ imageSource, onPress }) {
 }
 
 // =====================================================
-// CONTINUE YOUR JOURNEY SCREEN (drawn in a Modal so nothing can cover it)
+// CONTINUE YOUR JOURNEY SCREEN
+// Drawn in a Modal so other screens cannot cover it.
 // =====================================================
 export default function ChapterCompleted({
     showContinue = true,
@@ -99,21 +111,38 @@ export default function ChapterCompleted({
             transparent={false}
             animationType="none"
             statusBarTranslucent
-            supportedOrientations={["landscape", "landscape-left", "landscape-right", "portrait"]}
+            supportedOrientations={[
+                "landscape",
+                "landscape-left",
+                "landscape-right",
+                "portrait",
+            ]}
             onRequestClose={() => {}}
         >
             <View style={styles.root}>
                 <Animated.View
-                    style={[StyleSheet.absoluteFill, { opacity: bgOpacity }]}
+                    style={[
+                        StyleSheet.absoluteFill,
+                        { opacity: bgOpacity },
+                    ]}
                 >
                     <ImageBackground
                         source={JOURNEY_BACKGROUND}
                         style={styles.background}
                         resizeMode="cover"
                     >
-                        <View pointerEvents="none" style={styles.scrimBandLarge} />
-                        <View pointerEvents="none" style={styles.scrimBandMedium} />
-                        <View pointerEvents="none" style={styles.scrimBandSmall} />
+                        <View
+                            pointerEvents="none"
+                            style={styles.scrimBandLarge}
+                        />
+                        <View
+                            pointerEvents="none"
+                            style={styles.scrimBandMedium}
+                        />
+                        <View
+                            pointerEvents="none"
+                            style={styles.scrimBandSmall}
+                        />
 
                         <View style={styles.buttonRow}>
                             <JourneyButton
@@ -135,6 +164,9 @@ export default function ChapterCompleted({
     );
 }
 
+// =====================================================
+// STYLES
+// =====================================================
 const styles = StyleSheet.create({
     root: {
         flex: 1,

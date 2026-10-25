@@ -19,8 +19,7 @@ import { saveCheckpoint, markPartReached } from "../Others/saveProgress";
 import { Chapter1 } from "./StoryScreen/Chapter1";
 import { useJournal } from "../../Main/Others/JournalContext";
 import { useFocusEffect } from "@react-navigation/native";
-// IMPORT THE REMNANT DATA
-import { REMNANT_DATA } from "../RemnantData"; 
+import { REMNANT_DATA } from "../RemnantData";
 
 // =====================================================
 // MINIGAMES
@@ -41,15 +40,14 @@ import MinigameOverlay from "../../Components/Minigameoverlay";
 // =====================================================
 const getMusicFor = (sceneData, idx) => {
   for (let i = Math.min(idx, sceneData.length - 1); i >= 0; i--) {
-    const m = sceneData[i].music ?? sceneData[i].Music;
-    if (m) return m;
+    const music = sceneData[i].music ?? sceneData[i].Music;
+    if (music) return music;
   }
   return null;
 };
 
 // =====================================================
 // CHAPTER COMPLETE SCREEN
-// Shows the background first, then pops in the title.
 // =====================================================
 function ChapterCompleteScreen({ onContinue }) {
   const titleScale = useRef(new Animated.Value(0.65)).current;
@@ -74,7 +72,6 @@ function ChapterCompleteScreen({ onContinue }) {
     ]);
 
     animation.start();
-
     return () => animation.stop();
   }, [titleOpacity, titleScale]);
 
@@ -103,7 +100,7 @@ function ChapterCompleteScreen({ onContinue }) {
 }
 
 // =====================================================
-// ANIMATED BUTTONS
+// ANIMATED NEXT BUTTON
 // =====================================================
 function AnimatedNextButton({ onPress }) {
   const { playSfx } = useAudio();
@@ -160,6 +157,9 @@ function AnimatedNextButton({ onPress }) {
   );
 }
 
+// =====================================================
+// ANIMATED CHOICE BUTTON
+// =====================================================
 function AnimatedChoiceButton({ children, onPress, style }) {
   const scale = useRef(new Animated.Value(1)).current;
   const translateY = useRef(new Animated.Value(0)).current;
@@ -197,6 +197,9 @@ function AnimatedChoiceButton({ children, onPress, style }) {
   );
 }
 
+// =====================================================
+// ANIMATED QUIZ BUTTON
+// =====================================================
 function AnimatedQuizButton({ children, onPress, style }) {
   const scale = useRef(new Animated.Value(1)).current;
   const translateY = useRef(new Animated.Value(0)).current;
@@ -234,6 +237,9 @@ function AnimatedQuizButton({ children, onPress, style }) {
   );
 }
 
+// =====================================================
+// ANIMATED IMAGE BUTTON
+// =====================================================
 function AnimatedImageButton({
   normalSource,
   pressedSource,
@@ -284,8 +290,9 @@ function AnimatedImageButton({
   );
 }
 
-// NOTE: bloodtrace / oathtrace are NOT in this map anymore.
-// They are rendered in PartRenderer with the pause overlay (see below).
+// =====================================================
+// MINIGAME MAPS
+// =====================================================
 const MINIGAMES = {
   voyage: VoyageMinigame,
   santoNino: SantoNinoMinigame,
@@ -320,10 +327,10 @@ function useTypewriter(text, msPerChar, resetKey) {
     if (!length) return undefined;
 
     const id = setInterval(() => {
-      setState((s) =>
-        s.key === resetKey && s.count < length
-          ? { ...s, count: s.count + 1 }
-          : s
+      setState((previous) =>
+        previous.key === resetKey && previous.count < length
+          ? { ...previous, count: previous.count + 1 }
+          : previous
       );
     }, msPerChar);
 
@@ -347,7 +354,7 @@ function TypedText({ style, full, shown }) {
 }
 
 // =====================================================
-// MENU OVERLAY
+// GAMEPLAY MENU OVERLAY
 // =====================================================
 function GameplayMenuOverlay({ navigation }) {
   return (
@@ -372,44 +379,52 @@ function GameplayMenuOverlay({ navigation }) {
 }
 
 // =====================================================
-// CHARACTER LAYER (with head bobbing)
+// CHARACTER LAYER
 // =====================================================
-
-// How the characters move. Change these to tune the feel.
-const BOB_IDLE_PX = 8; // how far up an idle character moves
-const BOB_IDLE_MS = 1200; // time for one half-bob while idle
-const BOB_TALK_PX = 80; // how far up the speaking character moves
-const BOB_TALK_MS = 1200; // time for one half-bob while talking
-
-// One character that bobs up and down.
-// Idle: a slow, small bob. Talking: a faster, bigger bob.
 function CharacterSprite({ char, talking }) {
   const bob = useRef(new Animated.Value(0)).current;
+  const animationRef = useRef(null);
 
   useEffect(() => {
-    const amount = talking ? -BOB_TALK_PX : -BOB_IDLE_PX;
-    const duration = talking ? BOB_TALK_MS : BOB_IDLE_MS;
+    animationRef.current?.stop();
+    bob.stopAnimation();
 
-    bob.setValue(0);
-    const loop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(bob, {
-          toValue: amount,
-          duration,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.timing(bob, {
-          toValue: 0,
-          duration,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-      ])
-    );
-    loop.start();
+    if (talking) {
+      const loop = Animated.loop(
+        Animated.sequence([
+          Animated.timing(bob, {
+            toValue: -2.5,
+            duration: 550,
+            easing: Easing.inOut(Easing.sin),
+            useNativeDriver: true,
+          }),
+          Animated.timing(bob, {
+            toValue: 0,
+            duration: 650,
+            easing: Easing.inOut(Easing.sin),
+            useNativeDriver: true,
+          }),
+        ])
+      );
 
-    return () => loop.stop();
+      animationRef.current = loop;
+      loop.start();
+    } else {
+      const settle = Animated.timing(bob, {
+        toValue: 0,
+        duration: 450,
+        easing: Easing.out(Easing.quad),
+        useNativeDriver: true,
+      });
+
+      animationRef.current = settle;
+      settle.start();
+    }
+
+    return () => {
+      animationRef.current?.stop();
+      bob.stopAnimation();
+    };
   }, [talking, bob]);
 
   const isLeft = char.position === "left";
@@ -426,21 +441,29 @@ function CharacterSprite({ char, talking }) {
           : isCenter
             ? styles.characterCenter
             : styles.characterRight,
-        { transform: [{ translateY: bob }] },
+        { transform: [{ translateY: Animated.add(bob, 9) }] },
       ]}
     />
   );
 }
 
-// `speaker` = the name shown on the dialogue box
-// `typing`  = true while the text is still being typed out
-function CharacterLayer({ characters, speaker, typing }) {
+function CharacterLayer({ characters, speaker, typing, sceneKey }) {
   if (!characters || characters.length === 0) return null;
 
-  const speakerName = (speaker || "").toLowerCase();
+  const speakerName = (speaker || "").trim().toLowerCase();
+
   const isSpeaker = (char) => {
-    const name = (char?.name || "").toLowerCase();
+    const name = (
+      char?.name ||
+      char?.characterName ||
+      char?.id ||
+      ""
+    )
+      .trim()
+      .toLowerCase();
+
     if (!name || !speakerName) return false;
+
     return speakerName.includes(name) || name.includes(speakerName);
   };
 
@@ -451,7 +474,7 @@ function CharacterLayer({ characters, speaker, typing }) {
 
         return (
           <CharacterSprite
-            key={`${char.name || "character"}-${index}`}
+            key={`${sceneKey ?? "scene"}-${char.name || char.characterName || char.id || "character"}-${index}`}
             char={char}
             talking={!!typing && isSpeaker(char)}
           />
@@ -477,7 +500,6 @@ function PartRenderer(props) {
   const { playMusic, stopLoops, playSfx } = useAudio();
   const settings = useGameplaySettings();
   const display = useDisplaySettings();
-  const { unlock } = useJournal();
 
   const fontScale = FONT_SCALE[display?.fontSize] ?? 1;
 
@@ -486,29 +508,33 @@ function PartRenderer(props) {
   };
 
   const scaled = (style) => {
-    const s = StyleSheet.flatten(style) || {};
+    const flattened = StyleSheet.flatten(style) || {};
 
     return {
-      ...s,
-      ...(s.fontSize
-        ? { fontSize: Math.round(s.fontSize * fontScale) }
+      ...flattened,
+      ...(flattened.fontSize
+        ? { fontSize: Math.round(flattened.fontSize * fontScale) }
         : {}),
-      ...(s.lineHeight
-        ? { lineHeight: Math.round(s.lineHeight * fontScale) }
+      ...(flattened.lineHeight
+        ? { lineHeight: Math.round(flattened.lineHeight * fontScale) }
         : {}),
     };
   };
 
-  const startIdx = props.route?.params?.startScene ?? game.scene;
+  const startIdx = props.route?.params?.startScene ?? game.scene ?? 0;
 
   const [sceneIdx, setSceneIdx] = useState(startIdx);
-  const [picked, setPicked] = useState(null);
-  const [quizAnswer, setQuizAnswer] = useState(null);
 
-  // --- MINIGAME PAUSE ---
+  // Regular choices: selection and confirmation are separate.
+  const [picked, setPicked] = useState(null);
+  const [choiceConfirmed, setChoiceConfirmed] = useState(false);
+
+  // Quiz state remains independent from regular choices.
+  const [quizAnswer, setQuizAnswer] = useState(null);
+  const [quizConfirmed, setQuizConfirmed] = useState(false);
+
+  // Minigame pause state.
   const [paused, setPaused] = useState(false);
-  // Reported by the minigame on screen: "intro" (instructions),
-  // "playing", or "result" (win / lose screen)
   const [minigamePhase, setMinigamePhase] = useState("intro");
 
   useEffect(() => {
@@ -516,12 +542,12 @@ function PartRenderer(props) {
   }, [sceneIdx]);
 
   useFocusEffect(
-  useCallback(() => {
-    setPaused(false);
-  }, [])
-);
+    useCallback(() => {
+      setPaused(false);
+    }, [])
+  );
 
-  // --- REMNANT POPUP STATES ---
+  // Remnant popup.
   const [showRewardPopup, setShowRewardPopup] = useState(false);
   const [rewardImage, setRewardImage] = useState(null);
 
@@ -545,34 +571,49 @@ function PartRenderer(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const startScene = route?.params?.startScene;
-  const lastAppliedStartScene = useRef(null);
+  const getSceneInfo = useCallback(
+    (idx) => {
+      let sceneNumber = 0;
+      let sceneTitle = "";
+
+      for (let i = 0; i <= idx && i < sceneData.length; i++) {
+        if (sceneData[i].type === "scene") {
+          sceneNumber += 1;
+          sceneTitle = sceneData[i].title;
+        }
+      }
+
+      return { sceneNumber, sceneTitle };
+    },
+    [sceneData]
+  );
 
   useEffect(() => {
-    if (startScene == null) return;
-    if (lastAppliedStartScene.current === startScene) return;
-
-    lastAppliedStartScene.current = startScene;
-    setPicked(null);
-    setQuizAnswer(null);
-    setSceneIdx(startScene);
-    game.setScene(startScene);
-  }, [startScene, game]);
+    saveCheckpoint({
+      chap: chapterNumber,
+      part: partNumber,
+      sceneIdx: startIdx,
+      ...getSceneInfo(startIdx),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const hasMoreScenes = sceneIdx < sceneData.length;
   const current = hasMoreScenes ? sceneData[sceneIdx] : null;
+
   console.log("part", partNumber, "idx", sceneIdx, "type", current?.type);
 
   const isMinigame = current ? MINIGAME_TYPES.has(current.type) : false;
 
   useEffect(() => {
-    if (!hasMoreScenes && !isLastPart) markPartReached(partNumber + 1);
+    if (!hasMoreScenes && !isLastPart) {
+      markPartReached(partNumber + 1);
+    }
   }, [hasMoreScenes, isLastPart, partNumber]);
 
   const { unlock } = useJournal();
 
-  // FIXED: Exclude "quiz" so it doesn't auto-unlock when the screen loads. 
-  // Quizzes unlock their items via handleQuizSelect.
+  // Do not automatically unlock quiz rewards before an answer is confirmed.
   useEffect(() => {
     if (current && current.unlock && current.type !== "quiz") {
       unlock(current.unlock);
@@ -584,7 +625,6 @@ function PartRenderer(props) {
     if (track) playMusic(track);
   }, [sceneIdx, sceneData, playMusic]);
 
-  // Scene sound effects
   useEffect(() => {
     const scene = sceneData[sceneIdx];
     if (!scene) return;
@@ -595,7 +635,6 @@ function PartRenderer(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sceneIdx, sceneData]);
 
-  // Chapter title animation
   useEffect(() => {
     if (current?.type !== "chapterIntro") return undefined;
 
@@ -615,43 +654,9 @@ function PartRenderer(props) {
     return () => animation.stop();
   }, [sceneIdx, current?.type, chapterTitleOpacity]);
 
-  const getSceneInfo = useCallback(
-    (idx) => {
-      let sceneNumber = 0;
-      let sceneTitle = "";
-
-      for (let i = 0; i <= idx && i < sceneData.length; i++) {
-        if (sceneData[i].type === "scene") {
-          sceneNumber += 1;
-          sceneTitle = sceneData[i].title;
-        }
-      }
-
-      return { sceneNumber, sceneTitle };
-    },
-    [sceneData]
-  );
-
-  // Save checkpoints on scene screens.
-  useEffect(() => {
-    if (!current || current.type !== "scene") return;
-    if (sceneIdx === sceneData.length - 1) return;
-
-    saveCheckpoint({
-      chap: chapterNumber,
-      part: partNumber,
-      sceneIdx,
-      ...getSceneInfo(sceneIdx),
-    });
-  }, [
-    sceneIdx,
-    current,
-    chapterNumber,
-    partNumber,
-    sceneData.length,
-    getSceneInfo,
-  ]);
-
+  // =====================================================
+  // CHECKPOINTS AND DECISIONS
+  // =====================================================
   const saveDecision = (choiceIndex) => {
     if (!current || current.type !== "choice") return;
 
@@ -682,9 +687,13 @@ function PartRenderer(props) {
       return;
     }
 
+    // Clear all per-scene selection/confirmation state.
     setPicked(null);
+    setChoiceConfirmed(false);
     setQuizAnswer(null);
-    setMinigamePhase("intro"); // a new minigame starts on its instructions
+    setQuizConfirmed(false);
+    setMinigamePhase("intro");
+
     setSceneIdx(index);
     game.setScene(index);
   };
@@ -735,6 +744,10 @@ function PartRenderer(props) {
     });
   };
 
+  // =====================================================
+  // TYPEWRITER TEXT
+  // A choice response appears only after the choice is confirmed.
+  // =====================================================
   const isTyped =
     current &&
     !isMinigame &&
@@ -745,7 +758,10 @@ function PartRenderer(props) {
 
   if (isTyped) {
     if (current.type === "choice") {
-      lineText = picked !== null ? current.choices[picked].dialogue : null;
+      lineText =
+        picked !== null && choiceConfirmed
+          ? current.choices[picked].dialogue
+          : null;
     } else {
       lineText = current.text;
     }
@@ -754,13 +770,16 @@ function PartRenderer(props) {
   const { shown, done, skip } = useTypewriter(
     lineText,
     SPEED_MS[settings?.textSpeed] ?? 30,
-    `${sceneIdx}-${picked}`
+    `${sceneIdx}-${picked}-${choiceConfirmed}`
   );
 
   const next = () => {
     if (!current) return;
 
     if (current.type === "choice") {
+      // Safety guard: never advance an unconfirmed choice.
+      if (!choiceConfirmed || picked === null) return;
+
       return goToIndex(
         typeof current.nextScene === "number"
           ? current.nextScene
@@ -777,12 +796,18 @@ function PartRenderer(props) {
 
   const advance = () => (done ? next() : skip());
 
-  // Auto Play never skips minigames or quizzes.
+  // Auto-play cannot confirm or advance an unconfirmed choice.
   useEffect(() => {
     if (!settings?.autoPlay || !done || !current) return;
-    if (isMinigame) return; 
+    if (isMinigame) return;
     if (current.type === "quiz") return;
-    if (current.type === "choice" && picked === null) return;
+
+    if (
+      current.type === "choice" &&
+      (picked === null || !choiceConfirmed)
+    ) {
+      return;
+    }
 
     const id = setTimeout(next, settings.autoDelay * 1000);
     return () => clearTimeout(id);
@@ -790,6 +815,7 @@ function PartRenderer(props) {
   }, [
     sceneIdx,
     picked,
+    choiceConfirmed,
     done,
     settings?.autoPlay,
     settings?.autoDelay,
@@ -804,13 +830,6 @@ function PartRenderer(props) {
     return <VoyageMinigame onComplete={goNext} />;
   }
 
-  // Adds the pause + settings buttons (top right) on top of a minigame.
-  // Only the minigames that understand the `paused` prop use this.
-  // The pause + settings buttons only show while the minigame is actually
-  // being played (not on the instructions or the win / lose screens).
-  // Options: { hideSettings: true } = no menu button at the top right
-  //          (the PAUSED panel still has Settings),
-  //          { top, right } = where the buttons sit (default 20 / 20).
   const withMinigameOverlay = (
     node,
     { hideSettings = false, top = 20, right = 20 } = {}
@@ -844,7 +863,9 @@ function PartRenderer(props) {
     );
   }
 
-  if (current?.type === "santoNino") return <SantoNinoMinigame onComplete={goNext} />;
+  if (current?.type === "santoNino") {
+    return <SantoNinoMinigame onComplete={goNext} />;
+  }
 
   if (current?.type === "cedula") {
     return withMinigameOverlay(
@@ -854,7 +875,6 @@ function PartRenderer(props) {
         onPhaseChange={setMinigamePhase}
         onComplete={goNext}
       />,
-      // Cedula: pause only, tucked into the corner (same as Decipher)
       { hideSettings: true, top: 6, right: 12 }
     );
   }
@@ -867,7 +887,6 @@ function PartRenderer(props) {
         onPhaseChange={setMinigamePhase}
         onComplete={goNext}
       />,
-      // Decipher: no top-right menu button, pause tucked into the corner
       { hideSettings: true, top: 6, right: 12 }
     );
   }
@@ -881,7 +900,6 @@ function PartRenderer(props) {
         onPhaseChange={setMinigamePhase}
         onComplete={goNext}
       />,
-      // Matching: same as Decipher - pause only, tucked into the corner
       { hideSettings: true, top: 6, right: 12 }
     );
   }
@@ -895,15 +913,17 @@ function PartRenderer(props) {
         onPhaseChange={setMinigamePhase}
         onComplete={goNext}
       />,
-      // Timeline: pause only, tucked into the corner (same as Decipher)
       { hideSettings: true, top: 6, right: 12 }
     );
   }
 
-  // Tracing games (Blood Trace / Oath Trace): instructions screen first,
-  // pause button only while tracing.
-  if (current?.type === "bloodtrace" || current?.type === "oathtrace") {
-    const TraceGame = current.type === "bloodtrace" ? BloodTrace : OathTrace;
+  if (
+    current?.type === "bloodtrace" ||
+    current?.type === "oathtrace"
+  ) {
+    const TraceGame =
+      current.type === "bloodtrace" ? BloodTrace : OathTrace;
+
     return withMinigameOverlay(
       <TraceGame
         key={`trace-${chapterNumber}-${partNumber}-${sceneIdx}`}
@@ -911,12 +931,10 @@ function PartRenderer(props) {
         onPhaseChange={setMinigamePhase}
         onComplete={goNext}
       />,
-      // Tracing: pause button only (no settings button at the top right)
       { hideSettings: true }
     );
   }
 
-  // Who Said It has its own built-in pause button (see WhoSaidItMinigame.js)
   if (current?.type === "whoSaidIt") {
     return (
       <WhoSaidItMinigame
@@ -1041,34 +1059,52 @@ function PartRenderer(props) {
   }
 
   // =====================================================
-  // QUIZ
+  // QUIZ — TAP ONCE TO SELECT, TAP AGAIN TO CONFIRM
   // =====================================================
   if (current.type === "quiz") {
+    const isConfirmed = quizConfirmed;
     const isAnswered = quizAnswer !== null;
     const isCorrect = quizAnswer === current.correctIndex;
 
-    const handleQuizSelect = (index) => {
-      if (isAnswered) return; // Prevent double clicking
-      
-      setQuizAnswer(index);
-      playSfx(index === current.correctIndex ? "correct" : "wrong");
+    const handleQuizTap = (index) => {
+      if (isConfirmed) return;
 
-      if (index === current.correctIndex) {
-        // Check if the quiz has an unlock array (e.g., ["remnant-part1-1"])
-        if (current.unlock && current.unlock.length > 0) {
-          unlock(current.unlock);
-          
-          // Find the specific remnant ID to show the popup image
-          const remnantId = current.unlock.find(id => id.startsWith('remnant-part'));
-          if (remnantId) {
-            const parts = remnantId.split('-');
-            const partNum = parseInt(parts[1].replace('part', ''), 10);
-            const pieceNum = parseInt(parts[2], 10);
-            
-            if (REMNANT_DATA[partNum] && REMNANT_DATA[partNum].pieces[pieceNum - 1]) {
-              setRewardImage(REMNANT_DATA[partNum].pieces[pieceNum - 1]);
-              setShowRewardPopup(true);
-            }
+      // First tap, or selecting a different answer.
+      if (quizAnswer !== index) {
+        setQuizAnswer(index);
+        playSfx("choose");
+        return;
+      }
+
+      // Second tap on the same answer confirms it.
+      setQuizConfirmed(true);
+
+      const correct = index === current.correctIndex;
+      playSfx(correct ? "correct" : "wrong");
+
+      if (correct && current.unlock && current.unlock.length > 0) {
+        unlock(current.unlock);
+
+        const remnantId = current.unlock.find((id) =>
+          id.startsWith("remnant-part")
+        );
+
+        if (remnantId) {
+          const parts = remnantId.split("-");
+          const partNum = parseInt(
+            parts[1].replace("part", ""),
+            10
+          );
+          const pieceNum = parseInt(parts[2], 10);
+
+          if (
+            REMNANT_DATA[partNum] &&
+            REMNANT_DATA[partNum].pieces[pieceNum - 1]
+          ) {
+            setRewardImage(
+              REMNANT_DATA[partNum].pieces[pieceNum - 1]
+            );
+            setShowRewardPopup(true);
           }
         }
       }
@@ -1087,7 +1123,15 @@ function PartRenderer(props) {
               {current.question}
             </Text>
 
-            {isAnswered && (
+            {!isConfirmed && (
+              <Text style={scaled(styles.quizTapPrompt)}>
+                {isAnswered
+                  ? "Tap your selected answer again to confirm."
+                  : "Tap an answer to select it."}
+              </Text>
+            )}
+
+            {isConfirmed && (
               <Text
                 style={scaled(
                   isCorrect
@@ -1095,49 +1139,71 @@ function PartRenderer(props) {
                     : styles.quizIncorrectPrompt
                 )}
               >
-                {isCorrect ? "Correct!" : "Not quite..."}
+                {isCorrect ? "Correct!" : "Not quite!"}
               </Text>
             )}
           </ImageBackground>
         </View>
-        
+
         <View style={styles.quizButtonsGrid}>
-          {current.options.map((option, index) => (
-            <AnimatedQuizButton
-              key={index}
-              style={styles.quizImageButton}
-              onPress={() => {
-                if (isAnswered) return;
+          {current.options.map((option, index) => {
+            let buttonSource = require("../../assets/buttons/choice_button.png");
 
-                setQuizAnswer(index);
-                playSfx(index === current.correctIndex ? "correct" : "wrong");
-              }}
-            >
-              <ImageBackground
-                source={require("../../assets/buttons/choice_button.png")}
-                style={styles.quizImageButtonBg}
-                resizeMode="stretch"
+            if (quizAnswer === index) {
+              if (!isConfirmed) {
+                buttonSource = require("../../assets/buttons/choice_picked.png");
+              } else if (index === current.correctIndex) {
+                buttonSource = require("../../assets/buttons/choice_correct.png");
+              } else {
+                buttonSource = require("../../assets/buttons/choice_wrong.png");
+              }
+            }
+
+            return (
+              <AnimatedQuizButton
+                key={index}
+                style={styles.quizImageButton}
+                onPress={() => handleQuizTap(index)}
               >
-                <Text style={scaled(styles.quizButtonText)}>
-                  {option}
-                </Text>
-              </ImageBackground>
-            </AnimatedQuizButton>
-          ))}
+                <ImageBackground
+                  source={buttonSource}
+                  style={styles.quizImageButtonBg}
+                  resizeMode="stretch"
+                >
+                  <Text style={scaled(styles.quizButtonText)}>
+                    {option}
+                  </Text>
+                </ImageBackground>
+              </AnimatedQuizButton>
+            );
+          })}
         </View>
-        
-        {isAnswered && <AnimatedNextButton onPress={goNext} />}
 
-        {/* REMNANT CONGRATULATIONS POPUP */}
+        {isConfirmed && <AnimatedNextButton onPress={goNext} />}
+
         {showRewardPopup && (
           <View style={styles.rewardPopupOverlay}>
             <View style={styles.rewardPopupBox}>
-              <Text style={styles.rewardTitle}>CONGRATULATIONS!</Text>
-              <Text style={styles.rewardSubtitle}>You received a Remnant piece!</Text>
+              <Text style={styles.rewardTitle}>
+                CONGRATULATIONS!
+              </Text>
+
+              <Text style={styles.rewardSubtitle}>
+                You received a Remnant piece!
+              </Text>
+
               {rewardImage && (
-                <Image source={rewardImage} style={styles.rewardImage} resizeMode="contain" />
+                <Image
+                  source={rewardImage}
+                  style={styles.rewardImage}
+                  resizeMode="contain"
+                />
               )}
-              <TouchableOpacity style={styles.rewardButton} onPress={() => setShowRewardPopup(false)}>
+
+              <TouchableOpacity
+                style={styles.rewardButton}
+                onPress={() => setShowRewardPopup(false)}
+              >
                 <Text style={styles.rewardButtonText}>CLAIM</Text>
               </TouchableOpacity>
             </View>
@@ -1219,7 +1285,10 @@ function PartRenderer(props) {
   if (current.type === "narrator") {
     const narratorContent = (
       <>
-        <CharacterLayer characters={current.characters} />
+        <CharacterLayer
+          characters={current.characters}
+          sceneKey={sceneIdx}
+        />
 
         <View style={styles.narratorWrapper}>
           <ImageBackground
@@ -1259,10 +1328,30 @@ function PartRenderer(props) {
   }
 
   // =====================================================
-  // CHOICES
+  // CHOICES — SELECT FIRST, CONFIRM SECOND
   // =====================================================
   if (current.type === "choice") {
-    if (picked === null) {
+    // Keep the choice-selection screen visible until the player
+    // explicitly confirms the selected option.
+    if (picked === null || !choiceConfirmed) {
+      const handleChoiceTap = (index) => {
+        if (choiceConfirmed) return;
+
+        // First tap, or tapping a different option:
+        // select it, show the gold artwork, and wait.
+        if (picked !== index) {
+          setPicked(index);
+          playSfx("choose");
+          return;
+        }
+
+        // Second tap on the SAME option confirms the decision.
+        // Only now save the decision and show its dialogue response.
+        setChoiceConfirmed(true);
+        playSfx("dialogueClick");
+        saveDecision(index);
+      };
+
       const choiceContent = (
         <>
           <View style={styles.choiceParchmentWrapper}>
@@ -1275,34 +1364,41 @@ function PartRenderer(props) {
               <Text style={scaled(styles.choiceQuestion)}>
                 {current.question}
               </Text>
+
               <Text style={scaled(styles.choicePrompt)}>
-                What will you choose?
+                {picked === null
+                  ? "What will you choose?"
+                  : "Tap your selected choice again to confirm."}
               </Text>
             </ImageBackground>
           </View>
 
           <View style={styles.choiceButtonsGrid}>
-            {current.choices.map((choice, index) => (
-              <AnimatedChoiceButton
-                key={index}
-                style={styles.choiceImageButton}
-                onPress={() => {
-                  playSfx("choose");
-                  setPicked(index);
-                  saveDecision(index);
-                }}
-              >
-                <ImageBackground
-                  source={require("../../assets/buttons/choice_button.png")}
-                  style={styles.choiceImageButtonBg}
-                  resizeMode="stretch"
+            {current.choices.map((choice, index) => {
+              const isSelected = picked === index;
+
+              const buttonSource = isSelected
+                ? require("../../assets/buttons/choice_picked.png")
+                : require("../../assets/buttons/choice_button.png");
+
+              return (
+                <AnimatedChoiceButton
+                  key={index}
+                  style={styles.choiceImageButton}
+                  onPress={() => handleChoiceTap(index)}
                 >
-                  <Text style={scaled(styles.choiceButtonText)}>
-                    {choice.text}
-                  </Text>
-                </ImageBackground>
-              </AnimatedChoiceButton>
-            ))}
+                  <ImageBackground
+                    source={buttonSource}
+                    style={styles.choiceImageButtonBg}
+                    resizeMode="stretch"
+                  >
+                    <Text style={scaled(styles.choiceButtonText)}>
+                      {choice.text}
+                    </Text>
+                  </ImageBackground>
+                </AnimatedChoiceButton>
+              );
+            })}
           </View>
         </>
       );
@@ -1324,6 +1420,7 @@ function PartRenderer(props) {
       );
     }
 
+    // Response dialogue is only rendered after confirmation.
     const selectedChoice = current.choices[picked];
 
     const responseContent = (
@@ -1332,7 +1429,9 @@ function PartRenderer(props) {
           characters={selectedChoice.characters}
           speaker={selectedChoice.speaker}
           typing={!done}
+          sceneKey={`${sceneIdx}-${picked}`}
         />
+
         <View style={styles.dialogueWrapper}>
           <ImageBackground
             source={require("../../assets/foreground/dialogue_box.png")}
@@ -1388,7 +1487,9 @@ function PartRenderer(props) {
         characters={current.characters}
         speaker={current.speaker}
         typing={!done}
+        sceneKey={sceneIdx}
       />
+
       <View style={styles.dialogueWrapper}>
         <ImageBackground
           source={require("../../assets/foreground/dialogue_box.png")}
@@ -1396,7 +1497,9 @@ function PartRenderer(props) {
           imageStyle={boxImage}
           resizeMode="stretch"
         >
-          <Text style={scaled(styles.speakerName)}>{current.speaker}</Text>
+          <Text style={scaled(styles.speakerName)}>
+            {current.speaker}
+          </Text>
 
           <TypedText
             style={scaled(styles.dialogueText)}
@@ -1780,7 +1883,7 @@ const styles = StyleSheet.create({
 
   narratorBox: {
     width: "100%",
-    minHeight: 160,
+    minHeight: 165,
     justifyContent: "center",
     paddingTop: 40,
     paddingBottom: 25,
@@ -1827,11 +1930,13 @@ const styles = StyleSheet.create({
   },
 
   characterLeft: {
+    width: "28%",
     left: "2%",
   },
 
   characterRight: {
-    right: "2%",
+    width: "28%",
+    right: "4%",
   },
 
   characterCenter: {
@@ -1842,7 +1947,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 20,
     right: 20,
-    bottom: 5,
+    bottom: 7,
     zIndex: 20,
   },
 
@@ -1993,6 +2098,15 @@ const styles = StyleSheet.create({
     marginTop: 15,
     fontWeight: "bold",
   },
+
+  quizTapPrompt: {
+    color: "#5A4A32",
+    fontSize: 15,
+    textAlign: "center",
+    marginTop: 15,
+    fontWeight: "bold",
+  },
+
   nextButton: {
     marginTop: 20,
     paddingHorizontal: 30,
@@ -2000,6 +2114,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 8,
   },
+
   nextButtonText: {
     color: "#000000",
     fontSize: 18,
@@ -2007,63 +2122,69 @@ const styles = StyleSheet.create({
   },
 
   // =====================================================
-  // REMNANT REWARD POPUP STYLES
+  // REMNANT REWARD POPUP
   // =====================================================
   rewardPopupOverlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.85)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0,0,0,0.85)",
+    justifyContent: "center",
+    alignItems: "center",
     zIndex: 9999,
-    elevation: 999, // Required for Android z-index
+    elevation: 999,
   },
+
   rewardPopupBox: {
-    backgroundColor: '#F4E4C8',
+    backgroundColor: "#F4E4C8",
     padding: 30,
     borderRadius: 15,
     borderWidth: 2,
-    borderColor: '#A87C5E',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '50%',       // Widened to fit the bigger image
-    maxWidth: 450,      // Increased max width
+    borderColor: "#A87C5E",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "50%",
+    maxWidth: 450,
   },
+
   rewardTitle: {
     fontSize: 24,
-    fontFamily: 'serif',
-    fontWeight: 'bold',
-    color: '#5A4A32',
+    fontFamily: "serif",
+    fontWeight: "bold",
+    color: "#5A4A32",
     marginBottom: 8,
-    textAlign: 'center',
+    textAlign: "center",
   },
+
   rewardSubtitle: {
     fontSize: 15,
-    fontFamily: 'serif',
-    color: '#5A4A32',
+    fontFamily: "serif",
+    color: "#5A4A32",
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
+
   rewardImage: {
     width: 150,
-    height: 150, 
+    height: 150,
     marginBottom: 25,
   },
+
   rewardButton: {
-    backgroundColor: '#A87C5E',
+    backgroundColor: "#A87C5E",
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 8,
     borderWidth: 2,
-    borderColor: '#5A4A32',
+    borderColor: "#5A4A32",
   },
+
   rewardButtonText: {
-    color: '#FFF',
-    fontFamily: 'serif',
-    fontWeight: 'bold',
+    color: "#FFF",
+    fontFamily: "serif",
+    fontWeight: "bold",
     fontSize: 18,
   },
 });

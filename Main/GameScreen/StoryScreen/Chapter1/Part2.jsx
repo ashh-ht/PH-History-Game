@@ -1,25 +1,8 @@
 export const Chapter1_Part2 = [
 
-
-  {
-    type: "system",
-    intro: true,
-    text: "The arrival of the Spanish changed life across the islands.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
-  },
-
-  {
-    type: "system",
-    intro: true,
-    text: "For some, accepting their rule was never an option.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
-  },
-
-  // GAME ENTRY
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 1 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // ===========================================
+  // SCENE 1: THE REFUSAL AT INABANGA
+  // ===========================================
 
   {
     type: "scene",
@@ -31,15 +14,17 @@ export const Chapter1_Part2 = [
 
   {
     type: "narrator",
-    text: "The afternoon air in Bohol is heavy. Outside the parish church, Francisco Dagohoy\nstands grieving for his brother, Sagarino.",
+    text: "In 1744, Francisco Dagohoy loses his brother, Sagarino.",
     background: require("../../../../Background Images/Part 2/saint paul inabanga church exterior.png"),
     music: "grief",
     unlock: ["dagohoy-1"]
   },
 
+  // SFX: church ambience, footsteps
+
   {
     type: "narrator",
-    text: "Sagarino died while carrying out Father Morales's orders. Yet the priest\nrefuses to give him a proper burial.",
+    text: "Sagarino dies while carrying out a priest's orders.\nBut Father Gaspar Morales refuses him a proper burial.",
     background: require("../../../../Background Images/Part 2/saint paul inabanga church interior.png"),
     unlock: ["morales-1", "morales-2"]
   },
@@ -50,15 +35,17 @@ export const Chapter1_Part2 = [
     background: require("../../../../Background Images/Part 2/saint paul inabanga church interior.png"),
     characters: [
       {
+        name: "FRANCISCO DAGOHOY",
         source: require("../../../../Character Images/Chapter 2/Dagohoy Mad.png"),
         position: "left"
       },
       {
+        name: "FATHER GASPAR MORALES",
         source: require("../../../../Character Images/Chapter 2/Morales.png"),
         position: "right"
       }
     ],
-    text: "Padre, pinatay po ang aking kapatid habang tinutupad ang inyong utos."
+    text: "Padre, namatay ang aking kapatid habang tinutupad ang inyong utos."
   },
 
   {
@@ -67,16 +54,18 @@ export const Chapter1_Part2 = [
     background: require("../../../../Background Images/Part 2/saint paul inabanga church interior.png"),
     characters: [
       {
+        name: "FRANCISCO DAGOHOY",
         source: require("../../../../Character Images/Chapter 2/Dagohoy Mad.png"),
         position: "left"
       },
       {
+        name: "FATHER GASPAR MORALES",
         source: require("../../../../Character Images/Chapter 2/Morales.png"),
         position: "right"
       }
     ],
-    text: "Bakit ninyo siya pinakakaitan ng tamang paglilibing?",
-    translation: "He died doing his duty. Why are you refusing him a proper burial?"
+    text: "Bakit ninyo siya pinagkakaitan ng tamang libing?",
+    translation: "Why are you refusing him a proper burial?"
   },
 
   {
@@ -85,10 +74,12 @@ export const Chapter1_Part2 = [
     background: require("../../../../Background Images/Part 2/saint paul inabanga church interior.png"),
     characters: [
       {
+        name: "FATHER GASPAR MORALES",
         source: require("../../../../Character Images/Chapter 2/Morales Talking.png"),
         position: "right"
       },
       {
+        name: "FRANCISCO DAGOHOY",
         source: require("../../../../Character Images/Chapter 2/Dagohoy Done.png"),
         position: "left"
       }
@@ -102,15 +93,18 @@ export const Chapter1_Part2 = [
     background: require("../../../../Background Images/Part 2/saint paul inabanga church interior.png"),
     characters: [
       {
+        name: "FRANCISCO DAGOHOY",
         source: require("../../../../Character Images/Chapter 2/Dagohoy Mad.png"),
         position: "left"
       },
       {
+        name: "FATHER GASPAR MORALES",
         source: require("../../../../Character Images/Chapter 2/Morales.png"),
         position: "right"
       }
     ],
-    text: "Sinuway niya ang panganib para sa inyo!"
+    text: "Isinugal niya ang buhay niya para sa inyo!",
+    translation: "He risked his life for you!"
   },
 
   {
@@ -119,38 +113,37 @@ export const Chapter1_Part2 = [
     background: require("../../../../Background Images/Part 2/saint paul inabanga church interior.png"),
     characters: [
       {
+        name: "FRANCISCO DAGOHOY",
         source: require("../../../../Character Images/Chapter 2/Dagohoy Mad.png"),
         position: "left"
       },
       {
+        name: "FATHER GASPAR MORALES",
         source: require("../../../../Character Images/Chapter 2/Morales.png"),
         position: "right"
       }
     ],
-    text: "Kung wala man lang paggalang ang inyong simbahan para sa mga tapat\nna lingkod, hindi na kami dapat manatiling tapat!",
-    translation: "If your church has no respect for a loyal servant, then we should not have to remain loyal."
+    text: "Kung walang paggalang ang inyong simbahan sa mga tapat na lingkod,\Nbakit pa kami mananatiling tapat?",
+    translation: "If your church cannot respect loyal servants, why should we remain loyal?"
   },
 
-  //Q2_1 here
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // CHOICE 2.1
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "choice",
     title: "Choice 2.1: You are Francisco Dagohoy",
-    question: "Father Gaspar Morales has refused your brother a proper burial.",
+    question: "Your brother has been denied a proper burial. What will you do?",
     background: require("../../../../Background Images/Part 2/saint paul inabanga church interior.png"),
 
     choices: [
       {
-        text: "Speak out and lead your people\nto the mountains.",
+        text: "Lead your people to the mountains.",
         speaker: "FRANCISCO DAGOHOY",
-        dialogue: "Sobra na ang ginawa nila sa ating mga pamilya! Panahon na para umalis\ntayo at magsimula sa kabundukan.",
-        translation: "They've done enough to our families. It's time for us to leave and start anew in the mountains.",
+        dialogue: "Sobra na ang ginawa nila sa ating mga pamilya! Panahon na para magsimula tayo sa kabundukan.",
+        translation: "They've done enough to our families. It's time to start anew in the mountains.",
         characters: [
           {
+            name: "FRANCISCO DAGOHOY",
             source: require("../../../../Character Images/Chapter 2/Dagohoy Mad.png"),
             position: "center"
           }
@@ -158,63 +151,107 @@ export const Chapter1_Part2 = [
       },
 
       {
-        text: "Appeal to a higher church\nauthority first.",
+        text: "Appeal to a higher church authority.",
         speaker: "FRANCISCO DAGOHOY",
-        dialogue: "Makikipag-usap muna ako sa Obispo. Baka may magawa pa\nsiya tungkol dito.",
-        translation: "I'll speak to the Bishop first. Maybe he can still do something about this.",
+        dialogue: "Makikipag-usap muna ako sa Obispo. Baka may magawa pa siya.",
+        translation: "I'll speak to the Bishop first. Maybe he can still help.",
         characters: [
           {
+            name: "FRANCISCO DAGOHOY",
             source: require("../../../../Character Images/Chapter 2/Dagohoy Done.png"),
             position: "center"
           }
         ]
       }
     ],
-
-
   },
 
-
-  // CONTINUE
+  // SFX: footsteps, rustling leaves
 
   {
     type: "narrator",
-    text: "No compromise is reached. Dagohoy gathers about three thousand Boholanos\nand leads them into the mountains.",
+    text: "No compromise is reached. Dagohoy leads about 3,000 Boholanos into the mountains.",
     background: require("../../../../Background Images/Part 2/Bohol highlands jungle pass.png"),
     unlock: ["Timeline_1744", "dagohoy-2", "morales-3"]
   },
 
-  //Q2_2 here
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 2
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // ===========================================
+  // SCENE 2: FLIGHT TO THE MOUNTAINS
+  // ===========================================
 
   {
     type: "scene",
     title: "Flight to the Mountains",
     date: "1744",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx:'hiking'
+    sfx: 'hiking'
   },
 
   {
     type: "narrator",
-    text: "In the mountains, Dagohoy along with the three thousand Boholanos build farms\nand organize their own community.",
+    text: "Far from Spanish control, the rebels build farms and a new home in the mountains.",
     background: require("../../../../Background Images/Part 2/Mountain settlement.png")
   },
+
+  // EXTRA CHOICE: SURVIVING IN THE MOUNTAINS
+  // Uses existing background and character assets.
+
+  {
+    type: "choice",
+    title: "Life in the Mountains",
+    question: "Your people need food and protection. What should you focus on first?",
+    background: require("../../../../Background Images/Part 2/Mountain settlement.png"),
+
+    choices: [
+      {
+        text: "Grow food for the families.",
+        speaker: "FRANCISCO DAGOHOY",
+        dialogue: "Unahin natin ang pagkain. Walang dapat magutom sa ating komunidad.",
+        translation: "Let's focus on food first. No one in our community should go hungry.",
+        characters: [
+          {
+            name: "FRANCISCO DAGOHOY",
+            source: require("../../../../Character Images/Chapter 2/Dagohoy Talking.png"),
+            position: "center"
+          }
+        ]
+      },
+
+      {
+        text: "Strengthen our defenses.",
+        speaker: "FRANCISCO DAGOHOY",
+        dialogue: "Patibayin natin ang mga harang. Dapat handa tayo sa anumang pag-atake.",
+        translation: "Let's strengthen our barriers. We must be ready for any attack.",
+        characters: [
+          {
+            name: "FRANCISCO DAGOHOY",
+            source: require("../../../../Character Images/Chapter 2/Dagohoy Talking.png"),
+            position: "center"
+          }
+        ]
+      }
+    ],
+  },
+
+  // SFX: marching, distant shouts
 
   {
     type: "narrator",
-    text: "There, they start a new outside of Spanish control and forced labor.",
-    background: require("../../../../Background Images/Part 2/Mountain settlement.png")
+    text: "Spanish forces return to crush the rebellion. But the mountain community refuses to fall.",
+    background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png")
   },
 
+  // SFX: Fighting fighting
 
+  {
+    type: "narrator",
+    text: "A fight ensues, and the mountain community refuses to fall.",
+    background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png")
+  },
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 3
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // SFX: gunshots, fighting, swords clashing
+  // These are suggestions for a future audio pass.
+  // Do not add them as sfx values unless the assets exist.
 
   {
     type: "scene",
@@ -222,49 +259,46 @@ export const Chapter1_Part2 = [
     date: "Late 18th Century – 1827",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
     sfx: 'pagesFlipping',
-    
   },
 
   {
     type: "narrator",
-    text: "Decades pass. The mountain community grows from a around three thousand\npeople into a population of around twenty thousand.",
+    text: "Decades pass. The community grows from about 3,000 people to nearly 20,000.",
     background: require("../../../../Background Images/Part 2/Mountain settlement.png"),
     unlock: ["Timeline_1744-1828", "dagohoy-3"]
   },
 
-  {
-    type: "narrator",
-    text: "Spanish expeditions return again and again to regain control, but to no avail.",
-    background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png")
-  },
-
-  //T1_2 here
+  // SFX: marching, distant gunfire
 
   {
     type: "narrator",
-    text: "Officials begin to make attempts to negotiate with the community.",
+    text: "Spanish expeditions attack again and again. Still, they fail to defeat the rebels.",
     background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png")
   },
 
+  {
+    type: "narrator",
+    text: "Then, Spain faces another crisis: the British have taken Manila.",
+    background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png")
+  },
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // CHOICE 2.2
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "choice",
     title: "Choice 2.2: You are Francisco Dagohoy",
-    question: "Spain is weakened after the British take Manila.",
+    question: "Spain is weakened. What should your community do?",
     background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png"),
 
     choices: [
       {
-        text: "Stay focused on protecting your\nmountain community.",
+        text: "Protect the mountain community.",
         speaker: "FRANCISCO DAGOHOY",
-        dialogue: "Hindi pa panahon para lumabas. Bantayan muna natin ang\nating komunidad.",
-        translation: "It's not time to move yet. Let's protect our community first.",
+        dialogue: "Hindi pa panahon para lumabas. Bantayan muna natin ang ating komunidad.",
+        translation: "It's not time to leave yet. Let's protect our community first.",
         characters: [
           {
+            name: "FRANCISCO DAGOHOY",
             source: require("../../../../Character Images/Chapter 2/Dagohoy Talking.png"),
             position: "center"
           }
@@ -272,50 +306,49 @@ export const Chapter1_Part2 = [
       },
 
       {
-        text: "Send scouts to see if other islands\nwant to join you.",
+        text: "Seek allies from nearby islands.",
         speaker: "FRANCISCO DAGOHOY",
-        dialogue: "Magpadala tayo ng mga tagamasid sa Leyte at Cebu. Alamin natin\nkung handa silang sumama sa atin.",
-        translation: "Let's send scouts to Leyte and Cebu. Let's see if they're willing to join us.",
+        dialogue: "Magpadala tayo ng mga tagamasid sa Leyte at Cebu. Alamin natin kung may sasama sa atin.",
+        translation: "Let's send scouts to Leyte and Cebu. We'll see if others will join us.",
         characters: [
           {
+            name: "FRANCISCO DAGOHOY",
             source: require("../../../../Character Images/Chapter 2/Dagohoy Talking.png"),
             position: "center"
           }
         ]
       }
     ],
-
   },
 
-  // CONTINUE
-
+  // SFX: footsteps, wind through trees
 
   {
     type: "narrator",
-    text: "No large alliance forms. The mountain community remains on its own.",
+    text: "No large alliance forms. The Boholanos continue to defend their home on their own.",
     background: require("../../../../Background Images/Part 2/Mountain settlement.png")
   },
 
+  // SFX: marching, boots on rocky ground
+
   {
     type: "narrator",
-    text: "In 1827, a Spanish expedition of 2,200 soldiers enters the mountains.",
+    text: "In 1827, 2,200 Spanish soldiers march into the mountains to confront the rebels.",
     background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png"),
     unlock: ["Timeline_1827"]
   },
 
-  //T3_2 here 
+  // SFX: gunshots, fighting, then silence
 
   {
     type: "narrator",
-    text: "After a difficult standoff, the expedition withdraws. The Boholanos\nsuccessfully defend their territory.",
+    text: "After a difficult standoff, the expedition withdraws. The Boholanos hold their ground.",
     background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png")
   },
 
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 4
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // ===========================================
+  // SCENE 4: THE SANZ CAMPAIGN
+  // ===========================================
 
   {
     type: "scene",
@@ -323,78 +356,78 @@ export const Chapter1_Part2 = [
     date: "1828–1829",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
     sfx: 'marching',
-    
   },
 
   {
     type: "narrator",
-    text: "Governor-General Mariano Ricafort sends Captain Manuel Sanz to lead 6,000\nsoldiers into Bohol as a final campaign to retake control.",
+    text: "Governor-General Mariano Ricafort sends Captain Manuel Sanz\nwith 6,000 soldiers to retake Bohol.",
     background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png"),
     unlock: ["sanz-1", "ricafort-1"]
+    // SFX: marching, drums, soldiers assembling
   },
 
-  //Q3_2 here
+  {
+    type: "narrator",
+    text: "After 85 years of resistance, the rebels face a difficult choice: accept peace or keep fighting.",
+    background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png")
+  },
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // CHOICE 2.3
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "choice",
     title: "Choice 2.3: You are a Boholano Rebel Leader",
-    question: "In 1829, Captain Manuel Sanz's army arrives. After spending 85 years in the\nmountains, the Spanish offer peace and pardon or war.",
+    question: "Spain offers peace and a pardon. What will you choose?",
     background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png"),
 
     choices: [
       {
-        text: "Accept the offer to spare your people\nfrom more fighting.",
-        speaker: "REBEL LEADER",
-        dialogue: "Tama na ang labanan. Tanggapin natin ang alok nila para wala\nng buhay ang mawawala.",
-        translation: "Enough of the fighting. Let's accept their offer so no more lives are lost.",
+        text: "Accept peace to protect your people.",
+        speaker: "FRANCISCO DAGOHOY",
+        dialogue: "Tama na ang labanan. Tanggapin natin ang alok para wala nang buhay na mawala.",
+        translation: "Enough fighting. Let's accept the offer so no more lives are lost.",
         characters: [
           {
-            source: require("../../../../Character Images/Chapter 2/BoholanoRebelLeader.png"),
+            name: "FRANCISCO DAGOHOY",
+            source: require("../../../../Character Images/Chapter 2/Dagohoy Talking.png"),
             position: "center"
           }
         ]
       },
 
       {
-        text: "Ask for time to discuss the offer\nwith the community.",
-        speaker: "REBEL LEADER",
-        dialogue: "Bigyan ninyo kami ng panahon para pag-usapan muna ito\nbilang isang komunidad.",
+        text: "Ask for time to discuss the offer.",
+        speaker: "FRANCISCO DAGOHOY",
+        dialogue: "Bigyan ninyo kami ng panahon para pag-usapan ito bilang isang komunidad.",
         translation: "Give us time to discuss this as a community.",
         characters: [
           {
-            source: require("../../../../Character Images/Chapter 2/BoholanoRebelLeader.png"),
+            name: "FRANCISCO DAGOHOY",
+            source: require("../../../../Character Images/Chapter 2/Dagohoy Talking.png"),
             position: "center"
           }
         ]
       }
     ],
-
   },
-
-  // CONTINUE
-
 
   {
     type: "narrator",
-    text: "The community ends up choosing peace. Governor-General Ricafort pardons the\n19,420 people living in the mountain state.",
+    text: "In 1829, the rebellion ends. Ricafort pardons 19,420 people from the mountain community.",
     background: require("../../../../Background Images/Part 2/bohol 19th century town plaza.png"),
     unlock: ["Timeline_1829_08-31", "ricafort-2", "sanz-2", "dagohoy-4"]
   },
 
   {
     type: "narrator",
-    text: "They resettle in lowland towns including Batuan, Cabulao, Catigbian, and Bilar.",
+    text: "They return to lowland towns, including Batuan, Cabulao, Catigbian, and Bilar.",
     background: require("../../../../Background Images/Part 2/bohol 19th century town plaza.png")
   },
 
   {
     type: "scene",
-    title: "After 85 years,",
-    date: "the Dagohoy rebellion comes to an end.",
+    title: "After 85 Years",
+    date: "The Dagohoy Rebellion Comes to an End",
     background: require("../../../../Background Images/Usuals/Black Background.jpg"),
   },
 
@@ -402,9 +435,9 @@ export const Chapter1_Part2 = [
     type: "decipher",
   },
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // ===========================================
   // QUIZ TIME
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // ===========================================
 
   {
     type: "scene",
@@ -425,9 +458,10 @@ export const Chapter1_Part2 = [
     correctIndex: 1,
     unlock: ["remnant-part2-1"]
   },
+
   {
     type: "quiz",
-    question: "Where did Dagohoy and his followers establish their community?",
+    question: "Where did Dagohoy and his followers build their community?",
     options: [
       "Along the coast of Cebu",
       "In the mountains of Bohol",
@@ -437,9 +471,10 @@ export const Chapter1_Part2 = [
     correctIndex: 1,
     unlock: ["remnant-part2-2"]
   },
+
   {
     type: "quiz",
-    question: "About how large did Dagohoy's mountain community eventually become?",
+    question: "About how large did the community eventually become?",
     options: [
       "Around 3,000 people",
       "Around 10,000 people",
@@ -449,34 +484,36 @@ export const Chapter1_Part2 = [
     correctIndex: 2,
     unlock: ["remnant-part2-3"]
   },
+
   {
     type: "quiz",
-    question: "What happened when a Spanish expedition of 2,200 soldiers\nentered the mountains in 1827?",
+    question: "What happened when 2,200 Spanish soldiers entered the mountains in 1827?",
     options: [
       "The Boholanos immediately surrendered",
-      "The expedition withdrew after\na difficult standoff",
+      "The expedition withdrew after a difficult standoff",
       "The community moved to Cebu",
       "Dagohoy signed a peace treaty with Spain"
     ],
     correctIndex: 1,
     unlock: ["remnant-part2-4"]
   },
+
   {
     type: "quiz",
-    question: "How did the Dagohoy rebellion finally come to an end in 1829?",
+    question: "How did the rebellion end in 1829?",
     options: [
       "The Spanish captured every rebel leader",
-      "The community accepted peace and was\ngranted a pardon",
+      "The community accepted peace and received a pardon",
       "The Boholanos left the Philippines",
-      "The mountain community defeated the\nSpanish completely"
+      "The mountain community defeated Spain completely"
     ],
     correctIndex: 1,
     unlock: ["remnant-part2-5"]
   },
-  // NEW QUESTION ADDED
+
   {
     type: "quiz",
-    question: "Who led the final Spanish expedition of 6,000 soldiers that ended the Dagohoy rebellion?",
+    question: "Who led the final Spanish campaign?",
     options: [
       "Captain Manuel Sanz",
       "Governor-General Mariano Ricafort",
@@ -485,6 +522,13 @@ export const Chapter1_Part2 = [
     ],
     correctIndex: 0,
     unlock: ["remnant-part2-6"]
+  },
+
+  {
+    type: "scene",
+    title: "Chapter Complete",
+    date: "The longest rebellion in Philippine history has ended.",
+    background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
 
   {

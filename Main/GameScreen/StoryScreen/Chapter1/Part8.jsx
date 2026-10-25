@@ -1,138 +1,41 @@
+
 export const Chapter1_Part8 = [
 
+  // ===========================================
+  // OPENING
+  // ===========================================
+
   {
     type: "system",
     intro: true,
-    text: "Spain's power in the Philippines was weakening, but the Revolution was not yet over.",
+    text: "Spain's power was weakening, but the fight for freedom was not over.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
 
   {
     type: "system",
     intro: true,
-    text: "As the struggle against Spain continued, a new power entered the story\nand the meaning of independence became more uncertain.",
+    text: "Would the world recognize Philippine independence?",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
 
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 1
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // ===========================================
+  // SCENE 1: THE ROAD TO KAWIT
+  // ===========================================
 
   {
     type: "scene",
     title: "The Road to Kawit",
-    date: "December 1897 – May 1898",
+    date: "December 1897 to May 1898",
     background: require("../../../../Background Images/Usuals/Black Background.jpg"),
-    sfx:'footstepsPavement'
+    sfx: "footstepsPavement"
   },
 
   {
     type: "narrator",
-    text: "After Bonifacio's death, the Revolution continues under Aguinaldo's leadership,\nbut Spanish forces keep pushing the revolutionaries back.",
-    background: require("../../../../Background Images/Part 8/Manila Bay_mock battle.png")
-  },
-
-  {
-    type: "narrator",
-    text: "By the second half of 1897, Aguinaldo and his forces retreat\nto Biak-na-Bato in Bulacan.",
-    background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png")
-  },
-
-  {
-    type: "narrator",
-    text: "There, they establish a revolutionary government and continue fighting Spain.",
-    background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png")
-  },
-
-  {
-    type: "narrator",
-    text: "Later that year, both sides agree to negotiate. The result is the Pact of Biak-na-Bato.",
-    background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png"),
-    unlock: ["Timeline_1897_12-14", "aguinaldo-4"]
-  },
-
-  {
-    type: "narrator",
-    text: "Under the agreement, Aguinaldo and other revolutionary leaders leave for Hong\nKong in exchange for money and promises of reforms from Spain.",
+    text: "After the Pact of Biak-na-Bato, Aguinaldo and other leaders went into exile in Hong Kong.",
     background: require("../../../../Background Images/Part 8/Victoria Harbour, hong kong 19th century.png"),
-    unlock: ["diaz-3"]
-  },
-
-  {
-    type: "narrator",
-    text: "For the moment, the fighting pauses. But the peace does not last.",
-    background: require("../../../../Background Images/Part 8/Victoria Harbour, hong kong 19th century.png")
-  },
-
-  {
-    type: "narrator",
-    text: "In April 1898, while Aguinaldo was at Singapore, war breaks out between Spain\nand the United States. The situation changes almost overnight.",
-    background: require("../../../../Background Images/Part 8/colonial Singapore, exterior 1.png"),
-    unlock: ["Timeline_1898_05-01", "dewey-1"]
-  },
-
-  {
-    type: "narrator",
-    text: "Aguinaldo meets U.S. Consul E. Spencer Pratt, who encourages him to return\nto the Philippines and resume the fight against Spain.",
-    background: require("../../../../Background Images/Part 8/U.S. Consul Pratt's office, Singapore 2.png"),
-    unlock: ["Timeline_1898_04", "pratt-1"]
-  },
-
-  {
-    type: "dialogue",
-    speaker: "E. SPENCER PRATT",
-    characters: [
-      {
-        source: require("../../../../Character Images/Chapter 8/Pratt.png"),
-        position: "left"
-      },
-      {
-        source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
-        position: "right"
-      }
-    ],
-    text: "Bumalik kayo sa Pilipinas at ipagpatuloy ang laban sa Espanya.\nMakikipagtulungan ang Amerika laban sa kanila.",
-    translation: "Return to the Philippines and continue the fight against Spain. America will cooperate against them.",
-    background: require("../../../../Background Images/Part 8/U.S. Consul Pratt's office, Singapore 2.png"),
-    unlock: ["pratt-2", "wildman-1"]
-  },
-
-  {
-    type: "narrator",
-    text: "Aguinaldo eventually returns aboard an American ship, arriving in the\nPhilippines on May 19, 1898.",
-    background: require("../../../../Background Images/Part 8/American ship deck and Cavite landing (Dewey conversation).png"),
-    unlock: ["Timeline_1898_05-19", "dewey-2"]
-  },
-
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 2
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  {
-    type: "scene",
-    title: "Alapan and the First Flag",
-    date: "May 28, 1898",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx:'windyFlag'
-  },
-
-  {
-    type: "narrator",
-    text: "Aguinaldo quickly resumes the revolution. On May 28, Filipino forces\ndefeat Spanish troops at Alapan in Imus, Cavite.",
-    background: require("../../../../Background Images/Part 8/Alapan Cavite City HQ (first flag unfurled).png"),
-    music: "somber",
-    unlock: ["Timeline_1898_05-24"]
-  },
-
-  {
-    type: "narrator",
-    text: "After the victory, the Filipino flag sewn in Hong Kong is publicly\nunfurled for the first time on Philippine soil.",
-    background: require("../../../../Background Images/Part 8/Alapan Cavite City HQ (first flag unfurled).png"),
-    unlock: ["Timeline_1898_05-28"]
+    unlock: ["Timeline_1897_12-14", "aguinaldo-4", "diaz-3"]
   },
 
   {
@@ -140,47 +43,172 @@ export const Chapter1_Part8 = [
     speaker: "EMILIO AGUINALDO",
     characters: [
       {
+        name: "aguinaldo",
         source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
         position: "center"
       }
     ],
-    text: "Ito na. Ito ang unang beses na lalantad ang watawat na ito sa\nhangin ng ating sariling bayan.",
-    translation: "This is it. This is the first time this flag will fly in the wind of our own homeland.",
-    background: require("../../../../Background Images/Part 8/Alapan Cavite City HQ (first flag unfurled).png")
-  },
-
-  {
-    type: "narrator",
-    text: "Filipino forces continue to take towns across Luzon. Spanish forces are pushed\nback toward Manila, where their remaining troops are concentrated.",
-    background: require("../../../../Background Images/Part 8/Manila Bay_mock battle.png"),
-    unlock: ["trias-2", "diwa-3"]
-  },
-
-  //T3_8 here
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 3
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  {
-    type: "scene",
-    title: "The Draft of the Acta",
-    date: "Early June 1898",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx:'stampPapers'
-  },
-
-  {
-    type: "narrator",
-    text: "As the revolution gains ground, Aguinaldo's government begins preparing a\nformal declaration of independence.",
+    text: "Kung aalis tayo, hindi ibig sabihin na isusuko natin ang ating pangarap na kalayaan.",
+    translation: "If we leave, it does not mean we are surrendering our dream of independence.",
     background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png")
   },
 
   {
+    type: "system",
+    intro: true,
+    text: "In April 1898, war broke out between Spain and the United States.",
+    background: require("../../../../Background Images/Part 8/colonial Singapore, exterior 1.png"),
+    unlock: ["Timeline_1898_04", "Timeline_1898_05-01", "dewey-1"]
+  },
+
+  {
+    type: "dialogue",
+    speaker: "E. SPENCER PRATT",
+    characters: [
+      {
+        name: "pratt",
+        source: require("../../../../Character Images/Chapter 8/Pratt.png"),
+        position: "left"
+      },
+      {
+        name: "aguinaldo",
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
+        position: "right"
+      }
+    ],
+    text: "General Aguinaldo, this war may give your Revolution another chance.",
+    background: require("../../../../Background Images/Part 8/U.S. Consul Pratt's office, Singapore 2.png"),
+    unlock: ["pratt-1"]
+  },
+
+  {
+    type: "dialogue",
+    speaker: "EMILIO AGUINALDO",
+    characters: [
+      {
+        name: "aguinaldo",
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
+        position: "right"
+      },
+      {
+        name: "pratt",
+        source: require("../../../../Character Images/Chapter 8/Pratt.png"),
+        position: "left"
+      }
+    ],
+    text: "Will America recognize our independence?",
+    background: require("../../../../Background Images/Part 8/U.S. Consul Pratt's office, Singapore 2.png")
+  },
+
+  {
+    type: "dialogue",
+    speaker: "E. SPENCER PRATT",
+    characters: [
+      {
+        name: "pratt",
+        source: require("../../../../Character Images/Chapter 8/Pratt.png"),
+        position: "left"
+      },
+      {
+        name: "aguinaldo",
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
+        position: "right"
+      }
+    ],
+    text: "You should speak with Admiral Dewey. He commands the American fleet.",
+    background: require("../../../../Background Images/Part 8/U.S. Consul Pratt's office, Singapore 2.png"),
+    unlock: ["pratt-2", "wildman-1"]
+  },
+
+  {
+    type: "dialogue",
+    speaker: "EMILIO AGUINALDO",
+    characters: [
+      {
+        name: "aguinaldo",
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
+        position: "right"
+      },
+      {
+        name: "pratt",
+        source: require("../../../../Character Images/Chapter 8/Pratt.png"),
+        position: "left"
+      }
+    ],
+    text: "A promise of help is not enough. Our country needs genuine independence.",
+    background: require("../../../../Background Images/Part 8/U.S. Consul Pratt's office, Singapore 2.png")
+  },
+
+  {
     type: "narrator",
-    text: "Ambrosio Rianzares Bautista prepares the document, including language\nexpressing friendship toward the United States.",
-    background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png"),
-    unlock: ["bautista-1"]
+    text: "Aguinaldo returned to the Philippines on May 19, 1898, and resumed the Revolution.",
+    background: require("../../../../Background Images/Part 8/American ship deck and Cavite landing (Dewey conversation).png"),
+    unlock: ["Timeline_1898_05-19", "dewey-2"]
+  },
+
+  // ===========================================
+  // SCENE 2: ALAPAN AND THE FIRST FLAG
+  // ===========================================
+
+  {
+    type: "scene",
+    title: "Alapan and the First Flag",
+    date: "May 28, 1898",
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx: "windyFlag"
+  },
+
+  {
+    type: "narrator",
+    text: "Filipino forces defeated Spanish troops at Alapan, Cavite.",
+    background: require("../../../../Background Images/Part 8/Alapan Cavite City HQ (first flag unfurled).png"),
+    music: "somber",
+    unlock: ["Timeline_1898_05-24", "Timeline_1898_05-28"]
+  },
+
+  {
+    type: "dialogue",
+    speaker: "EMILIO AGUINALDO",
+    characters: [
+      {
+        name: "aguinaldo",
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
+        position: "center"
+      }
+    ],
+    text: "Itaas ang watawat! Ipakita natin kung ano ang ipinaglalaban natin.",
+    translation: "Raise the flag! Let us show what we are fighting for.",
+    background: require("../../../../Background Images/Part 8/Alapan Cavite City HQ (first flag unfurled).png")
+  },
+
+  {
+    type: "dialogue",
+    speaker: "EMILIO AGUINALDO",
+    characters: [
+      {
+        name: "aguinaldo",
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
+        position: "center"
+      }
+    ],
+    text: "Marami pa tayong kailangang gawin. Ngunit ngayon, may dahilan tayong umasa.",
+    translation: "We still have much to do. But today, we have reason to hope.",
+    background: require("../../../../Background Images/Part 8/Alapan Cavite City HQ (first flag unfurled).png"),
+    unlock: ["trias-2", "diwa-3"]
+  },
+
+  // T3_8 here
+
+  // ===========================================
+  // SCENE 3: THE DRAFT OF THE ACTA
+  // ===========================================
+
+  {
+    type: "scene",
+    title: "The Draft of the Acta",
+    date: "June 1898",
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx: "stampPapers"
   },
 
   {
@@ -188,97 +216,215 @@ export const Chapter1_Part8 = [
     speaker: "AMBROSIO RIANZARES BAUTISTA",
     characters: [
       {
+        name: "bautista",
         source: require("../../../../Character Images/Chapter 8/Rianzares.png"),
-        position: "center"
+        position: "left"
+      },
+      {
+        name: "aguinaldo",
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
+        position: "right"
       }
     ],
-    text: "...sa ilalim ng pangangalaga ng makapangyarihan at makataong bansang\nHilagang Amerika, ating kaibigan at tagapagtanggol...",
-    translation: "...under the protection of the mighty and humane North American nation, our friend and protector...",
+    text: "General, inihahanda ko na ang dokumento ng ating kalayaan.",
+    translation: "General, I am preparing the document declaring our independence.",
+    background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png"),
+    unlock: ["bautista-1"]
+  },
+
+  {
+    type: "dialogue",
+    speaker: "EMILIO AGUINALDO",
+    characters: [
+      {
+        name: "aguinaldo",
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
+        position: "right"
+      },
+      {
+        name: "bautista",
+        source: require("../../../../Character Images/Chapter 8/Rianzares.png"),
+        position: "left"
+      }
+    ],
+    text: "Malinaw bang sinasabi nito na malaya ang Pilipinas?",
+    translation: "Does it clearly state that the Philippines is free?",
     background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png")
   },
 
-  //Q3_8 here
+  {
+    type: "dialogue",
+    speaker: "AMBROSIO RIANZARES BAUTISTA",
+    characters: [
+      {
+        name: "bautista",
+        source: require("../../../../Character Images/Chapter 8/Rianzares.png"),
+        position: "left"
+      },
+      {
+        name: "aguinaldo",
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
+        position: "right"
+      }
+    ],
+    text: "Oo. Ngunit binabanggit din dito ang Amerika bilang kaibigan at tagapagtanggol.",
+    translation: "Yes. But it also describes America as a friend and protector.",
+    background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png")
+  },
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 8.1
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  {
+    type: "dialogue",
+    speaker: "EMILIO AGUINALDO",
+    characters: [
+      {
+        name: "aguinaldo",
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
+        position: "right"
+      },
+      {
+        name: "bautista",
+        source: require("../../../../Character Images/Chapter 8/Rianzares.png"),
+        position: "left"
+      }
+    ],
+    text: "Kaibigan ba talaga sila? O may sarili rin silang layunin?",
+    translation: "Are they truly our friends? Or do they have their own goals?",
+    background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png")
+  },
+
+  // Q3_8 here
+
+  // ===========================================
+  // CHOICE 8.1: AMERICAN GOODWILL
+  // ===========================================
 
   {
     type: "choice",
     title: "Choice 8.1: You are Emilio Aguinaldo",
-    question: "Bautista is reading his draft which speaks warmly of the United States.",
+    question: "Bautista's draft describes the United States as a friend and protector.",
     background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png"),
     choices: [
       {
-        text: "Approve the Acta as written to\nsecure American goodwill.",
+        text: "Keep the wording to encourage\nAmerican support.",
         speaker: "EMILIO AGUINALDO",
-        dialogue: "Panatiliin muna natin ang mga salitang ito. Kailangan natin ang\nkanilang suporta sa ngayon.",
-        translation: "Let's keep these words. We need their support for now.",
+        dialogue: "Panatilihin muna natin ito. Kailangan natin ang kanilang suporta.",
+        translation: "Let us keep it for now. We need their support.",
         characters: [
           {
+            name: "bautista",
             source: require("../../../../Character Images/Chapter 8/Rianzares.png"),
             position: "left"
           },
           {
+            name: "aguinaldo",
             source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
             position: "right"
           }
         ]
       },
       {
-        text: "Ask Bautista to soften the\npro-American language.",
+        text: "Stress Filipino independence.",
         speaker: "EMILIO AGUINALDO",
-        dialogue: "Bawasan natin ang papuri. Dapat malinaw na para sa\natin ang kalayaan.",
-        translation: "Let's tone down the praise. It should be clear that this independence belongs to us.",
+        dialogue: "Linawin nating ang kalayaan ay para sa Pilipinas, hindi sa ibang kapangyarihan.",
+        translation: "Let us make clear that independence belongs to the Philippines, not another power.",
         characters: [
           {
+            name: "bautista",
             source: require("../../../../Character Images/Chapter 8/Rianzares.png"),
             position: "left"
           },
           {
+            name: "aguinaldo",
             source: require("../../../../Character Images/Chapter 8/Emilio Reading.png"),
             position: "right"
           }
         ]
       }
-    ],
-    nextScene: 23
+    ]
   },
 
-
-  // CONTINUE
-
   {
-    type: "narrator",
-    text: "The declaration is completed and prepared for its public reading in Kawit.",
+    type: "dialogue",
+    speaker: "AMBROSIO RIANZARES BAUTISTA",
+    characters: [
+      {
+        name: "bautista",
+        source: require("../../../../Character Images/Chapter 8/Rianzares.png"),
+        position: "left"
+      },
+      {
+        name: "aguinaldo",
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
+        position: "right"
+      }
+    ],
+    text: "Handa na ang dokumento. Kailangang marinig ito ng ating mga kababayan.",
+    translation: "The document is ready. Our people must hear it.",
     background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png")
   },
 
+  // Q2_8 here
 
-  //Q2_8 here
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 4
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // ===========================================
+  // SCENE 4: THE DECLARATION AT KAWIT
+  // ===========================================
 
   {
     type: "scene",
     title: "The Declaration at Kawit",
     date: "June 12, 1898",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx: 'windyFlag'
+    sfx: "windyFlag"
   },
 
   {
-    type: "narrator",
-    text: "On June 12, 1898, Aguinaldo declares Philippine independence from\nthe balcony of his home in Kawit, Cavite.",
+    type: "dialogue",
+    speaker: "EMILIO AGUINALDO",
+    characters: [
+      {
+        name: "aguinaldo",
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious R.png"),
+        position: "center"
+      },
+      {
+        name: "crowd",
+        source: require("../../../../Character Images/Chapter 5/cheeringcrowd.png"),
+        position: "left"
+      },
+      {
+        name: "crowd",
+        source: require("../../../../Character Images/Chapter 5/cheeringcrowd.png"),
+        position: "right"
+      }
+    ],
+    text: "Ngayong araw, ipahahayag natin sa mundo ang kalayaang matagal nating ipinaglaban.",
+    translation: "Today, we will proclaim to the world the freedom we have fought for so long.",
     background: require("../../../../Background Images/Part 8/Aguinaldo Shrine (with crowd, cannons, bells, flag).png"),
     unlock: ["Timeline_1898_06-12"]
   },
 
   {
-    type: "narrator",
-    text: "The flag is raised as the Act of the Declaration of Independence is read\nbefore the gathered crowd.",
+    type: "dialogue",
+    speaker: "AMBROSIO RIANZARES BAUTISTA",
+    characters: [
+      {
+        name: "bautista",
+        source: require("../../../../Character Images/Chapter 8/Rianzares.png"),
+        position: "center"
+      },
+      {
+        name: "crowd",
+        source: require("../../../../Character Images/Chapter 5/cheeringcrowd.png"),
+        position: "left"
+      },
+      {
+        name: "crowd",
+        source: require("../../../../Character Images/Chapter 5/cheeringcrowd.png"),
+        position: "right"
+      }
+    ],
+    text: "Mga kababayan, pakinggan ninyo ang pagpapahayag ng kalayaan ng ating bayan!",
+    translation: "Compatriots, hear the proclamation of our country's independence!",
     background: require("../../../../Background Images/Part 8/Aguinaldo Shrine (with crowd, cannons, bells, flag).png"),
     unlock: ["bautista-2"]
   },
@@ -288,319 +434,498 @@ export const Chapter1_Part8 = [
     speaker: "EMILIO AGUINALDO",
     characters: [
       {
+        name: "aguinaldo",
         source: require("../../../../Character Images/Chapter 8/Emilio Serious R.png"),
         position: "center"
       },
       {
+        name: "crowd",
         source: require("../../../../Character Images/Chapter 5/cheeringcrowd.png"),
         position: "left"
       },
       {
+        name: "crowd",
         source: require("../../../../Character Images/Chapter 5/cheeringcrowd.png"),
         position: "right"
       }
     ],
-    text: "Sa ngalan ng Diyos, ipinapahayag ko at ipinapaalam na malaya\nat independiyente ang Pilipinas!",
-    translation: "In the name of God, I declare and proclaim that the Philippines is free and independent!",
+    text: "Ito ang kalayaang pinangarap natin. Ngunit paano natin ito mapangangalagaan?",
+    translation: "This is the freedom we dreamed of. But how will we protect it?",
     background: require("../../../../Background Images/Part 8/Aguinaldo Shrine (with crowd, cannons, bells, flag).png")
   },
 
-  {
-    type: "narrator",
-    text: "For the revolutionaries gathered there, it is a moment of triumph. But the\nfuture of that independence is still uncertain.",
-    background: require("../../../../Background Images/Part 8/Aguinaldo Shrine (with crowd, cannons, bells, flag).png")
-  },
+  // Q1_8 here
 
-
-  //Q1_8 here
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 5
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // ===========================================
+  // SCENE 5: DICTATOR OR PRESIDENT?
+  // ===========================================
 
   {
     type: "scene",
     title: "Dictator or President?",
     date: "June 23, 1898",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx:'chairSit'
+    sfx: "chairSit"
   },
 
   {
-    type: "narrator",
-    text: "Aguinaldo's government is still being reorganized.",
-    background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png")
-  },
-
-  {
-    type: "narrator",
-    text: "Apolinario Mabini argues that the revolution needs a government with clear\ninstitutions and laws, not power concentrated in one person.",
+    type: "dialogue",
+    speaker: "APOLINARIO MABINI",
+    characters: [
+      {
+        name: "mabini",
+        source: require("../../../../Character Images/Chapter 8/Mabini.png"),
+        position: "left"
+      },
+      {
+        name: "aguinaldo",
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
+        position: "right"
+      }
+    ],
+    text: "General, naipahayag na natin ang kalayaan. Anong uri ng pamahalaan ang itatayo natin?",
+    translation: "General, we have declared independence. What kind of government will we build?",
     background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png"),
     unlock: ["mabini-3"]
   },
 
   {
     type: "dialogue",
-    speaker: "APOLINARIO MABINI",
+    speaker: "EMILIO AGUINALDO",
     characters: [
       {
-        source: require("../../../../Character Images/Chapter 8/Mabini.png"),
-        position: "left"
-      },
-      {
+        name: "aguinaldo",
         source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
         position: "right"
+      },
+      {
+        name: "mabini",
+        source: require("../../../../Character Images/Chapter 8/Mabini.png"),
+        position: "left"
       }
     ],
-    text: "Kung gusto nating kilalanin tayo bilang isang tunay na bansa, kailangan natin ng\npamahalaang may malinaw na saligan.",
-    translation: "If we want to be recognized as a true nation, we need a government with a clear foundation.",
+    text: "Marami pa tayong kalaban. Kailangan nating kumilos nang mabilis.",
+    translation: "We still have many enemies. We must act quickly.",
     background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png")
   },
+
   {
     type: "dialogue",
     speaker: "APOLINARIO MABINI",
     characters: [
       {
+        name: "mabini",
         source: require("../../../../Character Images/Chapter 8/Mabini.png"),
         position: "left"
       },
       {
+        name: "aguinaldo",
         source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
         position: "right"
       }
     ],
-    text: "Hindi dapat nasa isang tao lamang ang kapangyarihan.",
-    translation: "We should not have power resting in one person.",
+    text: "Kung walang malinaw na batas, paano natin mapoprotektahan ang bayan?",
+    translation: "Without clear laws, how can we protect the country?",
     background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png")
   },
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 8.2
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // ===========================================
+  // CHOICE 8.2: BUILDING A GOVERNMENT
+  // ===========================================
 
   {
     type: "choice",
     title: "Choice 8.2: You are Emilio Aguinaldo",
-    question: "Mabini wants the revolutionary government reorganized.",
+    question: "Mabini wants a government with clear laws and institutions.",
     background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png"),
     choices: [
       {
         text: "Accept Mabini's proposal.",
         speaker: "EMILIO AGUINALDO",
-        dialogue: "Gagawin natin ito nang maayos, Apolinario. Kailangan natin ng\npamahalaang may malinaw na saligan.",
-        translation: "We'll do this properly, Apolinario. We need a government with a clear foundation.",
+        dialogue: "Sang-ayon ako. Bumuo tayo ng pamahalaang may malinaw na mga batas.",
+        translation: "I agree. Let us build a government with clear laws.",
         characters: [
           {
+            name: "mabini",
             source: require("../../../../Character Images/Chapter 8/Mabini.png"),
             position: "left"
           },
           {
+            name: "aguinaldo",
             source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
             position: "right"
           }
         ]
       },
       {
-        text: "Ask Mabini to explain the plan first.",
+        text: "Ask Mabini to explain first.",
         speaker: "EMILIO AGUINALDO",
-        dialogue: "Ipaliwanag mo muna sa akin ang buong plano bago tayo magpasya.",
-        translation: "Explain the whole plan to me first before we decide.",
+        dialogue: "Ipaliwanag mo muna ang plano. Kailangan kong maunawaan ang bawat hakbang.",
+        translation: "Explain the plan first. I need to understand each step.",
         characters: [
           {
+            name: "mabini",
             source: require("../../../../Character Images/Chapter 8/Mabini.png"),
             position: "left"
           },
           {
+            name: "aguinaldo",
             source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
             position: "right"
           }
         ]
       }
-    ],
-    nextScene: 35
+    ]
   },
 
   {
     type: "narrator",
-    text: "Aguinaldo accepts the reorganization. On June 23, the Dictatorial Government is\nreplaced by a Revolutionary Government.",
+    text: "On June 23, Aguinaldo established a Revolutionary Government and became its president.",
     background: require("../../../../Background Images/Part 8/Aguinaldo's Kawit study (Acta and Mabini scenes).png"),
     unlock: ["Timeline_1898_06-23", "aguinaldo-5"]
   },
 
+  // Q4_8 here
 
-  //Q4_8 here
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 6
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // ===========================================
+  // SCENE 6: THE SIEGE OF MANILA
+  // ===========================================
 
   {
     type: "scene",
     title: "The Siege of Manila",
-    date: "July – August 1898",
+    date: "July to August 1898",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx: 'marching'
+    sfx: "marching"
   },
 
   {
-    type: "narrator",
-    text: "By July, Filipino forces have surrounded Manila while Spanish troops\nremain inside the walled city.",
+    type: "dialogue",
+    speaker: "EMILIO AGUINALDO",
+    characters: [
+      {
+        name: "aguinaldo",
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious R.png"),
+        position: "center"
+      }
+    ],
+    text: "Napapalibutan na natin ang Maynila. Bakit ayaw tayong papasukin ng mga Amerikano?",
+    translation: "We have surrounded Manila. Why won't the Americans let us enter?",
     background: require("../../../../Background Images/Part 8/Siege of Manila 1898 trenches.png")
   },
 
   {
-    type: "narrator",
-    text: "American forces are also closing in. Aguinaldo's army now faces a difficult question:\nwho will control Manila when Spain finally surrenders?",
+    type: "dialogue",
+    speaker: "APOLINARIO MABINI",
+    characters: [
+      {
+        name: "mabini",
+        source: require("../../../../Character Images/Chapter 8/Mabini.png"),
+        position: "left"
+      },
+      {
+        name: "aguinaldo",
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
+        position: "right"
+      }
+    ],
+    text: "Maaaring nais nilang sila lamang ang mamahala sa pagsuko ng mga Espanyol.",
+    translation: "They may want to control the Spanish surrender themselves.",
     background: require("../../../../Background Images/Part 8/Siege of Manila 1898 trenches.png")
   },
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 8.3
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  {
+    type: "dialogue",
+    speaker: "EMILIO AGUINALDO",
+    characters: [
+      {
+        name: "aguinaldo",
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
+        position: "right"
+      },
+      {
+        name: "mabini",
+        source: require("../../../../Character Images/Chapter 8/Mabini.png"),
+        position: "left"
+      }
+    ],
+    text: "Kung hindi nila tayo kikilalanin ngayon, ano ang mangyayari sa ating kalayaan?",
+    translation: "If they will not recognize us now, what will happen to our independence?",
+    background: require("../../../../Background Images/Part 8/Siege of Manila 1898 trenches.png")
+  },
+
+  // ===========================================
+  // CHOICE 8.3: THE FATE OF MANILA
+  // ===========================================
 
   {
     type: "choice",
     title: "Choice 8.3: You are Emilio Aguinaldo",
-    question: "Manila is surrounded, but American forces are also moving toward the city.",
+    question: "American forces are preparing to capture Manila. What should you do?",
     background: require("../../../../Background Images/Part 8/Siege of Manila 1898 trenches.png"),
     choices: [
       {
-        text: "Wait and coordinate with\nthe Americans.",
+        text: "Seek an agreement with the Americans.",
         speaker: "EMILIO AGUINALDO",
-        dialogue: "Maghintay tayo. Ayaw kong mauwi ito sa labanan sa\npagitan ng magkakampi.",
-        translation: "Let's wait. I don't want this to turn into a fight between allies.",
+        dialogue: "Makipag-usap tayo. Hindi natin kailangan ng panibagong kalaban.",
+        translation: "Let us negotiate. We do not need another enemy.",
         characters: [
           {
-            source: require("../../../../Character Images/Chapter 8/Emilio Serious R.png"),
+            name: "aguinaldo",
+            source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
             position: "center"
           }
         ]
       },
       {
-        text: "Push forward carefully while still keeping\ncommunication open with the Americans",
+        text: "Maintain the siege.",
         speaker: "EMILIO AGUINALDO",
-        dialogue: "Ipagpatuloy natin ang pagkubkob, pero panatilihin nating\nbukas ang usapan sa mga Amerikano.",
-        translation: "Let's continue the siege, but keep communication open with the Americans.",
+        dialogue: "Ipagpatuloy ang pagkubkob. Dapat igalang ang karapatan ng ating bayan.",
+        translation: "Continue the siege. Our people's rights must be respected.",
         characters: [
           {
+            name: "aguinaldo",
             source: require("../../../../Character Images/Chapter 8/Emilio Serious R.png"),
             position: "center"
           }
         ]
       }
-    ],
-    nextScene: 40
-  },
-
-
-  // CONTINUE
-
-  {
-    type: "narrator",
-    text: "On August 13, American and Spanish forces fight the Battle of Manila.",
-    background: require("../../../../Background Images/Part 8/Siege of Manila 1898 trenches.png")
+    ]
   },
 
   {
     type: "narrator",
-    text: "Filipino forces are kept outside the city and do not take part in the surrender negotiations.",
+    text: "On August 13, American forces captured Manila.\nFilipino troops were excluded from the surrender.",
     background: require("../../../../Background Images/Part 8/Siege of Manila 1898 trenches.png"),
     unlock: ["Timeline_1898_08-13_14"]
   },
 
+  {
+    type: "dialogue",
+    speaker: "EMILIO AGUINALDO",
+    characters: [
+      {
+        name: "aguinaldo",
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious R.png"),
+        position: "center"
+      }
+    ],
+    text: "Tumulong tayong lumaban sa Espanya. Bakit tayo ngayon itinataboy?",
+    translation: "We helped fight Spain. Why are we being pushed aside now?",
+    background: require("../../../../Background Images/Part 8/Siege of Manila 1898 trenches.png")
+  },
 
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 7
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // ===========================================
+  // SCENE 7: THE TREATY OF PARIS
+  // ===========================================
 
   {
     type: "scene",
     title: "The Treaty of Paris",
-    date: "August – December 1898",
+    date: "August to December 1898",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx:'chairSit'
+    sfx: "chairSit"
   },
 
   {
-    type: "narrator",
-    text: "Spain formally surrenders Manila to the United States. Filipino representatives\nare not included in the agreement.",
+    type: "dialogue",
+    speaker: "APOLINARIO MABINI",
+    characters: [
+      {
+        name: "mabini",
+        source: require("../../../../Character Images/Chapter 8/Mabini.png"),
+        position: "left"
+      },
+      {
+        name: "aguinaldo",
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
+        position: "right"
+      }
+    ],
+    text: "Nag-uusap ang Espanya at Amerika tungkol sa Pilipinas. Bakit wala tayong kinatawan?",
+    translation: "Spain and America are discussing the Philippines. Why do we have no representative?",
     background: require("../../../../Background Images/Part 8/Treaty of Paris.png"),
     unlock: ["mckinley-1"]
   },
 
   {
-    type: "narrator",
-    text: "On December 10, 1898, Spain and the United States sign the Treaty of Paris.\nSpain cedes the Philippines, Guam, and Puerto Rico to the United States.",
-    background: require("../../../../Background Images/Part 8/Treaty of Paris.png"),
-    unlock: ["Timeline_1898_12-10"]
-  },
-
-  {
-    type: "narrator",
-    text: "The treaty makes clear that the future of the Philippines is now being decided by Spain\nand the United States, despite the Filipino declaration of independence in June.",
+    type: "dialogue",
+    speaker: "EMILIO AGUINALDO",
+    characters: [
+      {
+        name: "aguinaldo",
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
+        position: "right"
+      },
+      {
+        name: "mabini",
+        source: require("../../../../Character Images/Chapter 8/Mabini.png"),
+        position: "left"
+      }
+    ],
+    text: "Hindi ba dapat tayo ang magpasya sa ating kinabukasan?",
+    translation: "Should we not decide our own future?",
     background: require("../../../../Background Images/Part 8/Treaty of Paris.png")
   },
 
   {
     type: "narrator",
-    text: "The revolution that began against Spanish rule now faces a new\npower claiming authority over the islands.",
+    text: "On December 10, 1898, Spain ceded the Philippines to the\nUnited States through the Treaty of Paris.",
+    background: require("../../../../Background Images/Part 8/Treaty of Paris.png"),
+    unlock: ["Timeline_1898_12-10"]
+  },
+
+  {
+    type: "dialogue",
+    speaker: "APOLINARIO MABINI",
+    characters: [
+      {
+        name: "mabini",
+        source: require("../../../../Character Images/Chapter 8/Mabini.png"),
+        position: "left"
+      },
+      {
+        name: "aguinaldo",
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
+        position: "right"
+      }
+    ],
+    text: "Ipinasa nila ang Pilipinas na para bang pag-aari nila ito. Paano natin hahayaang mangyari iyon?",
+    translation: "They transferred the Philippines as though they owned it. How can we allow that?",
     background: require("../../../../Background Images/Part 8/Treaty of Paris.png"),
     unlock: ["Timeline_1898_12-21", "mckinley-2", "trias-3"]
   },
 
+  {
+    type: "dialogue",
+    speaker: "EMILIO AGUINALDO",
+    characters: [
+      {
+        name: "aguinaldo",
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious R.png"),
+        position: "center"
+      }
+    ],
+    text: "Kung hindi nila kikilalanin ang ating kalayaan, patuloy natin itong ipagtatanggol.",
+    translation: "If they will not recognize our independence, we will continue to defend it.",
+    background: require("../../../../Background Images/Part 8/Treaty of Paris.png")
+  },
 
-  //T2_8 here
+  // T2_8 here
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 8
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // ===========================================
+  // SCENE 8: SANTA MESA
+  // ===========================================
 
   {
     type: "scene",
     title: "Santa Mesa",
     date: "February 4, 1899",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx: 'cannonFire'
+    sfx: "cannonFire"
   },
 
   {
-    type: "narrator",
-    text: "Tensions between Filipino and American forces continue to rise around Manila.",
+    type: "dialogue",
+    speaker: "APOLINARIO MABINI",
+    characters: [
+      {
+        name: "mabini",
+        source: require("../../../../Character Images/Chapter 8/Mabini.png"),
+        position: "left"
+      },
+      {
+        name: "aguinaldo",
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious R.png"),
+        position: "right"
+      }
+    ],
+    text: "Lalong tumitindi ang tensyon sa paligid ng Maynila. Maiiwasan pa ba ang digmaan?",
+    translation: "Tensions around Manila are growing. Can war still be avoided?",
     background: require("../../../../Background Images/Part 8/San Juan Bridge Sociego Street Feb 4 1899.png"),
     unlock: ["Timeline_1899_01-21"]
   },
 
   {
-    type: "narrator",
-    text: "On the night of February 4, 1899, fighting breaks out after an encounter between\nAmerican and Filipino soldiers near Santa Mesa.",
-    background: require("../../../../Background Images/Part 8/San Juan Bridge Sociego Street Feb 4 1899.png"),
-    unlock: ["Timeline_1899_02-04"]
+    type: "dialogue",
+    speaker: "EMILIO AGUINALDO",
+    characters: [
+      {
+        name: "aguinaldo",
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious R.png"),
+        position: "right"
+      },
+      {
+        name: "mabini",
+        source: require("../../../../Character Images/Chapter 8/Mabini.png"),
+        position: "left"
+      }
+    ],
+    text: "Sinabi nilang tutulong sila laban sa Espanya. Bakit tayo ngayon ang kanilang kinakalaban?",
+    translation: "They said they would help fight Spain. Why are they now fighting us?",
+    background: require("../../../../Background Images/Part 8/San Juan Bridge Sociego Street Feb 4 1899.png")
   },
 
   {
     type: "narrator",
-    text: "The fighting spreads rapidly",
+    text: "On February 4, 1899, fighting broke out near Santa Mesa.\nThe Philippine-American War began.",
     background: require("../../../../Background Images/Part 8/San Juan Bridge Sociego Street Feb 4 1899.png"),
-    unlock: ["mabini-4", "mckinley-3"]
+    unlock: ["Timeline_1899_02-04", "mabini-4", "mckinley-3"]
+  },
+
+  {
+    type: "dialogue",
+    speaker: "APOLINARIO MABINI",
+    characters: [
+      {
+        name: "mabini",
+        source: require("../../../../Character Images/Chapter 8/Mabini.png"),
+        position: "left"
+      },
+      {
+        name: "aguinaldo",
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious R.png"),
+        position: "right"
+      }
+    ],
+    text: "Kung digmaan ang kanilang pinili, ano ang dapat nating ipaglaban ngayon?",
+    translation: "If they have chosen war, what must we fight for now?",
+    background: require("../../../../Background Images/Part 8/San Juan Bridge Sociego Street Feb 4 1899.png")
+  },
+
+  {
+    type: "dialogue",
+    speaker: "EMILIO AGUINALDO",
+    characters: [
+      {
+        name: "aguinaldo",
+        source: require("../../../../Character Images/Chapter 8/Emilio Serious.png"),
+        position: "center"
+      }
+    ],
+    text: "Ang kalayaang ipinahayag natin. Hindi natin basta isusuko ang ating bayan.",
+    translation: "The independence we declared. We will not simply surrender our country.",
+    background: require("../../../../Background Images/Part 8/San Juan Bridge Sociego Street Feb 4 1899.png")
   },
 
   {
     type: "system",
     intro: true,
-    text: "Now, the Philippine-American War has begun.",
+    text: "Independence had been declared, but the fight for freedom continued.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
 
-  { 
-    type: "sortingtimeline" 
+  // ===========================================
+  // TIMELINE INTERACTION
+  // ===========================================
+
+  {
+    type: "sortingtimeline"
   },
 
-  // END YAH
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // ===========================================
   // FINAL QUIZ
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // ===========================================
 
   {
     type: "scene",
@@ -611,7 +936,7 @@ export const Chapter1_Part8 = [
 
   {
     type: "quiz",
-    question: "What agreement ended the fighting between Spain and\nthe revolutionaries at the end of 1897?",
+    question: "What agreement led Aguinaldo and other leaders\nto go into exile in 1897?",
     options: [
       "Treaty of Paris",
       "Pact of Biak-na-Bato",
@@ -641,7 +966,7 @@ export const Chapter1_Part8 = [
     options: [
       "The Battle of Manila was fought",
       "The Philippine flag was first designed",
-      "Philippine independence was declared in Kawit",
+      "Philippine independence\nwas declared in Kawit",
       "The Treaty of Paris was signed"
     ],
     correctIndex: 2,
@@ -650,7 +975,7 @@ export const Chapter1_Part8 = [
 
   {
     type: "quiz",
-    question: "Who helped prepare the Act of the Declaration\nof Independence?",
+    question: "Who prepared and read the Act of the Declaration\nof Philippine Independence?",
     options: [
       "Emilio Jacinto",
       "Ambrosio Rianzares Bautista",
@@ -663,10 +988,10 @@ export const Chapter1_Part8 = [
 
   {
     type: "quiz",
-    question: "What happened when Spain and the United States signed\nthe Treaty of Paris in December 1898?",
+    question: "What did the Treaty of Paris do in December 1898?",
     options: [
-      "Spain recognized Philippine independence",
-      "The Philippines was ceded\nto the United States",
+      "Spain recognized Philippine\nindependence",
+      "Spain ceded the Philippines\nto the United States",
       "Aguinaldo became president\nof the United States",
       "The Philippine-American War ended"
     ],
@@ -676,16 +1001,20 @@ export const Chapter1_Part8 = [
 
   {
     type: "quiz",
-    question: "What event marked the beginning of the Philippine-American War?",
+    question: "What event marked the beginning of the\nPhilippine-American War?",
     options: [
       "The Declaration of Independence",
       "The Battle of Alapan",
-      "The fighting near Santa Mesa on\nFebruary 4, 1899",
+      "The fighting near Santa\nMesa on February 4, 1899",
       "The signing of the Treaty of Paris"
     ],
     correctIndex: 2,
     unlock: ["remnant-part8-6"]
   },
+
+  // ===========================================
+  // ENDING: PAMANA
+  // ===========================================
 
   {
     type: "scene",
@@ -694,62 +1023,38 @@ export const Chapter1_Part8 = [
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
 
-  // END YAH
-
   {
     type: "system",
     intro: true,
-    text: "The Revolution had changed the Philippines forever. But history did not end at Kawit.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
-  },
-
-
-  {
-    type: "system",
-    intro: true,
-    text: "It was passed on. It will pass on.",
+    text: "Generations of Filipinos fought for their homeland.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
 
   {
     type: "system",
     intro: true,
-    text: "From Sulayman and Lakan Dula, to Dagohoy, Rizal, Bonifacio, and Aguinaldo.",
+    text: "Their courage and sacrifices shaped the generations that followed.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
 
   {
     type: "system",
     intro: true,
-    text: "Some left courage. Some left sacrifice.",
+    text: "From Sulayman and Lakan Dula to Dagohoy, Rizal, Bonifacio, and Aguinaldo.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
 
   {
     type: "system",
     intro: true,
-    text: "Some left questions that would remain long after they were gone.",
+    text: "That is pamana: what one generation leaves behind, and what the next chooses to carry forward.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
 
   {
     type: "system",
     intro: true,
-    text: "That is pamana.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
-  },
-
-  {
-    type: "system",
-    intro: true,
-    text: "It is what one generation leaves for the next, and what we choose to carry forward.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
-  },
-
-  {
-    type: "system",
-    intro: true,
-    text: "The story is now yours to remember.",
+    text: "Their story is now part of yours.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
 
@@ -758,7 +1063,6 @@ export const Chapter1_Part8 = [
     title: "PAMANA:",
     date: "Chronicles of Philippine History",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
-  },
-
+  }
 
 ];

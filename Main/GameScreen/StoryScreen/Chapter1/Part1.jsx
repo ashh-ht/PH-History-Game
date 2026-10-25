@@ -1,372 +1,350 @@
-// MUSIC: put `music: "trackname"` (lowercase, no spaces) on any entry where the
-// track should change. It keeps playing until another entry sets a different one.
-// Only "traditional" and "somber" are used here. Add more tags once you have the files.
-
-// NOTE: every `nextScene` is the index of the entry right AFTER its choice.
-// If you add or remove entries above a choice, update that choice's nextScene.
-
-
 export const Chapter1_Part1 = [
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // ===========================================
   // PROLOGUE
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // ===========================================
 
-  // 0
   {
     type: "system",
     intro: true,
-    text: "Long before Spain arrived, people already lived on these islands.",
+    text: "Long before Spain arrived, the islands were already home to many communities.",
     background: require("../../../../Background Images/Intro/Intro 2.png"),
     music: "somber"
   },
-
-  // 1
   {
     type: "system",
     intro: true,
-    text: "They built homes, sailed between islands, traded goods, and formed communities.",
+    text: "People built homes, traded goods, and sailed between islands.",
     background: require("../../../../Background Images/Intro/Intro 3.png")
   },
-
-  // 2
   {
     type: "system",
     intro: true,
-    text: "Then, in 1565, Spanish ships arrived. What would happen next?",
+    text: "In 1565, Spanish ships arrived. A new chapter in Philippine history began.",
     background: require("../../../../Background Images/Intro/Intro 4.png")
   },
 
+  // ===========================================
+  // SCENE 1: CIBABAO, SAMAR
+  // ===========================================
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 1
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  // 3
   {
     type: "scene",
     title: "Cibabao, Samar",
     date: "February 13, 1565",
     background: require("../../../../Background Images/Usuals/Black Background.jpg"),
     music: "traditional",
-    sfx: 'shipArrival'
+    sfx: "shipArrival"
   },
 
-  // 4
+  // SFX: waves, ship creaking, sailors shouting
+
   {
     type: "narrator",
-    text: "Miguel López de Legazpi arrives in Samar with five Spanish ships.",
+    text: "Five Spanish ships arrive in Samar. Miguel López de Legazpi leads the expedition.",
     background: require("../../../../Background Images/Intro/Intro 4.png"),
     unlock: ["Timeline_1565_02-13"]
   },
-
-  // 5
   {
     type: "narrator",
-    text: "The people watch from the shore. They do not know if the visitors can be trusted.",
+    text: "The ships approach the shore. The people watch, unsure what to expect.",
     background: require("../../../../Background Images/Part 1/Spanish Arrival.png")
   },
-
-  // 6
   {
     type: "dialogue",
     speaker: "MIGUEL LÓPEZ DE LEGAZPI",
     background: require("../../../../Background Images/Part 1/Spanish Shipdeck.png"),
     characters: [
       {
+        name: "MIGUEL LÓPEZ DE LEGAZPI",
         source: require("../../../../Character Images/Chapter 1/Legazpi Neutral.png"),
         position: "right"
       }
     ],
-    text: "We have finally arrived. Remember our orders. We speak with\nthe locals peacefully first."
+    text: "Remember our orders. We must seek peace first."
   },
-
-  // 7
   {
     type: "dialogue",
     speaker: "FRANCISCO GOMEZ",
     background: require("../../../../Background Images/Part 1/Spanish Coast.png"),
     characters: [
       {
+        name: "FRANCISCO GOMEZ",
         source: require("../../../../Character Images/Chapter 1/Gomez Talking.png"),
         position: "center"
       }
     ],
-    text: "We come in peace! We'd like to offer a sandugo, a blood compact,\nas a sign of friendship."
+    text: "We come in peace! We offer you a sandugo as a pact of friendship."
   },
 
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // CHOICE 1.1
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  // 8
   {
     type: "choice",
     title: "Choice 1.1: You are a Chieftain of Samar",
     background: require("../../../../Background Images/Part 1/Spanish Coast.png"),
-
-    question: "A Spanish sailor has offered a blood compact.\nYour people are not sure whether to trust these strangers.",
-
+    question: "The strangers offer a sandugo, or blood compact. Will you trust them?",
     choices: [
       {
-        text: "Turn him away for now.",
+        text: "Turn them away for now.",
         speaker: "CHIEFTAIN",
         dialogue: "Hindi pa kami handa. Umalis muna kayo.",
-        translation: "We are not ready yet. Please leave for now.",
+        translation: "We are not ready. Please leave for now.",
         characters: [
           {
+            name: "FRANCISCO GOMEZ",
             source: require("../../../../Character Images/Chapter 1/Gomez Unsure.png"),
             position: "left"
           },
           {
-            source: require("../../../../Character Images/Temporary Placeholders/Chieftain.png"),
+            name: "CHIEFTAIN",
+            source: require("../../../../Character Images/Chapter 1/Chieftain.png"),
             position: "right"
           }
         ]
       },
-
       {
-        text: "Hear him out, but keep your guard up.",
+        text: "Listen, but stay cautious.",
         speaker: "CHIEFTAIN",
-        dialogue: "Makikinig kami sa sasabihin mo, pero hindi pa rin kami muna nagtitiwala sa iyo.",
-        translation: "We'll hear what you have to say, but we will not trust you yet.",
+        dialogue: "Makikinig kami, pero hindi pa kami nagtitiwala sa inyo.",
+        translation: "We will listen, but we do not trust you yet.",
         characters: [
           {
+            name: "FRANCISCO GOMEZ",
             source: require("../../../../Character Images/Chapter 1/Gomez Unsure.png"),
             position: "left"
           },
           {
+            name: "CHIEFTAIN",
             source: require("../../../../Character Images/Chapter 1/Chieftain.png"),
             position: "right"
           }
         ]
       }
     ],
-
     nextScene: 9
   },
 
   // CONTINUE
 
-  // 9
   {
     type: "narrator",
-    text: "The people of Samar choose to be careful. No Spanish settlement is built there.\nLegazpi's fleet sails toward Leyte and Bohol.",
+    text: "No settlement is established in Samar. Legazpi's fleet sails toward Leyte and Bohol.",
     background: require("../../../../Background Images/Part 1/Spanish Coast.png")
   },
 
+  // ===========================================
+  // SCENE 2: FORMAL CLAIMS & ISLAND HOPPING
+  // ===========================================
 
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 2
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  // 10
   {
     type: "scene",
     title: "Formal Claims & Island Hopping",
     date: "February 15 – April 1565",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
     music: "traditional",
-    sfx: 'shipArrival'
+    sfx: "shipArrival"
   },
 
-  // 11
+  // SFX: waves, footsteps on shore
+
   {
     type: "narrator",
-    text: "In Leyte, Legazpi claims the land for Spain by planting a cross.",
+    text: "In Leyte, Legazpi orders a cross to be planted. Spain claims the\nland in King Philip II's name.",
     background: require("../../../../Background Images/Part 1/Spanish Coast.png"),
     sfx: "sandThud"
   },
-
-  // 12
   {
     type: "dialogue",
     speaker: "MIGUEL LÓPEZ DE LEGAZPI",
     background: require("../../../../Background Images/Part 1/Spanish Coast.png"),
     characters: [
       {
+        name: "MIGUEL LÓPEZ DE LEGAZPI",
         source: require("../../../../Character Images/Chapter 1/Legazpi Neutral.png"),
         position: "center"
       }
     ],
-    text: "Let this cross mark the start of our mission here, in the name of King Philip II."
+    text: "This cross marks our claim in the name of King Philip II!"
   },
 
-  // 13
+  // SFX: waves, quiet gathering
+
   {
     type: "narrator",
-    text: "In Bohol, Datu Sikatuna welcomes him. They make a sandugo, or blood compact,\nto show friendship.",
+    text: "In Bohol, Datu Sikatuna welcomes Legazpi. They agree to seal their\nfriendship with a sandugo.",
     background: require("../../../../Background Images/Part 1/Bohol Coast.png")
   },
-
-  // 14
   {
     type: "dialogue",
     speaker: "DATU SIKATUNA",
     background: require("../../../../Background Images/Part 1/Bohol Coast.png"),
     characters: [
       {
+        name: "DATU SIKATUNA",
         source: require("../../../../Character Images/Chapter 1/Sikatuna Talk.png"),
         position: "left"
       },
       {
+        name: "MIGUEL LÓPEZ DE LEGAZPI",
         source: require("../../../../Character Images/Chapter 1/Legazpi Neutral.png"),
         position: "right"
       }
     ],
-    text: "Legazpi, take this cup. From this moment, our blood is one."
+    text: "Take this cup, Legazpi. Let our blood seal our friendship."
   },
 
-  // 15
+  // SFX: cup being passed, quiet ambience
+
   {
     type: "dialogue",
     speaker: "DATU SIKATUNA",
     background: require("../../../../Background Images/Part 1/Bohol Coast.png"),
     characters: [
       {
+        name: "DATU SIKATUNA",
         source: require("../../../../Character Images/Chapter 1/Sikatuna Solemn.png"),
         position: "left"
       },
       {
+        name: "MIGUEL LÓPEZ DE LEGAZPI",
         source: require("../../../../Character Images/Chapter 1/Legazpi Neutral.png"),
         position: "right"
       }
     ],
-    text: "If you're looking for Cebu, sail west. But be careful. Rajah Tupas is proud.\nHe guards his shores fiercely."
+    text: "Cebu lies to the west. But beware. Rajah Tupas will defend his shores."
   },
 
+  // ===========================================
+  // SCENE 3: THE ULTIMATUM IN CEBU
+  // ===========================================
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 3
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  // 16
   {
     type: "scene",
     title: "The Ultimatum in Cebu",
     date: "April 27, 1565",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
     music: "somber",
-    sfx: 'shipArrival'
+    sfx: "shipArrival"
   },
 
-  // 17
+  // SFX: waves, ship ropes, footsteps on shore
+
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 1/Cebu Village.png"),
     characters: [
       {
+        name: "RAJAH TUPAS",
         source: require("../../../../Character Images/Chapter 1/Tupas Upset R.png"),
         position: "right"
-      },
+      }
     ],
-    text: "At last, Legazpi reaches Cebu. Rajah Tupas and his two thousand warriors\nare ready to defend their home.",
+    text: "Legazpi reaches Cebu. Rajah Tupas stands ready with 2,000 warriors.",
     unlock: ["tupas-1"]
   },
-
-  // 18
   {
     type: "dialogue",
     speaker: "RAJAH TUPAS",
     background: require("../../../../Background Images/Part 1/Cebu Village.png"),
     characters: [
       {
+        name: "MIGUEL LÓPEZ DE LEGAZPI",
         source: require("../../../../Character Images/Chapter 1/Legazpi Neutral R.png"),
         position: "left"
       },
       {
+        name: "RAJAH TUPAS",
         source: require("../../../../Character Images/Chapter 1/Tupas Talking R.png"),
         position: "right"
       }
     ],
-    text: "Sino kayo at bakit kayo naparito sa aming isla? Hindi ako pumapayag\nsa inyong pakikipag-usap!",
-    translation: "Who are you, and why are you here on our island? I do not agree to your terms!"
+    text: "Sino kayo? Bakit kayo naparito? Hindi ako pumapayag sa inyong mga kondisyon!",
+    translation: "Who are you? Why have you come? I reject your terms!"
   },
-
-  // 19
   {
     type: "dialogue",
     speaker: "MIGUEL LÓPEZ DE LEGAZPI",
     background: require("../../../../Background Images/Part 1/Cebu Village.png"),
     characters: [
       {
+        name: "MIGUEL LÓPEZ DE LEGAZPI",
         source: require("../../../../Character Images/Chapter 1/Legazpi Neutral R.png"),
         position: "left"
       },
       {
+        name: "RAJAH TUPAS",
         source: require("../../../../Character Images/Chapter 1/Tupas Mad R.png"),
         position: "right"
       }
     ],
-    text: "Rajah Tupas, I am Miguel López de Legazpi. We come in peace and\ndo not wish to repeat old conflicts."
+    text: "I am Legazpi. We seek peace, not another conflict."
   },
-
-  // 20
   {
     type: "dialogue",
     speaker: "MIGUEL LÓPEZ DE LEGAZPI",
     background: require("../../../../Background Images/Part 1/Cebu Village.png"),
     characters: [
       {
+        name: "MIGUEL LÓPEZ DE LEGAZPI",
         source: require("../../../../Character Images/Chapter 1/Legazpi Mad R.png"),
         position: "left"
       },
       {
+        name: "RAJAH TUPAS",
         source: require("../../../../Character Images/Chapter 1/Tupas Upset R.png"),
         position: "right"
       }
     ],
-    text: "I offer you three days to consider a peace agreement with me. My men\nare hungry. I hope we can share this port peacefully."
+    text: "You have three days to decide. My men need food and a place to stay."
   },
 
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // CHOICE 1.2
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  // 21
   {
     type: "choice",
     title: "Choice 1.2: You are Rajah Tupas of Cebu",
-    question: "The three-day deadline is almost up.\nSpanish messengers return to ask for peace.",
+    question: "Three days have passed. How will you answer the Spanish?",
     background: require("../../../../Background Images/Part 1/Cebu Village.png"),
-
     choices: [
       {
-        text: "Refuse, and retreat to the\nmountains to prepare for battle.",
+        text: "Retreat to the mountains and prepare.",
         speaker: "RAJAH TUPAS",
-        dialogue: "Umatras muna tayo sa kabundukan at maghanda. Hindi natin\nbasta-basta ibibigay ang ating lupain.",
-        translation: "Let's retreat to the mountains and prepare. We we will not just give up our land.",
+        dialogue: "Umatras tayo sa kabundukan. Hindi natin basta ibibigay ang ating lupain.",
+        translation: "Let us retreat to the mountains. We will not give up our land easily.",
         characters: [
           {
+            name: "RAJAH TUPAS",
             source: require("../../../../Character Images/Chapter 1/Tupas Talking.png"),
             position: "center"
           }
         ]
       },
-
       {
-        text: "Send a messenger to ask for\nmore time first.",
+        text: "Ask the Spanish for more time.",
         speaker: "RAJAH TUPAS",
-        dialogue: "Sabihin mo sa kanila na kailangan pa natin ng panahon.",
-        translation: "Tell them we need more time.",
+        dialogue: "Kailangan pa namin ng panahon para mag-isip.",
+        translation: "We need more time to think.",
         characters: [
           {
-            source: require("../../../../Character Images/Chapter 1/Tupas Talking.png"),
-            position: "center"
+            name: "MIGUEL LÓPEZ DE LEGAZPI",
+            source: require("../../../../Character Images/Chapter 1/Legazpi Mad R.png"),
+            position: "left"
+          },
+          {
+            name: "RAJAH TUPAS",
+            source: require("../../../../Character Images/Chapter 1/Tupas Upset R.png"),
+            position: "right"
           }
         ]
       }
     ],
-
     nextScene: 22
   },
 
   // CONTINUE
 
-  // 22  (revised line split in two so both backgrounds still show)
+  // SFX: hurried footsteps, rustling leaves
+
   {
     type: "narrator",
     text: "Tupas and his people retreat to the hills.",
@@ -374,308 +352,299 @@ export const Chapter1_Part1 = [
     unlock: ["tupas-2", "Timeline_1565_04-27"]
   },
 
-  // 23
+  // SFX: hammering, sawing wood, workers calling out
+
   {
     type: "narrator",
-    text: "The Spanish enter Cebu and begin building a settlement.",
+    text: "The Spanish enter Cebu and begin building their settlement.",
     background: require("../../../../Background Images/Part 1/Construction.png"),
-    sfx: 'construction',
+    sfx: "construction",
     unlock: ["Timeline_1565_05-08"]
   },
 
-  //Q2_1 here
+  // SFX: distant fire crackling, falling debris
+  // Use only if the scene is intended to depict a burned settlement.
 
-  // 24
   {
-    type: "narrator",
-    text: "Juan de Camus finds an image of the Santo Niño, left behind by Magellan's crew in 1521.",
-    background: require("../../../../Background Images/Part 1/nipa hut interior santo nino discovery.png")
+    type: "dialogue",
+    speaker: "MIGUEL LÓPEZ DE LEGAZPI",
+    background: require("../../../../Background Images/Part 1/Cebu Burned.png"),
+    characters: [
+      {
+        name: "MIGUEL LÓPEZ DE LEGAZPI",
+        source: require("../../../../Character Images/Chapter 1/Legazpi Neutral.png"),
+        position: "center"
+      }
+    ],
+    text: "I wish it had not ended this way."
   },
 
-  // 25
+  // SFX: hut ambience, footsteps approaching
+
+  {
+    type: "narrator",
+    text: "In an abandoned hut, Juan de Camus discovers an image of the Santo Niño\nleft behind by Magellan's crew in 1521.",
+    background: require("../../../../Background Images/Part 1/nipa hut interior santo nino discovery.png")
+  },
   {
     type: "dialogue",
     speaker: "JUAN DE CAMUS",
     background: require("../../../../Background Images/Part 1/nipa hut interior santo nino discovery.png"),
     characters: [
       {
+        name: "JUAN DE CAMUS",
         source: require("../../../../Character Images/Chapter 1/Camus Talking.png"),
         position: "left"
       },
       {
+        name: "MIGUEL LÓPEZ DE LEGAZPI",
         source: require("../../../../Character Images/Chapter 1/Legazpi Neutral.png"),
         position: "right"
       }
     ],
     text: "Señor General! Look what I found!"
   },
-
-  // 26
   {
     type: "dialogue",
     speaker: "MIGUEL LÓPEZ DE LEGAZPI",
     background: require("../../../../Background Images/Part 1/nipa hut interior santo nino discovery.png"),
     characters: [
       {
+        name: "JUAN DE CAMUS",
         source: require("../../../../Character Images/Chapter 1/Camus Happy.png"),
         position: "left"
       },
       {
+        name: "MIGUEL LÓPEZ DE LEGAZPI",
         source: require("../../../../Character Images/Chapter 1/Legazpi Surprised.png"),
         position: "right"
       }
     ],
-    text: "The Santo Niño... left behind by Magellan's crew, forty-four years ago."
+    text: "The Santo Niño... left here by Magellan's crew in 1521."
   },
 
-  //T1_1 here
+  // MINIGAME
 
-  // 27  (MINIGAME)
   {
     type: "santoNino"
   },
-
-  // 28
   {
     type: "narrator",
-    text: "The discovery becomes an important moment for the new Spanish settlement.",
+    text: "The discovery becomes an important moment for the Spanish settlement.",
     background: require("../../../../Background Images/Part 1/nipa hut interior santo nino discovery.png"),
     unlock: ["Timeline_1565_04-28"]
   },
 
-  // 29
+  // SFX: ship creaking, waves, sailors preparing to depart
+
   {
     type: "narrator",
-    text: "Food soon becomes scarce. The Spanish move their settlement to Panay,\nwhere food is easier to find.",
+    text: "Eventually, food runs low. The Spanish move to Panay, where\nsupplies are easier to find.",
     background: require("../../../../Background Images/Part 1/Cebu Village.png"),
     unlock: ["Timeline_1565-1569", "Timeline_1565_11-27", "Timeline_1566_10-15", "Timeline_1569"]
   },
-
-  // 30
   {
     type: "narrator",
-    text: "Later, they hear about a wealthy settlement called Maynila.",
+    text: "Then they hear of a wealthy settlement: Maynila.",
     background: require("../../../../Background Images/Part 1/Manila Shoreline.png")
   },
-
-  // 31
   {
     type: "dialogue",
     speaker: "MIGUEL LÓPEZ DE LEGAZPI",
     background: require("../../../../Background Images/Part 1/Spanish Shipdeck.png"),
     characters: [
       {
+        name: "MARTÍN DE GOITI",
         source: require("../../../../Character Images/Chapter 1/Goiti Neutral.png"),
         position: "right"
       },
       {
+        name: "MIGUEL LÓPEZ DE LEGAZPI",
         source: require("../../../../Character Images/Chapter 1/Legazpi Neutral R.png"),
         position: "center"
       },
       {
+        name: "JUAN DE SALCEDO",
         source: require("../../../../Character Images/Chapter 1/Salcedo Neutral.png"),
         position: "left"
       }
     ],
-    text: "Martín, I want you and my grandson, Juan de Salcedo.\nI want you to sail north together.",
+    text: "Martín, take my grandson Juan. Sail north to Maynila.",
     unlock: ["goiti-1", "salcedo-1", "Timeline_1570_05-03"]
   },
-
-  // 32
   {
     type: "dialogue",
     speaker: "MIGUEL LÓPEZ DE LEGAZPI",
     background: require("../../../../Background Images/Part 1/Spanish Shipdeck.png"),
     characters: [
       {
+        name: "MARTÍN DE GOITI",
         source: require("../../../../Character Images/Chapter 1/Goiti Salute.png"),
         position: "right"
       },
       {
+        name: "MIGUEL LÓPEZ DE LEGAZPI",
         source: require("../../../../Character Images/Chapter 1/Legazpi Neutral R.png"),
         position: "center"
       },
       {
+        name: "JUAN DE SALCEDO",
         source: require("../../../../Character Images/Chapter 1/Salcedo Neutral.png"),
         position: "left"
       }
     ],
-    text: "Offer peace and friendship first. If we can avoid a fight, we will."
+    text: "Offer peace first. Avoid a fight if you can."
   },
 
+  // ===========================================
+  // SCENE 4: THE SANDUGO OF MANILA
+  // ===========================================
 
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 4
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  // 33
   {
     type: "scene",
     title: "The Sandugo of Manila",
     date: "June 1571",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx: 'footstepsSand',
+    sfx: "footstepsSand",
     music: "traditional"
   },
-
-  // 34
   {
     type: "narrator",
-    text: "In Manila, Rajah Sulayman and Lakan Dula face a difficult choice.\nShould they fight the Spanish or try to make peace?",
+    text: "In Manila, Rajah Sulayman and his uncle, Lakan Dula, face a\ndifficult choice: fight or negotiate.",
     background: require("../../../../Background Images/Part 1/Sulayman's council space.png"),
     unlock: ["goiti-2", "salcedo-2"]
   },
-
-  // 35
   {
     type: "dialogue",
     speaker: "LAKAN DULA",
     background: require("../../../../Background Images/Part 1/Sulayman's council space.png"),
     characters: [
       {
+        name: "LAKAN DULA",
         source: require("../../../../Character Images/Chapter 1/Dula Neutral.png"),
         position: "left"
       },
       {
+        name: "RAJAH SULAYMAN",
         source: require("../../../../Character Images/Chapter 1/Sulayman Neutral R.png"),
         position: "right"
       }
     ],
-    text: "Aking pamangkin, tingnan mo ang kanilang mga barko at armas.",
-    translation: "My dear nephew, look at their boat and guns."
+    text: "Aking pamangkin, malakas ang kanilang mga armas.",
+    translation: "My nephew, their weapons are powerful."
   },
-
-  // 36
   {
     type: "dialogue",
     speaker: "LAKAN DULA",
     background: require("../../../../Background Images/Part 1/Sulayman's council space.png"),
     characters: [
       {
+        name: "LAKAN DULA",
         source: require("../../../../Character Images/Chapter 1/Dula Unsure.png"),
         position: "left"
       },
       {
+        name: "RAJAH SULAYMAN",
         source: require("../../../../Character Images/Chapter 1/Sulayman Neutral R.png"),
         position: "right"
       }
     ],
-    text: "Kung lalabanan natin sila nang tuwiran, mawawala ang lahat sa atin.\nMakipag-usap muna tayo.",
-    translation: "My nephew, look at their ships and weapons. If we fight them head-on, we could lose everything. Let's talk first."
+    text: "Kung lalaban tayo, baka mawala ang lahat. Makipag-usap muna tayo.",
+    translation: "If we fight, we could lose everything. Let us talk first."
   },
 
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // CHOICE 1.3
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  // 37
   {
     type: "choice",
     title: "Choice 1.3: You are Rajah Sulayman",
-    question: "Legazpi has arrived with a large force. Your uncle is urging you to negotiate.",
+    question: "Your uncle urges you to negotiate with Legazpi. Will you listen?",
     background: require("../../../../Background Images/Part 1/Sulayman's council space.png"),
-
     choices: [
       {
-        text: "Agree right away and go\nspeak with Legazpi.",
+        text: "Agree to speak with Legazpi.",
         speaker: "RAJAH SULAYMAN",
         dialogue: "Sige, tito. Susubukan nating makipag-usap.",
-        translation: "Alright, uncle. Let's try talking.",
+        translation: "All right, uncle. Let us try to negotiate.",
         characters: [
           {
+            name: "RAJAH SULAYMAN",
             source: require("../../../../Character Images/Chapter 1/Sulayman Talking R.png"),
             position: "right"
           },
           {
+            name: "LAKAN DULA",
             source: require("../../../../Character Images/Chapter 1/Dula Neutral.png"),
             position: "left"
           }
         ]
       },
-
       {
-        text: "Hesitate, but let your uncle\nexplain his plan.",
+        text: "Ask your uncle to explain first.",
         speaker: "RAJAH SULAYMAN",
-        dialogue: "Hindi ako sigurado, tito... pero makikinig muna ako.\nAno ba ang plano mo?",
-        translation: "I'm not sure, uncle... but I'll hear you out. What's your plan?",
+        dialogue: "Hindi pa ako sigurado, tito. Ano ba ang plano mo?",
+        translation: "I'm not sure yet, uncle. What is your plan?",
         characters: [
           {
+            name: "RAJAH SULAYMAN",
             source: require("../../../../Character Images/Chapter 1/Sulayman Talking R.png"),
             position: "right"
           },
           {
+            name: "LAKAN DULA",
             source: require("../../../../Character Images/Chapter 1/Dula Neutral.png"),
             position: "left"
           }
         ]
       }
     ],
-
-    nextScene: 38
+    nextScene: 39
   },
 
+  // ENDING
 
-
-  // END OF STORY
-
-  // 38  (revised line split in two so both backgrounds still show)
   {
     type: "narrator",
-    text: "Sulayman agrees to talk with Legazpi.",
+    text: "Sulayman agrees to speak with Legazpi.",
     background: require("../../../../Background Images/Part 1/Inside hut sandugo part.png")
   },
-
-  // 39
   {
     type: "narrator",
-    text: "On June 24, 1571, Legazpi declares Manila the capital of Spanish rule\nin the Philippines.",
+    text: "On June 24, 1571, Legazpi declares Manila the capital of Spanish rule in the Philippines.",
     background: require("../../../../Background Images/Part 1/Manila Shoreline.png"),
     unlock: ["Timeline_1571_06-24", "salcedo-3"]
   },
 
+  // CLOSING
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CLOSING (one short ending instead of the old title cards)
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  // 40
   {
     type: "system",
     intro: true,
-    text: "You have seen the first meetings between Spanish visitors and Filipino leaders.",
+    text: "You have witnessed the first meetings between Spanish forces and Filipino leaders.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
-
-  // 41
   {
     type: "system",
     intro: true,
-    text: "Some chose peace. Others chose caution. But Spain's rule was only beginning.",
+    text: "Some chose peace. Others chose caution. Spain's rule was only beginning.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
-
-  // 42  (MINIGAME: the voyage minigame has its own title + instructions screen now)
   {
     type: "voyage",
     unlock: ["remnant-2"],
     music: "voyage"
   },
 
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // ===========================================
   // QUIZ TIME
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // ===========================================
 
-  // 43
   {
     type: "scene",
     title: "What do you remember?",
     date: "How well do you remember the journey?",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg")
   },
-
   {
     type: "quiz",
     question: "Where did Legazpi and his fleet first anchor in February 1565?",
@@ -691,7 +660,7 @@ export const Chapter1_Part1 = [
   },
   {
     type: "quiz",
-    question: "What did Legazpi plant on Leyte to formally claim the territory for Spain?",
+    question: "What did Legazpi plant on Leyte to claim the land for Spain?",
     options: [
       "A Spanish flag",
       "A wooden fort",
@@ -715,7 +684,7 @@ export const Chapter1_Part1 = [
   },
   {
     type: "quiz",
-    question: "What important object did Juan de Camus discover inside a house in Cebu?",
+    question: "What did Juan de Camus discover inside a house in Cebu?",
     options: [
       "A Spanish sword",
       "The Santo Niño",
@@ -727,7 +696,7 @@ export const Chapter1_Part1 = [
   },
   {
     type: "quiz",
-    question: "Who urged Rajah Sulayman to negotiate with Legazpi when\nthe Spanish arrived in Manila?",
+    question: "Who urged Rajah Sulayman to negotiate with Legazpi?",
     options: [
       "Datu Sikatuna",
       "Rajah Tupas",
@@ -748,6 +717,5 @@ export const Chapter1_Part1 = [
     ],
     correctIndex: 1,
     unlock: ["remnant-part1-6"]
-  },
-
+  }
 ];
