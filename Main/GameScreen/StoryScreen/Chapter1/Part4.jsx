@@ -93,8 +93,6 @@ export const Chapter1_Part4 = [
 
   { type: "bloodtrace" },
 
-  { type: "bloodtrace" },
-
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
@@ -304,10 +302,6 @@ export const Chapter1_Part4 = [
   },
 
   { type: "oathtrace" },
-
-  { type: "oathtrace" },
-
-
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 4

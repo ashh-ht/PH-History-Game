@@ -44,6 +44,7 @@ const PIECE_ASPECT =
     ? pieceSource.width / pieceSource.height
     : 1;
 
+// Full shuffle used at the start (never starts already solved)
 function shuffle(array) {
   const shuffled = [...array];
 
@@ -57,7 +58,27 @@ function shuffle(array) {
   return shuffled;
 }
 
-export default function SantoNinoMinigame({ onComplete }) {
+// Shuffles any list of values and makes sure the order really changes
+// (needs at least 2 values).
+function shuffleDifferent(values) {
+  const original = [...values];
+  const shuffled = [...values];
+
+  do {
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+  } while (shuffled.every((value, index) => value === original[index]));
+
+  return shuffled;
+}
+
+export default function SantoNinoMinigame({
+  onComplete,
+  paused = false,
+  onPhaseChange,
+}) {
   const { width, height } = useWindowDimensions();
 
   /*
@@ -125,6 +146,22 @@ export default function SantoNinoMinigame({ onComplete }) {
     lockedRef.current = locked;
   }, [locked]);
 
+  // Pieces that are flying into their slot right now (not locked yet).
+  // They must not be touched or shuffled while they are on their way.
+  const settlingRef = useRef(new Set());
+
+  // Pause support: while paused, nothing can be dragged or shuffled.
+  const pausedRef = useRef(paused);
+  pausedRef.current = paused;
+
+  // Tells the parent which screen we are on ("playing" or "result") so it
+  // can show the pause button only while the puzzle is being played.
+  useEffect(() => {
+    if (!onPhaseChange) return;
+
+    onPhaseChange(gameState === 'won' ? 'result' : 'playing');
+  }, [gameState, onPhaseChange]);
+
   /*
    * =====================================================
    * ANIMATIONS
@@ -188,27 +225,52 @@ export default function SantoNinoMinigame({ onComplete }) {
 
   /*
    * =====================================================
-   * SHUFFLE / RESET
+   * SHUFFLE
+   *
+   * Only the pieces that are still in the tray get shuffled.
+   * Pieces already placed on the board stay exactly where they are,
+   * and they keep their original tray slot so their position on the
+   * board stays correct.
    * =====================================================
    */
 
-  const resetPuzzle = () => {
-    pieceAnimations.forEach((animation) => {
+  const shufflePieces = () => {
+    if (gameState !== 'playing' || pausedRef.current) return;
+
+    const isFrozen = (pieceIndex) =>
+      lockedRef.current.includes(pieceIndex) ||
+      settlingRef.current.has(pieceIndex);
+
+    // Tray slots that currently hold a piece that is still free
+    const freeSlots = [];
+    pieces.forEach((pieceIndex, slot) => {
+      if (!isFrozen(pieceIndex)) freeSlots.push(slot);
+    });
+
+    // Put every free piece (not a placed one) back to rest in the tray
+    pieces.forEach((pieceIndex) => {
+      if (isFrozen(pieceIndex)) return;
+
+      const animation = pieceAnimations[pieceIndex];
       animation.x.setValue(0);
       animation.y.setValue(0);
       animation.scale.setValue(1);
     });
 
-    successScale.setValue(0.85);
-    successOpacity.setValue(0);
-
-    setPieces(
-      shuffle(Array.from({ length: PIECE_COUNT }, (_, index) => index))
-    );
-
-    setLocked([]);
     setActivePiece(null);
-    setGameState('playing');
+
+    // Nothing (or only one piece) left to shuffle
+    if (freeSlots.length < 2) return;
+
+    const freePieces = freeSlots.map((slot) => pieces[slot]);
+    const reshuffled = shuffleDifferent(freePieces);
+
+    const next = [...pieces];
+    freeSlots.forEach((slot, i) => {
+      next[slot] = reshuffled[i];
+    });
+
+    setPieces(next);
   };
 
   /*
@@ -247,7 +309,10 @@ export default function SantoNinoMinigame({ onComplete }) {
    */
 
   const handleDrop = (pieceIndex, gestureX, gestureY) => {
-    if (lockedRef.current.includes(pieceIndex)) {
+    if (
+      lockedRef.current.includes(pieceIndex) ||
+      settlingRef.current.has(pieceIndex)
+    ) {
       return;
     }
 
@@ -283,7 +348,9 @@ export default function SantoNinoMinigame({ onComplete }) {
     const targetSlot = targetRow * GRID_SIZE + targetCol;
 
     const isCorrect = pieceIndex === targetSlot;
-    const occupied = lockedRef.current.includes(targetSlot);
+    const occupied =
+      lockedRef.current.includes(targetSlot) ||
+      settlingRef.current.has(targetSlot);
 
     if (!isCorrect || occupied) {
       Animated.parallel([
@@ -317,8 +384,6 @@ export default function SantoNinoMinigame({ onComplete }) {
       return;
     }
 
-
-
     const targetLeft = boardLeft + targetCol * boardPieceW;
     const targetTop = boardTop + targetRow * boardPieceH;
 
@@ -330,6 +395,10 @@ export default function SantoNinoMinigame({ onComplete }) {
 
     const requiredX = targetLeft - originalLeft - scaleOffsetX;
     const requiredY = targetTop - originalTop - scaleOffsetY;
+
+    // From now on this piece belongs to the board: it can't be shuffled
+    // or grabbed again, even before the animation has finished.
+    settlingRef.current.add(pieceIndex);
 
     Animated.parallel([
       Animated.spring(pieceAnimations[pieceIndex].x, {
@@ -351,6 +420,8 @@ export default function SantoNinoMinigame({ onComplete }) {
         useNativeDriver: true,
       }),
     ]).start(() => {
+      settlingRef.current.delete(pieceIndex);
+
       setLocked((previous) => {
         if (previous.includes(pieceIndex)) {
           return previous;
@@ -364,19 +435,21 @@ export default function SantoNinoMinigame({ onComplete }) {
   const handleDropRef = useRef(handleDrop);
   handleDropRef.current = handleDrop;
 
+  const canTouch = (pieceIndex) =>
+    !pausedRef.current &&
+    !lockedRef.current.includes(pieceIndex) &&
+    !settlingRef.current.has(pieceIndex);
 
   const responders = useMemo(
     () =>
       Array.from({ length: PIECE_COUNT }, (_, pieceIndex) =>
         PanResponder.create({
-          onStartShouldSetPanResponder: () =>
-            !lockedRef.current.includes(pieceIndex),
+          onStartShouldSetPanResponder: () => canTouch(pieceIndex),
 
-          onMoveShouldSetPanResponder: () =>
-            !lockedRef.current.includes(pieceIndex),
+          onMoveShouldSetPanResponder: () => canTouch(pieceIndex),
 
           onPanResponderGrant: () => {
-            if (lockedRef.current.includes(pieceIndex)) {
+            if (!canTouch(pieceIndex)) {
               return;
             }
 
@@ -391,7 +464,7 @@ export default function SantoNinoMinigame({ onComplete }) {
           },
 
           onPanResponderMove: (_, gesture) => {
-            if (lockedRef.current.includes(pieceIndex)) {
+            if (!canTouch(pieceIndex)) {
               return;
             }
 
@@ -402,7 +475,16 @@ export default function SantoNinoMinigame({ onComplete }) {
           onPanResponderRelease: (_, gesture) => {
             setActivePiece(null);
 
-            if (lockedRef.current.includes(pieceIndex)) {
+            if (
+              lockedRef.current.includes(pieceIndex) ||
+              settlingRef.current.has(pieceIndex)
+            ) {
+              return;
+            }
+
+            // Paused mid-drag: just send the piece back to the tray
+            if (pausedRef.current) {
+              returnPiece(pieceIndex);
               return;
             }
 
@@ -411,6 +493,14 @@ export default function SantoNinoMinigame({ onComplete }) {
 
           onPanResponderTerminate: () => {
             setActivePiece(null);
+
+            if (
+              lockedRef.current.includes(pieceIndex) ||
+              settlingRef.current.has(pieceIndex)
+            ) {
+              return;
+            }
+
             returnPiece(pieceIndex);
           },
         })
@@ -418,6 +508,10 @@ export default function SantoNinoMinigame({ onComplete }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
+
+  // Is there anything left to shuffle? (at least 2 free pieces)
+  const freePieceCount = PIECE_COUNT - locked.length;
+  const canShuffle = freePieceCount >= 2;
 
   /*
    * =====================================================
@@ -511,7 +605,10 @@ export default function SantoNinoMinigame({ onComplete }) {
 
       {/* ================= PIECES ================= */}
 
-      <View pointerEvents="box-none" style={StyleSheet.absoluteFill}>
+      <View
+        pointerEvents={paused ? 'none' : 'box-none'}
+        style={StyleSheet.absoluteFill}
+      >
         {pieces.map((pieceIndex, trayIndex) => {
           const trayRow = Math.floor(trayIndex / 3);
           const trayCol = trayIndex % 3;
@@ -583,7 +680,8 @@ export default function SantoNinoMinigame({ onComplete }) {
       {/* ================= SHUFFLE ================= */}
 
       <Pressable
-        onPress={resetPuzzle}
+        onPress={shufflePieces}
+        disabled={!canShuffle || paused}
         style={({ pressed }) => [
           styles.shuffleButton,
           {
@@ -591,6 +689,7 @@ export default function SantoNinoMinigame({ onComplete }) {
             top: trayTop + trayHeight + 25,
             width: trayWidth,
           },
+          !canShuffle && styles.shuffleDisabled,
           pressed && styles.buttonPressed,
         ]}
       >
@@ -777,6 +876,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 50,
+  },
+
+  // nothing left to shuffle (0 or 1 piece still in the tray)
+  shuffleDisabled: {
+    opacity: 0.4,
   },
 
   shuffleText: {

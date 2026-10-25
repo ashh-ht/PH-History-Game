@@ -14,7 +14,6 @@ import {
   ImageBackground,
   Animated,
   StyleSheet,
-  ScrollView,
   useWindowDimensions,
 } from "react-native";
 
@@ -46,7 +45,7 @@ const PANEL_PAD_SIDE = PANEL_HAS_TAB ? 34 : 54;
 // still looks off-center. Use all zeros for an image with no blank margins.
 const PANEL_INSET = PANEL_HAS_TAB
   ? { left: 0, right: 0, top: 0, bottom: 0 }
-  : { left: 0, right: 0.166, top: 0.06, bottom: 0.06 };
+  : { left: 0, right: 0.196, top: 0.06, bottom: 0.06 };
 
 const INK = "#352313"; // same brown the speaker names use
 const BUTTON_INK = "#371f10"; // same as quiz buttons
@@ -58,6 +57,7 @@ const START_SECONDS = 45;
 const BONUS_SECONDS = 10;
 const TICK_MS = 200;
 const CARD_GAP = 6;
+const CARD_MAX_H = 72; // cards never get taller than this
 
 const EVENT_LIBRARY = {
   legazpi: {
@@ -281,7 +281,9 @@ function Backdrop({ children }) {
 }
 
 // A card is just text + two arrow buttons. There is NO gesture handler on the
-// card, so the list scrolls normally no matter where the finger starts.
+// card. Cards share the available height equally (see cardsList), and their
+// text / buttons shrink a little when there are many cards on a short screen,
+// so the whole timeline always fits without scrolling.
 function TimelineCard({
   event,
   index,
@@ -290,15 +292,26 @@ function TimelineCard({
   disabled,
   onMove,
   compact,
+  cardH,
 }) {
   const canUp = !disabled && index > 0;
   const canDown = !disabled && index < total - 1;
+
+  const tight = cardH < 56;
+  const veryTight = cardH < 46;
+
+  const fontSize = veryTight ? 10.5 : tight ? 11.5 : compact ? 12 : 13;
+  const lineHeight = Math.round(fontSize * 1.28);
+  const btnH = Math.max(28, Math.min(44, cardH - 10));
+  const btnW = Math.max(32, Math.min(40, Math.round(btnH * 0.9)));
+  const badgeH = Math.max(24, Math.min(33, cardH - 12));
+  const badgeW = compact || tight ? 29 : 31;
 
   return (
     <View
       style={[
         styles.eventCard,
-        compact && styles.eventCardCompact,
+        tight && styles.eventCardTight,
         justMoved && styles.eventCardMoved,
         disabled && styles.eventCardDisabled,
       ]}
@@ -306,7 +319,7 @@ function TimelineCard({
       <View
         style={[
           styles.positionBadge,
-          compact && styles.positionBadgeCompact,
+          { width: badgeW, height: badgeH },
           justMoved && styles.positionBadgeMoved,
         ]}
       >
@@ -316,7 +329,12 @@ function TimelineCard({
       </View>
 
       <View style={styles.cardTextContainer}>
-        <Text style={[styles.eventText, compact && styles.eventTextCompact]}>
+        <Text
+          style={[styles.eventText, { fontSize, lineHeight }]}
+          numberOfLines={3}
+          adjustsFontSizeToFit
+          minimumFontScale={0.75}
+        >
           {event.text}
         </Text>
       </View>
@@ -329,7 +347,11 @@ function TimelineCard({
           disabled={!canUp}
           onPress={() => onMove(index, -1)}
           hitSlop={{ top: 4, bottom: 4, left: 2, right: 2 }}
-          style={[styles.arrowButton, !canUp && styles.arrowButtonOff]}
+          style={[
+            styles.arrowButton,
+            { width: btnW, height: btnH },
+            !canUp && styles.arrowButtonOff,
+          ]}
         >
           <Text style={[styles.arrowText, !canUp && styles.arrowTextOff]}>
             ▲
@@ -343,7 +365,11 @@ function TimelineCard({
           disabled={!canDown}
           onPress={() => onMove(index, 1)}
           hitSlop={{ top: 4, bottom: 4, left: 2, right: 2 }}
-          style={[styles.arrowButton, !canDown && styles.arrowButtonOff]}
+          style={[
+            styles.arrowButton,
+            { width: btnW, height: btnH },
+            !canDown && styles.arrowButtonOff,
+          ]}
         >
           <Text style={[styles.arrowText, !canDown && styles.arrowTextOff]}>
             ▼
@@ -358,7 +384,11 @@ function TimelineCard({
 // MINIGAME
 // =====================================================
 
-export default function ChronologicalOrderMinigame({ onComplete }) {
+export default function ChronologicalOrderMinigame({
+  onComplete,
+  paused = false, // set by PartRenderer when the pause panel is open
+  onPhaseChange, // tells PartRenderer: "intro" | "playing" | "result"
+}) {
   const { width, height } = useWindowDimensions();
   const audio = useAudio();
 
@@ -379,6 +409,14 @@ export default function ChronologicalOrderMinigame({ onComplete }) {
   const [roundPoints, setRoundPoints] = useState(0);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
+  // Height of the area the cards live in (so every card fits, no scrolling)
+  const [listH, setListH] = useState(0);
+
+  // Fit-to-screen for the start / result panels: they never scroll. If the
+  // content is taller than the space available it is scaled down a little.
+  const [areaH, setAreaH] = useState(0);
+  const [contentH, setContentH] = useState(0);
+
   const timerRef = useRef(null);
   const deadlineRef = useRef(null);
   const phaseRef = useRef("start");
@@ -391,9 +429,43 @@ export default function ChronologicalOrderMinigame({ onComplete }) {
   const startTimeRef = useRef(null);
   const onCompleteRef = useRef(onComplete);
 
+  // true while the "Round complete" panel is showing: the clock waits there
+  const holdRef = useRef(false);
+
   useEffect(() => {
     onCompleteRef.current = onComplete;
   }, [onComplete]);
+
+  // Pause support: the clock is frozen while `paused` is true, and the
+  // deadline is pushed back by however long the pause lasted.
+  const pausedRef = useRef(false);
+  const pausedAtRef = useRef(null);
+
+  useEffect(() => {
+    if (paused) {
+      pausedRef.current = true;
+      pausedAtRef.current = Date.now();
+    } else if (pausedRef.current) {
+      pausedRef.current = false;
+
+      if (pausedAtRef.current != null && deadlineRef.current != null) {
+        deadlineRef.current += Date.now() - pausedAtRef.current;
+      }
+
+      pausedAtRef.current = null;
+    }
+  }, [paused]);
+
+  // Tells the parent which screen we are on ("intro" = instructions,
+  // "playing", "result" = between rounds / final screens) so it can show
+  // the pause button only while the clock is running.
+  useEffect(() => {
+    if (!onPhaseChange) return;
+
+    if (screen === "start") onPhaseChange("intro");
+    else if (screen === "active") onPhaseChange("playing");
+    else onPhaseChange("result");
+  }, [screen, onPhaseChange]);
 
   // Sound helper that never crashes if audio isn't ready
   const sfx = useCallback(
@@ -442,6 +514,7 @@ export default function ChronologicalOrderMinigame({ onComplete }) {
       setRemainingMs(initialMs);
 
       timerRef.current = setInterval(() => {
+        if (pausedRef.current || holdRef.current) return;
         if (phaseRef.current !== "active" || deadlineRef.current == null) {
           return;
         }
@@ -494,6 +567,7 @@ export default function ChronologicalOrderMinigame({ onComplete }) {
     scoreRef.current = 0;
     roundsCompletedRef.current = 0;
     roundScoredRef.current = false;
+    holdRef.current = false;
     startTimeRef.current = Date.now();
 
     setRoundIndex(0);
@@ -515,6 +589,7 @@ export default function ChronologicalOrderMinigame({ onComplete }) {
   const moveCard = useCallback(
     (index, direction) => {
       if (phaseRef.current !== "active") return;
+      if (pausedRef.current) return;
       if (roundScoredRef.current) return;
 
       const events = orderedEventsRef.current;
@@ -534,6 +609,7 @@ export default function ChronologicalOrderMinigame({ onComplete }) {
 
   const submitAnswer = useCallback(() => {
     if (phaseRef.current !== "active") return;
+    if (pausedRef.current) return;
     if (roundScoredRef.current) return;
 
     const now = Date.now();
@@ -599,6 +675,8 @@ export default function ChronologicalOrderMinigame({ onComplete }) {
       return;
     }
 
+    // The clock waits on the "Round complete" panel (no pause button there).
+    holdRef.current = true;
     setScreen("roundComplete");
   }, [finishGameOver, stopTimer, sfx]);
 
@@ -609,6 +687,12 @@ export default function ChronologicalOrderMinigame({ onComplete }) {
     const nextIndex = roundIndexRef.current + 1;
 
     if (nextIndex >= ROUNDS.length) return;
+
+    // fresh 45 seconds starting now, and the clock runs again
+    deadlineRef.current = Date.now() + START_SECONDS * 1000;
+    remainingMsRef.current = START_SECONDS * 1000;
+    setRemainingMs(START_SECONDS * 1000);
+    holdRef.current = false;
 
     roundIndexRef.current = nextIndex;
     setRoundIndex(nextIndex);
@@ -623,11 +707,6 @@ export default function ChronologicalOrderMinigame({ onComplete }) {
   const seconds = Math.ceil(remainingMs / 1000);
   const lowTime = seconds <= 10;
 
-  const progress =
-    screen === "victory"
-      ? 1
-      : Math.max(0, Math.min(1, remainingMs / (START_SECONDS * 1000)));
-
   // ---------------------------------------------------
   // PIECES
   // ---------------------------------------------------
@@ -637,18 +716,6 @@ export default function ChronologicalOrderMinigame({ onComplete }) {
     feedbackType === "success" && styles.successText,
     feedbackType === "error" && styles.errorText,
   ];
-
-  const timerBar = (
-    <View style={styles.timerTrack}>
-      <View
-        style={[
-          styles.timerFill,
-          lowTime && styles.timerFillLow,
-          { width: `${progress * 100}%` },
-        ]}
-      />
-    </View>
-  );
 
   const introHeader = (
     <View style={styles.introHeader}>
@@ -671,6 +738,7 @@ export default function ChronologicalOrderMinigame({ onComplete }) {
     </View>
   );
 
+  // paddingRight leaves room for the pause button in the top-right corner
   const activeHeader = (
     <View style={styles.activeHeader}>
       <View style={styles.headerLeft}>
@@ -692,13 +760,24 @@ export default function ChronologicalOrderMinigame({ onComplete }) {
     </View>
   );
 
+  // Every card gets an equal share of the available height, so the whole
+  // timeline is always visible. No ScrollView.
+  const cardCount = orderedEvents.length || 1;
+  const cardH =
+    listH > 0
+      ? Math.min(
+          CARD_MAX_H,
+          Math.floor((listH - CARD_GAP * (cardCount - 1)) / cardCount)
+        )
+      : 64;
+
   const cardsList = (
-    <ScrollView
-      style={styles.cardsScroll}
-      contentContainerStyle={styles.cardsContent}
-      showsVerticalScrollIndicator
-      keyboardShouldPersistTaps="handled"
-      nestedScrollEnabled
+    <View
+      style={styles.cardsList}
+      onLayout={(e) => {
+        const h = e.nativeEvent.layout.height;
+        setListH((previous) => (Math.abs(previous - h) < 0.5 ? previous : h));
+      }}
     >
       {orderedEvents.map((event, index) => (
         <TimelineCard
@@ -709,10 +788,11 @@ export default function ChronologicalOrderMinigame({ onComplete }) {
           justMoved={lastMovedId === event.id}
           disabled={roundScoredRef.current}
           compact={compact}
+          cardH={cardH}
           onMove={moveCard}
         />
       ))}
-    </ScrollView>
+    </View>
   );
 
   // Landscape: controls live in a parchment panel beside the list.
@@ -732,7 +812,6 @@ export default function ChronologicalOrderMinigame({ onComplete }) {
       </Text>
 
       <GameButton label="Submit Order" onPress={submitAnswer} />
-      {timerBar}
     </Panel>
   );
 
@@ -766,7 +845,6 @@ export default function ChronologicalOrderMinigame({ onComplete }) {
                 </Text>
 
                 <GameButton label="Submit Order" onPress={submitAnswer} />
-                {timerBar}
               </View>
             </View>
           )}
@@ -874,16 +952,27 @@ export default function ChronologicalOrderMinigame({ onComplete }) {
     );
   }
 
+  // 1 = fits as is. Smaller = shrink to fit (never below 0.4).
+  const FIT_PADDING = 28; // top + bottom padding of the area
+  const fitScale =
+    areaH > 0 && contentH > 0
+      ? Math.min(1, Math.max(0.4, (areaH - FIT_PADDING) / contentH))
+      : 1;
+
   return (
     <Backdrop>
-      <ScrollView
-        style={styles.flex}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
+      <View
+        style={styles.fitArea}
+        onLayout={(e) => setAreaH(e.nativeEvent.layout.height)}
       >
-        {introHeader}
-        {content}
-      </ScrollView>
+        <View
+          style={{ transform: [{ scale: fitScale }] }}
+          onLayout={(e) => setContentH(e.nativeEvent.layout.height)}
+        >
+          {introHeader}
+          {content}
+        </View>
+      </View>
     </Backdrop>
   );
 }
@@ -893,11 +982,11 @@ export default function ChronologicalOrderMinigame({ onComplete }) {
 // =====================================================
 
 const styles = StyleSheet.create({
-  flex: { flex: 1, minHeight: 0 },
   background: { flex: 1, width: "100%", height: "100%", backgroundColor: "#000" },
   safeArea: { flex: 1 },
-  scrollContent: {
-    flexGrow: 1,
+  // Start / result panels: centered, no scrolling (scaled down if too tall)
+  fitArea: {
+    flex: 1,
     justifyContent: "center",
     paddingHorizontal: 20,
     paddingVertical: 14,
@@ -918,6 +1007,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 4,
+    paddingRight: 44, // room for the pause button (top-right corner)
     paddingBottom: 8,
   },
   headerLeft: {
@@ -1106,17 +1196,17 @@ const styles = StyleSheet.create({
     letterSpacing: 0.8,
   },
 
-  // CARDS
-  cardsScroll: {
+  // CARDS (equal share of the height, no scrolling)
+  cardsList: {
     flex: 1,
     minHeight: 0,
-  },
-  cardsContent: {
-    paddingBottom: 6,
+    justifyContent: "center",
+    gap: CARD_GAP,
   },
   eventCard: {
-    minHeight: 64,
-    marginBottom: CARD_GAP,
+    flex: 1,
+    minHeight: 0,
+    maxHeight: CARD_MAX_H,
     borderRadius: 10,
     backgroundColor: "rgba(255, 249, 232, 0.94)",
     borderWidth: 1.5,
@@ -1128,8 +1218,8 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     gap: 8,
   },
-  eventCardCompact: {
-    minHeight: 58,
+  eventCardTight: {
+    paddingVertical: 3,
     gap: 6,
   },
   eventCardMoved: {
@@ -1139,8 +1229,6 @@ const styles = StyleSheet.create({
   },
   eventCardDisabled: { opacity: 0.92 },
   positionBadge: {
-    width: 31,
-    height: 33,
     borderRadius: 7,
     backgroundColor: "rgba(120, 85, 40, 0.18)",
     borderWidth: 1.5,
@@ -1148,7 +1236,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  positionBadgeCompact: { width: 29, height: 30 },
   positionBadgeMoved: { backgroundColor: "rgba(214, 180, 106, 0.7)" },
   positionNumber: {
     color: INK,
@@ -1162,25 +1249,17 @@ const styles = StyleSheet.create({
   },
   eventText: {
     color: INK,
-    fontSize: 13,
-    lineHeight: 17,
     fontWeight: "bold",
     flexShrink: 1,
   },
-  eventTextCompact: {
-    fontSize: 12,
-    lineHeight: 16,
-  },
 
-  // Big, thumb-sized arrow buttons.
+  // Thumb-sized arrow buttons (width / height are set per card).
   arrowRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
   },
   arrowButton: {
-    width: 40,
-    height: 44,
     borderRadius: 9,
     backgroundColor: "#6b4a24",
     borderWidth: 1.5,
@@ -1215,19 +1294,6 @@ const styles = StyleSheet.create({
   },
   successText: { color: GREEN },
   errorText: { color: RED },
-  timerTrack: {
-    height: 5,
-    borderRadius: 3,
-    backgroundColor: "rgba(53, 35, 19, 0.2)",
-    overflow: "hidden",
-    marginTop: 10,
-  },
-  timerFill: {
-    height: "100%",
-    backgroundColor: GOLD,
-    borderRadius: 3,
-  },
-  timerFillLow: { backgroundColor: RED },
 
   // BUTTONS
   buttonWrap: { alignSelf: "center", width: "80%", maxWidth: 300, marginTop: 8 },

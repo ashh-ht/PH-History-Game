@@ -9,16 +9,24 @@ import {
     View,
 } from 'react-native';
 
-const GAME_SECONDS = 30;
-const TARGET_SUPPLIES = 5;
-const START_HULL = 3;
+const GAME_SECONDS = 60;
+const TARGET_SUPPLIES = 10;
+const START_HULL = 5;
 
 const TICK_MS = 50;
-const BASE_SPEED = 3.5;
-const MAX_SPEED = 6;
 
-const ROCK_SPAWN_MS = 2000;
-const SUPPLY_SPAWN_MS = 1700;
+// NOTE: how fast the player's boat moves left/right (pixels per tick).
+const STEER_SPEED = 7;
+
+// NOTE: how fast rocks / supplies / waves fall.
+// Starts at BASE_SPEED and ramps up over time until it hits MAX_SPEED.
+// (MAX_SPEED must be higher than BASE_SPEED or nothing ever speeds up.)
+const BASE_SPEED = 6;
+const MAX_SPEED = 14;
+
+// NOTE: RATE AT WHICH THINGS SPAWN. HIGHER NUMBER = SLOWER SPAWN. LOWER NUMBER = FASTER SPAWN.
+const ROCK_SPAWN_MS = 3000;
+const SUPPLY_SPAWN_MS = 1900;
 const WAVE_SPAWN_MS = 2200;
 
 const SHIP_WIDTH = 130;
@@ -46,6 +54,12 @@ const WAVE_IMAGES = [
     require('../../../assets/Minigames/Part1/Waves.png'),
     require('../../../assets/Minigames/Part1/Waves2.png'),
 ];
+
+// NOTE: how far to move the ship DOWN, in pixels.
+// 0 = original spot, bigger = lower, negative = higher.
+// (The hitbox moves with it. Don't go much past 80 or rocks and waves
+// will disappear before they reach the ship.)
+const SHIP_Y_OFFSET = 30;
 
 // =====================================================
 // HITBOXES
@@ -82,14 +96,17 @@ const overlaps = (a, b) =>
     a.top < b.bottom &&
     a.bottom > b.top;
 
-function VoyageMinigame({ onComplete }) {
+function VoyageMinigame({ onComplete, paused = false, onPhaseChange }) {
     const { width, height } = useWindowDimensions();
 
-    const controlsHeight = 92;
-    const playTop = 88;
+    // Space reserved at the bottom for the (now lifted) control buttons
+    const controlsHeight = 110;
+    // Space reserved at the top for the HUD + stats panel
+    const playTop = 95;
     const playBottom = height - controlsHeight;
 
-    const shipTop = playBottom - SHIP_HEIGHT - 12;
+    // Where the ship image is drawn (also used by the hitbox)
+    const shipTop = playBottom - SHIP_HEIGHT - 12 + SHIP_Y_OFFSET;
 
     const [shipX, setShipX] = useState(
         Math.max(0, width / 2 - SHIP_WIDTH / 2)
@@ -102,7 +119,7 @@ function VoyageMinigame({ onComplete }) {
     const [hull, setHull] = useState(START_HULL);
     const [collected, setCollected] = useState(0);
     const [seconds, setSeconds] = useState(0);
-    const [gameState, setGameState] = useState('playing');
+    const [gameState, setGameState] = useState('intro');
 
     const directionRef = useRef(0);
     const [shipDirection, setShipDirection] = useState(0);
@@ -122,6 +139,54 @@ function VoyageMinigame({ onComplete }) {
     const lastSecondRef = useRef(-1);
     const startTimeRef = useRef(Date.now());
 
+    // =====================================================
+    // PAUSE SUPPORT
+    // While paused the game loop skips every tick. When the game
+    // resumes, the round clock and the spawn timers are pushed back by
+    // however long the pause lasted, so nothing jumps ahead.
+    // =====================================================
+
+    const pausedRef = useRef(false);
+    const pausedAtRef = useRef(null);
+
+    useEffect(() => {
+        if (paused) {
+            pausedRef.current = true;
+            pausedAtRef.current = Date.now();
+
+            // Let go of the steering buttons so the ship doesn't drift
+            directionRef.current = 0;
+            setShipDirection(0);
+        } else if (pausedRef.current) {
+            pausedRef.current = false;
+
+            const delta = Date.now() - (pausedAtRef.current ?? Date.now());
+
+            startTimeRef.current += delta;
+            lastRockSpawnRef.current += delta;
+            lastSupplySpawnRef.current += delta;
+            lastWaveSpawnRef.current += delta;
+
+            pausedAtRef.current = null;
+        }
+    }, [paused]);
+
+    // Tells the parent which screen we are on ("intro" = instructions,
+    // "playing", "result" = win / lose) so it can adjust the pause button.
+    useEffect(() => {
+        if (!onPhaseChange) {
+            return;
+        }
+
+        if (gameState === 'intro') {
+            onPhaseChange('intro');
+        } else if (gameState === 'won' || gameState === 'lost') {
+            onPhaseChange('result');
+        } else {
+            onPhaseChange('playing');
+        }
+    }, [gameState, onPhaseChange]);
+
     useEffect(() => {
         if (gameState !== 'playing') {
             return;
@@ -134,6 +199,10 @@ function VoyageMinigame({ onComplete }) {
         lastSecondRef.current = -1;
 
         const timer = setInterval(() => {
+            if (pausedRef.current) {
+                return;
+            }
+
             const now = Date.now();
             const elapsed = (now - startTimeRef.current) / 1000;
             const currentSecond = Math.floor(elapsed);
@@ -143,13 +212,18 @@ function VoyageMinigame({ onComplete }) {
                 setSeconds(Math.min(currentSecond, GAME_SECONDS));
             }
 
+            // Ramps from BASE_SPEED up to MAX_SPEED over the whole round
             const speed = Math.min(
-                BASE_SPEED + elapsed * 0.12,
+                BASE_SPEED + (elapsed / GAME_SECONDS) * (MAX_SPEED - BASE_SPEED),
                 MAX_SPEED
             );
 
-            let nextX = shipXRef.current + directionRef.current * 7;
-            nextX = Math.max(8, Math.min(width - SHIP_WIDTH - 8, nextX));
+            let nextX = shipXRef.current + directionRef.current * STEER_SPEED;
+
+            nextX = Math.max(
+                8,
+                Math.min(width - SHIP_WIDTH - 8, nextX)
+            );
 
             shipXRef.current = nextX;
             setShipX(nextX);
@@ -266,7 +340,11 @@ function VoyageMinigame({ onComplete }) {
         }, TICK_MS);
 
         return () => clearInterval(timer);
-    }, [gameState, height, width, playBottom, shipTop]);
+    }, [gameState, height, width, playBottom, playTop, shipTop]);
+
+    // =====================================================
+    // RESTART
+    // =====================================================
 
     const restart = () => {
         const startX = Math.max(0, width / 2 - SHIP_WIDTH / 2);
@@ -340,13 +418,30 @@ function VoyageMinigame({ onComplete }) {
                 <View style={styles.darkOverlay} />
 
                 <View style={styles.header}>
-                    <Text style={styles.title}>THE VOYAGE CONTINUES</Text>
-                    <Text style={styles.subtitle}>The next shore awaits.</Text>
+                    {/* LEFT: health */}
+                    <View style={styles.panel}>
+                        <Text style={styles.panelLabel}>Health</Text>
+                        <Text style={styles.panelValue}>
+                            {hull}/{START_HULL}
+                        </Text>
+                    </View>
 
-                    <View style={styles.statsRow}>
-                        <Text style={styles.stat}>HULL: {hull}/{START_HULL}</Text>
-                        <Text style={styles.stat}>SUPPLIES: {collected}/{TARGET_SUPPLIES}</Text>
-                        <Text style={styles.stat}>TIME: {Math.max(0, GAME_SECONDS - seconds)}s</Text>
+                    {/* LEFT (next to health): supplies */}
+                    <View style={styles.panel}>
+                        <Text style={styles.panelLabel}>SUPPLIES</Text>
+                        <Text style={styles.panelValue}>
+                            {collected}/{TARGET_SUPPLIES}
+                        </Text>
+                    </View>
+                </View>
+
+                {/* CENTER: time */}
+                <View style={styles.timeWrap} pointerEvents="none">
+                    <View style={styles.panel}>
+                        <Text style={styles.panelLabel}>TIME</Text>
+                        <Text style={styles.panelValue}>
+                            {Math.max(0, GAME_SECONDS - seconds)}s
+                        </Text>
                     </View>
                 </View>
 
@@ -406,12 +501,9 @@ function VoyageMinigame({ onComplete }) {
                     />
                 ))}
 
-                <View pointerEvents="none" style={styles.instructions}>
-                    <Text style={styles.instructionText}>HOLD ◀ OR ▶ TO STEER</Text>
-                    <Text style={styles.smallInstruction}>
-                        Collect {TARGET_SUPPLIES} supplies. Avoid rocks and waves.
-                    </Text>
-                </View>
+                {/* =================================================
+                    CONTROLS
+                ================================================= */}
 
                 <View style={styles.controls}>
                     <Pressable
@@ -441,7 +533,49 @@ function VoyageMinigame({ onComplete }) {
                     </Pressable>
                 </View>
 
-                {gameState !== 'playing' && (
+                {/* =================================================
+                    INTRO / INSTRUCTIONS (shown before the game starts)
+                ================================================= */}
+
+                {gameState === 'intro' && (
+                    <View style={styles.resultOverlay}>
+                        <View style={styles.resultBox}>
+                            <Text style={styles.resultTitle}>THE VOYAGE CONTINUES</Text>
+
+                            <Text style={styles.resultText}>
+                                The next shore awaits. Guide the fleet safely across the sea.
+                            </Text>
+
+                            <View style={styles.introList}>
+                                <Text style={styles.introItem}>
+                                    ● Hold the arrows to steer the ship
+                                </Text>
+                                <Text style={styles.introItem}>
+                                    ● Collect {TARGET_SUPPLIES} supplies
+                                </Text>
+                                <Text style={styles.introItem}>
+                                    ● Avoid rocks and waves. They damage your hull
+                                </Text>
+                                <Text style={styles.introItem}>
+                                    ● You have {GAME_SECONDS} seconds
+                                </Text>
+                            </View>
+
+                            <Pressable
+                                style={styles.actionButton}
+                                onPress={() => setGameState('playing')}
+                            >
+                                <Text style={styles.actionText}>START</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+                )}
+
+                {/* =================================================
+                    RESULT SCREEN
+                ================================================= */}
+
+                {(gameState === 'won' || gameState === 'lost') && (
                     <View style={styles.resultOverlay}>
                         <View style={styles.resultBox}>
                             <Text style={styles.resultTitle}>
@@ -476,51 +610,60 @@ function VoyageMinigame({ onComplete }) {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        backgroundColor: '#0b2732',
+        backgroundColor: '#dbb882',
     },
     background: {
         flex: 1,
     },
     darkOverlay: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(0, 20, 30, 0.10)',
+        backgroundColor: 'rgba(143, 180, 166, 0.89)',
     },
+
+    // Health and supplies sit together at the top left
     header: {
         position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        paddingTop: 12,
-        paddingHorizontal: 14,
+        top: 12,
+        left: 16,
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        gap: 10,
         zIndex: 20,
     },
-    title: {
-        color: '#fff4cf',
-        fontSize: 21,
+
+    // Time stays centered at the top
+    timeWrap: {
+        position: 'absolute',
+        top: 12,
+        left: 0,
+        right: 0,
+        alignItems: 'center',
+        zIndex: 20,
+    },
+
+    panel: {
+        minWidth: 110,
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        alignItems: 'center',
+        backgroundColor: 'rgba(20, 48, 58, 0.85)',
+        borderWidth: 2,
+        borderColor: '#d8b86a',
+        borderRadius: 10,
+    },
+
+    panelLabel: {
+        color: '#f0d58a',
+        fontSize: 10,
         fontWeight: 'bold',
-        textAlign: 'center',
-        textShadowColor: '#000',
-        textShadowRadius: 4,
+        letterSpacing: 1,
     },
-    subtitle: {
+
+    panelValue: {
         color: '#fff',
-        fontSize: 12,
-        textAlign: 'center',
-        marginTop: 3,
-        textShadowColor: '#000',
-        textShadowRadius: 3,
-    },
-    statsRow: {
-        marginTop: 9,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    stat: {
-        color: '#fff',
-        fontSize: 11,
+        fontSize: 16,
         fontWeight: 'bold',
-        textShadowColor: '#000',
-        textShadowRadius: 3,
+        marginTop: 2,
     },
     ship: {
         position: 'absolute',
@@ -550,35 +693,28 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
         zIndex: 7,
     },
-    instructions: {
-        position: 'absolute',
-        bottom: 91,
-        left: 0,
-        right: 0,
-        alignItems: 'center',
-        zIndex: 9,
+
+    introList: {
+        marginTop: 16,
+        alignSelf: 'stretch',
     },
-    instructionText: {
+
+    introItem: {
         color: '#fff',
-        fontSize: 13,
-        fontWeight: 'bold',
-        textShadowColor: '#000',
-        textShadowRadius: 4,
+        fontSize: 14,
+        lineHeight: 22,
+        marginTop: 6,
     },
-    smallInstruction: {
-        color: '#fff',
-        fontSize: 11,
-        marginTop: 3,
-        textShadowColor: '#000',
-        textShadowRadius: 3,
-    },
+
+    // Left button at the bottom left, right button at the bottom right
     controls: {
         position: 'absolute',
-        bottom: 10,
+        bottom: 28,
         left: 0,
         right: 0,
+        paddingHorizontal: 28,
         flexDirection: 'row',
-        justifyContent: 'space-evenly',
+        justifyContent: 'space-between',
         zIndex: 30,
     },
     controlButton: {

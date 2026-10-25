@@ -2,32 +2,18 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   Image,
   ImageBackground,
   Animated,
+  PanResponder,
   StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
   SafeAreaView,
   useWindowDimensions,
 } from "react-native";
 
-import { useAudio } from "../../../Audiostore"; // same file PartRenderer uses
+import { useAudio } from "../../../Audiostore";
 
-// =====================================================
-// ARTWORK
-// These are the same images the story screens use.
-// This file lives in the Minigames folder, so the paths
-// go one folder deeper than PartRenderer's. Adjust them
-// if your folders are laid out differently.
-//
-// To use a real scroll image, drop it in assets/foreground
-// and change IMG.panel to point at it. That's the only line
-// you need to touch.
-// =====================================================
 
 const IMG = {
   background: require("../../../Background Images/Usuals/Paper_scroll.png"),
@@ -35,18 +21,13 @@ const IMG = {
   button: require("../../../assets/buttons/choice_button.png"),
 };
 
-// Does the panel image have a name tab built in (like dialogue_box.png)?
-//  true  -> labels sit on the tab
-//  false -> plain framed image: the label shows as a small heading inside
-//           the panel, and padding is wider to clear a decorative border
+
 const PANEL_HAS_TAB = false;
 const PANEL_PAD_TOP = PANEL_HAS_TAB ? 58 : 38;
 const PANEL_PAD_BOTTOM = PANEL_HAS_TAB ? 26 : 42;
 const PANEL_PAD_SIDE = PANEL_HAS_TAB ? 34 : 54;
 
-// How much blank/transparent space the panel PNG has around its visible
-// frame, as a fraction of the image (0.1 = 10%). Tune these if the content
-// still looks off-center. Use all zeros for an image with no blank margins.
+
 const PANEL_INSET = PANEL_HAS_TAB
   ? { left: 0, right: 0, top: 0, bottom: 0 }
   : { left: 0.023, right: 0.01, top: 0.06, bottom: 0.06 };
@@ -55,7 +36,6 @@ const START_SECONDS = 45;
 const BONUS_SECONDS = 10;
 const TICK_MS = 200;
 
-// Keep puzzle content separate from the screen and validation logic.
 const PUZZLES = [
   {
     answer: "DAGOHOY",
@@ -77,7 +57,9 @@ const PUZZLES = [
   },
   {
     answer: "REBELLION",
-    scrambled: ["L", "I", "O", "N", "B", "E", "L", "R"],
+    // (The old list was missing one "E", which made this impossible to
+    // solve by dragging. REBELLION has two E's.)
+    scrambled: ["L", "I", "O", "N", "B", "E", "L", "R", "E"],
     clue: "An organized resistance against an authority.",
     hint: "It describes Dagohoy's long resistance.",
   },
@@ -94,9 +76,9 @@ const TOTAL_MS = START_SECONDS * 1000 + 4 * BONUS_SECONDS * 1000;
 const normalizeAnswer = (value) =>
   String(value || "").trim().replace(/\s+/g, "").toUpperCase();
 
-// =====================================================
-// BUTTON (same spring press feel as the story buttons)
-// =====================================================
+const emptySlots = (puzzleIndex) =>
+  Array(PUZZLES[puzzleIndex].answer.length).fill(null);
+
 
 function GameButton({ label, onPress, secondary }) {
   const scale = useRef(new Animated.Value(1)).current;
@@ -146,14 +128,9 @@ function GameButton({ label, onPress, secondary }) {
   );
 }
 
-// Parchment panel
-// The panel image is drawn slightly oversized and shifted so that its
-// VISIBLE frame lines up exactly with the box, even when the PNG has blank
-// transparent margins. Content is then centered inside the visible frame.
+
 function Panel({ children, style }) {
-  // The box is measured after layout, and the image is sized in real pixels
-  // from that measurement. (Percent sizes can come out short when the box
-  // grows with its content.)
+
   const [size, setSize] = useState({ w: 0, h: 0 });
 
   const L = PANEL_INSET.left;
@@ -200,8 +177,7 @@ function Panel({ children, style }) {
   );
 }
 
-// Text that sits inside the little name tab built into the box art.
-// Sized in percentages so it stays on the tab however the box stretches.
+
 function PanelTab({ children }) {
   if (!PANEL_HAS_TAB) {
     return <Text style={styles.kicker}>{children}</Text>;
@@ -216,11 +192,107 @@ function PanelTab({ children }) {
   );
 }
 
-// =====================================================
-// MINIGAME
-// =====================================================
+function DraggableTile({
+  letter,
+  index,
+  width,
+  height,
+  fontSize,
+  used,
+  locked,
+  scale,
+  onDrop,
+  onTap,
+}) {
+  const pan = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
+  const [lifted, setLifted] = useState(false);
 
-export default function DecipherMinigame({ onComplete }) {
+  const live = useRef({});
+  live.current = { index, used, locked, scale, onDrop, onTap };
+
+  const springBack = () => {
+    setLifted(false);
+    Animated.spring(pan, {
+      toValue: { x: 0, y: 0 },
+      useNativeDriver: false,
+      speed: 24,
+      bounciness: 4,
+    }).start();
+  };
+
+  const snapHome = () => {
+    setLifted(false);
+    pan.setValue({ x: 0, y: 0 });
+  };
+
+  const responder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () =>
+        !live.current.used && !live.current.locked,
+      onMoveShouldSetPanResponder: () =>
+        !live.current.used && !live.current.locked,
+
+      onPanResponderGrant: () => setLifted(true),
+
+      onPanResponderMove: (_, gesture) => {
+
+        const s = live.current.scale || 1;
+        pan.setValue({ x: gesture.dx / s, y: gesture.dy / s });
+      },
+
+      onPanResponderRelease: (_, gesture) => {
+        const moved = Math.abs(gesture.dx) > 6 || Math.abs(gesture.dy) > 6;
+
+        if (!moved) {
+          snapHome();
+          live.current.onTap(live.current.index);
+          return;
+        }
+
+        Promise.resolve(
+          live.current.onDrop(
+            live.current.index,
+            gesture.moveX,
+            gesture.moveY
+          )
+        ).then((placed) => {
+          if (placed) snapHome();
+          else springBack();
+        });
+      },
+
+      onPanResponderTerminate: springBack,
+    })
+  ).current;
+
+  return (
+    <Animated.View
+      {...responder.panHandlers}
+      style={[
+        styles.letterTile,
+        { width, height },
+        used && styles.tileUsed,
+        lifted && styles.tileLifted,
+        {
+          transform: [
+            { translateX: pan.x },
+            { translateY: pan.y },
+            { scale: lifted ? 1.15 : 1 },
+          ],
+        },
+      ]}
+    >
+      <Text style={[styles.letterText, { fontSize }]}>{letter}</Text>
+    </Animated.View>
+  );
+}
+
+
+export default function DecipherMinigame({
+  onComplete,
+  paused = false,
+  onPhaseChange,
+}) {
   const { width, height } = useWindowDimensions();
   const landscape = width > height;
 
@@ -228,12 +300,20 @@ export default function DecipherMinigame({ onComplete }) {
 
   const [screen, setScreen] = useState("start");
   const [puzzleIndex, setPuzzleIndex] = useState(0);
-  const [answer, setAnswer] = useState("");
+
+  const [placed, setPlaced] = useState(() => emptySlots(0));
   const [remainingMs, setRemainingMs] = useState(START_SECONDS * 1000);
   const [feedback, setFeedback] = useState("");
   const [feedbackType, setFeedbackType] = useState("");
   const [completed, setCompleted] = useState([]);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+
+
+  const [areaH, setAreaH] = useState(0);
+  const [contentH, setContentH] = useState(0);
+
+
+  const [slotRowW, setSlotRowW] = useState(0);
 
   const deadlineRef = useRef(null);
   const timerRef = useRef(null);
@@ -244,9 +324,43 @@ export default function DecipherMinigame({ onComplete }) {
   const remainingMsRef = useRef(START_SECONDS * 1000);
   const onCompleteRef = useRef(onComplete);
 
+  const slotRefs = useRef([]);
+  const placedRef = useRef(placed);
+  placedRef.current = placed;
+
   useEffect(() => {
     onCompleteRef.current = onComplete;
   }, [onComplete]);
+
+  // Pause support: the clock is frozen while `paused` is true, and the
+  // deadline is pushed back by however long the pause lasted.
+  const pausedRef = useRef(false);
+  const pausedAtRef = useRef(null);
+
+  useEffect(() => {
+    if (paused) {
+      pausedRef.current = true;
+      pausedAtRef.current = Date.now();
+    } else if (pausedRef.current) {
+      pausedRef.current = false;
+
+      if (pausedAtRef.current != null && deadlineRef.current != null) {
+        deadlineRef.current += Date.now() - pausedAtRef.current;
+      }
+
+      pausedAtRef.current = null;
+    }
+  }, [paused]);
+
+  // Tells the parent which screen we are on ("intro" = instructions,
+  // "playing", "result" = final screen) so it can adjust the pause button.
+  useEffect(() => {
+    if (!onPhaseChange) return;
+
+    if (screen === "start") onPhaseChange("intro");
+    else if (screen === "gameover" || screen === "victory") onPhaseChange("result");
+    else onPhaseChange("playing");
+  }, [screen, onPhaseChange]);
 
   // Sound helper that never crashes if audio isn't ready
   const sfx = useCallback(
@@ -257,6 +371,16 @@ export default function DecipherMinigame({ onComplete }) {
     },
     [audio]
   );
+
+  const currentPuzzle = PUZZLES[puzzleIndex];
+  const letters = currentPuzzle.scrambled;
+
+  // The word the player has built so far
+  const answer = placed
+    .map((tileIndex) => (tileIndex == null ? "" : letters[tileIndex]))
+    .join("");
+  const allFilled = placed.length > 0 && placed.every((v) => v !== null);
+  const usedTiles = new Set(placed.filter((v) => v !== null));
 
   const stopTimer = useCallback(() => {
     if (timerRef.current) {
@@ -284,6 +408,7 @@ export default function DecipherMinigame({ onComplete }) {
       setRemainingMs(initialMs);
 
       timerRef.current = setInterval(() => {
+        if (pausedRef.current) return;
         if (phaseRef.current !== "active" || deadlineRef.current == null) return;
         const ms = Math.max(0, deadlineRef.current - Date.now());
         remainingMsRef.current = ms;
@@ -312,7 +437,7 @@ export default function DecipherMinigame({ onComplete }) {
     completedRef.current = [];
     remainingMsRef.current = START_SECONDS * 1000;
     setPuzzleIndex(0);
-    setAnswer("");
+    setPlaced(emptySlots(0));
     setFeedback("");
     setFeedbackType("");
     setCompleted([]);
@@ -321,29 +446,149 @@ export default function DecipherMinigame({ onComplete }) {
     startTimer(START_SECONDS * 1000);
   }, [startTimer, stopTimer]);
 
+
+  const clearErrorFeedback = useCallback(() => {
+    setFeedback((previous) => (previous ? "" : previous));
+    setFeedbackType("");
+  }, []);
+
+
+  const placeTile = useCallback(
+    (tileIndex, slotIndex) => {
+      setPlaced((previous) => {
+        const next = [...previous];
+        next[slotIndex] = tileIndex;
+        return next;
+      });
+      clearErrorFeedback();
+      sfx("dialogueClick");
+    },
+    [clearErrorFeedback, sfx]
+  );
+
+  // Tap a tile: it goes into the first empty box
+  const handleTileTap = useCallback(
+    (tileIndex) => {
+      if (phaseRef.current !== "active" || pausedRef.current) return;
+
+      const emptyIndex = placedRef.current.indexOf(null);
+      if (emptyIndex === -1) return;
+
+      placeTile(tileIndex, emptyIndex);
+    },
+    [placeTile]
+  );
+
+  // Tap a filled box: the letter goes back to the tray
+  const removeFromSlot = useCallback(
+    (slotIndex) => {
+      if (phaseRef.current !== "active" || pausedRef.current) return;
+
+      setPlaced((previous) => {
+        const next = [...previous];
+        next[slotIndex] = null;
+        return next;
+      });
+      clearErrorFeedback();
+    },
+    [clearErrorFeedback]
+  );
+
+ 
+  const handleTileDrop = useCallback(
+    (tileIndex, x, y) =>
+      new Promise((resolve) => {
+        if (phaseRef.current !== "active" || pausedRef.current) {
+          resolve(false);
+          return;
+        }
+
+        const count = placedRef.current.length;
+        const rects = new Array(count).fill(null);
+        let pending = count;
+
+        const finish = () => {
+          let bestSlot = -1;
+          let bestDistance = Infinity;
+
+          rects.forEach((rect, slotIndex) => {
+            if (!rect) return;
+
+            const inside =
+              x >= rect.x &&
+              x <= rect.x + rect.w &&
+              y >= rect.y &&
+              y <= rect.y + rect.h;
+
+            const distance = Math.hypot(
+              x - (rect.x + rect.w / 2),
+              y - (rect.y + rect.h / 2)
+            );
+
+            const closeEnough = distance <= Math.max(rect.w, rect.h) * 1.4;
+
+            if ((inside || closeEnough) && distance < bestDistance) {
+              bestDistance = distance;
+              bestSlot = slotIndex;
+            }
+          });
+
+          if (bestSlot >= 0) {
+            placeTile(tileIndex, bestSlot);
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        };
+
+        if (count === 0) {
+          resolve(false);
+          return;
+        }
+
+        for (let i = 0; i < count; i += 1) {
+          const node = slotRefs.current[i];
+
+          if (!node || typeof node.measureInWindow !== "function") {
+            pending -= 1;
+            if (pending === 0) finish();
+            continue;
+          }
+
+          node.measureInWindow((rx, ry, rw, rh) => {
+            rects[i] = { x: rx, y: ry, w: rw, h: rh };
+            pending -= 1;
+            if (pending === 0) finish();
+          });
+        }
+      }),
+    [placeTile]
+  );
+
+
   const submitAnswer = useCallback(() => {
     if (phaseRef.current !== "active" || submittedRef.current) return;
+    if (pausedRef.current) return;
 
     const now = Date.now();
     const liveRemaining =
       deadlineRef.current == null ? 0 : Math.max(0, deadlineRef.current - now);
 
-    // Check the actual deadline instead of relying on the next interval tick.
     if (liveRemaining <= 0) {
       finishGameOver();
       return;
     }
 
     const puzzle = PUZZLES[puzzleIndexRef.current];
-    const guess = normalizeAnswer(answer);
-    if (!guess) {
-      setFeedback("Enter an answer first.");
+
+    if (!allFilled) {
+      setFeedback("Fill every box first.");
       setFeedbackType("error");
       return;
     }
 
-    if (guess !== puzzle.answer) {
-      setFeedback("Not quite. Try again.");
+    if (normalizeAnswer(answer) !== puzzle.answer) {
+      setFeedback("Not quite. Tap a box to take a letter back.");
       setFeedbackType("error");
       sfx("wrong");
       return;
@@ -374,11 +619,11 @@ export default function DecipherMinigame({ onComplete }) {
     const nextIndex = puzzleIndexRef.current + 1;
     puzzleIndexRef.current = nextIndex;
     setPuzzleIndex(nextIndex);
-    setAnswer("");
+    setPlaced(emptySlots(nextIndex));
     // Allow the next puzzle to be submitted; the single existing timer continues
     // against the updated absolute deadline.
     submittedRef.current = false;
-  }, [answer, finishGameOver, stopTimer, sfx]);
+  }, [answer, allFilled, finishGameOver, stopTimer, sfx]);
 
   const retry = useCallback(() => {
     startGame();
@@ -386,13 +631,32 @@ export default function DecipherMinigame({ onComplete }) {
 
   const seconds = Math.ceil(remainingMs / 1000);
   const progress = Math.max(0, Math.min(1, remainingMs / TOTAL_MS));
-  const currentPuzzle = PUZZLES[puzzleIndex];
   const lowTime = seconds <= 10;
 
-  // Tiles shrink on small / landscape screens so long words always fit
+  // 1 = fits as is. Smaller = shrink to fit (never below 0.4).
+  const FIT_PADDING = 28; // top + bottom padding of the play area
+  const fitScale =
+    areaH > 0 && contentH > 0
+      ? Math.min(1, Math.max(0.4, (areaH - FIT_PADDING) / contentH))
+      : 1;
+
+  // Tray tiles shrink on small / landscape screens so long words always fit
   const tileW = landscape ? 30 : 36;
   const tileH = landscape ? 38 : 46;
   const tileFont = landscape ? 18 : 21;
+
+  // Answer boxes size themselves to fit the row (never bigger than 40)
+  const SLOT_GAP = 5;
+  const slotCount = placed.length;
+  const slotW =
+    slotRowW > 0
+      ? Math.max(
+          22,
+          Math.min(40, Math.floor((slotRowW - SLOT_GAP * (slotCount - 1)) / slotCount))
+        )
+      : 34;
+  const slotH = Math.round(slotW * 1.2);
+  const slotFont = Math.round(slotW * 0.55);
 
   // ---------------------------------------------------
   // SCREENS
@@ -409,6 +673,7 @@ export default function DecipherMinigame({ onComplete }) {
       <View style={styles.ruleBox}>
         <Text style={styles.ruleText}>• You start with 45 seconds.</Text>
         <Text style={styles.ruleText}>• Each correct word adds 10 seconds.</Text>
+        <Text style={styles.ruleText}>• Drag the letters into the boxes.</Text>
         <Text style={styles.ruleText}>• The clock never stops, so be quick!</Text>
       </View>
 
@@ -422,15 +687,20 @@ export default function DecipherMinigame({ onComplete }) {
       <Text style={styles.clueText}>{currentPuzzle.clue}</Text>
 
       <View style={styles.letterTray}>
-        {currentPuzzle.scrambled.map((letter, index) => (
-          <View
-            key={`${letter}-${index}`}
-            style={[styles.letterTile, { width: tileW, height: tileH }]}
-          >
-            <Text style={[styles.letterText, { fontSize: tileFont }]}>
-              {letter}
-            </Text>
-          </View>
+        {letters.map((letter, index) => (
+          <DraggableTile
+            key={`${puzzleIndex}-${index}`}
+            letter={letter}
+            index={index}
+            width={tileW}
+            height={tileH}
+            fontSize={tileFont}
+            used={usedTiles.has(index)}
+            locked={paused || screen !== "active"}
+            scale={fitScale}
+            onDrop={handleTileDrop}
+            onTap={handleTileTap}
+          />
         ))}
       </View>
 
@@ -442,26 +712,43 @@ export default function DecipherMinigame({ onComplete }) {
     <View style={landscape ? styles.rightCol : styles.answerCol}>
       <Text style={styles.inputLabel}>Your deciphered word</Text>
 
-      <TextInput
-        value={answer}
-        onChangeText={(value) => {
-          setAnswer(value);
-          if (feedbackType === "error") {
-            setFeedback("");
-            setFeedbackType("");
-          }
-        }}
-        onSubmitEditing={submitAnswer}
-        returnKeyType="done"
-        autoCapitalize="characters"
-        autoCorrect={false}
-        editable={screen === "active"}
-        maxLength={20}
-        placeholder="Type your answer"
-        placeholderTextColor="#8a7a62"
-        accessibilityLabel="Deciphered answer"
-        style={styles.input}
-      />
+      <View
+        style={styles.slotRow}
+        onLayout={(e) => setSlotRowW(e.nativeEvent.layout.width)}
+      >
+        {placed.map((tileIndex, slotIndex) => {
+          const filled = tileIndex !== null;
+
+          return (
+            <View
+              key={`slot-${puzzleIndex}-${slotIndex}`}
+              ref={(node) => {
+                slotRefs.current[slotIndex] = node;
+              }}
+              collapsable={false}
+              style={[
+                styles.slotBox,
+                { width: slotW, height: slotH },
+                filled && styles.slotFilled,
+              ]}
+            >
+              {filled ? (
+                <TouchableOpacity
+                  activeOpacity={0.6}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Remove letter ${letters[tileIndex]}`}
+                  onPress={() => removeFromSlot(slotIndex)}
+                  style={styles.slotTouch}
+                >
+                  <Text style={[styles.letterText, { fontSize: slotFont }]}>
+                    {letters[tileIndex]}
+                  </Text>
+                </TouchableOpacity>
+              ) : null}
+            </View>
+          );
+        })}
+      </View>
 
       {feedback ? (
         <Text
@@ -473,7 +760,9 @@ export default function DecipherMinigame({ onComplete }) {
           {feedback}
         </Text>
       ) : (
-        <View style={styles.feedbackSpacer} />
+        <Text style={styles.helperText}>
+          Drag the letters here, or tap them
+        </Text>
       )}
 
       <GameButton label="Submit Answer" onPress={submitAnswer} />
@@ -555,35 +844,39 @@ export default function DecipherMinigame({ onComplete }) {
       <View style={styles.dim} />
 
       <SafeAreaView style={styles.safeArea}>
-        <KeyboardAvoidingView
-          style={styles.flex}
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
-        >
-          <ScrollView
-            contentContainerStyle={styles.scrollContent}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
+        <View style={styles.flex}>
+          <View
+            style={styles.fitArea}
+            onLayout={(e) => setAreaH(e.nativeEvent.layout.height)}
           >
-            <View style={styles.header}>
-              <Text style={styles.title}>The Cipher Trail</Text>
+            <View
+              pointerEvents={paused ? "none" : "auto"}
+              style={{ transform: [{ scale: fitScale }] }}
+              onLayout={(e) => setContentH(e.nativeEvent.layout.height)}
+            >
+              <View style={styles.header}>
+                <Text style={styles.title}>The Cipher Trail</Text>
 
-              {screen === "active" ? (
-                <View style={[styles.timerPill, lowTime && styles.timerPillLow]}>
-                  <Text
-                    style={[styles.timerValue, lowTime && styles.timerTextLow]}
+                {screen === "active" ? (
+                  <View
+                    style={[styles.timerPill, lowTime && styles.timerPillLow]}
                   >
-                    {seconds}s
-                  </Text>
-                </View>
-              ) : null}
-            </View>
+                    <Text
+                      style={[styles.timerValue, lowTime && styles.timerTextLow]}
+                    >
+                      {seconds}s
+                    </Text>
+                  </View>
+                ) : null}
+              </View>
 
-            {screen === "start" ? startPanel : null}
-            {screen === "active" ? activeBody : null}
-            {screen === "gameover" ? gameOverPanel : null}
-            {screen === "victory" ? victoryPanel : null}
-          </ScrollView>
-        </KeyboardAvoidingView>
+              {screen === "start" ? startPanel : null}
+              {screen === "active" ? activeBody : null}
+              {screen === "gameover" ? gameOverPanel : null}
+              {screen === "victory" ? victoryPanel : null}
+            </View>
+          </View>
+        </View>
       </SafeAreaView>
     </ImageBackground>
   );
@@ -593,7 +886,7 @@ export default function DecipherMinigame({ onComplete }) {
 // STYLES
 // =====================================================
 
-const INK = "#352313"; // same brown the speaker names use
+const INK = "#422912"; // same brown the speaker names use
 const BUTTON_INK = "#371f10"; // same as quiz buttons
 
 const styles = StyleSheet.create({
@@ -604,8 +897,9 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.05)",
   },
   safeArea: { flex: 1 },
-  scrollContent: {
-    flexGrow: 1,
+
+  fitArea: {
+    flex: 1,
     justifyContent: "center",
     paddingHorizontal: 20,
     paddingVertical: 14,
@@ -613,15 +907,16 @@ const styles = StyleSheet.create({
 
   // HEADER
   header: {
-    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 10,
+    justifyContent: "center",
+    marginBottom: 9,
+    right:15
   },
   title: {
-    color: INK,
+    color: 'black',
     fontSize: 22,
     fontWeight: "bold",
+
   },
   timerPill: {
     minWidth: 64,
@@ -650,10 +945,11 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     minHeight: 240,
   },
-  fullPanel: { width: "100%" },
-  leftCol: { flex: 1.15 },
-  rightCol: { flex: 1, justifyContent: "center", paddingLeft: 6 },
-  answerCol: { width: "100%", marginTop: 10 },
+
+  fullPanel: { width: "100%", zIndex: 2 },
+  leftCol: { flex: 1.15, zIndex: 2 },
+  rightCol: { flex: 1, justifyContent: "center", paddingLeft: 6, zIndex: 1 },
+  answerCol: { width: "100%", marginTop: 10, zIndex: 1 },
   row: { flexDirection: "row", alignItems: "center", gap: 14 },
   column: { flexDirection: "column" },
 
@@ -705,7 +1001,7 @@ const styles = StyleSheet.create({
   ruleBox: { marginVertical: 14, alignSelf: "center" },
   ruleText: { color: INK, fontSize: 14, lineHeight: 22 },
 
-  // LETTERS
+  // LETTERS (tray)
   letterTray: {
     flexDirection: "row",
     justifyContent: "center",
@@ -722,6 +1018,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+
+  tileUsed: { opacity: 0.2 },
+
+  tileLifted: {
+    zIndex: 50,
+    elevation: 12,
+    backgroundColor: "rgba(214, 180, 106, 0.95)",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+  },
   letterText: { color: INK, fontWeight: "bold" },
   hintText: {
     color: "#141414",
@@ -731,34 +1039,54 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
   },
 
-  // INPUT
+  // ANSWER BOXES
   inputLabel: {
     color: INK,
     fontSize: 13,
     fontWeight: "bold",
     textAlign: "center",
-    marginBottom: 6,
+    marginBottom: 8,
   },
-  input: {
-    minHeight: 48,
-    borderRadius: 8,
-    borderWidth: 2,
+  slotRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 5,
+    alignSelf: "stretch",
+  },
+  slotBox: {
+    borderRadius: 6,
+    borderWidth: 1.5,
+    borderStyle: "dashed",
     borderColor: "#7a5a2a",
-    backgroundColor: "rgba(255, 248, 232, 0.92)",
-    paddingHorizontal: 14,
-    color: INK,
-    fontSize: 18,
-    fontWeight: "bold",
-    letterSpacing: 2,
+    backgroundColor: "rgba(255, 248, 232, 0.6)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  slotFilled: {
+    borderStyle: "solid",
+    backgroundColor: "rgba(120, 85, 40, 0.18)",
+  },
+  slotTouch: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  helperText: {
+    marginTop: 8,
+    minHeight: 26,
+    fontSize: 12,
+    fontStyle: "italic",
+    color: "#50402a",
     textAlign: "center",
   },
   feedback: {
     marginTop: 8,
+    minHeight: 26,
     fontSize: 14,
     fontWeight: "bold",
     textAlign: "center",
   },
-  feedbackSpacer: { height: 26 },
   successText: { color: "#1f6b34" },
   errorText: { color: "#a3281b" },
 

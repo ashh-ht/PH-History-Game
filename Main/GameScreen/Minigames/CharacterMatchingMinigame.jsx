@@ -15,7 +15,6 @@ import {
   ImageBackground,
   StyleSheet,
   SafeAreaView,
-  ScrollView,
   useWindowDimensions,
   PanResponder,
   Animated,
@@ -151,9 +150,6 @@ function GameButton({ label, onPress, secondary }) {
 // VISIBLE frame lines up exactly with the box, even when the PNG has blank
 // transparent margins. Content is then centered inside the visible frame.
 function Panel({ children, style }) {
-  // The box is measured after layout, and the image is sized in real pixels
-  // from that measurement. (Percent sizes can come out short when the box
-  // grows with its content.)
   const [size, setSize] = useState({ w: 0, h: 0 });
 
   const L = PANEL_INSET.left;
@@ -215,7 +211,16 @@ function PanelTab({ children }) {
   );
 }
 
-function Screen({ children }) {
+// Fit-to-screen shell (same idea as DecipherMinigame): the screen never
+// scrolls. If the content is taller than the space available, it is scaled
+// down a little instead.
+function Screen({
+  children,
+  paused = false,
+  scale,
+  onAreaLayout,
+  onContentLayout,
+}) {
   return (
     <ImageBackground
       source={IMG.background}
@@ -223,17 +228,219 @@ function Screen({ children }) {
       resizeMode="cover"
     >
       <SafeAreaView style={styles.safeArea}>
-        <ScrollView
-          style={styles.flex}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-          nestedScrollEnabled
-        >
-          {children}
-        </ScrollView>
+        <View style={styles.flex}>
+          <View style={styles.fitArea} onLayout={onAreaLayout}>
+            {/* While paused, nothing in the game can be touched or dragged */}
+            <View
+              pointerEvents={paused ? "none" : "auto"}
+              style={{ transform: [{ scale }] }}
+              onLayout={onContentLayout}
+            >
+              {children}
+            </View>
+          </View>
+        </View>
       </SafeAreaView>
     </ImageBackground>
+  );
+}
+
+// =====================================================
+// DRAGGABLE NAME CHIP
+//
+// The chip itself is the touch target (no Pressable inside it), so there is
+// no fight between "tap" and "drag" gestures. We decide on release:
+//   - finger barely moved  -> it was a TAP  (select / unselect the name)
+//   - finger moved         -> it was a DRAG (try to drop it on a portrait)
+//
+// The gesture handler is created ONCE and always reads the latest props
+// through `live`, so the 1-second timer re-renders never interrupt a drag.
+// =====================================================
+
+const DRAG_THRESHOLD = 8;
+
+// Which portrait row is the finger actually ON? Strictly inside the row
+// (tiny margin only). No "close enough" guessing, so nothing is accepted
+// unless you really drop it on a portrait.
+function findHit(rects, x, y) {
+  const MARGIN = 4;
+  let best = null;
+  let bestDistance = Infinity;
+
+  (rects || []).forEach((rect) => {
+    if (!rect) return;
+
+    const inside =
+      x >= rect.x - MARGIN &&
+      x <= rect.x + rect.width + MARGIN &&
+      y >= rect.y - MARGIN &&
+      y <= rect.y + rect.height + MARGIN;
+
+    if (!inside) return;
+
+    const distance = Math.hypot(
+      x - (rect.x + rect.width / 2),
+      y - (rect.y + rect.height / 2)
+    );
+
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      best = rect.target;
+    }
+  });
+
+  return best;
+}
+
+function DraggableName({
+  character,
+  isMatched,
+  isSelected,
+  disabled,
+  minHeight,
+  scale,
+  onDragStart,
+  onDragMove,
+  onDrop,
+  onTap,
+}) {
+  const pan = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
+  const [dragging, setDragging] = useState(false);
+  const [pressedDown, setPressedDown] = useState(false);
+  const startedRef = useRef(false);
+
+  const live = useRef({});
+  live.current = {
+    character,
+    isMatched,
+    disabled,
+    scale,
+    onDragStart,
+    onDragMove,
+    onDrop,
+    onTap,
+  };
+
+  const springBack = () => {
+    setDragging(false);
+    setPressedDown(false);
+    Animated.spring(pan, {
+      toValue: { x: 0, y: 0 },
+      useNativeDriver: false,
+      speed: 24,
+      bounciness: 3,
+    }).start();
+  };
+
+  const responder = useRef(
+    PanResponder.create({
+      // Claim the touch immediately so nothing else (a parent, a sibling)
+      // can steal it halfway through a drag.
+      onStartShouldSetPanResponder: () =>
+        !live.current.isMatched && !live.current.disabled,
+      onStartShouldSetPanResponderCapture: () =>
+        !live.current.isMatched && !live.current.disabled,
+      onMoveShouldSetPanResponder: () =>
+        !live.current.isMatched && !live.current.disabled,
+      onPanResponderTerminationRequest: () => false,
+      onShouldBlockNativeResponder: () => true,
+
+      onPanResponderGrant: () => {
+        startedRef.current = false;
+        pan.stopAnimation();
+        pan.setValue({ x: 0, y: 0 });
+        setPressedDown(true);
+      },
+
+      onPanResponderMove: (_, gesture) => {
+        const moved =
+          Math.abs(gesture.dx) > DRAG_THRESHOLD ||
+          Math.abs(gesture.dy) > DRAG_THRESHOLD;
+
+        if (!startedRef.current && moved) {
+          startedRef.current = true;
+          setDragging(true);
+          live.current.onDragStart(live.current.character);
+        }
+
+        if (startedRef.current) {
+          // The board may be scaled down to fit, so divide by that scale
+          // to keep the chip under the finger.
+          const s = live.current.scale || 1;
+          pan.setValue({ x: gesture.dx / s, y: gesture.dy / s });
+          live.current.onDragMove(gesture.moveX, gesture.moveY);
+        }
+      },
+
+      onPanResponderRelease: (_, gesture) => {
+        const wasDrag = startedRef.current;
+        startedRef.current = false;
+
+        if (wasDrag) {
+          live.current.onDrop(
+            live.current.character,
+            gesture.moveX,
+            gesture.moveY
+          );
+        } else {
+          live.current.onTap(live.current.character);
+        }
+
+        springBack();
+      },
+
+      onPanResponderTerminate: () => {
+        startedRef.current = false;
+        springBack();
+      },
+    })
+  ).current;
+
+  return (
+    <Animated.View
+      {...responder.panHandlers}
+      accessible
+      accessibilityRole="button"
+      accessibilityLabel={character.name}
+      accessibilityState={{ selected: isSelected, disabled: isMatched }}
+      style={[
+        styles.nameOptionWrapper,
+        {
+          transform: [
+            { translateX: pan.x },
+            { translateY: pan.y },
+            { scale: dragging ? 1.08 : 1 },
+          ],
+        },
+        (isSelected || dragging) && styles.nameOptionWrapperSelected,
+        dragging && styles.nameOptionWrapperDragging,
+        isMatched && styles.nameOptionWrapperMatched,
+      ]}
+    >
+      <View
+        style={[
+          styles.nameOption,
+          { minHeight },
+          isSelected && styles.nameOptionSelected,
+          isMatched && styles.nameOptionMatched,
+          pressedDown && !isMatched && !dragging && styles.pressed,
+        ]}
+      >
+        <Text
+          style={[
+            styles.nameText,
+            isSelected && styles.nameTextSelected,
+            isMatched && styles.nameTextMatched,
+          ]}
+          numberOfLines={3}
+          adjustsFontSizeToFit
+          minimumFontScale={0.78}
+        >
+          {isMatched ? "✓  " : ""}
+          {character.name}
+        </Text>
+      </View>
+    </Animated.View>
   );
 }
 
@@ -244,6 +451,8 @@ function Screen({ children }) {
 export default function CharacterMatchingMinigame({
   characters = [],
   onComplete,
+  paused = false,
+  onPhaseChange,
 }) {
   const { width, height } = useWindowDimensions();
   const audio = useAudio();
@@ -276,6 +485,10 @@ export default function CharacterMatchingMinigame({
   const [startedAt, setStartedAt] = useState(null);
   const [finishedAt, setFinishedAt] = useState(null);
 
+  // Fit-to-screen measurements (the screen never scrolls)
+  const [areaH, setAreaH] = useState(0);
+  const [contentH, setContentH] = useState(0);
+
   const feedbackTimeout = useRef(null);
   const transitionTimeout = useRef(null);
 
@@ -285,8 +498,8 @@ export default function CharacterMatchingMinigame({
   const finishTimeRef = useRef(null);
 
   const targetRefs = useRef({});
-  const dragValues = useRef({});
-  const dragStartedRef = useRef(false);
+  const rectsRef = useRef([]);
+  const [hoverId, setHoverId] = useState(null);
 
   // Sound helper that never crashes if audio isn't ready
   const sfx = useCallback(
@@ -419,8 +632,9 @@ export default function CharacterMatchingMinigame({
   }, [clearPendingTimeouts, normalizedCharacters, choicesPerRound]);
 
   // One countdown interval is active while a game is in progress.
+  // (Pausing simply stops the interval; timeLeft is kept as is.)
   useEffect(() => {
-    if (status !== "playing") return undefined;
+    if (status !== "playing" || paused) return undefined;
 
     const interval = setInterval(() => {
       setTimeLeft((previous) => {
@@ -439,7 +653,18 @@ export default function CharacterMatchingMinigame({
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [status, finishGame]);
+  }, [status, paused, finishGame]);
+
+  // Tells the parent which screen we are on ("intro" = instructions,
+  // "playing", "result" = final screen) so it can adjust the pause button.
+  useEffect(() => {
+    if (!onPhaseChange) return;
+
+    if (status === "ready" || status === "setupError") onPhaseChange("intro");
+    else if (status === "complete" || status === "gameover")
+      onPhaseChange("result");
+    else onPhaseChange("playing");
+  }, [status, onPhaseChange]);
 
   const elapsedSeconds = useMemo(() => {
     if (!startedAt) return 0;
@@ -451,7 +676,7 @@ export default function CharacterMatchingMinigame({
 
   const selectName = useCallback(
     (character) => {
-      if (status !== "playing" || roundLock.current) return;
+      if (status !== "playing" || roundLock.current || paused) return;
       if (matchedSet.has(character.id)) return;
 
       setSelectedNameId((previous) =>
@@ -462,12 +687,54 @@ export default function CharacterMatchingMinigame({
       setLastWrongId(null);
       setLastCorrectId(null);
     },
-    [status, matchedSet]
+    [status, matchedSet, paused]
   );
+
+  // Measures every visible portrait row in screen coordinates.
+  const measureTargets = useCallback(
+    () =>
+      Promise.all(
+        currentRound.map(
+          (target) =>
+            new Promise((resolve) => {
+              const node = targetRefs.current[target.id];
+
+              if (!node || typeof node.measureInWindow !== "function") {
+                resolve(null);
+                return;
+              }
+
+              node.measureInWindow((x, y, w, h) => {
+                resolve({ target, x, y, width: w, height: h });
+              });
+            })
+        )
+      ),
+    [currentRound]
+  );
+
+  const beginDrag = useCallback(
+    (character) => {
+      setSelectedNameId(character.id);
+      setFeedback(null);
+      rectsRef.current = [];
+      measureTargets().then((rects) => {
+        rectsRef.current = rects;
+      });
+    },
+    [measureTargets]
+  );
+
+  // While dragging: light up the portrait the finger is over.
+  const moveDrag = useCallback((x, y) => {
+    const target = findHit(rectsRef.current, x, y);
+    const id = target ? target.id : null;
+    setHoverId((previous) => (previous === id ? previous : id));
+  }, []);
 
   const selectPortrait = useCallback(
     (target, draggedNameId = null) => {
-      if (status !== "playing" || roundLock.current) return;
+      if (status !== "playing" || roundLock.current || paused) return;
       if (matchedSet.has(target.id)) return;
 
       const nameId = draggedNameId || selectedNameId;
@@ -586,6 +853,7 @@ export default function CharacterMatchingMinigame({
     },
     [
       status,
+      paused,
       matchedSet,
       selectedNameId,
       timeLeft,
@@ -598,62 +866,47 @@ export default function CharacterMatchingMinigame({
     ]
   );
 
-  // Measures the visible portrait targets in screen coordinates.
-  // This works with native touch gestures on Android and iOS.
+  // Called when a dragged name is released. It is only accepted if the
+  // finger is really on a portrait row.
   const dropNameOnPortrait = useCallback(
     async (character, screenX, screenY) => {
-      if (status !== "playing" || roundLock.current) return;
+      setHoverId(null);
 
-      const measurements = await Promise.all(
-        currentRound.map(
-          (target) =>
-            new Promise((resolve) => {
-              const node = targetRefs.current[target.id];
+      if (status !== "playing" || roundLock.current || paused) return;
 
-              if (!node || typeof node.measureInWindow !== "function") {
-                resolve(null);
-                return;
-              }
+      const rects = rectsRef.current.length
+        ? rectsRef.current
+        : await measureTargets();
 
-              node.measureInWindow((x, y, w, h) => {
-                resolve({ target, x, y, width: w, height: h });
-              });
-            })
-        )
-      );
+      rectsRef.current = [];
 
-      const hit = measurements.find(
-        (rect) =>
-          rect &&
-          screenX >= rect.x &&
-          screenX <= rect.x + rect.width &&
-          screenY >= rect.y &&
-          screenY <= rect.y + rect.height
-      );
+      const hit = findHit(rects, screenX, screenY);
 
       if (hit) {
-        selectPortrait(hit.target, character.id);
+        selectPortrait(hit, character.id);
       } else {
-        // If the drag misses, select the name so the player can
-        // finish with a simple tap on the intended portrait.
-        selectName(character);
+        // Released away from every portrait: nothing is accepted. The name
+        // stays selected so a tap on the intended portrait still works.
+        setSelectedNameId(character.id);
       }
     },
-    [status, currentRound, selectPortrait, selectName]
+    [status, paused, measureTargets, selectPortrait]
   );
-
-  const getDragValue = (id) => {
-    if (!dragValues.current[id]) {
-      dragValues.current[id] = new Animated.ValueXY({ x: 0, y: 0 });
-    }
-
-    return dragValues.current[id];
-  };
 
   // Row sizes shrink in landscape so more of the board fits on screen
   const rowMin = landscape ? 78 : 92;
   const imgW = landscape ? 50 : 52;
   const imgH = landscape ? 64 : 80;
+
+  // 1 = fits as is. Smaller = shrink to fit (never below 0.4).
+  const FIT_PADDING = 28; // top + bottom padding of the play area
+  const fitScale =
+    areaH > 0 && contentH > 0
+      ? Math.min(1, Math.max(0.4, (areaH - FIT_PADDING) / contentH))
+      : 1;
+
+  const onAreaLayout = (e) => setAreaH(e.nativeEvent.layout.height);
+  const onContentLayout = (e) => setContentH(e.nativeEvent.layout.height);
 
   // ---------------------------------------------------
   // PIECES
@@ -709,6 +962,7 @@ export default function CharacterMatchingMinigame({
               const isMatched = matchedSet.has(character.id);
               const isCorrect = lastCorrectId === character.id;
               const isWrong = lastWrongId === character.id;
+              const isHover = hoverId === character.id && !isMatched;
 
               return (
                 <Pressable
@@ -720,6 +974,7 @@ export default function CharacterMatchingMinigame({
                       delete targetRefs.current[character.id];
                     }
                   }}
+                  collapsable={false}
                   onPress={() => selectPortrait(character)}
                   disabled={isMatched || status !== "playing"}
                   accessibilityRole="button"
@@ -734,6 +989,7 @@ export default function CharacterMatchingMinigame({
                     isMatched && styles.portraitRowMatched,
                     isCorrect && styles.portraitRowCorrect,
                     isWrong && styles.portraitRowWrong,
+                    isHover && styles.portraitRowHover,
                     pressed && !isMatched && styles.pressed,
                   ]}
                 >
@@ -786,130 +1042,41 @@ export default function CharacterMatchingMinigame({
           <View style={styles.namesColumn}>
             <Text style={styles.namesHeading}>AVAILABLE NAMES</Text>
 
-            {roundChoices.map((character) => {
-              const isMatched = matchedSet.has(character.id);
-              const isSelected = selectedNameId === character.id;
-
-              const pan = getDragValue(character.id);
-
-              const panResponder = PanResponder.create({
-                onStartShouldSetPanResponder: () => false,
-
-                onMoveShouldSetPanResponder: (_, gesture) =>
-                  !isMatched &&
-                  status === "playing" &&
-                  (Math.abs(gesture.dx) > 5 || Math.abs(gesture.dy) > 5),
-
-                onPanResponderGrant: () => {
-                  dragStartedRef.current = true;
-                  setSelectedNameId(character.id);
-                  setFeedback(null);
-                },
-
-                onPanResponderMove: Animated.event(
-                  [null, { dx: pan.x, dy: pan.y }],
-                  { useNativeDriver: false }
-                ),
-
-                onPanResponderRelease: (_, gesture) => {
-                  const dropX = gesture.moveX;
-                  const dropY = gesture.moveY;
-
-                  dropNameOnPortrait(character, dropX, dropY);
-
-                  Animated.spring(pan, {
-                    toValue: { x: 0, y: 0 },
-                    useNativeDriver: false,
-                    speed: 24,
-                    bounciness: 3,
-                  }).start();
-
-                  setTimeout(() => {
-                    dragStartedRef.current = false;
-                  }, 80);
-                },
-
-                onPanResponderTerminate: () => {
-                  Animated.spring(pan, {
-                    toValue: { x: 0, y: 0 },
-                    useNativeDriver: false,
-                    speed: 24,
-                    bounciness: 3,
-                  }).start();
-
-                  dragStartedRef.current = false;
-                },
-              });
-
-              return (
-                <Animated.View
-                  key={character.id}
-                  {...panResponder.panHandlers}
-                  style={[
-                    styles.nameOptionWrapper,
-                    {
-                      transform: [
-                        { translateX: pan.x },
-                        { translateY: pan.y },
-                      ],
-                    },
-                    isSelected && styles.nameOptionWrapperSelected,
-                    isMatched && styles.nameOptionWrapperMatched,
-                  ]}
-                >
-                  <Pressable
-                    onPress={() => {
-                      if (dragStartedRef.current) return;
-                      selectName(character);
-                    }}
-                    disabled={isMatched || status !== "playing"}
-                    accessibilityRole="button"
-                    accessibilityLabel={character.name}
-                    accessibilityState={{
-                      selected: isSelected,
-                      disabled: isMatched,
-                    }}
-                    style={({ pressed }) => [
-                      styles.nameOption,
-                      { minHeight: rowMin },
-                      isSelected && styles.nameOptionSelected,
-                      isMatched && styles.nameOptionMatched,
-                      pressed && !isMatched && styles.pressed,
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.nameText,
-                        isSelected && styles.nameTextSelected,
-                        isMatched && styles.nameTextMatched,
-                      ]}
-                      numberOfLines={3}
-                      adjustsFontSizeToFit
-                      minimumFontScale={0.78}
-                    >
-                      {isMatched ? "✓  " : ""}
-                      {character.name}
-                    </Text>
-                  </Pressable>
-                </Animated.View>
-              );
-            })}
+            {roundChoices.map((character) => (
+              <DraggableName
+                key={character.id}
+                character={character}
+                isMatched={matchedSet.has(character.id)}
+                isSelected={selectedNameId === character.id}
+                disabled={status !== "playing" || paused}
+                minHeight={rowMin}
+                scale={fitScale}
+                onDragStart={beginDrag}
+                onDragMove={moveDrag}
+                onDrop={dropNameOnPortrait}
+                onTap={selectName}
+              />
+            ))}
           </View>
         </View>
 
-        {feedback ? (
-          <View
-            accessibilityLiveRegion="polite"
-            style={[
-              styles.feedbackBox,
-              feedback.type === "correct" && styles.feedbackCorrect,
-              feedback.type === "wrong" && styles.feedbackWrong,
-              feedback.type === "hint" && styles.feedbackHint,
-            ]}
-          >
-            <Text style={styles.feedbackText}>{feedback.text}</Text>
-          </View>
-        ) : null}
+        {/* Always reserves its space so the board never jumps when a
+            message appears or disappears */}
+        <View style={styles.feedbackSlot}>
+          {feedback ? (
+            <View
+              accessibilityLiveRegion="polite"
+              style={[
+                styles.feedbackBox,
+                feedback.type === "correct" && styles.feedbackCorrect,
+                feedback.type === "wrong" && styles.feedbackWrong,
+                feedback.type === "hint" && styles.feedbackHint,
+              ]}
+            >
+              <Text style={styles.feedbackText}>{feedback.text}</Text>
+            </View>
+          ) : null}
+        </View>
       </Panel>
     </>
   );
@@ -961,82 +1128,86 @@ export default function CharacterMatchingMinigame({
   // SCREENS
   // ---------------------------------------------------
 
+  let body;
+
   if (status === "ready") {
-    return (
-      <Screen>
-        <View style={styles.container}>
-          {renderHeader(false)}
+    body = (
+      <>
+        {renderHeader(false)}
 
-          <Panel style={styles.centerPanel}>
-            <PanelTab>PHILIPPINE HISTORY</PanelTab>
+        <Panel style={styles.centerPanel}>
+          <PanelTab>PHILIPPINE HISTORY</PanelTab>
 
-            <Text style={styles.panelTitle}>Know Your History</Text>
+          <Text style={styles.panelTitle}>Know Your History</Text>
 
-            <Text style={styles.bodyText}>
-              Match eight important figures from Philippine history with their
-              portraits.
+          <Text style={styles.bodyText}>
+            Match eight important figures from Philippine history with their
+            portraits.
+          </Text>
+
+          <View style={styles.ruleBox}>
+            <Text style={styles.ruleText}>
+              • Start with {STARTING_TIME} seconds.
             </Text>
-
-            <View style={styles.ruleBox}>
-              <Text style={styles.ruleText}>
-                • Start with {STARTING_TIME} seconds.
-              </Text>
-              <Text style={styles.ruleText}>
-                • Correct matches earn points and add {TIME_BONUS} seconds.
-              </Text>
-              <Text style={styles.ruleText}>
-                • Wrong matches cost {WRONG_ANSWER_PENALTY} seconds.
-              </Text>
-            </View>
-
-            {validCharacters.length !== 8 ? (
-              <Text style={styles.setupWarning}>
-                Portrait setup incomplete: {validCharacters.length}/8 images
-                received. Check the character asset mapping in
-                compilation.jsx.
-              </Text>
-            ) : null}
-
-            <GameButton label="Begin Challenge" onPress={startGame} />
-          </Panel>
-        </View>
-      </Screen>
-    );
-  }
-
-  if (status === "setupError") {
-    return (
-      <Screen>
-        <View style={styles.container}>
-          {renderHeader(false)}
-
-          <Panel style={styles.centerPanel}>
-            <PanelTab>SETUP</PanelTab>
-
-            <Text style={styles.panelTitle}>Portraits Missing</Text>
-
-            <Text style={styles.bodyText}>
-              This game needs all eight character portraits. Check that each
-              character in compilation.jsx has the correct id and an image
-              property referencing its existing asset.
+            <Text style={styles.ruleText}>
+              • Correct matches earn points and add {TIME_BONUS} seconds.
             </Text>
+            <Text style={styles.ruleText}>
+              • Wrong matches cost {WRONG_ANSWER_PENALTY} seconds.
+            </Text>
+          </View>
 
-            <GameButton label="Back" onPress={() => setStatus("ready")} />
-          </Panel>
-        </View>
-      </Screen>
+          {validCharacters.length !== 8 ? (
+            <Text style={styles.setupWarning}>
+              Portrait setup incomplete: {validCharacters.length}/8 images
+              received. Check the character asset mapping in compilation.jsx.
+            </Text>
+          ) : null}
+
+          <GameButton label="Begin Challenge" onPress={startGame} />
+        </Panel>
+      </>
     );
-  }
+  } else if (status === "setupError") {
+    body = (
+      <>
+        {renderHeader(false)}
 
-  return (
-    <Screen>
-      <View style={styles.container}>
+        <Panel style={styles.centerPanel}>
+          <PanelTab>SETUP</PanelTab>
+
+          <Text style={styles.panelTitle}>Portraits Missing</Text>
+
+          <Text style={styles.bodyText}>
+            This game needs all eight character portraits. Check that each
+            character in compilation.jsx has the correct id and an image
+            property referencing its existing asset.
+          </Text>
+
+          <GameButton label="Back" onPress={() => setStatus("ready")} />
+        </Panel>
+      </>
+    );
+  } else {
+    body = (
+      <>
         {renderHeader(status === "playing")}
 
         {status === "playing"
           ? renderGameBoard()
           : renderEndScreen(status === "complete")}
-      </View>
+      </>
+    );
+  }
+
+  return (
+    <Screen
+      paused={paused}
+      scale={fitScale}
+      onAreaLayout={onAreaLayout}
+      onContentLayout={onContentLayout}
+    >
+      <View style={styles.container}>{body}</View>
     </Screen>
   );
 }
@@ -1049,8 +1220,10 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   background: { flex: 1, width: "100%", height: "100%", backgroundColor: "#000" },
   safeArea: { flex: 1 },
-  scrollContent: {
-    flexGrow: 1,
+  // The play area does not scroll. Content is centered and scaled down
+  // slightly when it doesn't fit (see fitScale).
+  fitArea: {
+    flex: 1,
     justifyContent: "center",
     paddingHorizontal: 20,
     paddingVertical: 14,
@@ -1064,17 +1237,16 @@ const styles = StyleSheet.create({
 
   // HEADER
   header: {
-    flexDirection: "row",
-    flexWrap: "wrap",
     alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 10,
-    gap: 8,
+    justifyContent: "center",
+    marginBottom: 9,
+    right:15
   },
   title: {
-    color: INK,
+    color: 'black',
     fontSize: 22,
     fontWeight: "bold",
+
   },
   pills: {
     flexDirection: "row",
@@ -1189,11 +1361,14 @@ const styles = StyleSheet.create({
     minWidth: 0,
     paddingRight: 5,
     paddingTop: 23,
+    zIndex: 1,
   },
+  // Drawn above the portraits so a dragged name passes over them
   namesColumn: {
     flex: 1,
     minWidth: 0,
     paddingLeft: 5,
+    zIndex: 5,
   },
   namesHeading: {
     color: GOLD,
@@ -1223,6 +1398,12 @@ const styles = StyleSheet.create({
   },
   portraitRowCorrect: { borderColor: GREEN, borderWidth: 2.5 },
   portraitRowWrong: { borderColor: RED, borderWidth: 2.5 },
+  // the portrait the dragged name is currently over
+  portraitRowHover: {
+    borderColor: INK,
+    borderWidth: 2.5,
+    backgroundColor: "rgba(214, 180, 106, 0.4)",
+  },
 
   imageFrame: {
     minWidth: 42,
@@ -1275,7 +1456,10 @@ const styles = StyleSheet.create({
     borderRadius: 9,
     zIndex: 1,
   },
-  nameOptionWrapperSelected: { zIndex: 10, elevation: 5 },
+  // No elevation / shadow here: on a see-through chip they draw a pale box
+  // inside it. zIndex alone is enough to keep the chip above the portraits.
+  nameOptionWrapperSelected: { zIndex: 10 },
+  nameOptionWrapperDragging: { zIndex: 50 },
   nameOptionWrapperMatched: { opacity: 0.72 },
   nameOption: {
     paddingVertical: 7,
@@ -1285,15 +1469,15 @@ const styles = StyleSheet.create({
     borderRadius: 9,
     borderWidth: 1.5,
     borderColor: GOLD,
-    backgroundColor: "rgba(255, 248, 232, 0.85)",
+    backgroundColor: "#fdf3dc",
   },
   nameOptionSelected: {
-    backgroundColor: "rgba(214, 180, 106, 0.6)",
+    backgroundColor: "#e6d097",
     borderColor: INK,
     borderWidth: 2.5,
   },
   nameOptionMatched: {
-    backgroundColor: "rgba(61, 107, 69, 0.18)",
+    backgroundColor: "#dfe6d3",
     borderColor: GREEN,
   },
   nameText: {
@@ -1307,10 +1491,15 @@ const styles = StyleSheet.create({
   nameTextMatched: { color: GREEN },
 
   // FEEDBACK
+  // Fixed-height slot: the layout stays put whether or not a message shows.
+  feedbackSlot: {
+    minHeight: 36,
+    marginTop: 4,
+    justifyContent: "center",
+  },
   feedbackBox: {
     paddingVertical: 8,
     paddingHorizontal: 10,
-    marginTop: 4,
     borderRadius: 8,
     borderWidth: 1,
   },

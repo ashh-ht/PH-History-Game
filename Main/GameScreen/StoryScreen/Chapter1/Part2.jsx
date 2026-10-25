@@ -5,7 +5,8 @@ export const Chapter1_Part2 = [
     type: "system",
     intro: true,
     text: "The arrival of the Spanish changed life across the islands.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    sfx: 'windyFlag'
   },
 
   {
@@ -34,6 +35,7 @@ export const Chapter1_Part2 = [
     text: "The afternoon air in Bohol is heavy. Outside the parish church, Francisco Dagohoy\nstands grieving for his brother, Sagarino.",
     background: require("../../../../Background Images/Part 2/saint paul inabanga church exterior.png"),
     music: "grief",
+    sfx: 'windyFlag',
     unlock: ["dagohoy-1"]
   },
 
@@ -41,6 +43,7 @@ export const Chapter1_Part2 = [
     type: "narrator",
     text: "Sagarino died while carrying out Father Morales's orders. Yet the priest\nrefuses to give him a proper burial.",
     background: require("../../../../Background Images/Part 2/saint paul inabanga church interior.png"),
+    sfx: 'doorOpen',
     unlock: ["morales-1", "morales-2"]
   },
 
@@ -58,7 +61,8 @@ export const Chapter1_Part2 = [
         position: "right"
       }
     ],
-    text: "Padre, pinatay po ang aking kapatid habang tinutupad ang inyong utos."
+    text: "Padre, pinatay po ang aking kapatid habang tinutupad ang inyong utos.",
+    translation: "Father, my brother was killed while following your orders."
   },
 
   {
@@ -93,7 +97,8 @@ export const Chapter1_Part2 = [
         position: "left"
       }
     ],
-    text: "The rules of the Church do not bend, Cabeza. I cannot allow the burial."
+    text: "The rules of the Church do not bend, Cabeza. I cannot allow the burial.",
+    sfx: 'stampPapers'
   },
 
   {
@@ -110,7 +115,8 @@ export const Chapter1_Part2 = [
         position: "right"
       }
     ],
-    text: "Sinuway niya ang panganib para sa inyo!"
+    text: "Sinuway niya ang panganib para sa inyo!",
+    translation: "He faced danger for you!"
   },
 
   {
@@ -128,7 +134,8 @@ export const Chapter1_Part2 = [
       }
     ],
     text: "Kung wala man lang paggalang ang inyong simbahan para sa mga tapat\nna lingkod, hindi na kami dapat manatiling tapat!",
-    translation: "If your church has no respect for a loyal servant, then we should not have to remain loyal."
+    translation: "If your church has no respect for a loyal servant, then we should not have to remain loyal.",
+    sfx: 'groundThud'
   },
 
   //Q2_1 here
@@ -181,6 +188,7 @@ export const Chapter1_Part2 = [
     type: "narrator",
     text: "No compromise is reached. Dagohoy gathers about three thousand Boholanos\nand leads them into the mountains.",
     background: require("../../../../Background Images/Part 2/Bohol highlands jungle pass.png"),
+    sfx: 'footstepsGround',
     unlock: ["Timeline_1744", "dagohoy-2", "morales-3"]
   },
 
@@ -201,13 +209,14 @@ export const Chapter1_Part2 = [
   {
     type: "narrator",
     text: "In the mountains, Dagohoy along with the three thousand Boholanos build farms\nand organize their own community.",
-    background: require("../../../../Background Images/Part 2/Mountain settlement.png")
+    background: require("../../../../Background Images/Part 2/Mountain settlement.png"),
+    sfx: 'hammer'
   },
 
   {
     type: "narrator",
-    text: "There, they start a new outside of Spanish control and forced labor.",
-    background: require("../../../../Background Images/Part 2/Mountain settlement.png")
+    text: "There, they start a new life outside of Spanish control and forced labor.",
+    background: require("../../../../Background Images/Part 2/Mountain settlement.png"),
   },
 
 
@@ -227,7 +236,7 @@ export const Chapter1_Part2 = [
 
   {
     type: "narrator",
-    text: "Decades pass. The mountain community grows from a around three thousand\npeople into a population of around twenty thousand.",
+    text: "Decades pass. The mountain community grows from around three thousand\npeople into a population of around twenty thousand.",
     background: require("../../../../Background Images/Part 2/Mountain settlement.png"),
     unlock: ["Timeline_1744-1828", "dagohoy-3"]
   },
@@ -235,7 +244,8 @@ export const Chapter1_Part2 = [
   {
     type: "narrator",
     text: "Spanish expeditions return again and again to regain control, but to no avail.",
-    background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png")
+    background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png"),
+    sfx: 'marching'
   },
 
   //T1_2 here
@@ -243,7 +253,8 @@ export const Chapter1_Part2 = [
   {
     type: "narrator",
     text: "Officials begin to make attempts to negotiate with the community.",
-    background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png")
+    background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png"),
+    sfx: 'quillWriting'
   },
 
 
@@ -293,14 +304,33 @@ export const Chapter1_Part2 = [
   {
     type: "narrator",
     text: "No large alliance forms. The mountain community remains on its own.",
-    background: require("../../../../Background Images/Part 2/Mountain settlement.png")
+    background: require("../../../../Background Images/Part 2/Mountain settlement.png"),
+    sfx: 'windyFlag'
   },
 
   {
     type: "narrator",
     text: "In 1827, a Spanish expedition of 2,200 soldiers enters the mountains.",
     background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png"),
+    sfx: 'marching',
     unlock: ["Timeline_1827"]
+  },
+
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // MINIGAME: DEFEND THE STRONGHOLD
+  // (needs to be registered like "decipher")
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  {
+    type: "stronghold",
+    title: "Defend the Stronghold!",
+    instructions: "Spanish scouts are sneaking toward the palisade! Tap them before they get close. Don't tap the villagers!",
+    background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png"),
+    rounds: 3,
+    sfx: 'marching',
+    hitSfx: 'correct',
+    missSfx: 'wrong',
+    successText: "The stronghold holds!"
   },
 
   //T3_2 here 
@@ -308,7 +338,7 @@ export const Chapter1_Part2 = [
   {
     type: "narrator",
     text: "After a difficult standoff, the expedition withdraws. The Boholanos\nsuccessfully defend their territory.",
-    background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png")
+    background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png"),
   },
 
 
@@ -330,6 +360,7 @@ export const Chapter1_Part2 = [
     type: "narrator",
     text: "Governor-General Mariano Ricafort sends Captain Manuel Sanz to lead 6,000\nsoldiers into Bohol as a final campaign to retake control.",
     background: require("../../../../Background Images/Part 2/mountain fortress bamboo palisade.png"),
+    sfx: 'cannonFire',
     unlock: ["sanz-1", "ricafort-1"]
   },
 
@@ -382,13 +413,15 @@ export const Chapter1_Part2 = [
     type: "narrator",
     text: "The community ends up choosing peace. Governor-General Ricafort pardons the\n19,420 people living in the mountain state.",
     background: require("../../../../Background Images/Part 2/bohol 19th century town plaza.png"),
+    sfx: 'churchBell',
     unlock: ["Timeline_1829_08-31", "ricafort-2", "sanz-2", "dagohoy-4"]
   },
 
   {
     type: "narrator",
     text: "They resettle in lowland towns including Batuan, Cabulao, Catigbian, and Bilar.",
-    background: require("../../../../Background Images/Part 2/bohol 19th century town plaza.png")
+    background: require("../../../../Background Images/Part 2/bohol 19th century town plaza.png"),
+    sfx: 'footstepsPavement'
   },
 
   {
@@ -396,6 +429,7 @@ export const Chapter1_Part2 = [
     title: "After 85 years,",
     date: "the Dagohoy rebellion comes to an end.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    sfx: 'churchBell'
   },
 
   {
@@ -410,7 +444,8 @@ export const Chapter1_Part2 = [
     type: "scene",
     title: "Test Your Knowledge!",
     date: "How well do you remember Dagohoy's story?",
-    background: require("../../../../Background Images/Usuals/Brown Background.jpg")
+    background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
+    sfx: 'pagesFlipping'
   },
 
   {
@@ -491,7 +526,8 @@ export const Chapter1_Part2 = [
     type: "scene",
     title: "But the story of resistance is far from over.",
     date: " ",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    sfx: 'windyFlag'
   }
 
 ];

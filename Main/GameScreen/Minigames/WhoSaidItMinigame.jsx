@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   SafeAreaView,
-  ScrollView,
   View,
   Text,
   Image,
@@ -13,7 +12,10 @@ import {
   StatusBar,
 } from "react-native";
 
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+
 import { useAudio } from "../../../Audiostore";
+import MinigameOverlay from "../../../Components/Minigameoverlay";
 
 // =====================================================
 // ARTWORK (same set as the Decipher minigame)
@@ -36,7 +38,7 @@ const PANEL_INSET = PANEL_HAS_TAB
 const START_SECONDS = 60;
 const CORRECT_TIME_BONUS = 5;
 const WRONG_TIME_PENALTY = 3;
-const FEEDBACK_MS = 850;
+const FEEDBACK_MS = 2600; // how long the reveal overlay stays (tap to skip)
 
 const DEFAULT_QUESTIONS = [
   {
@@ -284,6 +286,34 @@ function makeGameQuestions(sourceQuestions) {
   }));
 }
 
+// Inserts line breaks (\n) so long answers never run past the button border.
+// Change MAX_LINE_CHARS to make lines shorter (smaller number) or longer.
+// Any \n you already wrote in a choice text is kept.
+const MAX_LINE_CHARS = 58;
+
+function breakText(text, maxChars = MAX_LINE_CHARS) {
+  return String(text)
+    .split("\n")
+    .map((part) => {
+      const lines = [];
+      let line = "";
+      part
+        .trim()
+        .split(/\s+/)
+        .forEach((word) => {
+          if (line && (line + " " + word).length > maxChars) {
+            lines.push(line);
+            line = word;
+          } else {
+            line = line ? line + " " + word : word;
+          }
+        });
+      if (line) lines.push(line);
+      return lines.join("\n");
+    })
+    .join("\n");
+}
+
 function formatTime(seconds) {
   const safeSeconds = Math.max(0, seconds);
   const minutes = Math.floor(safeSeconds / 60);
@@ -319,11 +349,13 @@ function useSpringPress() {
   return { animate, transform: [{ scale }, { translateY }] };
 }
 
-function GameButton({ label, onPress }) {
+function GameButton({ label, onPress, secondary }) {
   const { animate, transform } = useSpringPress();
 
   return (
-    <Animated.View style={[styles.buttonWrap, { transform }]}>
+    <Animated.View
+      style={[styles.buttonWrap, secondary && styles.buttonSecondary, { transform }]}
+    >
       <TouchableOpacity
         activeOpacity={1}
         accessibilityRole="button"
@@ -339,9 +371,9 @@ function GameButton({ label, onPress }) {
   );
 }
 
-// Answer choice: same button art, with a letter, long-text support, and a
-// green/red tint when the answer is revealed.
-function ChoiceButton({ letter, text, onPress, disabled, state }) {
+// Answer choice: same button art, with a letter and long-text support.
+// The correct / wrong feedback is shown only in the reveal overlay.
+function ChoiceButton({ letter, text, onPress, disabled }) {
   const { animate, transform } = useSpringPress();
 
   return (
@@ -356,19 +388,8 @@ function ChoiceButton({ letter, text, onPress, disabled, state }) {
         onPress={onPress}
       >
         <ImageBackground source={IMG.button} style={styles.choiceBg} resizeMode="stretch">
-          {state ? (
-            <View
-              pointerEvents="none"
-              style={[
-                StyleSheet.absoluteFillObject,
-                state === "correct" ? styles.tintCorrect : styles.tintWrong,
-              ]}
-            />
-          ) : null}
           <Text style={styles.choiceLetter}>{letter}</Text>
-          <Text style={styles.choiceText}>{text}</Text>
-          {state === "correct" ? <Text style={styles.choiceMarkGood}>✓</Text> : null}
-          {state === "wrong" ? <Text style={styles.choiceMarkBad}>×</Text> : null}
+          <Text style={styles.choiceText}>{breakText(text)}</Text>
         </ImageBackground>
       </TouchableOpacity>
     </Animated.View>
@@ -431,6 +452,65 @@ function PanelTab({ children }) {
   );
 }
 
+// Full-screen result overlay shown after every answer. It fades in, stays on
+// screen for FEEDBACK_MS, and can be tapped to continue right away.
+function RevealOverlay({ correct, question, onContinue }) {
+  const opacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(opacity, {
+      toValue: 1,
+      duration: 180,
+      useNativeDriver: true,
+    }).start();
+  }, [opacity]);
+
+  return (
+    <Animated.View style={[styles.overlay, { opacity }]}>
+      {/* Full-screen backdrop: tap anywhere to continue */}
+      <TouchableOpacity
+        activeOpacity={1}
+        style={StyleSheet.absoluteFillObject}
+        onPress={onContinue}
+        accessibilityRole="button"
+        accessibilityLabel="Continue"
+      />
+
+      {/* Centered card */}
+      <View style={styles.overlayCenter} pointerEvents="none">
+        <Panel style={styles.overlayPanel}>
+          <View
+            pointerEvents="none"
+            style={[
+              styles.overlayTint,
+              correct ? styles.tintCorrectStrong : styles.tintWrongStrong,
+            ]}
+          />
+          <Text
+            style={[styles.overlayTitle, correct ? styles.successText : styles.errorText]}
+          >
+            {correct ? "CORRECT!" : "WRONG!"}
+          </Text>
+          <Text style={styles.kicker}>{correct ? "WELL DONE" : "THE CORRECT ANSWER"}</Text>
+          <View style={styles.revealIdentity}>
+            <Image
+              source={question.portrait}
+              style={styles.revealPortrait}
+              resizeMode="contain"
+            />
+            <View style={styles.revealIdentityText}>
+              <Text style={styles.revealName}>{question.characterName}</Text>
+              <Text style={styles.revealChapter}>Chapter {question.chapter}</Text>
+            </View>
+          </View>
+          <Text style={styles.revealQuote}>“{question.quote}”</Text>
+          <Text style={styles.tapHint}>Tap to continue</Text>
+        </Panel>
+      </View>
+    </Animated.View>
+  );
+}
+
 // =====================================================
 // MINIGAME
 // =====================================================
@@ -438,9 +518,26 @@ function PanelTab({ children }) {
 export default function WhoSaidItMinigame({
   questions = DEFAULT_QUESTIONS,
   onComplete,
+  paused: pausedProp = false,
+  onPhaseChange,
 }) {
-  const { width } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   const compact = width < 380;
+  const landscape = width > height;
+
+  // Built-in pause button. If the parent screen already manages pausing
+  // (it passes onPhaseChange), the parent shows its own button instead.
+  const navigation = useNavigation();
+  const parentControlsPause = typeof onPhaseChange === "function";
+  const [localPaused, setLocalPaused] = useState(false);
+  const paused = pausedProp || localPaused;
+
+  // Coming back from the Settings screen: resume the game
+  useFocusEffect(
+    useCallback(() => {
+      setLocalPaused(false);
+    }, [])
+  );
 
   const audio = useAudio();
   const sfx = useCallback(
@@ -458,41 +555,45 @@ export default function WhoSaidItMinigame({
   const [score, setScore] = useState(0);
   const [answers, setAnswers] = useState([]);
   const [selectedChoiceId, setSelectedChoiceId] = useState(null);
-  const [feedback, setFeedback] = useState(null);
   const [revealing, setRevealing] = useState(false);
   const [finished, setFinished] = useState(false);
+
+  // Fit-to-screen: nothing scrolls. If the content is taller than the space
+  // available it is scaled down a little instead.
+  const [areaH, setAreaH] = useState(0);
+  const [contentH, setContentH] = useState(0);
+
   const feedbackTimeout = useRef(null);
+  const advanceRef = useRef(null);
+  const pausedRef = useRef(paused);
+  pausedRef.current = paused;
+
   const currentQuestion = gameQuestions[questionIndex];
   const totalQuestions = gameQuestions.length;
   const correctCount = answers.filter((answer) => answer.correct).length;
 
-  const finishGame = useCallback(
-    (finalAnswers = answers, finalScore = score) => {
-      setFinished(true);
-      setRevealing(false);
-      setFeedback(null);
-      if (typeof onComplete === "function") {
-        const correct = finalAnswers.filter((answer) => answer.correct).length;
-        onComplete({
-          score: finalScore,
-          correct,
-          total: totalQuestions,
-          accuracy: totalQuestions > 0 ? Math.round((correct / totalQuestions) * 100) : 0,
-        });
-      }
-    },
-    [answers, onComplete, score, totalQuestions]
-  );
-
+  // Tells the parent which screen we are on ("playing" or "result") so it
+  // can show the pause button only while the game is being played.
   useEffect(() => {
-    if (finished || revealing) return undefined;
+    if (!onPhaseChange) return;
+    onPhaseChange(finished ? "result" : "playing");
+  }, [finished, onPhaseChange]);
+
+  const finishGame = useCallback(() => {
+    setFinished(true);
+    setRevealing(false);
+  }, []);
+
+  // Countdown. It stops while the answer is being revealed and while paused.
+  useEffect(() => {
+    if (finished || revealing || paused) return undefined;
     if (secondsLeft <= 0) {
       finishGame();
       return undefined;
     }
     const timer = setTimeout(() => setSecondsLeft((time) => time - 1), 1000);
     return () => clearTimeout(timer);
-  }, [secondsLeft, finished, revealing, finishGame]);
+  }, [secondsLeft, finished, revealing, paused, finishGame]);
 
   useEffect(
     () => () => {
@@ -503,7 +604,8 @@ export default function WhoSaidItMinigame({
 
   const answerQuestion = useCallback(
     (choice) => {
-      if (!currentQuestion || revealing || finished || selectedChoiceId !== null) return;
+      if (!currentQuestion || revealing || finished || paused) return;
+      if (selectedChoiceId !== null) return;
 
       const correct = choice.id === currentQuestion.correctChoiceId;
       const pointsEarned = correct ? 100 + Math.max(0, secondsLeft) * 2 : 0;
@@ -523,32 +625,39 @@ export default function WhoSaidItMinigame({
       setSelectedChoiceId(choice.id);
       setAnswers(nextAnswers);
       setScore(nextScore);
-      setFeedback(
-        correct
-          ? { kind: "correct", text: `Correct! +${pointsEarned} points` }
-          : { kind: "wrong", text: "Not quite. The correct answer is revealed below." }
-      );
       setSecondsLeft((time) =>
         Math.max(0, time + (correct ? CORRECT_TIME_BONUS : -WRONG_TIME_PENALTY))
       );
       setRevealing(true);
 
-      feedbackTimeout.current = setTimeout(() => {
+      // Move on after the reveal (or when the player taps the overlay).
+      // If the game is paused at that moment, wait until it is resumed.
+      const advance = () => {
+        if (pausedRef.current) {
+          feedbackTimeout.current = setTimeout(advance, 200);
+          return;
+        }
+
+        advanceRef.current = null;
         setRevealing(false);
-        setFeedback(null);
+
         if (questionIndex + 1 >= totalQuestions) {
-          finishGame(nextAnswers, nextScore);
+          finishGame();
         } else {
           setQuestionIndex((index) => index + 1);
           setSelectedChoiceId(null);
         }
-      }, FEEDBACK_MS);
+      };
+
+      advanceRef.current = advance;
+      feedbackTimeout.current = setTimeout(advance, FEEDBACK_MS);
     },
     [
       answers,
       currentQuestion,
       finishGame,
       finished,
+      paused,
       questionIndex,
       revealing,
       score,
@@ -559,26 +668,86 @@ export default function WhoSaidItMinigame({
     ]
   );
 
+  // Tap on the overlay: skip the wait and go to the next question.
+  const skipReveal = useCallback(() => {
+    if (pausedRef.current || !advanceRef.current) return;
+    if (feedbackTimeout.current) clearTimeout(feedbackTimeout.current);
+    advanceRef.current();
+  }, []);
+
   const replay = useCallback(() => {
     if (feedbackTimeout.current) clearTimeout(feedbackTimeout.current);
+    advanceRef.current = null;
     setGameQuestions(makeGameQuestions(questions));
     setQuestionIndex(0);
     setSecondsLeft(START_SECONDS);
     setScore(0);
     setAnswers([]);
     setSelectedChoiceId(null);
-    setFeedback(null);
     setRevealing(false);
     setFinished(false);
   }, [questions]);
 
-  const shell = (body) => (
+  const accuracy = totalQuestions ? Math.round((correctCount / totalQuestions) * 100) : 0;
+
+  const continueStory = useCallback(() => {
+    if (typeof onComplete === "function") {
+      onComplete({
+        score,
+        correct: correctCount,
+        total: totalQuestions,
+        accuracy,
+      });
+    }
+  }, [onComplete, score, correctCount, totalQuestions, accuracy]);
+
+  // 1 = fits as is. Smaller = shrink to fit (never below 0.4).
+  const FIT_PADDING = 28; // top + bottom padding of the play area
+  const fitScale =
+    areaH > 0 && contentH > 0
+      ? Math.min(1, Math.max(0.4, (areaH - FIT_PADDING) / contentH))
+      : 1;
+
+  // The whole screen: background + a non-scrolling, centered, scaled area.
+  const shell = (body, withOverlay = null) => (
     <ImageBackground source={IMG.background} style={styles.background} resizeMode="cover">
       <View style={styles.dim} />
       <SafeAreaView style={styles.safeArea}>
         <StatusBar barStyle="dark-content" />
-        {body}
+
+        <View
+          style={styles.fitArea}
+          onLayout={(e) => setAreaH(e.nativeEvent.layout.height)}
+        >
+          {/* While paused, nothing in the game can be touched */}
+          <View
+            pointerEvents={paused ? "none" : "auto"}
+            style={[styles.content, { transform: [{ scale: fitScale }] }]}
+            onLayout={(e) => setContentH(e.nativeEvent.layout.height)}
+          >
+            {body}
+          </View>
+        </View>
+
       </SafeAreaView>
+
+      {/* Pause button (top right) + PAUSED panel */}
+      {!parentControlsPause && !finished && currentQuestion ? (
+        <MinigameOverlay
+          paused={localPaused}
+          hideSettings
+          top={6}
+          right={12}
+          onPause={() => setLocalPaused(true)}
+          onResume={() => setLocalPaused(false)}
+          onSettings={() => {
+            setLocalPaused(true);
+            navigation.navigate("Second");
+          }}
+        />
+      ) : null}
+
+      {withOverlay}
     </ImageBackground>
   );
 
@@ -597,48 +766,49 @@ export default function WhoSaidItMinigame({
   // RESULTS
   // ---------------------------------------------------
   if (finished) {
-    const accuracy = totalQuestions ? Math.round((correctCount / totalQuestions) * 100) : 0;
     return shell(
-      <ScrollView
-        contentContainerStyle={styles.resultsScroll}
-        showsVerticalScrollIndicator={false}
-      >
-        <Panel style={styles.centerPanel}>
-          <PanelTab>HISTORY CHALLENGE</PanelTab>
-          <Text style={styles.panelTitle}>Game Complete!</Text>
-          <Text style={styles.bodyText}>The Revolution's words live on.</Text>
+      <Panel style={styles.centerPanel}>
+        <PanelTab>HISTORY CHALLENGE</PanelTab>
+        <Text style={styles.panelTitle}>Game Complete!</Text>
+        <Text style={styles.bodyText}>The Revolution's words live on.</Text>
 
-          <Text style={styles.bigNumber}>{score.toLocaleString()}</Text>
-          <Text style={styles.statCaption}>FINAL SCORE</Text>
+        <Text style={styles.bigNumber}>{score.toLocaleString()}</Text>
+        <Text style={styles.statCaption}>FINAL SCORE</Text>
 
-          <View style={styles.statsRow}>
-            <View style={styles.statBox}>
-              <Text style={styles.statValue}>
-                {correctCount}/{totalQuestions}
-              </Text>
-              <Text style={styles.statLabel}>Correct</Text>
-            </View>
-            <View style={styles.statBox}>
-              <Text style={styles.statValue}>{accuracy}%</Text>
-              <Text style={styles.statLabel}>Accuracy</Text>
-            </View>
-            <View style={styles.statBox}>
-              <Text style={styles.statValue}>{formatTime(secondsLeft)}</Text>
-              <Text style={styles.statLabel}>Time left</Text>
-            </View>
+        <View style={styles.statsRow}>
+          <View style={styles.statBox}>
+            <Text style={styles.statValue}>
+              {correctCount}/{totalQuestions}
+            </Text>
+            <Text style={styles.statLabel}>Correct</Text>
           </View>
+          <View style={styles.statBox}>
+            <Text style={styles.statValue}>{accuracy}%</Text>
+            <Text style={styles.statLabel}>Accuracy</Text>
+          </View>
+          <View style={styles.statBox}>
+            <Text style={styles.statValue}>{formatTime(secondsLeft)}</Text>
+            <Text style={styles.statLabel}>Time left</Text>
+          </View>
+        </View>
 
-          <Text style={styles.timeSummary}>
-            {accuracy >= 80
-              ? "Excellent work, historian!"
-              : accuracy >= 50
-              ? "Good effort. Keep learning the voices of history."
-              : "Keep practicing—you'll recognize more voices next time."}
-          </Text>
+        <Text style={styles.timeSummary}>
+          {accuracy >= 80
+            ? "Excellent work, historian!"
+            : accuracy >= 50
+            ? "Good effort. Keep learning the voices of history."
+            : "Keep practicing—you'll recognize more voices next time."}
+        </Text>
 
-          <GameButton label="Play Again" onPress={replay} />
-        </Panel>
-      </ScrollView>
+        {typeof onComplete === "function" ? (
+          <GameButton label="Continue Story" onPress={continueStory} />
+        ) : null}
+        <GameButton
+          label="Play Again"
+          onPress={replay}
+          secondary={typeof onComplete === "function"}
+        />
+      </Panel>
     );
   }
 
@@ -646,140 +816,116 @@ export default function WhoSaidItMinigame({
   const lowTime = secondsLeft <= 10;
 
   // ---------------------------------------------------
+  // GAMEPLAY PIECES
+  // ---------------------------------------------------
+
+  const header = (
+    <View style={styles.header}>
+      <Text style={styles.title}>Who Said It?</Text>
+      <View style={styles.pillRow}>
+        <View style={[styles.pill, lowTime && styles.pillLow]}>
+          <Text style={[styles.pillValue, lowTime && styles.pillTextLow]}>
+            {formatTime(secondsLeft)}
+          </Text>
+        </View>
+        <View style={styles.pill}>
+          <Text style={styles.pillValue}>{score.toLocaleString()}</Text>
+        </View>
+      </View>
+    </View>
+  );
+
+  const progressBar = (
+    <View style={styles.progressTrack}>
+      {gameQuestions.map((q, i) => (
+        <View
+          key={q.id}
+          style={[
+            styles.progressSegment,
+            i < answers.length && styles.progressComplete,
+            i === questionIndex && styles.progressCurrent,
+          ]}
+        />
+      ))}
+    </View>
+  );
+
+  const questionPanel = (
+    <Panel style={styles.fullPanel}>
+      <PanelTab>
+        {currentQuestion.type === "quoteToCharacter"
+          ? `WHO SAID THIS? · CHAPTER ${currentQuestion.chapter}`
+          : `WHICH LINE DID THEY SAY? · CHAPTER ${currentQuestion.chapter}`}
+      </PanelTab>
+
+      {currentQuestion.type === "quoteToCharacter" ? (
+        <Text style={[styles.quoteText, compact && styles.quoteTextCompact]}>
+          “{currentQuestion.quote}”
+        </Text>
+      ) : (
+        <View style={styles.characterPrompt}>
+          <Image
+            source={currentQuestion.portrait}
+            style={styles.promptPortrait}
+            resizeMode="contain"
+          />
+          <Text style={styles.promptName}>{currentQuestion.characterName}</Text>
+          <Text style={styles.hintText}>Choose the line spoken by this character.</Text>
+        </View>
+      )}
+    </Panel>
+  );
+
+  const choiceList = (
+    <>
+      <Text style={styles.inputLabel}>Choose your answer</Text>
+      {currentQuestion.choices.map((choice, index) => (
+        <ChoiceButton
+          key={`${currentQuestion.id}-${choice.id}`}
+          letter={String.fromCharCode(65 + index)}
+          text={choice.text}
+          disabled={revealing || selectedChoiceId !== null || paused}
+          onPress={() => answerQuestion(choice)}
+        />
+      ))}
+    </>
+  );
+
+  const revealOverlay = revealing ? (
+    <RevealOverlay
+      correct={choiceIsCorrect}
+      question={currentQuestion}
+      onContinue={skipReveal}
+    />
+  ) : null;
+
+  // ---------------------------------------------------
   // GAMEPLAY
+  //   landscape: question on the left, answers on the right
+  //   portrait : everything stacked
   // ---------------------------------------------------
   return shell(
     <>
-    <ScrollView
-      contentContainerStyle={styles.scrollContent}
-      showsVerticalScrollIndicator={false}
-    >
-      <View style={styles.header}>
-        <Text style={styles.title}>Who Said It?</Text>
-        <View style={styles.pillRow}>
-          <View style={[styles.pill, lowTime && styles.pillLow]}>
-            <Text style={[styles.pillValue, lowTime && styles.pillTextLow]}>
-              {formatTime(secondsLeft)}
-            </Text>
-          </View>
-          <View style={styles.pill}>
-            <Text style={styles.pillValue}>{score.toLocaleString()}</Text>
-          </View>
+      {header}
+      {progressBar}
+
+      {landscape ? (
+        <View style={styles.row}>
+          <View style={styles.leftCol}>{questionPanel}</View>
+          <View style={styles.rightCol}>{choiceList}</View>
         </View>
-      </View>
-
-      <View style={styles.progressTrack}>
-        {gameQuestions.map((q, i) => (
-          <View
-            key={q.id}
-            style={[
-              styles.progressSegment,
-              i < answers.length && styles.progressComplete,
-              i === questionIndex && styles.progressCurrent,
-            ]}
-          />
-        ))}
-      </View>
-
-      <Panel style={styles.fullPanel}>
-        <PanelTab>
-          {currentQuestion.type === "quoteToCharacter"
-            ? `WHO SAID THIS? · CHAPTER ${currentQuestion.chapter}`
-            : `WHICH LINE DID THEY SAY? · CHAPTER ${currentQuestion.chapter}`}
-        </PanelTab>
-
-        {currentQuestion.type === "quoteToCharacter" ? (
-          <Text style={[styles.quoteText, compact && styles.quoteTextCompact]}>
-            “{currentQuestion.quote}”
-          </Text>
-        ) : (
-          <View style={styles.characterPrompt}>
-            <Image
-              source={currentQuestion.portrait}
-              style={styles.promptPortrait}
-              resizeMode="contain"
-            />
-            <Text style={styles.promptName}>{currentQuestion.characterName}</Text>
-            <Text style={styles.hintText}>Choose the line spoken by this character.</Text>
-          </View>
-        )}
-      </Panel>
-
-      <Text style={styles.inputLabel}>Choose your answer</Text>
-      {currentQuestion.choices.map((choice, index) => {
-        const isSelected = selectedChoiceId === choice.id;
-        const isCorrect = choice.id === currentQuestion.correctChoiceId;
-        let state = null;
-        if (revealing && isCorrect) state = "correct";
-        else if (revealing && isSelected && !isCorrect) state = "wrong";
-
-        return (
-          <ChoiceButton
-            key={`${currentQuestion.id}-${choice.id}`}
-            letter={String.fromCharCode(65 + index)}
-            text={choice.text}
-            state={state}
-            disabled={revealing || selectedChoiceId !== null}
-            onPress={() => answerQuestion(choice)}
-          />
-        );
-      })}
-
-      {feedback ? (
-        <Text
-          style={[
-            styles.feedback,
-            feedback.kind === "correct" ? styles.successText : styles.errorText,
-          ]}
-        >
-          {feedback.text}
-        </Text>
       ) : (
-        <View style={styles.feedbackSpacer} />
+        <>
+          {questionPanel}
+          {choiceList}
+          <Text style={styles.footerHint}>
+            Correct answer: +5 seconds · Incorrect answer: −3 seconds · Fast answers earn
+            more points
+          </Text>
+        </>
       )}
-
-      <Text style={styles.footerHint}>
-        Correct answer: +5 seconds · Incorrect answer: −3 seconds · Fast answers earn more
-        points
-      </Text>
-    </ScrollView>
-
-    {revealing ? (
-      <View style={styles.overlay} pointerEvents="none">
-        <Panel style={styles.overlayPanel}>
-          <View
-            style={[
-              styles.overlayTint,
-              choiceIsCorrect ? styles.tintCorrectStrong : styles.tintWrongStrong,
-            ]}
-          />
-          <Text
-            style={[
-              styles.overlayTitle,
-              choiceIsCorrect ? styles.successText : styles.errorText,
-            ]}
-          >
-            {choiceIsCorrect ? "CORRECT!" : "WRONG!"}
-          </Text>
-          <Text style={styles.kicker}>
-            {choiceIsCorrect ? "WELL DONE" : "THE CORRECT ANSWER"}
-          </Text>
-          <View style={styles.revealIdentity}>
-            <Image
-              source={currentQuestion.portrait}
-              style={styles.revealPortrait}
-              resizeMode="contain"
-            />
-            <View style={styles.revealIdentityText}>
-              <Text style={styles.revealName}>{currentQuestion.characterName}</Text>
-              <Text style={styles.revealChapter}>Chapter {currentQuestion.chapter}</Text>
-            </View>
-          </View>
-          <Text style={styles.revealQuote}>“{currentQuestion.quote}”</Text>
-        </Panel>
-      </View>
-    ) : null}
-    </>
+    </>,
+    revealOverlay
   );
 }
 
@@ -797,28 +943,33 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.05)",
   },
   safeArea: { flex: 1 },
-  scrollContent: {
-    flexGrow: 1,
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-    maxWidth: 640,
-    width: "100%",
-    alignSelf: "center",
-  },
-  resultsScroll: {
-    flexGrow: 1,
+
+  // The play area never scrolls. Content is centered and scaled down
+  // slightly when it doesn't fit (see fitScale).
+  fitArea: {
+    flex: 1,
     justifyContent: "center",
     paddingHorizontal: 20,
     paddingVertical: 14,
   },
-  centered: { flex: 1, justifyContent: "center", paddingHorizontal: 20 },
+  content: {
+    width: "100%",
+    maxWidth: 760,
+    alignSelf: "center",
+  },
+  centered: { justifyContent: "center" },
 
-  // HEADER
+  
+  row: { flexDirection: "row", alignItems: "center", gap: 14 },
+  leftCol: { flex: 1 },
+  rightCol: { flex: 1.15 },
+
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 10,
+    paddingRight: 60,
   },
   title: { color: INK, fontSize: 19, fontWeight: "bold" },
   pillRow: { flexDirection: "row", gap: 8 },
@@ -865,7 +1016,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     minHeight: 240,
   },
-  fullPanel: { width: "100%", marginBottom: 10 },
+  fullPanel: { width: "100%", marginBottom: 6 },
   kicker: {
     color: "#7a5a2a",
     fontSize: 11,
@@ -948,8 +1099,9 @@ const styles = StyleSheet.create({
     minHeight: 46,
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 22,
-    paddingVertical: 9,
+    paddingLeft: 30,
+    paddingRight: 40, // keeps long text inside the button border
+    paddingVertical: 10,
   },
   choiceLetter: {
     color: "#7a5a2a",
@@ -960,32 +1112,32 @@ const styles = StyleSheet.create({
   choiceText: {
     flex: 1,
     color: BUTTON_INK,
-    fontSize: 10,
-    lineHeight: 16,
+    fontSize: 9,
+    lineHeight: 14, // must be bigger than fontSize or lines overlap
     fontWeight: "bold",
   },
-  choiceMarkGood: { color: "#1f6b34", fontSize: 22, fontWeight: "bold", marginLeft: 8 },
-  choiceMarkBad: { color: "#a3281b", fontSize: 22, fontWeight: "bold", marginLeft: 8 },
-  tintCorrect: { backgroundColor: "rgba(60, 160, 85, 0.55)", borderRadius: 8 },
-  tintWrong: { backgroundColor: "rgba(200, 50, 35, 0.55)", borderRadius: 8 },
 
-  feedback: {
-    marginTop: 6,
-    marginBottom: 6,
-    fontSize: 12,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  feedbackSpacer: { height: 26 },
   successText: { color: "#1f6b34" },
   errorText: { color: "#a3281b" },
 
   // REVEAL OVERLAY
   overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.45)",
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 999,
+    elevation: 999,
+    backgroundColor: "rgba(0, 0, 0, 0.55)",
     justifyContent: "center",
+    alignItems: "center",
+  },
+  overlayCenter: {
+    width: "100%",
     paddingHorizontal: 20,
+    justifyContent: "center",
+    alignItems: "center",
   },
   overlayPanel: { width: "100%", maxWidth: 520, alignSelf: "center" },
   overlayTint: {
@@ -1004,6 +1156,13 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
     textAlign: "center",
     marginBottom: 2,
+  },
+  tapHint: {
+    color: "#7a5a2a",
+    fontSize: 10,
+    textAlign: "center",
+    marginTop: 8,
+    fontStyle: "italic",
   },
 
   // REVEAL
@@ -1068,6 +1227,7 @@ const styles = StyleSheet.create({
 
   // BUTTONS
   buttonWrap: { alignSelf: "center", width: "80%", maxWidth: 300, marginTop: 8 },
+  buttonSecondary: { opacity: 0.85 },
   buttonBg: {
     width: "100%",
     minHeight: 56,

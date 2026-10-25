@@ -7,6 +7,7 @@ import {
   ImageBackground,
   Image,
   Animated,
+  Easing,
   StyleSheet,
 } from "react-native";
 
@@ -17,7 +18,9 @@ import { useDisplaySettings, FONT_SCALE } from "../Others/DisplaySetting";
 import { saveCheckpoint, markPartReached } from "../Others/saveProgress";
 import { Chapter1 } from "./StoryScreen/Chapter1";
 import { useJournal } from "../../Main/Others/JournalContext";
-import { REMNANT_DATA } from "./RemnantData"; 
+import { useFocusEffect } from "@react-navigation/native";
+// IMPORT THE REMNANT DATA
+import { REMNANT_DATA } from "../RemnantData"; 
 
 // =====================================================
 // MINIGAMES
@@ -31,6 +34,7 @@ import ChronologicalOrderMinigame from "../GameScreen/Minigames/ChronologicalOrd
 import WhoSaidItMinigame from "../GameScreen/Minigames/WhoSaidItMinigame";
 import TimelineSort from "../GameScreen/Minigames/Timelinesort";
 import { BloodTrace, OathTrace } from "../GameScreen/Minigames/TracingMinigame";
+import MinigameOverlay from "../../Components/Minigameoverlay";
 
 // =====================================================
 // QUIZ UI IMAGES
@@ -234,12 +238,12 @@ function AnimatedImageButton({ normalSource, pressedSource, onPress, style, imag
   );
 }
 
+// NOTE: bloodtrace / oathtrace are NOT in this map anymore.
+// They are rendered in PartRenderer with the pause overlay (see below).
 const MINIGAMES = {
   voyage: VoyageMinigame,
   santoNino: SantoNinoMinigame,
   sortingtimeline: TimelineSort,
-  bloodtrace: BloodTrace,
-  oathtrace: OathTrace,
 };
 
 const MINIGAME_TYPES = new Set([
@@ -307,23 +311,176 @@ function GameplayMenuOverlay({ navigation }) {
   );
 }
 
-function CharacterLayer({ characters }) {
+// =====================================================
+// FADING BACKGROUND
+// Replaces ImageBackground for story scenes. When the picture changes it
+// fades the new one in over the old one instead of switching instantly.
+// Change `duration` (ms) to make the fade faster or slower.
+// =====================================================
+function FadeBackground({ source, style, children, duration = 700 }) {
+  // Two stacked pictures. Layer B sits on top of layer A.
+  // Only the layer that is currently hidden ever gets a new picture,
+  // so a visible picture never reloads or flickers.
+  const [srcA, setSrcA] = useState(source);
+  const [srcB, setSrcB] = useState(null);
+  const bOpacity = useRef(new Animated.Value(0)).current;
+  const showingB = useRef(false);
+  const targetRef = useRef(source);
+  const startFadeRef = useRef(null);
+  const timerRef = useRef(null);
+
+  // Runs the waiting fade (once)
+  const startFade = useCallback(() => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    const run = startFadeRef.current;
+    startFadeRef.current = null;
+    if (run) run();
+  }, []);
+
+  useEffect(() => {
+    if (source === targetRef.current) return;
+    targetRef.current = source;
+
+    startFade(); // finish a fade that was still waiting
+    bOpacity.stopAnimation();
+
+    const intoB = !showingB.current; // load into whichever layer is hidden
+    const alreadyThere = intoB ? srcB === source : srcA === source;
+
+    if (intoB) setSrcB(source);
+    else setSrcA(source);
+    showingB.current = intoB;
+
+    startFadeRef.current = () => {
+      Animated.timing(bOpacity, {
+        toValue: intoB ? 1 : 0,
+        duration,
+        useNativeDriver: true,
+      }).start();
+    };
+
+    // Wait until the new picture has loaded (onLoad below), then fade.
+    // If it was already loaded, or onLoad never fires, don't wait.
+    if (alreadyThere) startFade();
+    else timerRef.current = setTimeout(startFade, 400);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [source]);
+
+  useEffect(
+    () => () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      bOpacity.stopAnimation();
+    },
+    [bOpacity]
+  );
+
+  return (
+    <View style={style}>
+      <Image
+        source={srcA}
+        resizeMode="cover"
+        onLoad={startFade}
+        style={styles.fadeLayer}
+      />
+      {srcB != null ? (
+        <Animated.Image
+          source={srcB}
+          resizeMode="cover"
+          onLoad={startFade}
+          style={[styles.fadeLayer, { opacity: bOpacity }]}
+        />
+      ) : null}
+      {children}
+    </View>
+  );
+}
+
+// =====================================================
+// CHARACTER LAYER (with head bobbing)
+// =====================================================
+
+// How the characters move. Change these to tune the feel.
+const BOB_IDLE_PX = 8; // how far up an idle character moves
+const BOB_IDLE_MS = 1200; // time for one half-bob while idle
+const BOB_TALK_PX = 80; // how far up the speaking character moves
+const BOB_TALK_MS = 1200; // time for one half-bob while talking
+
+// One character that bobs up and down.
+// Idle: a slow, small bob. Talking: a faster, bigger bob.
+function CharacterSprite({ char, talking }) {
+  const bob = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const amount = talking ? -BOB_TALK_PX : -BOB_IDLE_PX;
+    const duration = talking ? BOB_TALK_MS : BOB_IDLE_MS;
+
+    bob.setValue(0);
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(bob, {
+          toValue: amount,
+          duration,
+          easing: Easing.inOut(Easing.quad),
+          useNativeDriver: true,
+        }),
+        Animated.timing(bob, {
+          toValue: 0,
+          duration,
+          easing: Easing.inOut(Easing.quad),
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    loop.start();
+
+    return () => loop.stop();
+  }, [talking, bob]);
+
+  const isLeft = char.position === "left";
+  const isCenter = char.position === "center";
+
+  return (
+    <Animated.Image
+      source={char.source}
+      resizeMode="contain"
+      style={[
+        styles.characterImage,
+        isLeft
+          ? styles.characterLeft
+          : isCenter
+            ? styles.characterCenter
+            : styles.characterRight,
+        { transform: [{ translateY: bob }] },
+      ]}
+    />
+  );
+}
+
+// `speaker` = the name shown on the dialogue box
+// `typing`  = true while the text is still being typed out
+function CharacterLayer({ characters, speaker, typing }) {
   if (!characters || characters.length === 0) return null;
+
+  const speakerName = (speaker || "").toLowerCase();
+  const isSpeaker = (char) => {
+    const name = (char?.name || "").toLowerCase();
+    if (!name || !speakerName) return false;
+    return speakerName.includes(name) || name.includes(speakerName);
+  };
+
   return (
     <View style={styles.characterLayer} pointerEvents="none">
       {characters.map((char, index) => {
         if (!char?.source) return null;
-        const isLeft = char.position === "left";
-        const isCenter = char.position === "center";
+
         return (
-          <Image
+          <CharacterSprite
             key={`${char.name || "character"}-${index}`}
-            source={char.source}
-            resizeMode="contain"
-            style={[
-              styles.characterImage,
-              isLeft ? styles.characterLeft : isCenter ? styles.characterCenter : styles.characterRight,
-            ]}
+            char={char}
+            talking={!!typing && isSpeaker(char)}
           />
         );
       })}
@@ -363,6 +520,22 @@ function PartRenderer(props) {
   // QUIZ STATES
   const [selectedOption, setSelectedOption] = useState(null); // What the player taps
   const [quizAnswer, setQuizAnswer] = useState(null); // What they submitted
+
+  // --- MINIGAME PAUSE ---
+  const [paused, setPaused] = useState(false);
+  // Reported by the minigame on screen: "intro" (instructions),
+  // "playing", or "result" (win / lose screen)
+  const [minigamePhase, setMinigamePhase] = useState("intro");
+
+  useEffect(() => {
+    setPaused(false);
+  }, [sceneIdx]);
+
+  useFocusEffect(
+  useCallback(() => {
+    setPaused(false);
+  }, [])
+);
 
   // --- REMNANT POPUP STATES ---
   const [showRewardPopup, setShowRewardPopup] = useState(false);
@@ -466,7 +639,7 @@ function PartRenderer(props) {
     if (typeof index !== "number" || index < 0 || index >= sceneData.length) return;
     setPicked(null);
     setQuizAnswer(null);
-    setSelectedOption(null);
+    setMinigamePhase("intro"); // a new minigame starts on its instructions
     setSceneIdx(index);
     game.setScene(index);
   };
@@ -539,14 +712,124 @@ function PartRenderer(props) {
 
   // =====================================================
   // MINIGAMES
-  // =====================================================
-  if (current?.type === "voyage") return <VoyageMinigame onComplete={goNext} />;
+  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  // Adds the pause + settings buttons (top right) on top of a minigame.
+  // Only the minigames that understand the `paused` prop use this.
+  // The pause + settings buttons only show while the minigame is actually
+  // being played (not on the instructions or the win / lose screens).
+  // Options: { hideSettings: true } = no menu button at the top right
+  //          (the PAUSED panel still has Settings),
+  //          { top, right } = where the buttons sit (default 20 / 20).
+  const withMinigameOverlay = (
+    node,
+    { hideSettings = false, top = 20, right = 20 } = {}
+  ) => (
+    <>
+      {node}
+      {minigamePhase === "playing" && (
+        <MinigameOverlay
+          paused={paused}
+          hideSettings={hideSettings}
+          top={top}
+          right={right}
+          onPause={() => setPaused(true)}
+          onResume={() => setPaused(false)}
+          onSettings={() => {
+            setPaused(true);
+            navigation.navigate("Second");
+          }}
+        />
+      )}
+    </>
+  );
+
+  if (current?.type === "voyage") {
+    return withMinigameOverlay(
+      <VoyageMinigame
+        paused={paused}
+        onPhaseChange={setMinigamePhase}
+        onComplete={goNext}
+      />
+    );
+  }
+
   if (current?.type === "santoNino") return <SantoNinoMinigame onComplete={goNext} />;
-  if (current?.type === "cedula") return <CedulaMinigame key={`cedula-${sceneIdx}`} onComplete={goNext} />;
-  if (current?.type === "decipher") return <DecipherMinigame key={`decipher-${chapterNumber}-${partNumber}-${sceneIdx}`} onComplete={goNext} />;
-  if (current?.type === "matching") return <CharacterMatchingMinigame key={`matching-${chapterNumber}-${partNumber}-${sceneIdx}`} characters={current.characters} onComplete={goNext} />;
-  if (current?.type === "chronological") return <ChronologicalOrderMinigame key={`chronological-${chapterNumber}-${partNumber}-${sceneIdx}`} events={current.events} onComplete={goNext} />;
-  if (current?.type === "whoSaidIt") return <WhoSaidItMinigame key={`who-said-it-${chapterNumber}-${partNumber}-${sceneIdx}`} onComplete={(results) => { console.log("Who Said It results:", results); goNext(); }} />;
+
+  if (current?.type === "cedula") {
+    return withMinigameOverlay(
+      <CedulaMinigame
+        key={`cedula-${chapterNumber}-${partNumber}-${sceneIdx}`}
+        paused={paused}
+        onPhaseChange={setMinigamePhase}
+        onComplete={goNext}
+      />,
+      // Cedula: pause only, tucked into the corner (same as Decipher)
+      { hideSettings: true, top: 6, right: 12 }
+    );
+  }
+
+  if (current?.type === "decipher") {
+    return withMinigameOverlay(
+      <DecipherMinigame
+        key={`decipher-${chapterNumber}-${partNumber}-${sceneIdx}`}
+        paused={paused}
+        onPhaseChange={setMinigamePhase}
+        onComplete={goNext}
+      />,
+      // Decipher: no top-right menu button, pause tucked into the corner
+      { hideSettings: true, top: 6, right: 12 }
+    );
+  }
+
+  if (current?.type === "matching") {
+    return withMinigameOverlay(
+      <CharacterMatchingMinigame
+        key={`matching-${chapterNumber}-${partNumber}-${sceneIdx}`}
+        characters={current.characters}
+        paused={paused}
+        onPhaseChange={setMinigamePhase}
+        onComplete={goNext}
+      />,
+      // Matching: same as Decipher - pause only, tucked into the corner
+      { hideSettings: true, top: 6, right: 12 }
+    );
+  }
+
+  if (current?.type === "chronological") {
+    return withMinigameOverlay(
+      <ChronologicalOrderMinigame
+        key={`chronological-${chapterNumber}-${partNumber}-${sceneIdx}`}
+        events={current.events}
+        paused={paused}
+        onPhaseChange={setMinigamePhase}
+        onComplete={goNext}
+      />,
+      // Timeline: pause only, tucked into the corner (same as Decipher)
+      { hideSettings: true, top: 6, right: 12 }
+    );
+  }
+
+  // Tracing games (Blood Trace / Oath Trace): instructions screen first,
+  // pause button only while tracing.
+  if (current?.type === "bloodtrace" || current?.type === "oathtrace") {
+    const TraceGame = current.type === "bloodtrace" ? BloodTrace : OathTrace;
+    return withMinigameOverlay(
+      <TraceGame
+        key={`trace-${chapterNumber}-${partNumber}-${sceneIdx}`}
+        paused={paused}
+        onPhaseChange={setMinigamePhase}
+        onComplete={goNext}
+      />,
+      // Tracing: pause button only (no settings button at the top right)
+      { hideSettings: true }
+    );
+  }
+
+  // Who Said It has its own built-in pause button (see WhoSaidItMinigame.js)
+  if (current?.type === "whoSaidIt") {
+    return <WhoSaidItMinigame key={`who-said-it-${chapterNumber}-${partNumber}-${sceneIdx}`} onComplete={(results) => { console.log("Who Said It results:", results); goNext(); }} />;
+  }
 
   const Minigame = current ? MINIGAMES[current.type] : null;
   if (Minigame) return <Minigame onComplete={goNext} />;
@@ -742,7 +1025,7 @@ function PartRenderer(props) {
       </>
     );
     if (current.background) {
-      return withOverlay(<ImageBackground source={current.background} style={styles.systemScreen} resizeMode="cover">{systemContent}</ImageBackground>);
+      return withOverlay(<FadeBackground source={current.background} style={styles.systemScreen}>{systemContent}</FadeBackground>);
     }
     return withOverlay(<View style={styles.systemScreen}>{systemContent}</View>);
   }
@@ -752,7 +1035,7 @@ function PartRenderer(props) {
   // =====================================================
   if (current.type === "scene") {
     return withOverlay(
-      <ImageBackground source={current.background} style={styles.sceneScreen} resizeMode="cover">
+      <FadeBackground source={current.background} style={styles.sceneScreen}>
         <View style={styles.sceneDarkOverlay}>
           <View style={styles.sceneTitleBox}>
             <Text style={styles.sceneTitle}>{current.title}</Text>
@@ -760,7 +1043,7 @@ function PartRenderer(props) {
           </View>
         </View>
         <AnimatedNextButton onPress={goNext} />
-      </ImageBackground>
+      </FadeBackground>
     );
   }
 
@@ -781,7 +1064,7 @@ function PartRenderer(props) {
       </>
     );
     if (current.background) {
-      return withOverlay(<ImageBackground source={current.background} style={styles.background} resizeMode="cover">{narratorContent}</ImageBackground>);
+      return withOverlay(<FadeBackground source={current.background} style={styles.background}>{narratorContent}</FadeBackground>);
     }
     return withOverlay(<View style={styles.background}>{narratorContent}</View>);
   }
@@ -817,7 +1100,7 @@ function PartRenderer(props) {
         </>
       );
       if (current.background) {
-        return withOverlay(<ImageBackground source={current.background} style={styles.choiceScreen} resizeMode="cover">{choiceContent}</ImageBackground>);
+        return withOverlay(<FadeBackground source={current.background} style={styles.choiceScreen}>{choiceContent}</FadeBackground>);
       }
       return withOverlay(<View style={styles.choiceScreen}>{choiceContent}</View>);
     }
@@ -825,7 +1108,11 @@ function PartRenderer(props) {
     const selectedChoice = current.choices[picked];
     const responseContent = (
       <>
-        <CharacterLayer characters={selectedChoice.characters} />
+        <CharacterLayer
+          characters={selectedChoice.characters}
+          speaker={selectedChoice.speaker}
+          typing={!done}
+        />
         <View style={styles.dialogueWrapper}>
           <ImageBackground source={require("../../assets/foreground/dialogue_box.png")} style={styles.dialogueBox} imageStyle={boxImage} resizeMode="stretch">
             <Text style={scaled(styles.speakerName)}>{selectedChoice.speaker}</Text>
@@ -837,7 +1124,7 @@ function PartRenderer(props) {
       </>
     );
     if (current.background) {
-      return withOverlay(<ImageBackground source={current.background} style={styles.background} resizeMode="cover">{responseContent}</ImageBackground>);
+      return withOverlay(<FadeBackground source={current.background} style={styles.background}>{responseContent}</FadeBackground>);
     }
     return withOverlay(<View style={styles.background}>{responseContent}</View>);
   }
@@ -847,7 +1134,11 @@ function PartRenderer(props) {
   // =====================================================
   const dialogueContent = (
     <>
-      <CharacterLayer characters={current.characters} />
+      <CharacterLayer
+        characters={current.characters}
+        speaker={current.speaker}
+        typing={!done}
+      />
       <View style={styles.dialogueWrapper}>
         <ImageBackground source={require("../../assets/foreground/dialogue_box.png")} style={styles.dialogueBox} imageStyle={boxImage} resizeMode="stretch">
           <Text style={scaled(styles.speakerName)}>{current.speaker}</Text>
@@ -860,7 +1151,7 @@ function PartRenderer(props) {
   );
 
   if (current.background) {
-    return withOverlay(<ImageBackground source={current.background} style={styles.background} resizeMode="cover">{dialogueContent}</ImageBackground>);
+    return withOverlay(<FadeBackground source={current.background} style={styles.background}>{dialogueContent}</FadeBackground>);
   }
   return withOverlay(<View style={styles.background}>{dialogueContent}</View>);
 }
@@ -922,6 +1213,16 @@ export function Chap1Part8Screen({ navigation, ...props }) {
 // STYLES
 // =====================================================
 const styles = StyleSheet.create({
+  // Both background pictures of FadeBackground: full size, centered crop
+  fadeLayer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+  },
+  opacityZero: { opacity: 0 },
+  quizBackground: { backgroundColor: "#fffca0" },
   opacityZero: {
     opacity: 0,
   },
