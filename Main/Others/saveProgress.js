@@ -147,9 +147,9 @@ async function continueGame() {
 async function clearCheckpoints() {
   try {
     await AsyncStorage.removeItem(SAVE_KEY);
-  } catch (error) {
-    console.error("error clearing checkpoints", error);
-  }
+   } catch (error) {
+     console.error("error clearing checkpoints", error);
+ }
 }
   
 async function restartEverything() {
@@ -162,14 +162,27 @@ async function restartEverything() {
   }
 }
 
+async function restartProgress() {
+  try {
+    await Promise.all([
+      AsyncStorage.removeItem(SAVE_KEY),
+      AsyncStorage.removeItem(UNLOCK_KEY),
+    ]);
+    return true;
+  } catch (error) {
+    console.error("Error reset progress:", error);
+    return false;
+  }
+}
 export {
   saveCheckpoint,
   getCheckpoints,
   restoreCheckpoint,
   continueGame,
-  clearCheckpoints,
   restartEverything,
+  clearCheckpoints,
   deleteCheckpoint,
   markPartReached,
   getUnlockedPart,
+  restartProgress
 };

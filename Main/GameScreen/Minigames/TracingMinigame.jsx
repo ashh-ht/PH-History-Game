@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ImageBackground,
   PanResponder,
@@ -106,6 +106,20 @@ function strokeBase(letter, strokeIdx) {
   return base;
 }
 
+// Where does the first stroke of a letter begin? ("bottom-left", "top", ...)
+// Used by the instructions screen so the text is right for any word.
+function describeStart(char) {
+  const p = FONT[char]?.[0]?.[0];
+  if (!p) return 'glowing dot';
+  const [px, py] = p;
+  const v = py < 0.34 ? 'top' : py > 0.66 ? 'bottom' : 'middle';
+  const h = px < 0.34 ? 'left' : px > 0.66 ? 'right' : 'center';
+  if (v === 'middle' && h === 'center') return 'middle';
+  if (v === 'middle') return `${h} side`;
+  if (h === 'center') return v;
+  return `${v}-${h}`;
+}
+
 // One big letter at a time, so the thumb has room and the finger doesn't hide the whole word.
 function buildLayout(word, width, height) {
   const chars = word.toUpperCase().split('');
@@ -161,14 +175,18 @@ function WordTrace({
   hint,
   doneText = 'Well done.',
   inkColor = '#B3201A',
+  paused = false, // set by PartRenderer when the pause panel is open
+  onPhaseChange, // tells PartRenderer: "intro" | "playing" | "result"
   onComplete,
 }) {
   // ALL hooks stay at the top, before any "if ... return"
   const { s } = useScale();
   const { width, height } = useWindowDimensions();
+  const landscape = width > height;
   const styles = useMemo(() => makeStyles(s), [s]);
   const layout = useMemo(() => buildLayout(word, width, height), [word, width, height]);
 
+  const [started, setStarted] = useState(false); // false = instructions screen
   const [idx, setIdx] = useState(0); // which letter is being traced
   const [hits, setHits] = useState([]); // checkpoints already covered on this letter
   const [trail, setTrail] = useState([]); // the finger's path on this stroke
@@ -176,6 +194,8 @@ function WordTrace({
   // The finger handler lives outside React's render cycle, so it reads these refs
   const layoutRef = useRef(layout);
   layoutRef.current = layout;
+  const pausedRef = useRef(false);
+  pausedRef.current = paused;
   const idxRef = useRef(0);
   const hitsRef = useRef(new Set());
   const trailRef = useRef([]);
@@ -198,6 +218,8 @@ function WordTrace({
     };
 
     const touch = (e, start) => {
+      if (pausedRef.current) return; // paused: ignore the finger
+
       const x = e.nativeEvent.locationX;
       const y = e.nativeEvent.locationY;
       const { letters, radius } = layoutRef.current;
@@ -279,9 +301,89 @@ function WordTrace({
   const current = layout.letters[idx];
   const activeStroke = progRef.current.stroke;
 
+  // Tell the parent which screen we're on, so it only shows the
+  // pause button while the player is actually tracing.
+  useEffect(() => {
+    if (!onPhaseChange) return;
+    if (!started) onPhaseChange('intro');
+    else if (finished) onPhaseChange('result');
+    else onPhaseChange('playing');
+  }, [started, finished, onPhaseChange]);
+
   const handleDone = () => {
     if (onComplete) onComplete({ word });
   };
+
+  // ---------------------------------------------------------------
+  // INSTRUCTIONS SCREEN (shown before tracing begins)
+  // ---------------------------------------------------------------
+  if (!started) {
+    const first = layout.letters[0];
+    const startPt = first?.strokes[0][0];
+    const previewScale = 0.55;
+
+    return (
+      <Screen style={styles.screen}>
+        <View style={[styles.content, landscape && styles.introRow]}>
+          {/* mini preview of the first letter with its start dot circled */}
+          {first && startPt ? (
+            <Svg
+              width={layout.canvasW * previewScale}
+              height={layout.canvasH * previewScale}
+              viewBox={`0 0 ${layout.canvasW} ${layout.canvasH}`}
+            >
+              {first.strokes.map((poly, si) => (
+                <Path
+                  key={`p${si}`}
+                  d={toPath(poly)}
+                  stroke={si === 0 ? GUIDE_STRONG : GUIDE_FAINT}
+                  strokeWidth={layout.strokeW}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  fill="none"
+                />
+              ))}
+              <Circle
+                cx={startPt.x}
+                cy={startPt.y}
+                r={layout.strokeW * 1.0}
+                stroke="#FFF2CB"
+                strokeWidth={layout.strokeW * 0.15}
+                fill="none"
+              />
+              <Circle
+                cx={startPt.x}
+                cy={startPt.y}
+                r={layout.strokeW * 0.6}
+                fill="#FFF2CB"
+              />
+            </Svg>
+          ) : null}
+
+          <View style={styles.introCol}>
+            <Text style={styles.title}>{title}</Text>
+            <Text style={styles.ruleText}>
+              • Start at the glowing dot on the {first ? describeStart(first.char) : 'letter'} of
+              the first letter ({first?.char}).
+            </Text>
+            <Text style={styles.ruleText}>• Drag your finger along the line, in order.</Text>
+            <Text style={styles.ruleText}>
+              • Don't lift your finger, or that stroke restarts.
+            </Text>
+            <Text style={styles.ruleText}>
+              • Letters with more than one stroke start a new glowing dot.
+            </Text>
+
+            <View style={styles.buttonsRow}>
+              <Sound_clicks style={styles.button} onPress={() => setStarted(true)}>
+                <Text style={styles.buttonText}>Begin Tracing</Text>
+              </Sound_clicks>
+            </View>
+          </View>
+        </View>
+      </Screen>
+    );
+  }
 
   // small preview of the whole word on top (done / current / upcoming)
   let letterCounter = -1;
@@ -403,7 +505,7 @@ export function OathTrace(props) {
       title="Initiation Oath Tracing"
       hint="Start at the glowing dot and trace without lifting your finger."
       doneText="The oath is taken."
-      inkColor="#D9A441"
+      inkColor="#1f1d1c"
       {...props}
     />
   );
@@ -424,6 +526,7 @@ const makeStyles = (s) =>
       paddingHorizontal: 20 * s,
     },
     title: {
+      top: 10,
       fontSize: 22 * s,
       fontWeight: '700',
       color: '#FFF2CB',
@@ -470,12 +573,30 @@ const makeStyles = (s) =>
       paddingHorizontal: 32 * s,
       alignItems: 'center',
       justifyContent: 'center',
-      bottom:10
+      bottom: 10,
     },
     buttonText: {
       fontSize: 15 * s,
       fontWeight: '600',
       color: '#FFF2CB',
+    },
+
+    // instructions screen
+    introRow: {
+      flexDirection: 'row',
+      gap: 24 * s,
+    },
+    introCol: {
+      flexShrink: 1,
+      maxWidth: 380 * s,
+      alignItems: 'center',
+    },
+    ruleText: {
+      fontSize: 14 * s,
+      lineHeight: 21 * s,
+      color: 'rgba(255, 242, 203, 0.9)',
+      alignSelf: 'flex-start',
+      marginTop: 2 * s,
     },
   });
 

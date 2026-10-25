@@ -1,20 +1,44 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   SafeAreaView,
-  ScrollView,
   View,
   Text,
   Image,
-  Pressable,
+  ImageBackground,
+  Animated,
+  TouchableOpacity,
   StyleSheet,
   useWindowDimensions,
   StatusBar,
 } from "react-native";
 
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+
+import { useAudio } from "../../../Audiostore";
+import MinigameOverlay from "../../../Components/Minigameoverlay";
+
+// =====================================================
+// ARTWORK (same set as the Decipher minigame)
+// =====================================================
+
+const IMG = {
+  background: require("../../../Background Images/Usuals/Paper_scroll.png"),
+  panel: require("../../../Background Images/Usuals/Minigames_Foreground.png"),
+  button: require("../../../assets/buttons/choice_button.png"),
+};
+
+const PANEL_HAS_TAB = false;
+const PANEL_PAD_TOP = PANEL_HAS_TAB ? 58 : 38;
+const PANEL_PAD_BOTTOM = PANEL_HAS_TAB ? 26 : 42;
+const PANEL_PAD_SIDE = PANEL_HAS_TAB ? 34 : 54;
+const PANEL_INSET = PANEL_HAS_TAB
+  ? { left: 0, right: 0, top: 0, bottom: 0 }
+  : { left: 0.023, right: 0.01, top: 0.06, bottom: 0.06 };
+
 const START_SECONDS = 60;
 const CORRECT_TIME_BONUS = 5;
 const WRONG_TIME_PENALTY = 3;
-const FEEDBACK_MS = 850;
+const FEEDBACK_MS = 2600; // how long the reveal overlay stays (tap to skip)
 
 const DEFAULT_QUESTIONS = [
   {
@@ -87,11 +111,11 @@ const DEFAULT_QUESTIONS = [
     choices: [
       {
         id: "jacinto",
-        text: "One person may be wiser, richer, or more skilled than another, but that doesn't make them more human. This is what should guide every member.",
+        text: "One person may be wiser, richer, or more skilled than another, but that doesn't make them more human.\n This is what should guide every member.",
       },
       {
         id: "rizal",
-        text: "If we want a better future for our people, we cannot wait for the government to change. We must build it ourselves.",
+        text: "If we want a better future for our people, we cannot wait for the government to change. We must build \nit ourselves.",
       },
       {
         id: "sikatuna",
@@ -246,7 +270,7 @@ function shuffle(items) {
 }
 
 function makeGameQuestions(sourceQuestions) {
-  // The game always includes one question from Chapters 1–6 and four from Chapter 7.
+  // One question from Chapters 1–6 and four from Chapter 7.
   const chosen = [];
   for (let chapter = 1; chapter <= 6; chapter += 1) {
     const candidates = sourceQuestions.filter((question) => question.chapter === chapter);
@@ -262,6 +286,34 @@ function makeGameQuestions(sourceQuestions) {
   }));
 }
 
+// Inserts line breaks (\n) so long answers never run past the button border.
+// Change MAX_LINE_CHARS to make lines shorter (smaller number) or longer.
+// Any \n you already wrote in a choice text is kept.
+const MAX_LINE_CHARS = 58;
+
+function breakText(text, maxChars = MAX_LINE_CHARS) {
+  return String(text)
+    .split("\n")
+    .map((part) => {
+      const lines = [];
+      let line = "";
+      part
+        .trim()
+        .split(/\s+/)
+        .forEach((word) => {
+          if (line && (line + " " + word).length > maxChars) {
+            lines.push(line);
+            line = word;
+          } else {
+            line = line ? line + " " + word : word;
+          }
+        });
+      if (line) lines.push(line);
+      return lines.join("\n");
+    })
+    .join("\n");
+}
+
 function formatTime(seconds) {
   const safeSeconds = Math.max(0, seconds);
   const minutes = Math.floor(safeSeconds / 60);
@@ -269,73 +321,279 @@ function formatTime(seconds) {
   return `${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`;
 }
 
+// =====================================================
+// SHARED UI (button + panel, same as Decipher)
+// =====================================================
+
+function useSpringPress() {
+  const scale = useRef(new Animated.Value(1)).current;
+  const translateY = useRef(new Animated.Value(0)).current;
+
+  const animate = (isPressed) => {
+    Animated.parallel([
+      Animated.spring(scale, {
+        toValue: isPressed ? 0.94 : 1,
+        speed: 20,
+        bounciness: 12,
+        useNativeDriver: true,
+      }),
+      Animated.spring(translateY, {
+        toValue: isPressed ? 3 : 0,
+        speed: 20,
+        bounciness: 10,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  return { animate, transform: [{ scale }, { translateY }] };
+}
+
+function GameButton({ label, onPress, secondary }) {
+  const { animate, transform } = useSpringPress();
+
+  return (
+    <Animated.View
+      style={[styles.buttonWrap, secondary && styles.buttonSecondary, { transform }]}
+    >
+      <TouchableOpacity
+        activeOpacity={1}
+        accessibilityRole="button"
+        onPressIn={() => animate(true)}
+        onPressOut={() => animate(false)}
+        onPress={onPress}
+      >
+        <ImageBackground source={IMG.button} style={styles.buttonBg} resizeMode="stretch">
+          <Text style={styles.buttonText}>{label}</Text>
+        </ImageBackground>
+      </TouchableOpacity>
+    </Animated.View>
+  );
+}
+
+// Answer choice: same button art, with a letter and long-text support.
+// The correct / wrong feedback is shown only in the reveal overlay.
+function ChoiceButton({ letter, text, onPress, disabled }) {
+  const { animate, transform } = useSpringPress();
+
+  return (
+    <Animated.View style={[styles.choiceWrap, { transform }]}>
+      <TouchableOpacity
+        activeOpacity={1}
+        disabled={disabled}
+        accessibilityRole="button"
+        accessibilityState={{ disabled }}
+        onPressIn={() => animate(true)}
+        onPressOut={() => animate(false)}
+        onPress={onPress}
+      >
+        <ImageBackground source={IMG.button} style={styles.choiceBg} resizeMode="stretch">
+          <Text style={styles.choiceLetter}>{letter}</Text>
+          <Text style={styles.choiceText}>{breakText(text)}</Text>
+        </ImageBackground>
+      </TouchableOpacity>
+    </Animated.View>
+  );
+}
+
+function Panel({ children, style }) {
+  const [size, setSize] = useState({ w: 0, h: 0 });
+
+  const L = PANEL_INSET.left;
+  const R = PANEL_INSET.right;
+  const T = PANEL_INSET.top;
+  const B = PANEL_INSET.bottom;
+  const w = 1 - L - R;
+  const h = 1 - T - B;
+
+  const onLayout = (event) => {
+    const { width, height } = event.nativeEvent.layout;
+    setSize((previous) =>
+      Math.abs(previous.w - width) < 0.5 && Math.abs(previous.h - height) < 0.5
+        ? previous
+        : { w: width, h: height }
+    );
+  };
+
+  const imgW = size.w / w;
+  const imgH = size.h / h;
+
+  return (
+    <View onLayout={onLayout} style={[styles.panel, style, { overflow: "visible" }]}>
+      {size.w > 0 ? (
+        <Image
+          source={IMG.panel}
+          resizeMode="stretch"
+          pointerEvents="none"
+          style={{
+            position: "absolute",
+            width: imgW,
+            height: imgH,
+            left: -L * imgW,
+            top: -T * imgH,
+          }}
+        />
+      ) : null}
+      {children}
+    </View>
+  );
+}
+
+function PanelTab({ children }) {
+  if (!PANEL_HAS_TAB) {
+    return <Text style={styles.kicker}>{children}</Text>;
+  }
+  return (
+    <View style={styles.tab} pointerEvents="none">
+      <Text style={styles.tabText} numberOfLines={1}>
+        {children}
+      </Text>
+    </View>
+  );
+}
+
+// Full-screen result overlay shown after every answer. It fades in, stays on
+// screen for FEEDBACK_MS, and can be tapped to continue right away.
+function RevealOverlay({ correct, question, onContinue }) {
+  const opacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(opacity, {
+      toValue: 1,
+      duration: 180,
+      useNativeDriver: true,
+    }).start();
+  }, [opacity]);
+
+  return (
+    <Animated.View style={[styles.overlay, { opacity }]}>
+      {/* Full-screen backdrop: tap anywhere to continue */}
+      <TouchableOpacity
+        activeOpacity={1}
+        style={StyleSheet.absoluteFillObject}
+        onPress={onContinue}
+        accessibilityRole="button"
+        accessibilityLabel="Continue"
+      />
+
+      {/* Centered card */}
+      <View style={styles.overlayCenter} pointerEvents="none">
+        <Panel style={styles.overlayPanel}>
+          <View
+            pointerEvents="none"
+            style={[
+              styles.overlayTint,
+              correct ? styles.tintCorrectStrong : styles.tintWrongStrong,
+            ]}
+          />
+          <Text
+            style={[styles.overlayTitle, correct ? styles.successText : styles.errorText]}
+          >
+            {correct ? "CORRECT!" : "WRONG!"}
+          </Text>
+          <Text style={styles.kicker}>{correct ? "WELL DONE" : "THE CORRECT ANSWER"}</Text>
+          <View style={styles.revealIdentity}>
+            <Image
+              source={question.portrait}
+              style={styles.revealPortrait}
+              resizeMode="contain"
+            />
+            <View style={styles.revealIdentityText}>
+              <Text style={styles.revealName}>{question.characterName}</Text>
+              <Text style={styles.revealChapter}>Chapter {question.chapter}</Text>
+            </View>
+          </View>
+          <Text style={styles.revealQuote}>“{question.quote}”</Text>
+          <Text style={styles.tapHint}>Tap to continue</Text>
+        </Panel>
+      </View>
+    </Animated.View>
+  );
+}
+
+// =====================================================
+// MINIGAME
+// =====================================================
+
 export default function WhoSaidItMinigame({
   questions = DEFAULT_QUESTIONS,
   onComplete,
+  paused: pausedProp = false,
+  onPhaseChange,
 }) {
-  const { width } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   const compact = width < 380;
+  const landscape = width > height;
+
+  // Built-in pause button. If the parent screen already manages pausing
+  // (it passes onPhaseChange), the parent shows its own button instead.
+  const navigation = useNavigation();
+  const parentControlsPause = typeof onPhaseChange === "function";
+  const [localPaused, setLocalPaused] = useState(false);
+  const paused = pausedProp || localPaused;
+
+  // Coming back from the Settings screen: resume the game
+  useFocusEffect(
+    useCallback(() => {
+      setLocalPaused(false);
+    }, [])
+  );
+
+  const audio = useAudio();
+  const sfx = useCallback(
+    (key) => {
+      try {
+        audio?.playSfx?.(key);
+      } catch (e) {}
+    },
+    [audio]
+  );
+
   const [gameQuestions, setGameQuestions] = useState(() => makeGameQuestions(questions));
   const [questionIndex, setQuestionIndex] = useState(0);
   const [secondsLeft, setSecondsLeft] = useState(START_SECONDS);
   const [score, setScore] = useState(0);
   const [answers, setAnswers] = useState([]);
   const [selectedChoiceId, setSelectedChoiceId] = useState(null);
-  const [feedback, setFeedback] = useState(null);
   const [revealing, setRevealing] = useState(false);
   const [finished, setFinished] = useState(false);
+
+  // Fit-to-screen: nothing scrolls. If the content is taller than the space
+  // available it is scaled down a little instead.
+  const [areaH, setAreaH] = useState(0);
+  const [contentH, setContentH] = useState(0);
+
   const feedbackTimeout = useRef(null);
+  const advanceRef = useRef(null);
+  const pausedRef = useRef(paused);
+  pausedRef.current = paused;
+
   const currentQuestion = gameQuestions[questionIndex];
   const totalQuestions = gameQuestions.length;
   const correctCount = answers.filter((answer) => answer.correct).length;
 
-  const finishGame = useCallback(
-    (finalAnswers = answers, finalScore = score) => {
-      setFinished(true);
-      setRevealing(false);
-      setFeedback(null);
-      if (typeof onComplete === "function") {
-        onComplete({
-          score: finalScore,
-          correct: finalAnswers.filter((answer) => answer.correct).length,
-          total: totalQuestions,
-          accuracy:
-            totalQuestions > 0
-              ? Math.round(
-                  (finalAnswers.filter((answer) => answer.correct).length /
-                    totalQuestions) *
-                    100
-                )
-              : 0,
-        });
-      }
-    },
-    [answers, onComplete, score, totalQuestions]
-  );
-
-  const goNext = useCallback(
-    (nextAnswers, nextScore) => {
-      if (questionIndex + 1 >= totalQuestions) {
-        finishGame(nextAnswers, nextScore);
-      } else {
-        setQuestionIndex((index) => index + 1);
-        setSelectedChoiceId(null);
-        setFeedback(null);
-        setRevealing(false);
-      }
-    },
-    [finishGame, questionIndex, totalQuestions]
-  );
-
+  // Tells the parent which screen we are on ("playing" or "result") so it
+  // can show the pause button only while the game is being played.
   useEffect(() => {
-    if (finished || revealing) return undefined;
+    if (!onPhaseChange) return;
+    onPhaseChange(finished ? "result" : "playing");
+  }, [finished, onPhaseChange]);
+
+  const finishGame = useCallback(() => {
+    setFinished(true);
+    setRevealing(false);
+  }, []);
+
+  // Countdown. It stops while the answer is being revealed and while paused.
+  useEffect(() => {
+    if (finished || revealing || paused) return undefined;
     if (secondsLeft <= 0) {
       finishGame();
       return undefined;
     }
     const timer = setTimeout(() => setSecondsLeft((time) => time - 1), 1000);
     return () => clearTimeout(timer);
-  }, [secondsLeft, finished, revealing, finishGame]);
+  }, [secondsLeft, finished, revealing, paused, finishGame]);
 
   useEffect(
     () => () => {
@@ -346,619 +604,643 @@ export default function WhoSaidItMinigame({
 
   const answerQuestion = useCallback(
     (choice) => {
-      if (!currentQuestion || revealing || finished || selectedChoiceId !== null) {
-        return;
-      }
-      const correct = choice.id === currentQuestion.correctChoiceId;
-      const timeAtAnswer = secondsLeft;
-      const pointsEarned = correct ? 100 + Math.max(0, timeAtAnswer) * 2 : 0;
-      const nextScore = score + pointsEarned;
-      const answerRecord = {
-        questionId: currentQuestion.id,
-        chapter: currentQuestion.chapter,
-        correct,
-        choiceId: choice.id,
-        pointsEarned,
-      };
-      const nextAnswers = [...answers, answerRecord];
+      if (!currentQuestion || revealing || finished || paused) return;
+      if (selectedChoiceId !== null) return;
 
+      const correct = choice.id === currentQuestion.correctChoiceId;
+      const pointsEarned = correct ? 100 + Math.max(0, secondsLeft) * 2 : 0;
+      const nextScore = score + pointsEarned;
+      const nextAnswers = [
+        ...answers,
+        {
+          questionId: currentQuestion.id,
+          chapter: currentQuestion.chapter,
+          correct,
+          choiceId: choice.id,
+          pointsEarned,
+        },
+      ];
+
+      sfx(correct ? "correct" : "wrong");
       setSelectedChoiceId(choice.id);
       setAnswers(nextAnswers);
       setScore(nextScore);
-      setFeedback(
-        correct
-          ? { kind: "correct", text: `Correct! +${pointsEarned} points` }
-          : { kind: "wrong", text: "Not quite. The correct answer is revealed below." }
-      );
       setSecondsLeft((time) =>
-        Math.max(
-          0,
-          time + (correct ? CORRECT_TIME_BONUS : -WRONG_TIME_PENALTY)
-        )
+        Math.max(0, time + (correct ? CORRECT_TIME_BONUS : -WRONG_TIME_PENALTY))
       );
       setRevealing(true);
 
-      feedbackTimeout.current = setTimeout(() => {
+      // Move on after the reveal (or when the player taps the overlay).
+      // If the game is paused at that moment, wait until it is resumed.
+      const advance = () => {
+        if (pausedRef.current) {
+          feedbackTimeout.current = setTimeout(advance, 200);
+          return;
+        }
+
+        advanceRef.current = null;
         setRevealing(false);
-        setFeedback(null);
+
         if (questionIndex + 1 >= totalQuestions) {
-          finishGame(nextAnswers, nextScore);
+          finishGame();
         } else {
           setQuestionIndex((index) => index + 1);
           setSelectedChoiceId(null);
         }
-      }, FEEDBACK_MS);
+      };
+
+      advanceRef.current = advance;
+      feedbackTimeout.current = setTimeout(advance, FEEDBACK_MS);
     },
     [
       answers,
       currentQuestion,
       finishGame,
       finished,
+      paused,
       questionIndex,
       revealing,
       score,
       secondsLeft,
       selectedChoiceId,
       totalQuestions,
+      sfx,
     ]
   );
 
+  // Tap on the overlay: skip the wait and go to the next question.
+  const skipReveal = useCallback(() => {
+    if (pausedRef.current || !advanceRef.current) return;
+    if (feedbackTimeout.current) clearTimeout(feedbackTimeout.current);
+    advanceRef.current();
+  }, []);
+
   const replay = useCallback(() => {
     if (feedbackTimeout.current) clearTimeout(feedbackTimeout.current);
+    advanceRef.current = null;
     setGameQuestions(makeGameQuestions(questions));
     setQuestionIndex(0);
     setSecondsLeft(START_SECONDS);
     setScore(0);
     setAnswers([]);
     setSelectedChoiceId(null);
-    setFeedback(null);
     setRevealing(false);
     setFinished(false);
   }, [questions]);
 
-  if (!currentQuestion && !finished) {
-    return (
-      <SafeAreaView style={styles.safeArea}>
-        <View style={styles.centered}>
-          <Text style={styles.title}>Who Said It?</Text>
-          <Text style={styles.bodyText}>No questions are available.</Text>
-        </View>
-      </SafeAreaView>
-    );
-  }
+  const accuracy = totalQuestions ? Math.round((correctCount / totalQuestions) * 100) : 0;
 
-  if (finished) {
-    const accuracy = totalQuestions
-      ? Math.round((correctCount / totalQuestions) * 100)
-      : 0;
-    return (
+  const continueStory = useCallback(() => {
+    if (typeof onComplete === "function") {
+      onComplete({
+        score,
+        correct: correctCount,
+        total: totalQuestions,
+        accuracy,
+      });
+    }
+  }, [onComplete, score, correctCount, totalQuestions, accuracy]);
+
+  // 1 = fits as is. Smaller = shrink to fit (never below 0.4).
+  const FIT_PADDING = 28; // top + bottom padding of the play area
+  const fitScale =
+    areaH > 0 && contentH > 0
+      ? Math.min(1, Math.max(0.4, (areaH - FIT_PADDING) / contentH))
+      : 1;
+
+  // The whole screen: background + a non-scrolling, centered, scaled area.
+  const shell = (body, withOverlay = null) => (
+    <ImageBackground source={IMG.background} style={styles.background} resizeMode="cover">
+      <View style={styles.dim} />
       <SafeAreaView style={styles.safeArea}>
         <StatusBar barStyle="dark-content" />
-        <ScrollView contentContainerStyle={styles.resultsScroll}>
-          <View style={styles.header}>
-            <Text style={styles.eyebrow}>HISTORY CHALLENGE</Text>
-            <Text style={styles.title}>Game Complete!</Text>
-            <Text style={styles.subtitle}>The Revolution's words live on.</Text>
-          </View>
 
-          <View style={styles.resultCard}>
-            <Text style={styles.resultLabel}>FINAL SCORE</Text>
-            <Text style={styles.resultScore}>{score.toLocaleString()}</Text>
-            <View style={styles.statsRow}>
-              <View style={styles.statBox}>
-                <Text style={styles.statValue}>{correctCount}/{totalQuestions}</Text>
-                <Text style={styles.statLabel}>Correct</Text>
-              </View>
-              <View style={styles.statBox}>
-                <Text style={styles.statValue}>{accuracy}%</Text>
-                <Text style={styles.statLabel}>Accuracy</Text>
-              </View>
-              <View style={styles.statBox}>
-                <Text style={styles.statValue}>{formatTime(secondsLeft)}</Text>
-                <Text style={styles.statLabel}>Time left</Text>
-              </View>
-            </View>
-            <Text style={styles.resultMessage}>
-              {accuracy >= 80
-                ? "Excellent work, historian!"
-                : accuracy >= 50
-                ? "Good effort. Keep learning the voices of history."
-                : "Keep practicing—you'll recognize more voices next time."}
-            </Text>
+        <View
+          style={styles.fitArea}
+          onLayout={(e) => setAreaH(e.nativeEvent.layout.height)}
+        >
+          {/* While paused, nothing in the game can be touched */}
+          <View
+            pointerEvents={paused ? "none" : "auto"}
+            style={[styles.content, { transform: [{ scale: fitScale }] }]}
+            onLayout={(e) => setContentH(e.nativeEvent.layout.height)}
+          >
+            {body}
           </View>
+        </View>
 
-          <Pressable accessibilityRole="button" onPress={replay} style={styles.primaryButton}>
-            <Text style={styles.primaryButtonText}>Play Again</Text>
-          </Pressable>
-        </ScrollView>
       </SafeAreaView>
+
+      {/* Pause button (top right) + PAUSED panel */}
+      {!parentControlsPause && !finished && currentQuestion ? (
+        <MinigameOverlay
+          paused={localPaused}
+          hideSettings
+          top={6}
+          right={12}
+          onPause={() => setLocalPaused(true)}
+          onResume={() => setLocalPaused(false)}
+          onSettings={() => {
+            setLocalPaused(true);
+            navigation.navigate("Second");
+          }}
+        />
+      ) : null}
+
+      {withOverlay}
+    </ImageBackground>
+  );
+
+  if (!currentQuestion && !finished) {
+    return shell(
+      <View style={styles.centered}>
+        <Panel style={styles.centerPanel}>
+          <Text style={styles.panelTitle}>Who Said It?</Text>
+          <Text style={styles.bodyText}>No questions are available.</Text>
+        </Panel>
+      </View>
     );
   }
 
-  const correctChoice = currentQuestion.choices.find(
-    (choice) => choice.id === currentQuestion.correctChoiceId
-  );
-  const selectedChoice = currentQuestion.choices.find(
-    (choice) => choice.id === selectedChoiceId
-  );
-  const choiceIsCorrect = selectedChoiceId === currentQuestion.correctChoiceId;
+  // ---------------------------------------------------
+  // RESULTS
+  // ---------------------------------------------------
+  if (finished) {
+    return shell(
+      <Panel style={styles.centerPanel}>
+        <PanelTab>HISTORY CHALLENGE</PanelTab>
+        <Text style={styles.panelTitle}>Game Complete!</Text>
+        <Text style={styles.bodyText}>The Revolution's words live on.</Text>
 
-  return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="dark-content" />
-      <ScrollView contentContainerStyle={styles.screenContent}>
-        <View style={styles.header}>
-          <Text style={styles.eyebrow}>PHILIPPINE HISTORY</Text>
-          <Text style={styles.title}>Who Said It?</Text>
-          <Text style={styles.subtitle}>Recognize the voices of the Revolution</Text>
-        </View>
+        <Text style={styles.bigNumber}>{score.toLocaleString()}</Text>
+        <Text style={styles.statCaption}>FINAL SCORE</Text>
 
-        <View style={styles.topStats}>
-          <View style={styles.timerPill}>
-            <Text style={styles.timerLabel}>TIME</Text>
-            <Text style={[styles.timerValue, secondsLeft <= 10 && styles.timerUrgent]}>
-              {formatTime(secondsLeft)}
+        <View style={styles.statsRow}>
+          <View style={styles.statBox}>
+            <Text style={styles.statValue}>
+              {correctCount}/{totalQuestions}
             </Text>
+            <Text style={styles.statLabel}>Correct</Text>
           </View>
-          <View style={styles.scorePill}>
-            <Text style={styles.timerLabel}>SCORE</Text>
-            <Text style={styles.scoreValue}>{score.toLocaleString()}</Text>
+          <View style={styles.statBox}>
+            <Text style={styles.statValue}>{accuracy}%</Text>
+            <Text style={styles.statLabel}>Accuracy</Text>
           </View>
-        </View>
-
-        <View style={styles.progressSection}>
-          <View style={styles.progressLabels}>
-            <Text style={styles.progressText}>Question {questionIndex + 1} of {totalQuestions}</Text>
-            <Text style={styles.progressText}>Chapter {currentQuestion.chapter}</Text>
-          </View>
-          <View style={styles.progressTrack}>
-            <View
-              style={[
-                styles.progressFill,
-                { width: `${((questionIndex + 1) / totalQuestions) * 100}%` },
-              ]}
-            />
+          <View style={styles.statBox}>
+            <Text style={styles.statValue}>{formatTime(secondsLeft)}</Text>
+            <Text style={styles.statLabel}>Time left</Text>
           </View>
         </View>
 
-        <View style={styles.questionCard}>
-          <Text style={styles.questionType}>
-            {currentQuestion.type === "quoteToCharacter"
-              ? "WHO SAID THIS?"
-              : "WHICH LINE DID THEY SAY?"}
-          </Text>
-          {currentQuestion.type === "quoteToCharacter" ? (
-            <Text style={[styles.quoteText, compact && styles.quoteTextCompact]}>
-              “{currentQuestion.quote}”
-            </Text>
-          ) : (
-            <View style={styles.characterPrompt}>
-              <Image source={currentQuestion.portrait} style={styles.promptPortrait} resizeMode="contain" />
-              <Text style={styles.promptName}>{currentQuestion.characterName}</Text>
-              <Text style={styles.promptHint}>Choose the line spoken by this character.</Text>
-            </View>
-          )}
-        </View>
-
-        <View style={styles.choicesSection}>
-          <Text style={styles.sectionTitle}>Choose your answer</Text>
-          {currentQuestion.choices.map((choice, index) => {
-            const isSelected = selectedChoiceId === choice.id;
-            const isCorrect = choice.id === currentQuestion.correctChoiceId;
-            let choiceStyle = styles.choiceButton;
-            if (revealing && isCorrect) choiceStyle = [styles.choiceButton, styles.choiceCorrect];
-            else if (revealing && isSelected && !isCorrect) choiceStyle = [styles.choiceButton, styles.choiceWrong];
-
-            return (
-              <Pressable
-                key={`${currentQuestion.id}-${choice.id}`}
-                accessibilityRole="button"
-                accessibilityState={{ disabled: revealing || selectedChoiceId !== null }}
-                disabled={revealing || selectedChoiceId !== null}
-                onPress={() => answerQuestion(choice)}
-                style={choiceStyle}
-              >
-                <View style={styles.choiceLetter}>
-                  <Text style={styles.choiceLetterText}>{String.fromCharCode(65 + index)}</Text>
-                </View>
-                <Text style={styles.choiceText}>{choice.text}</Text>
-                {revealing && isCorrect ? <Text style={styles.choiceMark}>✓</Text> : null}
-                {revealing && isSelected && !isCorrect ? <Text style={styles.choiceMark}>×</Text> : null}
-              </Pressable>
-            );
-          })}
-        </View>
-
-        {feedback ? (
-          <View style={[styles.feedbackBanner, feedback.kind === "correct" ? styles.feedbackCorrect : styles.feedbackWrong]}>
-            <Text style={styles.feedbackText}>{feedback.text}</Text>
-          </View>
-        ) : null}
-
-        {revealing ? (
-          <View style={styles.revealCard}>
-            <Text style={styles.revealEyebrow}>{choiceIsCorrect ? "WELL DONE" : "THE CORRECT ANSWER"}</Text>
-            <View style={styles.revealIdentity}>
-              <Image source={currentQuestion.portrait} style={styles.revealPortrait} resizeMode="contain" />
-              <View style={styles.revealIdentityText}>
-                <Text style={styles.revealName}>{currentQuestion.characterName}</Text>
-                <Text style={styles.revealChapter}>Chapter {currentQuestion.chapter}</Text>
-              </View>
-            </View>
-            <Text style={styles.revealQuote}>“{currentQuestion.quote}”</Text>
-          </View>
-        ) : null}
-
-        <Text style={styles.footerHint}>
-          Correct answer: +5 seconds · Incorrect answer: −3 seconds · Fast answers earn more points
+        <Text style={styles.timeSummary}>
+          {accuracy >= 80
+            ? "Excellent work, historian!"
+            : accuracy >= 50
+            ? "Good effort. Keep learning the voices of history."
+            : "Keep practicing—you'll recognize more voices next time."}
         </Text>
-      </ScrollView>
-    </SafeAreaView>
+
+        {typeof onComplete === "function" ? (
+          <GameButton label="Continue Story" onPress={continueStory} />
+        ) : null}
+        <GameButton
+          label="Play Again"
+          onPress={replay}
+          secondary={typeof onComplete === "function"}
+        />
+      </Panel>
+    );
+  }
+
+  const choiceIsCorrect = selectedChoiceId === currentQuestion.correctChoiceId;
+  const lowTime = secondsLeft <= 10;
+
+  // ---------------------------------------------------
+  // GAMEPLAY PIECES
+  // ---------------------------------------------------
+
+  const header = (
+    <View style={styles.header}>
+      <Text style={styles.title}>Who Said It?</Text>
+      <View style={styles.pillRow}>
+        <View style={[styles.pill, lowTime && styles.pillLow]}>
+          <Text style={[styles.pillValue, lowTime && styles.pillTextLow]}>
+            {formatTime(secondsLeft)}
+          </Text>
+        </View>
+        <View style={styles.pill}>
+          <Text style={styles.pillValue}>{score.toLocaleString()}</Text>
+        </View>
+      </View>
+    </View>
+  );
+
+  const progressBar = (
+    <View style={styles.progressTrack}>
+      {gameQuestions.map((q, i) => (
+        <View
+          key={q.id}
+          style={[
+            styles.progressSegment,
+            i < answers.length && styles.progressComplete,
+            i === questionIndex && styles.progressCurrent,
+          ]}
+        />
+      ))}
+    </View>
+  );
+
+  const questionPanel = (
+    <Panel style={styles.fullPanel}>
+      <PanelTab>
+        {currentQuestion.type === "quoteToCharacter"
+          ? `WHO SAID THIS? · CHAPTER ${currentQuestion.chapter}`
+          : `WHICH LINE DID THEY SAY? · CHAPTER ${currentQuestion.chapter}`}
+      </PanelTab>
+
+      {currentQuestion.type === "quoteToCharacter" ? (
+        <Text style={[styles.quoteText, compact && styles.quoteTextCompact]}>
+          “{currentQuestion.quote}”
+        </Text>
+      ) : (
+        <View style={styles.characterPrompt}>
+          <Image
+            source={currentQuestion.portrait}
+            style={styles.promptPortrait}
+            resizeMode="contain"
+          />
+          <Text style={styles.promptName}>{currentQuestion.characterName}</Text>
+          <Text style={styles.hintText}>Choose the line spoken by this character.</Text>
+        </View>
+      )}
+    </Panel>
+  );
+
+  const choiceList = (
+    <>
+      <Text style={styles.inputLabel}>Choose your answer</Text>
+      {currentQuestion.choices.map((choice, index) => (
+        <ChoiceButton
+          key={`${currentQuestion.id}-${choice.id}`}
+          letter={String.fromCharCode(65 + index)}
+          text={choice.text}
+          disabled={revealing || selectedChoiceId !== null || paused}
+          onPress={() => answerQuestion(choice)}
+        />
+      ))}
+    </>
+  );
+
+  const revealOverlay = revealing ? (
+    <RevealOverlay
+      correct={choiceIsCorrect}
+      question={currentQuestion}
+      onContinue={skipReveal}
+    />
+  ) : null;
+
+  // ---------------------------------------------------
+  // GAMEPLAY
+  //   landscape: question on the left, answers on the right
+  //   portrait : everything stacked
+  // ---------------------------------------------------
+  return shell(
+    <>
+      {header}
+      {progressBar}
+
+      {landscape ? (
+        <View style={styles.row}>
+          <View style={styles.leftCol}>{questionPanel}</View>
+          <View style={styles.rightCol}>{choiceList}</View>
+        </View>
+      ) : (
+        <>
+          {questionPanel}
+          {choiceList}
+          <Text style={styles.footerHint}>
+            Correct answer: +5 seconds · Incorrect answer: −3 seconds · Fast answers earn
+            more points
+          </Text>
+        </>
+      )}
+    </>,
+    revealOverlay
   );
 }
 
+// =====================================================
+// STYLES
+// =====================================================
+
+const INK = "#352313";
+const BUTTON_INK = "#371f10";
+
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#F4E8CE",
+  background: { flex: 1, width: "100%", height: "100%", backgroundColor: "#000" },
+  dim: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.05)",
   },
-  screenContent: {
-    paddingHorizontal: 18,
-    paddingTop: 14,
-    paddingBottom: 28,
-    maxWidth: 720,
+  safeArea: { flex: 1 },
+
+  // The play area never scrolls. Content is centered and scaled down
+  // slightly when it doesn't fit (see fitScale).
+  fitArea: {
+    flex: 1,
+    justifyContent: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+  },
+  content: {
     width: "100%",
+    maxWidth: 760,
     alignSelf: "center",
   },
-  resultsScroll: {
-    flexGrow: 1,
-    justifyContent: "center",
-    paddingHorizontal: 18,
-    paddingVertical: 28,
-    maxWidth: 720,
-    width: "100%",
-    alignSelf: "center",
-  },
-  centered: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 24,
-  },
+  centered: { justifyContent: "center" },
+
+  // LANDSCAPE LAYOUT
+  row: { flexDirection: "row", alignItems: "center", gap: 14 },
+  leftCol: { flex: 1 },
+  rightCol: { flex: 1.15 },
+
+  // HEADER
   header: {
+    flexDirection: "row",
     alignItems: "center",
-    marginBottom: 18,
-  },
-  eyebrow: {
-    color: "#7B5B2D",
-    fontSize: 11,
-    fontWeight: "900",
-    letterSpacing: 2.1,
-    marginBottom: 5,
-  },
-  title: {
-    color: "#234536",
-    fontSize: 30,
-    fontWeight: "900",
-    letterSpacing: 0.2,
-    textAlign: "center",
-  },
-  subtitle: {
-    color: "#77664D",
-    fontSize: 13,
-    marginTop: 4,
-    textAlign: "center",
-  },
-  topStats: {
-    flexDirection: "row",
-    gap: 12,
-    marginBottom: 17,
-  },
-  timerPill: {
-    flex: 1,
-    borderRadius: 14,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    backgroundColor: "#FFF8E9",
-    borderWidth: 1,
-    borderColor: "#D7C39D",
-  },
-  scorePill: {
-    flex: 1,
-    borderRadius: 14,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    backgroundColor: "#234536",
-  },
-  timerLabel: {
-    color: "#8B7045",
-    fontSize: 10,
-    fontWeight: "900",
-    letterSpacing: 1.5,
-  },
-  timerValue: {
-    color: "#234536",
-    fontSize: 22,
-    fontWeight: "900",
-    fontVariant: ["tabular-nums"],
-    marginTop: 1,
-  },
-  timerUrgent: {
-    color: "#B23B32",
-  },
-  scoreValue: {
-    color: "#FFF2D1",
-    fontSize: 22,
-    fontWeight: "900",
-    marginTop: 1,
-  },
-  progressSection: {
-    marginBottom: 16,
-  },
-  progressLabels: {
-    flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 7,
+    marginBottom: 10,
+    paddingRight: 60, // leaves room for the pause button
   },
-  progressText: {
-    color: "#6C5B42",
-    fontSize: 12,
-    fontWeight: "800",
-  },
-  progressTrack: {
-    height: 7,
-    borderRadius: 99,
-    backgroundColor: "#DFD0B2",
-    overflow: "hidden",
-  },
-  progressFill: {
-    height: "100%",
-    borderRadius: 99,
-    backgroundColor: "#B68A3A",
-  },
-  questionCard: {
-    backgroundColor: "#FFFAEF",
-    borderColor: "#D8C49D",
+  title: { color: INK, fontSize: 19, fontWeight: "bold" },
+  pillRow: { flexDirection: "row", gap: 8 },
+  pill: {
+    minWidth: 64,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 14,
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
     borderWidth: 1,
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 18,
-    shadowColor: "#4C3820",
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 2,
+    borderColor: "#d7cfbe",
   },
-  questionType: {
-    color: "#A4772C",
+  pillLow: { borderColor: "#ff9b82", backgroundColor: "rgba(90, 20, 10, 0.75)" },
+  pillValue: {
+    color: "#FFFFFF",
+    fontSize: 15,
+    fontWeight: "bold",
+    fontVariant: ["tabular-nums"],
+  },
+  pillTextLow: { color: "#ff9b82" },
+
+  // PROGRESS
+  progressTrack: { flexDirection: "row", gap: 5, marginBottom: 10 },
+  progressSegment: {
+    flex: 1,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: "rgba(53, 35, 19, 0.2)",
+  },
+  progressComplete: { backgroundColor: "#7a5a2a" },
+  progressCurrent: { backgroundColor: INK },
+
+  // PANELS
+  panel: {
+    paddingTop: PANEL_PAD_TOP,
+    paddingBottom: PANEL_PAD_BOTTOM,
+    paddingHorizontal: PANEL_PAD_SIDE,
+    justifyContent: "center",
+  },
+  centerPanel: {
+    width: "100%",
+    maxWidth: 560,
+    alignSelf: "center",
+    minHeight: 240,
+  },
+  fullPanel: { width: "100%", marginBottom: 6 },
+  kicker: {
+    color: "#7a5a2a",
     fontSize: 11,
-    fontWeight: "900",
-    letterSpacing: 1.8,
+    fontWeight: "bold",
+    letterSpacing: 1.6,
     textAlign: "center",
-    marginBottom: 14,
+    marginBottom: 6,
   },
+  tab: {
+    position: "absolute",
+    top: 0,
+    left: "2.5%",
+    width: "38%",
+    height: "20%",
+    minHeight: 36,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 8,
+  },
+  tabText: {
+    color: INK,
+    fontSize: 13,
+    fontWeight: "bold",
+    letterSpacing: 1.2,
+    textAlign: "center",
+  },
+  panelTitle: {
+    color: INK,
+    fontSize: 22,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  bodyText: {
+    color: "#0f0f0f",
+    fontSize: 15,
+    lineHeight: 22,
+    textAlign: "center",
+  },
+
+  // QUESTION
   quoteText: {
-    color: "#283E32",
-    fontSize: 21,
-    lineHeight: 31,
-    fontWeight: "700",
+    color: "#0f0f0f",
+    fontSize: 15,
+    lineHeight: 22,
+    fontWeight: "600",
     fontStyle: "italic",
     textAlign: "center",
+    marginTop: 4,
   },
-  quoteTextCompact: {
-    fontSize: 18,
-    lineHeight: 27,
-  },
-  characterPrompt: {
-    alignItems: "center",
-  },
-  promptPortrait: {
-    width: 124,
-    height: 124,
-    marginBottom: 7,
-  },
+  quoteTextCompact: { fontSize: 14, lineHeight: 20 },
+  characterPrompt: { alignItems: "center" },
+  promptPortrait: { width: 90, height: 90, marginBottom: 6 },
   promptName: {
-    color: "#234536",
-    fontSize: 22,
-    fontWeight: "900",
+    color: INK,
+    fontSize: 17,
+    fontWeight: "bold",
     textAlign: "center",
   },
-  promptHint: {
-    color: "#77664D",
+  hintText: {
+    color: "#141414",
+    fontSize: 11,
+    lineHeight: 16,
+    textAlign: "center",
+    fontStyle: "italic",
+    marginTop: 4,
+  },
+  inputLabel: {
+    color: INK,
     fontSize: 12,
-    marginTop: 5,
+    fontWeight: "bold",
     textAlign: "center",
+    marginVertical: 6,
   },
-  choicesSection: {
-    marginBottom: 12,
-  },
-  sectionTitle: {
-    color: "#234536",
-    fontSize: 15,
-    fontWeight: "900",
-    marginBottom: 10,
-  },
-  choiceButton: {
+
+  // CHOICES
+  choiceWrap: { width: "100%", marginBottom: 6 },
+  choiceBg: {
+    width: "100%",
+    minHeight: 46,
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FFF9EC",
-    borderColor: "#D8C49D",
-    borderWidth: 1,
-    borderRadius: 14,
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    marginBottom: 9,
-    minHeight: 54,
-  },
-  choiceCorrect: {
-    backgroundColor: "#E3F0E3",
-    borderColor: "#4F875D",
-    borderWidth: 2,
-  },
-  choiceWrong: {
-    backgroundColor: "#F8E2D9",
-    borderColor: "#B84B3D",
-    borderWidth: 2,
+    paddingLeft: 30,
+    paddingRight: 40, // keeps long text inside the button border
+    paddingVertical: 10,
   },
   choiceLetter: {
-    width: 30,
-    height: 30,
-    borderRadius: 10,
-    backgroundColor: "#EAD9B7",
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 11,
-  },
-  choiceLetterText: {
-    color: "#5E4727",
+    color: "#7a5a2a",
     fontSize: 13,
-    fontWeight: "900",
+    fontWeight: "bold",
+    width: 22,
   },
   choiceText: {
     flex: 1,
-    color: "#343B31",
-    fontSize: 14,
-    lineHeight: 20,
-    fontWeight: "600",
+    color: BUTTON_INK,
+    fontSize: 9,
+    lineHeight: 14, // must be bigger than fontSize or lines overlap
+    fontWeight: "bold",
   },
-  choiceMark: {
-    color: "#234536",
+
+  successText: { color: "#1f6b34" },
+  errorText: { color: "#a3281b" },
+
+  // REVEAL OVERLAY
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 999,
+    elevation: 999,
+    backgroundColor: "rgba(0, 0, 0, 0.55)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  overlayCenter: {
+    width: "100%",
+    paddingHorizontal: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  overlayPanel: { width: "100%", maxWidth: 520, alignSelf: "center" },
+  overlayTint: {
+    position: "absolute",
+    top: 18,
+    bottom: 20,
+    left: 26,
+    right: 26,
+    borderRadius: 10,
+  },
+  tintCorrectStrong: { backgroundColor: "rgba(60, 160, 85, 0.40)" },
+  tintWrongStrong: { backgroundColor: "rgba(200, 50, 35, 0.40)" },
+  overlayTitle: {
     fontSize: 20,
-    fontWeight: "900",
-    marginLeft: 8,
-  },
-  feedbackBanner: {
-    paddingVertical: 12,
-    paddingHorizontal: 15,
-    borderRadius: 12,
-    marginBottom: 12,
-  },
-  feedbackCorrect: {
-    backgroundColor: "#DCEBDD",
-  },
-  feedbackWrong: {
-    backgroundColor: "#F4DCD3",
-  },
-  feedbackText: {
-    color: "#2F4635",
-    fontSize: 14,
-    fontWeight: "900",
+    fontWeight: "bold",
+    letterSpacing: 2,
     textAlign: "center",
+    marginBottom: 2,
   },
-  revealCard: {
-    backgroundColor: "#234536",
-    borderRadius: 18,
-    padding: 16,
-    marginTop: 2,
-    marginBottom: 12,
-  },
-  revealEyebrow: {
-    color: "#E7C57D",
+  tapHint: {
+    color: "#7a5a2a",
     fontSize: 10,
-    fontWeight: "900",
-    letterSpacing: 1.7,
-    marginBottom: 10,
+    textAlign: "center",
+    marginTop: 8,
+    fontStyle: "italic",
   },
+
+  // REVEAL
   revealIdentity: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 12,
+    marginBottom: 10,
   },
-  revealPortrait: {
-    width: 76,
-    height: 76,
-    marginRight: 13,
-  },
-  revealIdentityText: {
-    flex: 1,
-  },
-  revealName: {
-    color: "#FFF4D9",
-    fontSize: 20,
-    fontWeight: "900",
-  },
-  revealChapter: {
-    color: "#D8C49D",
-    fontSize: 12,
-    fontWeight: "700",
-    marginTop: 4,
-  },
+  revealPortrait: { width: 70, height: 70, marginRight: 12 },
+  revealIdentityText: { flex: 1 },
+  revealName: { color: INK, fontSize: 16, fontWeight: "bold" },
+  revealChapter: { color: "#7a5a2a", fontSize: 12, fontWeight: "bold", marginTop: 3 },
   revealQuote: {
-    color: "#FFF4D9",
-    fontSize: 15,
-    lineHeight: 23,
+    color: "#0f0f0f",
+    fontSize: 12.5,
+    lineHeight: 18,
     fontStyle: "italic",
+    textAlign: "center",
   },
   footerHint: {
-    color: "#867354",
-    fontSize: 11,
-    lineHeight: 17,
+    color: INK,
+    fontSize: 10,
+    lineHeight: 14,
     textAlign: "center",
-    marginTop: 7,
+    marginTop: 6,
   },
-  resultCard: {
-    backgroundColor: "#FFFAEF",
-    borderColor: "#D8C49D",
-    borderWidth: 1,
-    borderRadius: 22,
-    padding: 22,
-    alignItems: "center",
-    marginBottom: 20,
+
+  // RESULTS
+  bigNumber: {
+    color: INK,
+    fontSize: 40,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginTop: 10,
   },
-  resultLabel: {
-    color: "#9B762F",
+  statCaption: {
+    color: "#7a5a2a",
     fontSize: 11,
-    fontWeight: "900",
-    letterSpacing: 2,
+    fontWeight: "bold",
+    letterSpacing: 1.6,
+    textAlign: "center",
+    marginBottom: 10,
   },
-  resultScore: {
-    color: "#234536",
-    fontSize: 48,
-    fontWeight: "900",
-    marginTop: 4,
-    marginBottom: 16,
-  },
-  statsRow: {
-    flexDirection: "row",
-    width: "100%",
-    gap: 8,
-    marginBottom: 18,
-  },
+  statsRow: { flexDirection: "row", gap: 8, marginBottom: 10 },
   statBox: {
     flex: 1,
-    backgroundColor: "#F2E5C9",
-    borderRadius: 13,
-    paddingVertical: 12,
+    paddingVertical: 10,
     alignItems: "center",
+    borderRadius: 6,
+    backgroundColor: "rgba(120, 85, 40, 0.18)",
+    borderWidth: 1.5,
+    borderColor: "#7a5a2a",
   },
-  statValue: {
-    color: "#234536",
-    fontSize: 18,
-    fontWeight: "900",
-  },
-  statLabel: {
-    color: "#77664D",
-    fontSize: 11,
-    fontWeight: "700",
-    marginTop: 3,
-  },
-  resultMessage: {
-    color: "#5F523D",
-    fontSize: 14,
-    fontWeight: "700",
+  statValue: { color: INK, fontSize: 16, fontWeight: "bold" },
+  statLabel: { color: "#141414", fontSize: 11, marginTop: 2 },
+  timeSummary: {
+    color: "#141414",
     textAlign: "center",
-    lineHeight: 21,
+    fontSize: 13,
+    marginBottom: 6,
   },
-  primaryButton: {
-    backgroundColor: "#234536",
-    borderRadius: 15,
-    paddingVertical: 15,
-    paddingHorizontal: 24,
+
+  // BUTTONS
+  buttonWrap: { alignSelf: "center", width: "80%", maxWidth: 300, marginTop: 8 },
+  buttonSecondary: { opacity: 0.85 },
+  buttonBg: {
+    width: "100%",
+    minHeight: 56,
+    justifyContent: "center",
     alignItems: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 10,
   },
-  primaryButtonText: {
-    color: "#FFF4D9",
+  buttonText: {
+    color: BUTTON_INK,
     fontSize: 16,
-    fontWeight: "900",
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });

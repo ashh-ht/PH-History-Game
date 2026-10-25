@@ -123,8 +123,49 @@ function SpringBackButton({ onPress }) {
 }
 
 // Spring animation for the polaroid press.
-function PolaroidItem({ image, unlocked, onPress }) {
+function PolaroidItem({ image, unlocked, selected, onPress }) {
   const scale = useRef(new Animated.Value(1)).current;
+  const pulse = useRef(new Animated.Value(0)).current;
+
+  // Pulse the highlight while this polaroid is the selected one,
+  // hinting that a second tap will open it.
+  useEffect(() => {
+    if (!selected) {
+      pulse.setValue(0);
+      return;
+    }
+
+    const animation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulse, {
+          toValue: 1,
+          duration: 700,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulse, {
+          toValue: 0,
+          duration: 700,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+
+    animation.start();
+
+    return () => {
+      animation.stop();
+    };
+  }, [selected, pulse]);
+
+  const highlightOpacity = pulse.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.6, 1],
+  });
+
+  const selectedScale = pulse.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1.04, 1.08],
+  });
 
   const handlePress = () => {
     Animated.sequence([
@@ -147,11 +188,26 @@ function PolaroidItem({ image, unlocked, onPress }) {
   return (
     <Sound_clicks onPress={handlePress} disabled={!unlocked}>
       <Animated.View style={{ transform: [{ scale }] }}>
-        <Image
-          source={unlocked ? image : LOCKED_IMAGE}
-          style={styles.polaroid}
-          resizeMode="contain"
-        />
+        <Animated.View
+          style={
+            selected
+              ? { transform: [{ scale: selectedScale }] }
+              : undefined
+          }
+        >
+          {selected && (
+            <Animated.View
+              pointerEvents="none"
+              style={[styles.selectedHighlight, { opacity: highlightOpacity }]}
+            />
+          )}
+
+          <Image
+            source={unlocked ? image : LOCKED_IMAGE}
+            style={styles.polaroid}
+            resizeMode="contain"
+          />
+        </Animated.View>
       </Animated.View>
     </Sound_clicks>
   );
@@ -345,9 +401,8 @@ function Chapter1Selection({ navigation, route }) {
       resizeMode="cover"
       style={styles.background}
     >
-      {showBackBtn && (
-        <SpringBackButton onPress={() => navigation.goBack()} />
-      )}
+      {/* Always visible: lives outside the ScrollView and is pinned with absolute positioning. */}
+      <SpringBackButton onPress={() => navigation.goBack()} />
 
       {/* Preview and instruction stay hidden until a polaroid is tapped,
           or until the unlock sequence shows the new part's preview. */}
@@ -397,8 +452,6 @@ function Chapter1Selection({ navigation, route }) {
         }}
         style={styles.scrollView}
         contentContainerStyle={styles.list}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
       >
         {UNLOCKED_IMAGES.map((image, index) => {
@@ -472,7 +525,7 @@ const styles = StyleSheet.create({
   backButton: {
     position: 'absolute',
     top: 32,
-    left: 25,
+    left: 20,
     zIndex: 10,
   },
 
@@ -504,6 +557,7 @@ const styles = StyleSheet.create({
   previewImage: {
     width: '100%',
     height: 290,
+    left: 20
   },
 
   tapInstruction: {
@@ -540,6 +594,18 @@ const styles = StyleSheet.create({
   polaroid: {
     width: POLAROID_WIDTH,
     height: POLAROID_HEIGHT,
+  },
+
+  // Golden frame + glow around the selected polaroid.
+  selectedHighlight: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    borderRadius: 8,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.9,
+    shadowRadius: 12,
+    elevation: 10,
   },
 });
 

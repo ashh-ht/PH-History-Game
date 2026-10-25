@@ -31,6 +31,12 @@ const BTN_X_CIRCLE = require('../../assets/Settings_Assets/Saves_DeleteSave.png'
 
 const PANEL_ASPECT = 1205 / 630;
 
+// width / height of Saves_DeleteAll.png (tweak if the button looks squished)
+const DELETE_ASPECT = 4.8;
+
+// Fine-tune horizontal position in pixels (negative = left, positive = right)
+const DELETE_NUDGE_X = 0;
+
 const timeAgo = (ts) => {
   const mins = Math.floor((Date.now() - ts) / 60000);
   if (mins < 1) return "JUST NOW";
@@ -154,10 +160,10 @@ export default function SavesScreen({ navigation }) {
   const listTop = panelH * 0.24;
   const listH = panelH * 0.5;
 
-  const delW = panelW * 0.24;
-  const delH = panelH * 0.12;
-  const delLeft = (panelW - delW) / 2;
-  const delTop = panelH * 0.78;
+  // Delete All button: bigger, centered, pinned to the bottom of the panel
+  const delW = panelW * 0.52;             // raise/lower to resize
+  const delH = delW / DELETE_ASPECT;
+  const delBottom = panelH * 0.085;       // raise/lower to move up/down
 
   const cardH = Math.max(40, panelH * 0.16);
   const cardFont = Math.max(12, panelH * 0.05);
@@ -242,7 +248,6 @@ export default function SavesScreen({ navigation }) {
           style={{ width: panelW, height: panelH }}
           resizeMode="stretch"
         >
-          {/* FIXED: Extracted position: 'absolute' to StyleSheet to clear warning */}
           <View
             style={[
               styles.absolute,
@@ -251,7 +256,7 @@ export default function SavesScreen({ navigation }) {
                 top: listTop,
                 width: listW,
                 height: listH,
-              }
+              },
             ]}
           >
             <ScrollView
@@ -280,21 +285,26 @@ export default function SavesScreen({ navigation }) {
           </View>
 
           {saves.length > 0 && (
-            <Sound_clicks
-              // FIXED: Extracted position: 'absolute' to StyleSheet to clear warning
-              style={[
-                styles.absolute,
-                {
-                  left: delLeft,
-                  top: delTop,
+            // Full-width row pinned to the bottom; alignItems centers the button
+            <View
+              pointerEvents="box-none"
+              style={[styles.deleteAllRow, { bottom: delBottom }]}
+            >
+              <Sound_clicks
+                style={{
                   width: delW,
                   height: delH,
-                }
-              ]}
-              onPress={() => setConfirm({ type: "all" })}
-            >
-              <Image source={BTN_DELETE_ALL} style={styles.deleteAllImage} resizeMode="contain" />
-            </Sound_clicks>
+                  transform: [{ translateX: DELETE_NUDGE_X }],
+                }}
+                onPress={() => setConfirm({ type: "all" })}
+              >
+                <Image
+                  source={BTN_DELETE_ALL}
+                  style={styles.deleteAllImage}
+                  resizeMode="contain"
+                />
+              </Sound_clicks>
+            </View>
           )}
         </ImageBackground>
       </View>
@@ -307,13 +317,11 @@ export default function SavesScreen({ navigation }) {
         statusBarTranslucent
         supportedOrientations={["landscape", "portrait"]}
         onRequestClose={() => setConfirm(null)}
-        // FIXED: Removed duplicate visible and onRequestClose props
       >
         <View style={styles.modalOverlay}>
           <View style={styles.confirmBox}>
             <Text style={styles.confirmTitle}>Are you sure?</Text>
             <Text style={styles.confirmText}>
-              {/* FIXED: Removed duplicated text rendering */}
               {confirm?.type === "one"
                 ? "This will delete this save."
                 : "This will erase all your saves and progress."}
@@ -323,7 +331,6 @@ export default function SavesScreen({ navigation }) {
               <Sound_clicks
                 style={[styles.confirmBtn, styles.noBtn]}
                 onPress={() => setConfirm(null)}
-                // FIXED: Removed duplicate onPress
               >
                 <Text style={styles.noText}>No</Text>
               </Sound_clicks>
@@ -331,7 +338,6 @@ export default function SavesScreen({ navigation }) {
               <Sound_clicks
                 style={[styles.confirmBtn, styles.yesBtn]}
                 onPress={onConfirmYes}
-                // FIXED: Removed duplicate onPress
               >
                 <Text style={styles.yesText}>Yes</Text>
               </Sound_clicks>
@@ -356,7 +362,6 @@ const styles = StyleSheet.create({
     zIndex: 10,
     flexDirection: "row",
   },
-  // FIXED: Added this reusable style to fix the ESLint warnings
   absolute: {
     position: 'absolute',
   },
@@ -407,13 +412,22 @@ const styles = StyleSheet.create({
   cardDeleteBtn: {
     justifyContent: "center",
     alignItems: "center",
-    width: 30,
-    height:30
+    width: 60,
+    height: 60,
+  },
+
+  // Delete All: pinned to the bottom center of the panel
+  deleteAllRow: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    alignItems: "center",
   },
   deleteAllImage: {
     width: "100%",
     height: "100%",
   },
+
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.6)",

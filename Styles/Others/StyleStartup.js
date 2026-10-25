@@ -10,7 +10,7 @@ export default StyleSheet.create({
     margin: 'auto',
   },
   blackScreen: {
-    backgroundColor: 'black',
+    backgroundColor: '#FFFAF0 ',
     width: '100%',
     height: '100%',
     justifyContent: 'center',

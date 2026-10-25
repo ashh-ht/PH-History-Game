@@ -21,48 +21,56 @@ const BTN_GAME = require('../../assets/Settings_Assets/About_Game.png');
 const BG_TEAM_OVERLAY = require('../../assets/Settings_Assets/AboutTeam_Base.png');
 const BG_GAME_OVERLAY = require('../../assets/Settings_Assets/AboutGame_Base.png');
 
-const PANEL_ASPECT = 1205 / 630;
+const BTN_TEAM_C = require('../../assets/Settings_Assets/About_TeamClicked.png');
+const BTN_GAME_C = require('../../assets/Settings_Assets/About_GameClicked.png');
 
-// --- BUTTON LAYOUT MATH ---
+const PANEL_ASPECT = 1205 / 630;
 const BTN_W = 0.55;
 const BTN_ASPECT = 1.45;
 const BTN_TOP = 0.16;
 const COLS = [0.02, 0.42];
-
-// --- POPUP SIZE (max fraction of the whole screen) ---
 const POPUP_MAX_W = 0.80;
 const POPUP_MAX_H = 0.85;
-
-// --- POPUP TEXT AREA (fractions of the popup card itself) ---
-// TEXT_TOP: where text starts, just below the baked-in title.
 const TEXT_TOP = 0.28;
 const TEXT_BOTTOM = 0.08;
 const TEXT_SIDE = 0.12;
 
 function SpringImageButton({ image, pressedImage, onPress, imageStyle }) {
-  const scale = useRef(new Animated.Value(1)).current;
   const [pressed, setPressed] = useState(false);
+  const scale = useRef(new Animated.Value(1)).current;
+  const translateY = useRef(new Animated.Value(0)).current;
 
-  const handlePressIn = () => {
-    setPressed(true);
-    Animated.spring(scale, { toValue: 0.9, useNativeDriver: true, speed: 20, bounciness: 10 }).start();
-  };
-
-  const handlePressOut = () => {
-    setPressed(false);
-    Animated.spring(scale, { toValue: 1, useNativeDriver: true, speed: 20, bounciness: 10 }).start();
+  const animatePress = (isPressed) => {
+    setPressed(isPressed);
+    Animated.parallel([
+      Animated.spring(scale, {
+        toValue: isPressed ? 0.88 : 1,
+        speed: isPressed ? 24 : 18,
+        bounciness: isPressed ? 8 : 12,
+        useNativeDriver: true,
+      }),
+      Animated.spring(translateY, {
+        toValue: isPressed ? 4 : 0,
+        speed: isPressed ? 24 : 18,
+        bounciness: isPressed ? 4 : 12,
+        useNativeDriver: true,
+      }),
+    ]).start();
   };
 
   return (
-    <Animated.View style={{ transform: [{ scale }] }}>
-      <Sound_clicks onPress={onPress} onPressIn={handlePressIn} onPressOut={handlePressOut}>
-        <Image source={pressed ? pressedImage : image} style={imageStyle} resizeMode="contain" />
+    <Animated.View style={{ transform: [{ scale }, { translateY }] }}>
+      <Sound_clicks
+        onPressIn={() => animatePress(true)}
+        onPressOut={() => animatePress(false)}
+        onPress={onPress}
+      >
+        <Image source={pressed ? pressedImage : image} style={imageStyle} resizeMode="stretch" />
       </Sound_clicks>
     </Animated.View>
   );
 }
 
-// Centered popup: dim backdrop + card at the artwork's own aspect ratio (no stretching)
 function InfoOverlay({ source, onClose, children }) {
   const { width: winW, height: winH } = useWindowDimensions();
   const asset = Image.resolveAssetSource(source);
@@ -76,40 +84,31 @@ function InfoOverlay({ source, onClose, children }) {
   }
 
   return (
-    <Modal
-      transparent
-      animationType="fade"
-      statusBarTranslucent
-      supportedOrientations={['landscape', 'portrait']}
-      onRequestClose={onClose}
-    >
-    <View style={styles.backdrop}>
-      {/* Tap outside the card to close */}
-      <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
-
-      <ImageBackground source={source} style={{ width: cardW, height: cardH }} resizeMode="stretch">
-        <View
-          style={{
-            position: 'absolute',
-            top: TEXT_TOP * cardH,
-            bottom: TEXT_BOTTOM * cardH,
-            left: TEXT_SIDE * cardW,
-            right: TEXT_SIDE * cardW,
-            alignItems: 'center',
-          }}
-        >
-          <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-            {children}
-          </ScrollView>
-
-          <Sound_clicks onPress={onClose}>
-            <View style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>CLOSE</Text>
-            </View>
-          </Sound_clicks>
-        </View>
-      </ImageBackground>
-    </View>
+    <Modal transparent animationType="fade" statusBarTranslucent supportedOrientations={['landscape', 'portrait']} onRequestClose={onClose}>
+      <View style={styles.backdrop}>
+        <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
+        <ImageBackground source={source} style={{ width: cardW, height: cardH }} resizeMode="stretch">
+          <View
+            style={{
+              position: 'absolute',
+              top: TEXT_TOP * cardH,
+              bottom: TEXT_BOTTOM * cardH,
+              left: TEXT_SIDE * cardW,
+              right: TEXT_SIDE * cardW,
+              alignItems: 'center',
+            }}
+          >
+            <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+              {children}
+            </ScrollView>
+            <Sound_clicks onPress={onClose}>
+              <View style={styles.closeButton}>
+                <Text style={styles.closeButtonText}>CLOSE</Text>
+              </View>
+            </Sound_clicks>
+          </View>
+        </ImageBackground>
+      </View>
     </Modal>
   );
 }
@@ -121,7 +120,6 @@ export default function AboutScreen({ navigation }) {
 
   const panelH = Math.min(winH * 0.92, 700, (winW * 0.9) / PANEL_ASPECT);
   const panelW = panelH * PANEL_ASPECT;
-
   const btnW = panelW * BTN_W;
   const btnH = btnW / BTN_ASPECT;
 
@@ -130,10 +128,7 @@ export default function AboutScreen({ navigation }) {
       top: Math.max(insets.top, 12 * s),
       left: Math.max(insets.left, 20 * s),
     },
-    topIconImage: {
-      width: 40 * s,
-      height: 40 * s,
-    },
+    topIconImage: { width: 40 * s, height: 40 * s },
   };
 
   const closeOverlay = () => setActiveOverlay(null);
@@ -141,76 +136,50 @@ export default function AboutScreen({ navigation }) {
   return (
     <View style={styles.screenOverlay}>
       <View style={[styles.topIconContainer, dynamicStyles.topIconContainer]}>
-        <SpringImageButton imageStyle={dynamicStyles.topIconImage}
+        <SpringImageButton 
           image={require('../../assets/icons/x_button.png')}
           pressedImage={require('../../assets/icons/x_buttonpressed.png')}
           onPress={() => navigation.goBack()}
+          imageStyle={dynamicStyles.topIconImage}
         />
       </View>
 
-      {/* Main About panel */}
       <ImageBackground source={BG_MAIN} style={{ width: panelW, height: panelH }} resizeMode="stretch">
-
-        {/* Team Button */}
-        <View
-          style={{
-            position: 'absolute',
-            left: COLS[0] * panelW,
-            top: BTN_TOP * panelH,
-            width: btnW,
-            height: btnH
-          }}
-        >
-          <Sound_clicks onPress={() => setActiveOverlay('Team')}>
-            <Image source={BTN_TEAM} style={{ width: btnW, height: btnH }} resizeMode="stretch" />
-          </Sound_clicks>
+        <View style={{ position: 'absolute', left: COLS[0] * panelW, top: BTN_TOP * panelH, width: btnW, height: btnH }}>
+          <SpringImageButton 
+            image={BTN_TEAM}
+            pressedImage={BTN_TEAM_C}
+            onPress={() => setActiveOverlay('Team')}
+            imageStyle={{ width: btnW, height: btnH }}
+          />
         </View>
 
-        {/* Game Button */}
-        <View
-          style={{
-            position: 'absolute',
-            left: COLS[1] * panelW,
-            top: BTN_TOP * panelH,
-            width: btnW,
-            height: btnH
-          }}
-        >
-          <Sound_clicks onPress={() => setActiveOverlay('Game')}>
-            <Image source={BTN_GAME} style={{ width: btnW, height: btnH }} resizeMode="stretch" />
-          </Sound_clicks>
+        <View style={{ position: 'absolute', left: COLS[1] * panelW, top: BTN_TOP * panelH, width: btnW, height: btnH }}>
+          <SpringImageButton 
+            image={BTN_GAME}
+            pressedImage={BTN_GAME_C}
+            onPress={() => setActiveOverlay('Game')}
+            imageStyle={{ width: btnW, height: btnH }}
+          />
         </View>
-
       </ImageBackground>
 
-      {/* ================= GAME POPUP (Credits) ================= */}
       {activeOverlay === 'Game' && (
         <InfoOverlay source={BG_GAME_OVERLAY} onClose={closeOverlay}>
           <Text style={styles.overlayBody}>
-            <Text style={styles.boldText}>Lead Developer</Text>
-            {'\n'}Fulgencio, John Hendrick{'\n\n'}
-
-            <Text style={styles.boldText}>Game Design</Text>
-            {'\n'}Sulla, 
-            {'\n'}Arellano, Janell Ashtene {'\n'}
-            Catapang, Maureign Anne Christyanna M.{'\n'}
-            Sulla, Sylvia Heart L.{'\n\n'}
-
-            <Text style={styles.boldText}>SFX/BGM</Text>
-            {'\n'}Solis, Markuz Andre Merek R.{'\n'}
+            PAMANA: Chronicles of Philippine History, is an educational game that brings Philippine history to life through interactive storytelling and engaging minigames. It aims to make learning about the country's past more enjoyable, accessible, and meaningful for young players.
+            {'\n\n'}
+            Traditional history lessons can sometimes feel overwhelming or difficult to connect with. PAMANA provides an opportunity to explore historical events, understand the struggles and contributions of Filipino heroes, and develop a deeper appreciation for our cultural heritage.
+            {'\n\n'}
+            <Text style={styles.boldText}>Our Goal:</Text> To promote historical awareness, strengthen Filipino identity, and encourage young learners to discover and preserve the nation's rich history through fun and interactive gameplay.
           </Text>
         </InfoOverlay>
       )}
 
-      {/* ================= TEAM POPUP (About Team) ================= */}
       {activeOverlay === 'Team' && (
         <InfoOverlay source={BG_TEAM_OVERLAY} onClose={closeOverlay}>
           <Text style={styles.overlayBody}>
-          The Pamana Development Team is a group of Computer Science students with different skills and talents. 
-          The team was formed to create Pamana as a school project.
-            {'\n\n'}
-          Together, they work to make the game fun, interesting, 
-          and educational for players.
+            The Pamana Development Team is a group of Computer Science students from Technological Institute of the Philippines QC with different skills and talents. The team was formed to create Pamana as a school project. Together, they work to make the game fun, interesting, and educational for players.
           </Text>
         </InfoOverlay>
       )}
@@ -230,7 +199,6 @@ const styles = StyleSheet.create({
     zIndex: 10,
     flexDirection: "row",
   },
-  // Full-screen dim layer; the popup card is centered inside it
   backdrop: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.55)",

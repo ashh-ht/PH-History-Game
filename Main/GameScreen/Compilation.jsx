@@ -7,6 +7,7 @@ import {
   ImageBackground,
   Image,
   Animated,
+  Easing,
   StyleSheet,
 } from "react-native";
 
@@ -17,19 +18,23 @@ import { useDisplaySettings, FONT_SCALE } from "../Others/DisplaySetting";
 import { saveCheckpoint, markPartReached } from "../Others/saveProgress";
 import { Chapter1 } from "./StoryScreen/Chapter1";
 import { useJournal } from "../../Main/Others/JournalContext";
+import { useFocusEffect } from "@react-navigation/native";
+// IMPORT THE REMNANT DATA
+import { REMNANT_DATA } from "../RemnantData"; 
 
 // =====================================================
 // MINIGAMES
 // =====================================================
-import VoyageMinigame from "./Minigames/VoyageMinigame";
-import SantoNinoMinigame from "./Minigames/SantoNinoMinigame";
-import CedulaMinigame from "./Minigames/CedulaMinigame";
-import DecipherMinigame from "./Minigames/DecipherMinigame";
-import CharacterMatchingMinigame from "./Minigames/CharacterMatchingMinigame";
-import ChronologicalOrderMinigame from "./Minigames/ChronologicalOrderMinigame";
-import WhoSaidItMinigame from "./Minigames/WhoSaidItMinigame";
-import TimelineSort from "./Minigames/Timelinesort";
-import { BloodTrace, OathTrace } from "./Minigames/TracingMinigame";
+import VoyageMinigame from "../GameScreen/Minigames/VoyageMinigame";
+import SantoNinoMinigame from "../GameScreen/Minigames/SantoNinoMinigame";
+import CedulaMinigame from "../GameScreen/Minigames/CedulaMinigame";
+import DecipherMinigame from "../GameScreen/Minigames/DecipherMinigame";
+import CharacterMatchingMinigame from "../GameScreen/Minigames/CharacterMatchingMinigame";
+import ChronologicalOrderMinigame from "../GameScreen/Minigames/ChronologicalOrderMinigame";
+import WhoSaidItMinigame from "../GameScreen/Minigames/WhoSaidItMinigame";
+import TimelineSort from "../GameScreen/Minigames/Timelinesort";
+import { BloodTrace, OathTrace } from "../GameScreen/Minigames/TracingMinigame";
+import MinigameOverlay from "../../Components/Minigameoverlay";
 
 // =====================================================
 // HELPERS
@@ -279,12 +284,12 @@ function AnimatedImageButton({
   );
 }
 
+// NOTE: bloodtrace / oathtrace are NOT in this map anymore.
+// They are rendered in PartRenderer with the pause overlay (see below).
 const MINIGAMES = {
   voyage: VoyageMinigame,
   santoNino: SantoNinoMinigame,
   sortingtimeline: TimelineSort,
-  bloodtrace: BloodTrace,
-  oathtrace: OathTrace,
 };
 
 const MINIGAME_TYPES = new Set([
@@ -367,32 +372,88 @@ function GameplayMenuOverlay({ navigation }) {
 }
 
 // =====================================================
-// CHARACTER LAYER
+// CHARACTER LAYER (with head bobbing)
 // =====================================================
-function CharacterLayer({ characters }) {
+
+// How the characters move. Change these to tune the feel.
+const BOB_IDLE_PX = 8; // how far up an idle character moves
+const BOB_IDLE_MS = 1200; // time for one half-bob while idle
+const BOB_TALK_PX = 80; // how far up the speaking character moves
+const BOB_TALK_MS = 1200; // time for one half-bob while talking
+
+// One character that bobs up and down.
+// Idle: a slow, small bob. Talking: a faster, bigger bob.
+function CharacterSprite({ char, talking }) {
+  const bob = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const amount = talking ? -BOB_TALK_PX : -BOB_IDLE_PX;
+    const duration = talking ? BOB_TALK_MS : BOB_IDLE_MS;
+
+    bob.setValue(0);
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(bob, {
+          toValue: amount,
+          duration,
+          easing: Easing.inOut(Easing.quad),
+          useNativeDriver: true,
+        }),
+        Animated.timing(bob, {
+          toValue: 0,
+          duration,
+          easing: Easing.inOut(Easing.quad),
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    loop.start();
+
+    return () => loop.stop();
+  }, [talking, bob]);
+
+  const isLeft = char.position === "left";
+  const isCenter = char.position === "center";
+
+  return (
+    <Animated.Image
+      source={char.source}
+      resizeMode="contain"
+      style={[
+        styles.characterImage,
+        isLeft
+          ? styles.characterLeft
+          : isCenter
+            ? styles.characterCenter
+            : styles.characterRight,
+        { transform: [{ translateY: bob }] },
+      ]}
+    />
+  );
+}
+
+// `speaker` = the name shown on the dialogue box
+// `typing`  = true while the text is still being typed out
+function CharacterLayer({ characters, speaker, typing }) {
   if (!characters || characters.length === 0) return null;
+
+  const speakerName = (speaker || "").toLowerCase();
+  const isSpeaker = (char) => {
+    const name = (char?.name || "").toLowerCase();
+    if (!name || !speakerName) return false;
+    return speakerName.includes(name) || name.includes(speakerName);
+  };
 
   return (
     <View style={styles.characterLayer} pointerEvents="none">
       {characters.map((char, index) => {
         if (!char?.source) return null;
 
-        const isLeft = char.position === "left";
-        const isCenter = char.position === "center";
-
         return (
-          <Image
+          <CharacterSprite
             key={`${char.name || "character"}-${index}`}
-            source={char.source}
-            resizeMode="contain"
-            style={[
-              styles.characterImage,
-              isLeft
-                ? styles.characterLeft
-                : isCenter
-                  ? styles.characterCenter
-                  : styles.characterRight,
-            ]}
+            char={char}
+            talking={!!typing && isSpeaker(char)}
           />
         );
       })}
@@ -444,6 +505,26 @@ function PartRenderer(props) {
   const [picked, setPicked] = useState(null);
   const [quizAnswer, setQuizAnswer] = useState(null);
 
+  // --- MINIGAME PAUSE ---
+  const [paused, setPaused] = useState(false);
+  // Reported by the minigame on screen: "intro" (instructions),
+  // "playing", or "result" (win / lose screen)
+  const [minigamePhase, setMinigamePhase] = useState("intro");
+
+  useEffect(() => {
+    setPaused(false);
+  }, [sceneIdx]);
+
+  useFocusEffect(
+  useCallback(() => {
+    setPaused(false);
+  }, [])
+);
+
+  // --- REMNANT POPUP STATES ---
+  const [showRewardPopup, setShowRewardPopup] = useState(false);
+  const [rewardImage, setRewardImage] = useState(null);
+
   const introProgress = useRef(new Animated.Value(1)).current;
   const [introChanging, setIntroChanging] = useState(false);
   const [introNextIndex, setIntroNextIndex] = useState(null);
@@ -464,7 +545,7 @@ function PartRenderer(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const startScene = props.route?.params?.startScene;
+  const startScene = route?.params?.startScene;
   const lastAppliedStartScene = useRef(null);
 
   useEffect(() => {
@@ -480,20 +561,24 @@ function PartRenderer(props) {
 
   const hasMoreScenes = sceneIdx < sceneData.length;
   const current = hasMoreScenes ? sceneData[sceneIdx] : null;
+  console.log("part", partNumber, "idx", sceneIdx, "type", current?.type);
+
   const isMinigame = current ? MINIGAME_TYPES.has(current.type) : false;
 
   useEffect(() => {
     if (!hasMoreScenes && !isLastPart) markPartReached(partNumber + 1);
   }, [hasMoreScenes, isLastPart, partNumber]);
 
-  // Unlock journal entries when their scene becomes current.
+  const { unlock } = useJournal();
+
+  // FIXED: Exclude "quiz" so it doesn't auto-unlock when the screen loads. 
+  // Quizzes unlock their items via handleQuizSelect.
   useEffect(() => {
-    if (current?.unlock) {
+    if (current && current.unlock && current.type !== "quiz") {
       unlock(current.unlock);
     }
   }, [current, unlock]);
 
-  // Music
   useEffect(() => {
     const track = getMusicFor(sceneData, sceneIdx);
     if (track) playMusic(track);
@@ -599,6 +684,7 @@ function PartRenderer(props) {
 
     setPicked(null);
     setQuizAnswer(null);
+    setMinigamePhase("intro"); // a new minigame starts on its instructions
     setSceneIdx(index);
     game.setScene(index);
   };
@@ -693,10 +779,10 @@ function PartRenderer(props) {
 
   // Auto Play never skips minigames or quizzes.
   useEffect(() => {
-    if (!settings?.autoPlay || !done || !current) return undefined;
-    if (isMinigame) return undefined;
-    if (current.type === "quiz") return undefined;
-    if (current.type === "choice" && picked === null) return undefined;
+    if (!settings?.autoPlay || !done || !current) return;
+    if (isMinigame) return; 
+    if (current.type === "quiz") return;
+    if (current.type === "choice" && picked === null) return;
 
     const id = setTimeout(next, settings.autoDelay * 1000);
     return () => clearTimeout(id);
@@ -718,48 +804,119 @@ function PartRenderer(props) {
     return <VoyageMinigame onComplete={goNext} />;
   }
 
-  if (current?.type === "santoNino") {
-    return <SantoNinoMinigame onComplete={goNext} />;
-  }
+  // Adds the pause + settings buttons (top right) on top of a minigame.
+  // Only the minigames that understand the `paused` prop use this.
+  // The pause + settings buttons only show while the minigame is actually
+  // being played (not on the instructions or the win / lose screens).
+  // Options: { hideSettings: true } = no menu button at the top right
+  //          (the PAUSED panel still has Settings),
+  //          { top, right } = where the buttons sit (default 20 / 20).
+  const withMinigameOverlay = (
+    node,
+    { hideSettings = false, top = 20, right = 20 } = {}
+  ) => (
+    <>
+      {node}
+      {minigamePhase === "playing" && (
+        <MinigameOverlay
+          paused={paused}
+          hideSettings={hideSettings}
+          top={top}
+          right={right}
+          onPause={() => setPaused(true)}
+          onResume={() => setPaused(false)}
+          onSettings={() => {
+            setPaused(true);
+            navigation.navigate("Second");
+          }}
+        />
+      )}
+    </>
+  );
 
-  if (current?.type === "cedula") {
-    return (
-      <CedulaMinigame
-        key={`cedula-${sceneIdx}`}
+  if (current?.type === "voyage") {
+    return withMinigameOverlay(
+      <VoyageMinigame
+        paused={paused}
+        onPhaseChange={setMinigamePhase}
         onComplete={goNext}
       />
+    );
+  }
+
+  if (current?.type === "santoNino") return <SantoNinoMinigame onComplete={goNext} />;
+
+  if (current?.type === "cedula") {
+    return withMinigameOverlay(
+      <CedulaMinigame
+        key={`cedula-${chapterNumber}-${partNumber}-${sceneIdx}`}
+        paused={paused}
+        onPhaseChange={setMinigamePhase}
+        onComplete={goNext}
+      />,
+      // Cedula: pause only, tucked into the corner (same as Decipher)
+      { hideSettings: true, top: 6, right: 12 }
     );
   }
 
   if (current?.type === "decipher") {
-    return (
+    return withMinigameOverlay(
       <DecipherMinigame
         key={`decipher-${chapterNumber}-${partNumber}-${sceneIdx}`}
+        paused={paused}
+        onPhaseChange={setMinigamePhase}
         onComplete={goNext}
-      />
+      />,
+      // Decipher: no top-right menu button, pause tucked into the corner
+      { hideSettings: true, top: 6, right: 12 }
     );
   }
 
   if (current?.type === "matching") {
-    return (
+    return withMinigameOverlay(
       <CharacterMatchingMinigame
         key={`matching-${chapterNumber}-${partNumber}-${sceneIdx}`}
         characters={current.characters}
+        paused={paused}
+        onPhaseChange={setMinigamePhase}
         onComplete={goNext}
-      />
+      />,
+      // Matching: same as Decipher - pause only, tucked into the corner
+      { hideSettings: true, top: 6, right: 12 }
     );
   }
 
   if (current?.type === "chronological") {
-    return (
+    return withMinigameOverlay(
       <ChronologicalOrderMinigame
         key={`chronological-${chapterNumber}-${partNumber}-${sceneIdx}`}
         events={current.events}
+        paused={paused}
+        onPhaseChange={setMinigamePhase}
         onComplete={goNext}
-      />
+      />,
+      // Timeline: pause only, tucked into the corner (same as Decipher)
+      { hideSettings: true, top: 6, right: 12 }
     );
   }
 
+  // Tracing games (Blood Trace / Oath Trace): instructions screen first,
+  // pause button only while tracing.
+  if (current?.type === "bloodtrace" || current?.type === "oathtrace") {
+    const TraceGame = current.type === "bloodtrace" ? BloodTrace : OathTrace;
+    return withMinigameOverlay(
+      <TraceGame
+        key={`trace-${chapterNumber}-${partNumber}-${sceneIdx}`}
+        paused={paused}
+        onPhaseChange={setMinigamePhase}
+        onComplete={goNext}
+      />,
+      // Tracing: pause button only (no settings button at the top right)
+      { hideSettings: true }
+    );
+  }
+
+  // Who Said It has its own built-in pause button (see WhoSaidItMinigame.js)
   if (current?.type === "whoSaidIt") {
     return (
       <WhoSaidItMinigame
@@ -890,6 +1047,33 @@ function PartRenderer(props) {
     const isAnswered = quizAnswer !== null;
     const isCorrect = quizAnswer === current.correctIndex;
 
+    const handleQuizSelect = (index) => {
+      if (isAnswered) return; // Prevent double clicking
+      
+      setQuizAnswer(index);
+      playSfx(index === current.correctIndex ? "correct" : "wrong");
+
+      if (index === current.correctIndex) {
+        // Check if the quiz has an unlock array (e.g., ["remnant-part1-1"])
+        if (current.unlock && current.unlock.length > 0) {
+          unlock(current.unlock);
+          
+          // Find the specific remnant ID to show the popup image
+          const remnantId = current.unlock.find(id => id.startsWith('remnant-part'));
+          if (remnantId) {
+            const parts = remnantId.split('-');
+            const partNum = parseInt(parts[1].replace('part', ''), 10);
+            const pieceNum = parseInt(parts[2], 10);
+            
+            if (REMNANT_DATA[partNum] && REMNANT_DATA[partNum].pieces[pieceNum - 1]) {
+              setRewardImage(REMNANT_DATA[partNum].pieces[pieceNum - 1]);
+              setShowRewardPopup(true);
+            }
+          }
+        }
+      }
+    };
+
     return withOverlay(
       <View style={[styles.choiceScreen, styles.quizBackground]}>
         <View style={styles.choiceParchmentWrapper}>
@@ -916,7 +1100,7 @@ function PartRenderer(props) {
             )}
           </ImageBackground>
         </View>
-
+        
         <View style={styles.quizButtonsGrid}>
           {current.options.map((option, index) => (
             <AnimatedQuizButton
@@ -941,8 +1125,24 @@ function PartRenderer(props) {
             </AnimatedQuizButton>
           ))}
         </View>
-
+        
         {isAnswered && <AnimatedNextButton onPress={goNext} />}
+
+        {/* REMNANT CONGRATULATIONS POPUP */}
+        {showRewardPopup && (
+          <View style={styles.rewardPopupOverlay}>
+            <View style={styles.rewardPopupBox}>
+              <Text style={styles.rewardTitle}>CONGRATULATIONS!</Text>
+              <Text style={styles.rewardSubtitle}>You received a Remnant piece!</Text>
+              {rewardImage && (
+                <Image source={rewardImage} style={styles.rewardImage} resizeMode="contain" />
+              )}
+              <TouchableOpacity style={styles.rewardButton} onPress={() => setShowRewardPopup(false)}>
+                <Text style={styles.rewardButtonText}>CLAIM</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
       </View>
     );
   }
@@ -1128,8 +1328,11 @@ function PartRenderer(props) {
 
     const responseContent = (
       <>
-        <CharacterLayer characters={selectedChoice.characters} />
-
+        <CharacterLayer
+          characters={selectedChoice.characters}
+          speaker={selectedChoice.speaker}
+          typing={!done}
+        />
         <View style={styles.dialogueWrapper}>
           <ImageBackground
             source={require("../../assets/foreground/dialogue_box.png")}
@@ -1181,8 +1384,11 @@ function PartRenderer(props) {
   // =====================================================
   const dialogueContent = (
     <>
-      <CharacterLayer characters={current.characters} />
-
+      <CharacterLayer
+        characters={current.characters}
+        speaker={current.speaker}
+        typing={!done}
+      />
       <View style={styles.dialogueWrapper}>
         <ImageBackground
           source={require("../../assets/foreground/dialogue_box.png")}
@@ -1786,5 +1992,78 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 15,
     fontWeight: "bold",
+  },
+  nextButton: {
+    marginTop: 20,
+    paddingHorizontal: 30,
+    paddingVertical: 15,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 8,
+  },
+  nextButtonText: {
+    color: "#000000",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+
+  // =====================================================
+  // REMNANT REWARD POPUP STYLES
+  // =====================================================
+  rewardPopupOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.85)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 9999,
+    elevation: 999, // Required for Android z-index
+  },
+  rewardPopupBox: {
+    backgroundColor: '#F4E4C8',
+    padding: 30,
+    borderRadius: 15,
+    borderWidth: 2,
+    borderColor: '#A87C5E',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '50%',       // Widened to fit the bigger image
+    maxWidth: 450,      // Increased max width
+  },
+  rewardTitle: {
+    fontSize: 24,
+    fontFamily: 'serif',
+    fontWeight: 'bold',
+    color: '#5A4A32',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  rewardSubtitle: {
+    fontSize: 15,
+    fontFamily: 'serif',
+    color: '#5A4A32',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  rewardImage: {
+    width: 150,
+    height: 150, 
+    marginBottom: 25,
+  },
+  rewardButton: {
+    backgroundColor: '#A87C5E',
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#5A4A32',
+  },
+  rewardButtonText: {
+    color: '#FFF',
+    fontFamily: 'serif',
+    fontWeight: 'bold',
+    fontSize: 18,
   },
 });

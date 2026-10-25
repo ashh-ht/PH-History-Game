@@ -34,7 +34,7 @@ function Disclaimer({ navigation }) {
     // Note: give players more time to read the warning.
     const timer = setTimeout(() => {
       setScreen('Done');
-    }, 8000); // from 3 to 8 secs now
+    }, 2000); // from 3 to 8 secs now
 
     return () => clearTimeout(timer);
   }, []);
@@ -70,14 +70,14 @@ function Logo({ navigation }) {
     const timer = setTimeout(() => {
       Animated.timing(fade, {
         toValue: 0,
-        duration: 500,
+        duration: 300,
         useNativeDriver: true,
       }).start(({ finished }) => {
         if (finished) {
           setScreen('Done');
         }
       });
-    }, 5000);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, [fade, scale]);
@@ -89,7 +89,7 @@ function Logo({ navigation }) {
   return (
     <View style={Style.blackScreen}>
       <Animated.Image
-        source={require('../../assets/LoadingLogo.png')}
+        source={require('../../assets/Pamanalogo.png')}
         style={[
           Style.logobg,
           {
@@ -154,10 +154,3 @@ function StartGame({ navigation }) {
   );
 }
 
-const styles = {
-  disclaimerButton: {
-    position: 'absolute',
-    bottom: 35,
-    alignSelf: 'center',
-  },
-};

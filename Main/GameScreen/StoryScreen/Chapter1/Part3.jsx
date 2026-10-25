@@ -555,9 +555,9 @@ export const Chapter1_Part3 = [
       "Leave Manila immediately",
       "Start a military campaign"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part3-1"]
   },
-
   {
     type: "quiz",
     question: "What organization did Rizal help establish on July 3, 1892?",
@@ -567,9 +567,9 @@ export const Chapter1_Part3 = [
       "The Philippine Republic",
       "The Propaganda Movement"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part3-2"]
   },
-
   {
     type: "quiz",
     question: "What happened to Rizal shortly after the founding of La Liga Filipina?",
@@ -579,9 +579,9 @@ export const Chapter1_Part3 = [
       "He was arrested and exiled to Dapitan",
       "He joined Bonifacio's secret organization"
     ],
-    correctIndex: 2
+    correctIndex: 2,
+    unlock: ["remnant-part3-3"]
   },
-
   {
     type: "quiz",
     question: "Why did members of La Liga Filipina begin to disagree about its future?",
@@ -591,9 +591,9 @@ export const Chapter1_Part3 = [
       "They wanted to replace Rizal as a novelist",
       "They disagreed about which language to use"
     ],
-    correctIndex: 0
+    correctIndex: 0,
+    unlock: ["remnant-part3-4"]
   },
-
   {
     type: "quiz",
     question: "What secret organization was founded by Andrés\nBonifacio and his companions?",
@@ -603,14 +603,21 @@ export const Chapter1_Part3 = [
       "The Katipunan",
       "The Philippine Assembly"
     ],
-    correctIndex: 2
+    correctIndex: 2,
+    unlock: ["remnant-part3-5"]
   },
-
+  // NEW QUESTION ADDED
   {
-    type: "scene",
-    title: "Chapter Complete.",
-    date: "The call for change has now become a call for freedom.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+    type: "quiz",
+    question: "What was the Latin motto of La Liga Filipina?",
+    options: [
+      "Liberty or Death",
+      "Unus Instar Omnium (One is worth all)",
+      "Viva la Independencia",
+      "God, Country, People"
+    ],
+    correctIndex: 1,
+    unlock: ["remnant-part3-6"]
   },
 
   {

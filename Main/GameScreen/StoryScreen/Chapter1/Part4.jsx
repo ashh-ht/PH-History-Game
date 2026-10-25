@@ -93,8 +93,6 @@ export const Chapter1_Part4 = [
 
   { type: "bloodtrace" },
 
-  { type: "bloodtrace" },
-
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
@@ -304,10 +302,6 @@ export const Chapter1_Part4 = [
   },
 
   { type: "oathtrace" },
-
-  { type: "oathtrace" },
-
-
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 4
@@ -639,9 +633,9 @@ export const Chapter1_Part4 = [
       "To become a political party in Spain",
       "To replace La Liga Filipina as a reform group"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part4-1"]
   },
-
   {
     type: "quiz",
     question: "What name did the Katipunan use for the nation it imagined?",
@@ -651,9 +645,9 @@ export const Chapter1_Part4 = [
       "Katagalugan",
       "Manila"
     ],
-    correctIndex: 2
+    correctIndex: 2,
+    unlock: ["remnant-part4-2"]
   },
-
   {
     type: "quiz",
     question: "What was the purpose of the Triangle System?",
@@ -663,9 +657,9 @@ export const Chapter1_Part4 = [
       "To recruit members while limiting\nwhat each member knew",
       "To divide the Katipunan into three armies"
     ],
-    correctIndex: 2
+    correctIndex: 2,
+    unlock: ["remnant-part4-3"]
   },
-
   {
     type: "quiz",
     question: "Who wrote the Kartilya ng Katipunan?",
@@ -675,9 +669,9 @@ export const Chapter1_Part4 = [
       "José Rizal",
       "Deodato Arellano"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part4-4"]
   },
-
   {
     type: "quiz",
     question: "What happened after the Katipunan was discovered by\nSpanish authorities in August 1896?",
@@ -687,14 +681,28 @@ export const Chapter1_Part4 = [
       "The movement moved toward open revolt",
       "La Liga Filipina was restored"
     ],
-    correctIndex: 2
+    correctIndex: 2,
+    unlock: ["remnant-part4-5"]
+  },
+  // NEW QUESTION ADDED
+  {
+    type: "quiz",
+    question: "Who was the 'Lakambini' (Muse) of the Katipunan who safeguarded its secret documents?",
+    options: [
+      "Melchora Aquino",
+      "Gregoria de Jesús",
+      "Teodora Alonso",
+      "Trinidad Tecson"
+    ],
+    correctIndex: 1,
+    unlock: ["remnant-part4-6"]
   },
 
   {
-    type: "scene",
-    title: "Chapter Complete.",
-    date: "The secret of the Katipunan is now out.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+      type: "scene",
+      title: "Chapter Complete.",
+      date: "The secret of the Katipunan is now out.",
+      background: require("../../../../Background Images/Usuals/Black Background.jpg")
   }
 
 ];

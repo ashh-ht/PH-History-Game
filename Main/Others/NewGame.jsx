@@ -8,7 +8,9 @@ import {
 } from 'react-native';
 import { useGameProgress } from '../../GameProgress';
 import Sound_clicks from '../../Components/Sound_clicks';
-import { clearCheckpoints } from './saveProgress'; // 1. Added missing import
+import { restartProgress } from './saveProgress';
+import { useJournal } from './JournalContext'; // same folder as saveProgress
+
 
 // Note: spring animation for le buttons.
 function AnimatedButton({ onPress, image }) {
@@ -49,11 +51,16 @@ function AnimatedButton({ onPress, image }) {
   );
 }
 
+
 function NewGameConfirmScreen({ navigation }) {
   const { setChapter, setPart, setScene, setInGame } = useGameProgress();
+  const { resetUnlocks } = useJournal();
 
   const restart = async () => {
-    await clearCheckpoints(); // 2. Changed from restartEverything to clearCheckpoints
+    console.log("RESTART PRESSED");
+    await restartProgress();   // clears saves + unlocked parts
+    await resetUnlocks();     // clears remnants, timeline, profiles, glossary unlocks
+    console.log("RESET DONE");
 
     setChapter(1);
     setPart(1);
@@ -62,7 +69,7 @@ function NewGameConfirmScreen({ navigation }) {
 
     navigation.reset({
       index: 0,
-      routes: [{ name: 'Part1', params: {startScene:0} }],
+      routes: [{ name: 'Part1', params: { startScene: 0 } }],
     });
   };
 
@@ -75,7 +82,7 @@ function NewGameConfirmScreen({ navigation }) {
       <View style={styles.list}>
         <AnimatedButton
           image={require('../../assets/New Game/Restart.png')}
-          onPress={restart} // 3. Changed to call the restart function
+          onPress={restart}
         />
 
         <AnimatedButton
@@ -107,4 +114,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NewGameConfirmScreen;
+   export default NewGameConfirmScreen;

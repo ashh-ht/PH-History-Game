@@ -422,9 +422,9 @@ export const Chapter1_Part2 = [
       "The Spanish destroyed his mountain community",
       "He wanted to become governor of Bohol"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part2-1"]
   },
-
   {
     type: "quiz",
     question: "Where did Dagohoy and his followers establish their community?",
@@ -434,9 +434,9 @@ export const Chapter1_Part2 = [
       "Inside Manila",
       "On the island of Leyte"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part2-2"]
   },
-
   {
     type: "quiz",
     question: "About how large did Dagohoy's mountain community eventually become?",
@@ -446,9 +446,9 @@ export const Chapter1_Part2 = [
       "Around 20,000 people",
       "Around 50,000 people"
     ],
-    correctIndex: 2
+    correctIndex: 2,
+    unlock: ["remnant-part2-3"]
   },
-
   {
     type: "quiz",
     question: "What happened when a Spanish expedition of 2,200 soldiers\nentered the mountains in 1827?",
@@ -458,9 +458,9 @@ export const Chapter1_Part2 = [
       "The community moved to Cebu",
       "Dagohoy signed a peace treaty with Spain"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part2-4"]
   },
-
   {
     type: "quiz",
     question: "How did the Dagohoy rebellion finally come to an end in 1829?",
@@ -470,15 +470,21 @@ export const Chapter1_Part2 = [
       "The Boholanos left the Philippines",
       "The mountain community defeated the\nSpanish completely"
     ],
-    correctIndex: 1
+    correctIndex: 1,
+    unlock: ["remnant-part2-5"]
   },
-
-  
+  // NEW QUESTION ADDED
   {
-    type: "scene",
-    title: "Chapter Complete.",
-    date: "The longest rebellion in Philippine history has ended.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+    type: "quiz",
+    question: "Who led the final Spanish expedition of 6,000 soldiers that ended the Dagohoy rebellion?",
+    options: [
+      "Captain Manuel Sanz",
+      "Governor-General Mariano Ricafort",
+      "Father Gaspar Morales",
+      "Miguel López de Legazpi"
+    ],
+    correctIndex: 0,
+    unlock: ["remnant-part2-6"]
   },
 
   {
