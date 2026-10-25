@@ -310,6 +310,93 @@ function GameplayMenuOverlay({ navigation }) {
 }
 
 // =====================================================
+// FADING BACKGROUND
+// Replaces ImageBackground for story scenes. When the picture changes it
+// fades the new one in over the old one instead of switching instantly.
+// Change `duration` (ms) to make the fade faster or slower.
+// =====================================================
+function FadeBackground({ source, style, children, duration = 700 }) {
+  // Two stacked pictures. Layer B sits on top of layer A.
+  // Only the layer that is currently hidden ever gets a new picture,
+  // so a visible picture never reloads or flickers.
+  const [srcA, setSrcA] = useState(source);
+  const [srcB, setSrcB] = useState(null);
+  const bOpacity = useRef(new Animated.Value(0)).current;
+  const showingB = useRef(false);
+  const targetRef = useRef(source);
+  const startFadeRef = useRef(null);
+  const timerRef = useRef(null);
+
+  // Runs the waiting fade (once)
+  const startFade = useCallback(() => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    const run = startFadeRef.current;
+    startFadeRef.current = null;
+    if (run) run();
+  }, []);
+
+  useEffect(() => {
+    if (source === targetRef.current) return;
+    targetRef.current = source;
+
+    startFade(); // finish a fade that was still waiting
+    bOpacity.stopAnimation();
+
+    const intoB = !showingB.current; // load into whichever layer is hidden
+    const alreadyThere = intoB ? srcB === source : srcA === source;
+
+    if (intoB) setSrcB(source);
+    else setSrcA(source);
+    showingB.current = intoB;
+
+    startFadeRef.current = () => {
+      Animated.timing(bOpacity, {
+        toValue: intoB ? 1 : 0,
+        duration,
+        useNativeDriver: true,
+      }).start();
+    };
+
+    // Wait until the new picture has loaded (onLoad below), then fade.
+    // If it was already loaded, or onLoad never fires, don't wait.
+    if (alreadyThere) startFade();
+    else timerRef.current = setTimeout(startFade, 400);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [source]);
+
+  useEffect(
+    () => () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      bOpacity.stopAnimation();
+    },
+    [bOpacity]
+  );
+
+  return (
+    <View style={style}>
+      <Image
+        source={srcA}
+        resizeMode="cover"
+        onLoad={startFade}
+        style={styles.fadeLayer}
+      />
+      {srcB != null ? (
+        <Animated.Image
+          source={srcB}
+          resizeMode="cover"
+          onLoad={startFade}
+          style={[styles.fadeLayer, { opacity: bOpacity }]}
+        />
+      ) : null}
+      {children}
+    </View>
+  );
+}
+
+// =====================================================
 // CHARACTER LAYER (with head bobbing)
 // =====================================================
 
@@ -959,14 +1046,14 @@ function PartRenderer(props) {
     );
 
     if (current.background) {
-      return withOverlay(<ImageBackground source={current.background} style={styles.systemScreen} resizeMode="cover">{systemContent}</ImageBackground>);
+      return withOverlay(<FadeBackground source={current.background} style={styles.systemScreen}>{systemContent}</FadeBackground>);
     }
     return withOverlay(<View style={styles.systemScreen}>{systemContent}</View>);
   }
 
   if (current.type === "scene") {
     return withOverlay(
-      <ImageBackground source={current.background} style={styles.sceneScreen} resizeMode="cover">
+      <FadeBackground source={current.background} style={styles.sceneScreen}>
         <View style={styles.sceneDarkOverlay}>
           <View style={styles.sceneTitleBox}>
             <Text style={styles.sceneTitle}>{current.title}</Text>
@@ -974,7 +1061,7 @@ function PartRenderer(props) {
           </View>
         </View>
         <AnimatedNextButton onPress={goNext} />
-      </ImageBackground>
+      </FadeBackground>
     );
   }
 
@@ -993,7 +1080,7 @@ function PartRenderer(props) {
     );
 
     if (current.background) {
-      return withOverlay(<ImageBackground source={current.background} style={styles.background} resizeMode="cover">{narratorContent}</ImageBackground>);
+      return withOverlay(<FadeBackground source={current.background} style={styles.background}>{narratorContent}</FadeBackground>);
     }
     return withOverlay(<View style={styles.background}>{narratorContent}</View>);
   }
@@ -1021,7 +1108,7 @@ function PartRenderer(props) {
       );
 
       if (current.background) {
-        return withOverlay(<ImageBackground source={current.background} style={styles.choiceScreen} resizeMode="cover">{choiceContent}</ImageBackground>);
+        return withOverlay(<FadeBackground source={current.background} style={styles.choiceScreen}>{choiceContent}</FadeBackground>);
       }
       return withOverlay(<View style={styles.choiceScreen}>{choiceContent}</View>);
     }
@@ -1046,7 +1133,7 @@ function PartRenderer(props) {
     );
 
     if (current.background) {
-      return withOverlay(<ImageBackground source={current.background} style={styles.background} resizeMode="cover">{responseContent}</ImageBackground>);
+      return withOverlay(<FadeBackground source={current.background} style={styles.background}>{responseContent}</FadeBackground>);
     }
     return withOverlay(<View style={styles.background}>{responseContent}</View>);
   }
@@ -1070,7 +1157,7 @@ function PartRenderer(props) {
   );
 
   if (current.background) {
-    return withOverlay(<ImageBackground source={current.background} style={styles.background} resizeMode="cover">{dialogueContent}</ImageBackground>);
+    return withOverlay(<FadeBackground source={current.background} style={styles.background}>{dialogueContent}</FadeBackground>);
   }
   return withOverlay(<View style={styles.background}>{dialogueContent}</View>);
 }
@@ -1129,6 +1216,14 @@ export function Chap1Part8Screen({ navigation, ...props }) {
 // STYLES
 // =====================================================
 const styles = StyleSheet.create({
+  // Both background pictures of FadeBackground: full size, centered crop
+  fadeLayer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+  },
   opacityZero: { opacity: 0 },
   quizBackground: { backgroundColor: "#fffca0" },
   chapterIntroScreen: {

@@ -89,7 +89,7 @@ function Logo({ navigation }) {
   return (
     <View style={Style.blackScreen}>
       <Animated.Image
-        source={require('../../assets/Pamanalogo.png')}
+        source={require('../../assets/LoadingLogo.png')}
         style={[
           Style.logobg,
           {

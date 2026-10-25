@@ -12,15 +12,8 @@ import {
   useWindowDimensions,
 } from "react-native";
 
-import { useAudio } from "../../../Audiostore"; // same file PartRenderer uses
+import { useAudio } from "../../../Audiostore";
 
-// =====================================================
-// ARTWORK
-// These are the same images the story screens use.
-// This file lives in the Minigames folder, so the paths
-// go one folder deeper than PartRenderer's. Adjust them
-// if your folders are laid out differently.
-// =====================================================
 
 const IMG = {
   background: require("../../../Background Images/Usuals/Paper_scroll.png"),
@@ -28,18 +21,13 @@ const IMG = {
   button: require("../../../assets/buttons/choice_button.png"),
 };
 
-// Does the panel image have a name tab built in (like dialogue_box.png)?
-//  true  -> labels sit on the tab
-//  false -> plain framed image: the label shows as a small heading inside
-//           the panel, and padding is wider to clear a decorative border
+
 const PANEL_HAS_TAB = false;
 const PANEL_PAD_TOP = PANEL_HAS_TAB ? 58 : 38;
 const PANEL_PAD_BOTTOM = PANEL_HAS_TAB ? 26 : 42;
 const PANEL_PAD_SIDE = PANEL_HAS_TAB ? 34 : 54;
 
-// How much blank/transparent space the panel PNG has around its visible
-// frame, as a fraction of the image (0.1 = 10%). Tune these if the content
-// still looks off-center. Use all zeros for an image with no blank margins.
+
 const PANEL_INSET = PANEL_HAS_TAB
   ? { left: 0, right: 0, top: 0, bottom: 0 }
   : { left: 0.023, right: 0.01, top: 0.06, bottom: 0.06 };
@@ -48,8 +36,6 @@ const START_SECONDS = 45;
 const BONUS_SECONDS = 10;
 const TICK_MS = 200;
 
-// Keep puzzle content separate from the screen and validation logic.
-// `scrambled` must contain exactly the letters of `answer`.
 const PUZZLES = [
   {
     answer: "DAGOHOY",
@@ -90,13 +76,9 @@ const TOTAL_MS = START_SECONDS * 1000 + 4 * BONUS_SECONDS * 1000;
 const normalizeAnswer = (value) =>
   String(value || "").trim().replace(/\s+/g, "").toUpperCase();
 
-// One empty box per letter of the puzzle's answer
 const emptySlots = (puzzleIndex) =>
   Array(PUZZLES[puzzleIndex].answer.length).fill(null);
 
-// =====================================================
-// BUTTON (same spring press feel as the story buttons)
-// =====================================================
 
 function GameButton({ label, onPress, secondary }) {
   const scale = useRef(new Animated.Value(1)).current;
@@ -146,14 +128,9 @@ function GameButton({ label, onPress, secondary }) {
   );
 }
 
-// Parchment panel
-// The panel image is drawn slightly oversized and shifted so that its
-// VISIBLE frame lines up exactly with the box, even when the PNG has blank
-// transparent margins. Content is then centered inside the visible frame.
+
 function Panel({ children, style }) {
-  // The box is measured after layout, and the image is sized in real pixels
-  // from that measurement. (Percent sizes can come out short when the box
-  // grows with its content.)
+
   const [size, setSize] = useState({ w: 0, h: 0 });
 
   const L = PANEL_INSET.left;
@@ -200,8 +177,7 @@ function Panel({ children, style }) {
   );
 }
 
-// Text that sits inside the little name tab built into the box art.
-// Sized in percentages so it stays on the tab however the box stretches.
+
 function PanelTab({ children }) {
   if (!PANEL_HAS_TAB) {
     return <Text style={styles.kicker}>{children}</Text>;
@@ -215,14 +191,6 @@ function PanelTab({ children }) {
     </View>
   );
 }
-
-// =====================================================
-// DRAGGABLE LETTER TILE
-//
-// Drag it into a box, or just tap it to drop it into the next empty box.
-// The gesture handler is created ONCE per tile and always reads the latest
-// props through `live`, so the 200ms timer re-renders never interrupt a drag.
-// =====================================================
 
 function DraggableTile({
   letter,
@@ -267,8 +235,7 @@ function DraggableTile({
       onPanResponderGrant: () => setLifted(true),
 
       onPanResponderMove: (_, gesture) => {
-        // The play area may be scaled down to fit, so divide by that scale
-        // to keep the tile under the finger.
+
         const s = live.current.scale || 1;
         pan.setValue({ x: gesture.dx / s, y: gesture.dy / s });
       },
@@ -320,9 +287,6 @@ function DraggableTile({
   );
 }
 
-// =====================================================
-// MINIGAME
-// =====================================================
 
 export default function DecipherMinigame({
   onComplete,
@@ -336,7 +300,7 @@ export default function DecipherMinigame({
 
   const [screen, setScreen] = useState("start");
   const [puzzleIndex, setPuzzleIndex] = useState(0);
-  // placed[i] = index of the scrambled tile sitting in box i (or null)
+
   const [placed, setPlaced] = useState(() => emptySlots(0));
   const [remainingMs, setRemainingMs] = useState(START_SECONDS * 1000);
   const [feedback, setFeedback] = useState("");
@@ -344,12 +308,11 @@ export default function DecipherMinigame({
   const [completed, setCompleted] = useState([]);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
-  // Fit-to-screen: the play area never scrolls. If the content is taller
-  // than the space available it is scaled down a little instead.
+
   const [areaH, setAreaH] = useState(0);
   const [contentH, setContentH] = useState(0);
 
-  // Width of the row of answer boxes (so the boxes can size themselves)
+
   const [slotRowW, setSlotRowW] = useState(0);
 
   const deadlineRef = useRef(null);
@@ -483,16 +446,13 @@ export default function DecipherMinigame({
     startTimer(START_SECONDS * 1000);
   }, [startTimer, stopTimer]);
 
-  // ---------------------------------------------------
-  // PLACING LETTERS
-  // ---------------------------------------------------
 
   const clearErrorFeedback = useCallback(() => {
     setFeedback((previous) => (previous ? "" : previous));
     setFeedbackType("");
   }, []);
 
-  // Put a tile into a specific box (a tile already there goes back to the tray)
+
   const placeTile = useCallback(
     (tileIndex, slotIndex) => {
       setPlaced((previous) => {
@@ -534,8 +494,7 @@ export default function DecipherMinigame({
     [clearErrorFeedback]
   );
 
-  // A tile was dropped at screen position (x, y). Returns a promise that
-  // resolves to true if it landed in a box.
+ 
   const handleTileDrop = useCallback(
     (tileIndex, x, y) =>
       new Promise((resolve) => {
@@ -566,7 +525,6 @@ export default function DecipherMinigame({
               y - (rect.y + rect.h / 2)
             );
 
-            // Dropping close to a box counts too, not only exactly on it
             const closeEnough = distance <= Math.max(rect.w, rect.h) * 1.4;
 
             if ((inside || closeEnough) && distance < bestDistance) {
@@ -607,9 +565,6 @@ export default function DecipherMinigame({
     [placeTile]
   );
 
-  // ---------------------------------------------------
-  // SUBMIT
-  // ---------------------------------------------------
 
   const submitAnswer = useCallback(() => {
     if (phaseRef.current !== "active" || submittedRef.current) return;
@@ -619,7 +574,6 @@ export default function DecipherMinigame({
     const liveRemaining =
       deadlineRef.current == null ? 0 : Math.max(0, deadlineRef.current - now);
 
-    // Check the actual deadline instead of relying on the next interval tick.
     if (liveRemaining <= 0) {
       finishGameOver();
       return;
@@ -932,7 +886,7 @@ export default function DecipherMinigame({
 // STYLES
 // =====================================================
 
-const INK = "#352313"; // same brown the speaker names use
+const INK = "#422912"; // same brown the speaker names use
 const BUTTON_INK = "#371f10"; // same as quiz buttons
 
 const styles = StyleSheet.create({
@@ -943,8 +897,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.05)",
   },
   safeArea: { flex: 1 },
-  // The play area does not scroll. Content is centered and scaled down
-  // slightly when it doesn't fit (see fitScale).
+
   fitArea: {
     flex: 1,
     justifyContent: "center",
@@ -954,15 +907,16 @@ const styles = StyleSheet.create({
 
   // HEADER
   header: {
-    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 10,
+    justifyContent: "center",
+    marginBottom: 9,
+    right:15
   },
   title: {
-    color: INK,
+    color: 'black',
     fontSize: 22,
     fontWeight: "bold",
+
   },
   timerPill: {
     minWidth: 64,
@@ -991,8 +945,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     minHeight: 240,
   },
-  // The letter panel sits ABOVE the answer boxes so a dragged tile
-  // is drawn over them instead of disappearing behind them.
+
   fullPanel: { width: "100%", zIndex: 2 },
   leftCol: { flex: 1.15, zIndex: 2 },
   rightCol: { flex: 1, justifyContent: "center", paddingLeft: 6, zIndex: 1 },
@@ -1065,9 +1018,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  // a tile that has been moved into a box stays behind as a faint outline
+
   tileUsed: { opacity: 0.2 },
-  // the tile you are dragging
+
   tileLifted: {
     zIndex: 50,
     elevation: 12,

@@ -1237,18 +1237,16 @@ const styles = StyleSheet.create({
 
   // HEADER
   header: {
-    flexDirection: "row",
-    flexWrap: "wrap",
     alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 10,
-    gap: 8,
-    paddingRight: 60, // leaves room for the pause button
+    justifyContent: "center",
+    marginBottom: 9,
+    right:15
   },
   title: {
-    color: INK,
+    color: 'black',
     fontSize: 22,
     fontWeight: "bold",
+
   },
   pills: {
     flexDirection: "row",

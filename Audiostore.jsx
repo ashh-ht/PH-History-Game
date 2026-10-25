@@ -4,8 +4,7 @@ import Sound from 'react-native-sound';
 
 const Audiostore = createContext(null);
 
-// Sound effect table. The key is what you use in story data / code,
-// `file` is the name in android/app/src/main/res/raw (lowercase, no extension).
+
 const SFX = {
   // UI
   click1: { file: 'click1' },
@@ -75,11 +74,12 @@ export function AudioProvider({ children }) {
   // ---------------------------------------------------
   // MUSIC
   // ---------------------------------------------------
-
+  const lastTrackRef = useRef('somber');
   // Switch background music. Same track = do nothing (no restart).
   const playMusic = (rawName) => {
     if (!rawName) return;
     const name = String(rawName).toLowerCase();
+    lastTrackRef.current = name;
     if (currentTrackRef.current === name) return;
 
     const prevName = currentTrackRef.current;
@@ -194,19 +194,32 @@ export function AudioProvider({ children }) {
   // APP IN BACKGROUND / FOREGROUND
   // ---------------------------------------------------
 
-  useEffect(() => {
-    const sub = AppState.addEventListener('change', (state) => {
-      if (state === 'active') {
-        appPausedRef.current = false;
-        if (!heldByGameRef.current) bgmRef.current?.play();
-      } else {
-        appPausedRef.current = true;
-        bgmRef.current?.pause();
-        stopLoops();
+useEffect(() => {
+  const sub = AppState.addEventListener('change', (state) => {
+    if (state === 'active') {
+      appPausedRef.current = false;
+
+      if (!bgmRef.current) {
+        // Quitapp (or a failed load) wiped the music, so reload it
+        playMusic(lastTrackRef.current || 'somber');
+      } else if (!heldByGameRef.current) {
+        bgmRef.current.play();
       }
-    });
-    return () => sub.remove();
-  }, []);
+
+      // click sound was released in Quitapp, so recreate it
+      if (!clickref.current) {
+        clickref.current = new Sound('click', Sound.MAIN_BUNDLE, (error) => {
+          if (error) console.log('did not load default click', error);
+        });
+      }
+    } else {
+      appPausedRef.current = true;
+      bgmRef.current?.pause();
+      stopLoops();
+    }
+  });
+  return () => sub.remove();
+}, []);
 
   // ---------------------------------------------------
   // BUTTON CLICK
@@ -255,7 +268,7 @@ export function AudioProvider({ children }) {
     bgmRef.current = null;
     clickref.current = null;
     currentTrackRef.current = null;
-
+    heldByGameRef.current = false;
     BackHandler.exitApp();
   };
 

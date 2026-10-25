@@ -10,6 +10,7 @@ import {
 import Sound_clicks from '../../Components/Sound_clicks';
 import useScale from '../../Components/ScreenScaler';
 import styles from '../../Styles/Others/StyleSettings';
+import { useAudio } from '../../Audiostore'; // ADDED: for menu music on exit
 
 // --- IMAGE IMPORTS ---
 const BG_PARCHMENT = require('../../assets/Settings_Assets/Settings_Base.png');
@@ -139,6 +140,15 @@ function Setting_screen({ navigation }) {
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const { s, insets } = useScale();
   const { width: winW, height: winH } = useWindowDimensions();
+  const { playMusic, stopLoops } = useAudio(); // ADDED
+
+  // ADDED: leave the game -> menu music + clear the game screens off the stack
+  const handleExitToMenu = () => {
+    setShowExitConfirm(false);
+    stopLoops();           // kill looping sfx (oil lamp, etc.)
+    playMusic('somber');   // back to menu music
+    navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+  };
 
   const panelH = Math.min(winH * 0.92, 700, (winW * 0.9) / PANEL_ASPECT);
   const panelW = panelH * PANEL_ASPECT;
@@ -230,7 +240,7 @@ function Setting_screen({ navigation }) {
 
               <Sound_clicks
                 style={styles.confirmButtonYes}
-                onPress={() => navigation.navigate('Home')}
+                onPress={handleExitToMenu}
               >
                 <Text style={styles.confirmBtnText}>Yes</Text>
               </Sound_clicks>

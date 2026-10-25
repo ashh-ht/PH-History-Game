@@ -959,18 +959,17 @@ const styles = StyleSheet.create({
   },
   centered: { justifyContent: "center" },
 
-  // LANDSCAPE LAYOUT
+  
   row: { flexDirection: "row", alignItems: "center", gap: 14 },
   leftCol: { flex: 1 },
   rightCol: { flex: 1.15 },
 
-  // HEADER
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 10,
-    paddingRight: 60, // leaves room for the pause button
+    paddingRight: 60,
   },
   title: { color: INK, fontSize: 19, fontWeight: "bold" },
   pillRow: { flexDirection: "row", gap: 8 },

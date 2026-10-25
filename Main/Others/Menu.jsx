@@ -10,27 +10,26 @@ import { useFocusEffect } from '@react-navigation/native';
 import Sound_clicks from '../../Components/Sound_clicks';
 import { useGameProgress } from '../../GameProgress';
 import { getCheckpoints, clearCheckpoints, restartProgress } from '../Others/saveProgress';
-import { useAudio } from '../../Audiostore'; // Added for Quitapp
+import { useAudio } from '../../Audiostore'; 
 import { useJournal } from './JournalContext';
 
 function MainMenuScreen({ navigation }) {
   const [selectedButton, setSelectedButton] = useState(null);
-  const [hasSave, setHasSave] = useState(false); // Added state for saving
+  const [hasSave, setHasSave] = useState(false);
   const game = useGameProgress();
   const { Quitapp } = useAudio();
-  const { resetUnlocks } = useJournal(); // Extracted Quitapp
+  const { resetUnlocks } = useJournal();
 
   useFocusEffect(
     useCallback(() => {
       setSelectedButton(null);
-      // FIXED: Fetch checkpoints to determine if "Continue" should show
       getCheckpoints().then((saves) => {
         setHasSave(saves.length > 0);
       });
     }, [])
   );
 
-  // FIXED: Defined startFresh to wipe data and start at Part 1
+
   const startFresh = async () => {
     await restartProgress(); // clears saves + unlocked parts
     await resetUnlocks(); // clears remnants, timeline, profiles, glossary
