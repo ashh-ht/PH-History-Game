@@ -280,8 +280,6 @@ const QUIZ_PANELS = [
   require("../../assets/quiz_assets/QuizQuestion_6.png"),
 ];
 
-// NOTE: voyage is handled separately in PartRenderer (it needs onSettings
-// and draws its own pause overlay), so it is not listed here.
 const MINIGAMES = {
   santoNino: SantoNinoMinigame,
   sortingtimeline: TimelineSort,
@@ -634,6 +632,11 @@ function PartRenderer(props) {
   );
 
   useEffect(() => {
+    const isFreshStart =
+      chapterNumber === 1 && partNumber === 1 && startIdx === 0;
+
+    if (isFreshStart) return;
+
     saveCheckpoint({
       chap: chapterNumber,
       part: partNumber,
@@ -644,6 +647,17 @@ function PartRenderer(props) {
 
   const hasMoreScenes = sceneIdx < sceneData.length;
   const current = hasMoreScenes ? sceneData[sceneIdx] : null;
+
+  useEffect(() => {
+    if (!current || current.type !== "scene") return;
+
+    saveCheckpoint({
+      chap: chapterNumber,
+      part: partNumber,
+      sceneIdx,
+      ...getSceneInfo(sceneIdx),
+    });
+  }, [sceneIdx]);
 
   console.log("part", partNumber, "idx", sceneIdx, "type", current?.type);
 
@@ -847,8 +861,6 @@ function PartRenderer(props) {
     isMinigame,
   ]);
 
-  // Voyage draws its own pause/settings overlay, so it is rendered directly
-  // (no withMinigameOverlay) and only needs onComplete + onSettings.
   if (current?.type === "voyage") {
     return (
       <VoyageMinigame
@@ -2016,7 +2028,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 10,
-
   },
 
   choiceQuestion: {

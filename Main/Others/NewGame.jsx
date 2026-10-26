@@ -34,31 +34,22 @@ function AnimatedButton({ onPress, image }) {
 
   return (
     <Sound_clicks onPress={handlePress}>
-      <Animated.View
-        style={{
-          transform: [{ scale }],
-        }}
-      >
-        <Image
-          source={image}
-          style={styles.button}
-          resizeMode="contain"
-        />
+      <Animated.View style={{ transform: [{ scale }] }}>
+        <Image source={image} style={styles.button} resizeMode="contain" />
       </Animated.View>
     </Sound_clicks>
   );
 }
-
 
 function NewGameConfirmScreen({ navigation }) {
   const { setChapter, setPart, setScene, setInGame } = useGameProgress();
   const { resetUnlocks } = useJournal();
 
   const restart = async () => {
-    console.log("RESTART PRESSED");
-    await restartProgress();
+    const cleared = await restartProgress();
+    if (!cleared) return; // don't continue into a half-reset state
+
     await resetUnlocks();
-    console.log("RESET DONE");
 
     setChapter(1);
     setPart(1);
@@ -112,4 +103,4 @@ const styles = StyleSheet.create({
   },
 });
 
-   export default NewGameConfirmScreen;
+export default NewGameConfirmScreen;

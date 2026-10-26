@@ -281,6 +281,7 @@ export default function SavesScreen({ navigation }) {
           </View>
 
           {saves.length > 0 && (
+            // Full-width row pinned to the bottom; alignItems centers the button
             <View
               pointerEvents="box-none"
               style={[styles.deleteAllRow, { bottom: delBottom }]}
@@ -410,6 +411,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
   },
+
 
   deleteAllRow: {
     position: "absolute",
