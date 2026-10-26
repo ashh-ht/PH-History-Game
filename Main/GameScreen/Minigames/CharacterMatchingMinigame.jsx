@@ -20,13 +20,7 @@ import {
   Animated,
 } from "react-native";
 
-import { useAudio } from "../../../Audiostore"; // same file PartRenderer uses
-
-// =====================================================
-// ARTWORK
-// Same images and paths as DecipherMinigame. Adjust the
-// paths if your folders are laid out differently.
-// =====================================================
+import { useAudio } from "../../../Audiostore"; 
 
 const IMG = {
   background: require("../../../Background Images/Usuals/Paper_scroll.png"),
@@ -34,24 +28,19 @@ const IMG = {
   button: require("../../../assets/buttons/choice_button.png"),
 };
 
-// Does the panel image have a name tab built in (like dialogue_box.png)?
-//  true  -> labels sit on the tab
-//  false -> plain framed image: the label shows as a small heading inside
-//           the panel, and padding is wider to clear a decorative border
+
 const PANEL_HAS_TAB = false;
 const PANEL_PAD_TOP = PANEL_HAS_TAB ? 58 : 38;
 const PANEL_PAD_BOTTOM = PANEL_HAS_TAB ? 26 : 42;
 const PANEL_PAD_SIDE = PANEL_HAS_TAB ? 34 : 54;
 
-// How much blank/transparent space the panel PNG has around its visible
-// frame, as a fraction of the image (0.1 = 10%). Tune these if the content
-// still looks off-center. Use all zeros for an image with no blank margins.
+
 const PANEL_INSET = PANEL_HAS_TAB
   ? { left: 0, right: 0, top: 0, bottom: 0 }
   : { left: 0.023, right: 0.01, top: 0.06, bottom: 0.06 };
 
-const INK = "#352313"; // same brown the speaker names use
-const BUTTON_INK = "#371f10"; // same as quiz buttons
+const INK = "#352313"; 
+const BUTTON_INK = "#371f10"; 
 const GOLD = "#7a5a2a";
 const GREEN = "#3d6b45";
 const RED = "#a3281b";
@@ -93,10 +82,6 @@ function formatTime(seconds) {
     remainingSeconds
   ).padStart(2, "0")}`;
 }
-
-// =====================================================
-// SHARED UI PIECES
-// =====================================================
 
 function GameButton({ label, onPress, secondary }) {
   const scale = useRef(new Animated.Value(1)).current;
@@ -145,10 +130,6 @@ function GameButton({ label, onPress, secondary }) {
     </Animated.View>
   );
 }
-
-// The panel image is drawn slightly oversized and shifted so that its
-// VISIBLE frame lines up exactly with the box, even when the PNG has blank
-// transparent margins. Content is then centered inside the visible frame.
 function Panel({ children, style }) {
   const [size, setSize] = useState({ w: 0, h: 0 });
 
@@ -196,7 +177,6 @@ function Panel({ children, style }) {
   );
 }
 
-// Text that sits on the little name tab built into the box art.
 function PanelTab({ children }) {
   if (!PANEL_HAS_TAB) {
     return <Text style={styles.kicker}>{children}</Text>;
@@ -210,10 +190,6 @@ function PanelTab({ children }) {
     </View>
   );
 }
-
-// Fit-to-screen shell (same idea as DecipherMinigame): the screen never
-// scrolls. If the content is taller than the space available, it is scaled
-// down a little instead.
 function Screen({
   children,
   paused = false,
@@ -245,23 +221,8 @@ function Screen({
   );
 }
 
-// =====================================================
-// DRAGGABLE NAME CHIP
-//
-// The chip itself is the touch target (no Pressable inside it), so there is
-// no fight between "tap" and "drag" gestures. We decide on release:
-//   - finger barely moved  -> it was a TAP  (select / unselect the name)
-//   - finger moved         -> it was a DRAG (try to drop it on a portrait)
-//
-// The gesture handler is created ONCE and always reads the latest props
-// through `live`, so the 1-second timer re-renders never interrupt a drag.
-// =====================================================
 
 const DRAG_THRESHOLD = 8;
-
-// Which portrait row is the finger actually ON? Strictly inside the row
-// (tiny margin only). No "close enough" guessing, so nothing is accepted
-// unless you really drop it on a portrait.
 function findHit(rects, x, y) {
   const MARGIN = 4;
   let best = null;
@@ -334,8 +295,6 @@ function DraggableName({
 
   const responder = useRef(
     PanResponder.create({
-      // Claim the touch immediately so nothing else (a parent, a sibling)
-      // can steal it halfway through a drag.
       onStartShouldSetPanResponder: () =>
         !live.current.isMatched && !live.current.disabled,
       onStartShouldSetPanResponderCapture: () =>
@@ -364,8 +323,6 @@ function DraggableName({
         }
 
         if (startedRef.current) {
-          // The board may be scaled down to fit, so divide by that scale
-          // to keep the chip under the finger.
           const s = live.current.scale || 1;
           pan.setValue({ x: gesture.dx / s, y: gesture.dy / s });
           live.current.onDragMove(gesture.moveX, gesture.moveY);
@@ -444,9 +401,7 @@ function DraggableName({
   );
 }
 
-// =====================================================
-// MINIGAME
-// =====================================================
+
 
 export default function CharacterMatchingMinigame({
   characters = [],
@@ -485,7 +440,6 @@ export default function CharacterMatchingMinigame({
   const [startedAt, setStartedAt] = useState(null);
   const [finishedAt, setFinishedAt] = useState(null);
 
-  // Fit-to-screen measurements (the screen never scrolls)
   const [areaH, setAreaH] = useState(0);
   const [contentH, setContentH] = useState(0);
 
@@ -501,7 +455,7 @@ export default function CharacterMatchingMinigame({
   const rectsRef = useRef([]);
   const [hoverId, setHoverId] = useState(null);
 
-  // Sound helper that never crashes if audio isn't ready
+
   const sfx = useCallback(
     (key) => {
       try {
@@ -545,8 +499,6 @@ export default function CharacterMatchingMinigame({
     [currentRound]
   );
 
-  // The order is stored in state rather than randomly regenerated on
-  // every render. Timer ticks therefore cannot reshuffle the choices.
   const roundChoices = useMemo(() => {
     const byId = new Map(
       currentRound.map((character) => [character.id, character])
@@ -631,8 +583,6 @@ export default function CharacterMatchingMinigame({
     setStatus("playing");
   }, [clearPendingTimeouts, normalizedCharacters, choicesPerRound]);
 
-  // One countdown interval is active while a game is in progress.
-  // (Pausing simply stops the interval; timeLeft is kept as is.)
   useEffect(() => {
     if (status !== "playing" || paused) return undefined;
 
@@ -655,8 +605,6 @@ export default function CharacterMatchingMinigame({
     return () => clearInterval(interval);
   }, [status, paused, finishGame]);
 
-  // Tells the parent which screen we are on ("intro" = instructions,
-  // "playing", "result" = final screen) so it can adjust the pause button.
   useEffect(() => {
     if (!onPhaseChange) return;
 
@@ -690,7 +638,7 @@ export default function CharacterMatchingMinigame({
     [status, matchedSet, paused]
   );
 
-  // Measures every visible portrait row in screen coordinates.
+
   const measureTargets = useCallback(
     () =>
       Promise.all(
@@ -725,7 +673,6 @@ export default function CharacterMatchingMinigame({
     [measureTargets]
   );
 
-  // While dragging: light up the portrait the finger is over.
   const moveDrag = useCallback((x, y) => {
     const target = findHit(rectsRef.current, x, y);
     const id = target ? target.id : null;
@@ -755,7 +702,7 @@ export default function CharacterMatchingMinigame({
       if (nameId === target.id) {
         const nextMatched = [...matchedRef.current];
 
-        // Prevent double scoring from rapid or repeated touches.
+
         if (nextMatched.includes(target.id)) return;
 
         nextMatched.push(target.id);
@@ -827,7 +774,6 @@ export default function CharacterMatchingMinigame({
         return;
       }
 
-      // Incorrect matches keep the original penalty and scoring rules.
       sfx("wrong");
       setLastWrongId(target.id);
       setLastCorrectId(null);
@@ -866,8 +812,6 @@ export default function CharacterMatchingMinigame({
     ]
   );
 
-  // Called when a dragged name is released. It is only accepted if the
-  // finger is really on a portrait row.
   const dropNameOnPortrait = useCallback(
     async (character, screenX, screenY) => {
       setHoverId(null);
@@ -885,21 +829,20 @@ export default function CharacterMatchingMinigame({
       if (hit) {
         selectPortrait(hit, character.id);
       } else {
-        // Released away from every portrait: nothing is accepted. The name
-        // stays selected so a tap on the intended portrait still works.
+
         setSelectedNameId(character.id);
       }
     },
     [status, paused, measureTargets, selectPortrait]
   );
 
-  // Row sizes shrink in landscape so more of the board fits on screen
+ 
   const rowMin = landscape ? 78 : 92;
   const imgW = landscape ? 50 : 52;
   const imgH = landscape ? 64 : 80;
 
-  // 1 = fits as is. Smaller = shrink to fit (never below 0.4).
-  const FIT_PADDING = 28; // top + bottom padding of the play area
+ 
+  const FIT_PADDING = 28; 
   const fitScale =
     areaH > 0 && contentH > 0
       ? Math.min(1, Math.max(0.4, (areaH - FIT_PADDING) / contentH))
@@ -908,9 +851,7 @@ export default function CharacterMatchingMinigame({
   const onAreaLayout = (e) => setAreaH(e.nativeEvent.layout.height);
   const onContentLayout = (e) => setContentH(e.nativeEvent.layout.height);
 
-  // ---------------------------------------------------
-  // PIECES
-  // ---------------------------------------------------
+
 
   const timeIsLow = timeLeft <= 10;
 
@@ -1124,9 +1065,7 @@ export default function CharacterMatchingMinigame({
     </Panel>
   );
 
-  // ---------------------------------------------------
-  // SCREENS
-  // ---------------------------------------------------
+
 
   let body;
 
@@ -1212,16 +1151,13 @@ export default function CharacterMatchingMinigame({
   );
 }
 
-// =====================================================
-// STYLES
-// =====================================================
+
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   background: { flex: 1, width: "100%", height: "100%", backgroundColor: "#000" },
   safeArea: { flex: 1 },
-  // The play area does not scroll. Content is centered and scaled down
-  // slightly when it doesn't fit (see fitScale).
+ 
   fitArea: {
     flex: 1,
     justifyContent: "center",
@@ -1235,7 +1171,7 @@ const styles = StyleSheet.create({
   },
   pressed: { opacity: 0.78 },
 
-  // HEADER
+
   header: {
     alignItems: "center",
     justifyContent: "center",
@@ -1280,7 +1216,7 @@ const styles = StyleSheet.create({
     backgroundColor: GOLD,
   },
 
-  // PANELS
+
   panel: {
     paddingTop: PANEL_PAD_TOP,
     paddingBottom: PANEL_PAD_BOTTOM,
@@ -1351,7 +1287,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
 
-  // MATCHING BOARD
+
   matchingColumns: {
     flexDirection: "row",
     alignItems: "stretch",
@@ -1363,7 +1299,7 @@ const styles = StyleSheet.create({
     paddingTop: 23,
     zIndex: 1,
   },
-  // Drawn above the portraits so a dragged name passes over them
+  
   namesColumn: {
     flex: 1,
     minWidth: 0,
@@ -1396,9 +1332,16 @@ const styles = StyleSheet.create({
     borderColor: GREEN,
     backgroundColor: "rgba(61, 107, 69, 0.18)",
   },
-  portraitRowCorrect: { borderColor: GREEN, borderWidth: 2.5 },
-  portraitRowWrong: { borderColor: RED, borderWidth: 2.5 },
-  // the portrait the dragged name is currently over
+  portraitRowCorrect: { 
+    borderColor: GREEN, 
+    borderWidth: 2.5 
+  },
+
+  portraitRowWrong: { 
+    borderColor: RED, 
+    borderWidth: 2.5 
+  },
+
   portraitRowHover: {
     borderColor: INK,
     borderWidth: 2.5,
@@ -1415,7 +1358,10 @@ const styles = StyleSheet.create({
     position: "relative",
     alignSelf: "center",
   },
-  portrait: { width: "100%", height: "100%" },
+  portrait: { 
+    width: "100%", 
+    height: "100%" 
+  },
   matchedOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(61, 107, 69, 0.35)",
@@ -1450,17 +1396,17 @@ const styles = StyleSheet.create({
   },
   answerTextMatched: { color: INK },
 
-  // NAME CHIPS
+
   nameOptionWrapper: {
     marginBottom: 7,
     borderRadius: 9,
     zIndex: 1,
   },
-  // No elevation / shadow here: on a see-through chip they draw a pale box
-  // inside it. zIndex alone is enough to keep the chip above the portraits.
+
   nameOptionWrapperSelected: { zIndex: 10 },
   nameOptionWrapperDragging: { zIndex: 50 },
   nameOptionWrapperMatched: { opacity: 0.72 },
+  
   nameOption: {
     paddingVertical: 7,
     paddingHorizontal: 6,
@@ -1487,11 +1433,14 @@ const styles = StyleSheet.create({
     lineHeight: 17,
     fontWeight: "bold",
   },
-  nameTextSelected: { color: INK },
-  nameTextMatched: { color: GREEN },
+  nameTextSelected: { 
+    color: INK 
+  },
+  nameTextMatched: { 
+    color: GREEN 
 
-  // FEEDBACK
-  // Fixed-height slot: the layout stays put whether or not a message shows.
+  },
+
   feedbackSlot: {
     minHeight: 36,
     marginTop: 4,
@@ -1523,7 +1472,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 
-  // BUTTONS
   buttonWrap: { alignSelf: "center", width: "80%", maxWidth: 300, marginTop: 8 },
   buttonSecondary: { opacity: 0.85 },
   buttonBg: {
@@ -1541,7 +1489,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 
-  // RESULTS
+
   resultStats: {
     flexDirection: "row",
     justifyContent: "space-around",

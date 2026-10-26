@@ -7,6 +7,7 @@ import {
   Text,
   View,
   Animated,
+  Linking,
   useWindowDimensions,
 } from 'react-native';
 import Sound_clicks from '../../Components/Sound_clicks';
@@ -62,6 +63,7 @@ Victoria, F. P. F. (2023). Opium, the Ethnic Chinese, and the Philippine Revolut
 
 const SOURCES_LIST = CITATIONS_TEXT.split('\n').filter(line => line.trim() !== '');
 const PANEL_ASPECT = 1205 / 630;
+const URL_REGEX = /(https?:\/\/[^\s]+)/g;
 
 function SpringImageButton({ image, pressedImage, onPress, imageStyle }) {
   const scale = useRef(new Animated.Value(1)).current;
@@ -83,6 +85,32 @@ function SpringImageButton({ image, pressedImage, onPress, imageStyle }) {
         <Image source={pressed ? pressedImage : image} style={imageStyle} resizeMode="contain" />
       </Sound_clicks>
     </Animated.View>
+  );
+}
+
+function Citation({ text }) {
+  const parts = text.split(URL_REGEX);
+
+  const openLink = async (url) => {
+    try {
+      await Linking.openURL(url);
+    } catch (e) {
+      console.warn('Could not open URL:', url, e);
+    }
+  };
+
+  return (
+    <Text style={styles.citationText}>
+      {parts.map((part, i) =>
+        i % 2 === 1 ? (
+          <Text key={i} style={styles.linkText} onPress={() => openLink(part)}>
+            {part}
+          </Text>
+        ) : (
+          part
+        )
+      )}
+    </Text>
   );
 }
 
@@ -127,9 +155,7 @@ export default function SourcesScreen({ navigation }) {
             indicatorStyle="black"
           >
             {SOURCES_LIST.map((citation, index) => (
-              <Text key={index} style={styles.citationText}>
-                {citation}
-              </Text>
+              <Citation key={index} text={citation} />
             ))}
           </ScrollView>
         </View>
@@ -169,5 +195,9 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     lineHeight: 24,
     marginBottom: 16,
+  },
+  linkText: {
+    color: '#1A5FB4',
+    textDecorationLine: 'underline',
   },
 });

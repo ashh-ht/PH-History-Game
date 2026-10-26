@@ -9,13 +9,6 @@ import {
   StyleSheet,
 } from "react-native";
 
-// =====================================================
-// Pause + Settings buttons for minigames (top right),
-// plus the "PAUSED" panel.
-//
-// Lives in the Components folder at the project root,
-// so the asset paths go 1 folder up.
-// =====================================================
 
 const IMG = {
   menu: require("../assets/icons/menu_button.png"),
@@ -23,9 +16,8 @@ const IMG = {
   button: require("../assets/buttons/choice_button.png"),
 };
 
-const BUTTON_INK = "#371f10"; // same as the quiz buttons
+const BUTTON_INK = "#371f10";
 
-// Same spring press feel as the story buttons
 function usePressAnim() {
   const scale = useRef(new Animated.Value(1)).current;
   const translateY = useRef(new Animated.Value(0)).current;
@@ -50,7 +42,6 @@ function usePressAnim() {
   return { scale, translateY, animate };
 }
 
-// Pause button drawn in code (two bars) so no new image is needed.
 function PauseButton({ onPress }) {
   const { scale, translateY, animate } = usePressAnim();
 
@@ -74,7 +65,7 @@ function PauseButton({ onPress }) {
   );
 }
 
-// Settings button uses the same artwork as the story menu button.
+
 function SettingsButton({ onPress }) {
   const [pressed, setPressed] = useState(false);
   const { scale, translateY, animate } = usePressAnim();
@@ -149,13 +140,12 @@ export default function MinigameOverlay({
 }) {
   return (
     <>
-      {/* TOP-RIGHT BUTTONS */}
+   
       <View style={[styles.bar, { top, right }]}>
         {!hidePause && <PauseButton onPress={onPause} />}
         {!hideSettings && <SettingsButton onPress={onSettings} />}
       </View>
 
-      {/* PAUSE PANEL (blocks the game underneath while open) */}
       {paused ? (
         <View style={styles.pauseOverlay}>
           <View style={styles.pauseBox}>
@@ -174,7 +164,6 @@ export default function MinigameOverlay({
 }
 
 const styles = StyleSheet.create({
-  // Same spot as the story screens' menu / journal buttons
   bar: {
     position: "absolute",
     top: 20,
@@ -229,7 +218,7 @@ const styles = StyleSheet.create({
     elevation: 200,
   },
 
-  // Same colors as the Remnant reward popup
+
   pauseBox: {
     backgroundColor: "#F4E4C8",
     borderWidth: 2,

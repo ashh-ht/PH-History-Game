@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import { Animated, Easing, StyleSheet, View } from 'react-native';
 
-// Timing (ms)
+
 const FADE_IN_MS = 550;
 const BEAT_MS = 450;
 const SCROLL_MS = 1400;
@@ -12,16 +12,7 @@ const PREVIEW_HOLD_MS = 2400;
 
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
-// =====================================================
-// UNLOCKING POLAROID
-// One Animated.Value (progress 0 -> 1) drives everything:
-//   0.00-0.50  anticipation: the locked polaroid jiggles and tilts
-//   0.55-0.66  the locked art swaps to the unlocked art
-//   0.60-1.00  pop, small hop, settle (ends at exactly normal size)
-//
-// width/height are the same pixel size as the normal polaroids,
-// and both images get that exact size (no stretching to fill).
-// =====================================================
+
 export function UnlockingPolaroid({
     lockedImage,
     unlockedImage,
@@ -29,7 +20,6 @@ export function UnlockingPolaroid({
     width,
     height,
 }) {
-    // Built once, so re-renders never recreate the native animation nodes.
     const anim = useMemo(
         () => ({
             rotate: progress.interpolate({
@@ -92,15 +82,11 @@ export function UnlockingPolaroid({
     );
 }
 
-// =====================================================
-// SEQUENCE COORDINATOR
-// Plays: fade in -> scroll -> unlock animation -> preview hold,
-// then calls onSequenceDone(). PartSelect owns the final screen.
-// =====================================================
+
 export default function ChapterUnlockSequence({
     sequence,
     scrollRef,
-    scrollMetrics, // ref: { offset, viewH, contentH }
+    scrollMetrics,
     revealProgress,
     itemHeight,
     itemStride,
@@ -109,8 +95,6 @@ export default function ChapterUnlockSequence({
     onSequenceDone,
 }) {
     const cover = useRef(new Animated.Value(1)).current;
-
-    // Always call the latest handlers from the long-running timeline.
     const callbacks = useRef({});
     callbacks.current = { onRevealDone, onShowPreview, onSequenceDone };
 
@@ -221,7 +205,6 @@ export default function ChapterUnlockSequence({
                             })
                         );
                         if (cancelled) return;
-                        // Pin the value to exactly 1 so the polaroid rests at normal size.
                         revealProgress.setValue(1);
                         console.log('[unlock-seq] revealed');
                         callbacks.current.onRevealDone?.();

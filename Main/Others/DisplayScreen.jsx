@@ -19,7 +19,6 @@ const PANEL_FONT_SIZE = require('../../assets/Settings_Assets/Display_FontSize.p
 const BANNER_OPACITY = require('../../assets/Settings_Assets/Display_DialogueOpacity.png');
 
 const CIRCLE_THUMB = require('../../assets/Settings_Assets/CircleButton.png');
-const CIRCLE_THUMB_CHECKED = require('../../assets/Settings_Assets/CircleButton_Checked.png');
 
 const PANEL_ASPECT = 1205 / 630;
 
@@ -31,9 +30,9 @@ const ROW_W = 400/1920;
 const CIRCLE_CX = 250/1920;
 
 const FONT_OPTIONS = [
-  { value: 'Small', y: 473/1080 },
-  { value: 'Medium', y: 587/1080 },
-  { value: 'Large', y: 708/1080 },
+  { value: 'Small', y: 473 / 1080 },
+  { value: 'Medium', y: 587 / 1080 },
+  { value: 'Large', y: 708 / 1080 },
 ];
 
 // Slider
@@ -148,7 +147,11 @@ function OpacitySlider({ panelW, panelH, value, onChange }) {
           height: thumb,
         }}
       >
-        <Image source={CIRCLE_THUMB} resizeMode="contain" style={{ width: '100%', height: '100%' }} />
+        <Image
+          source={CIRCLE_THUMB}
+          resizeMode="contain"
+          style={{ width: '100%', height: '100%', transform: [{ scale: THUMB_SCALE }] }}
+        />
       </View>
     </View>
   );

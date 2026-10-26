@@ -5,7 +5,6 @@ import styles from '../../Styles/Others/StyleJournal';
 import { useJournal } from '../../Main/Others/JournalContext'; 
 import { REMNANT_DATA } from '../GameScreen/RemnantData';
 
-// ==================================== IMAGES OF TABS ====================================
 const TABS = ['Timeline', 'Character Profiles', 'Minigame Collections', 'Glossary'];
 const TAB_IMAGES = {
   'Timeline': require('../../assets/Journal_Assets/Timeline_closed.png'),
@@ -28,7 +27,6 @@ const TAB_OPEN_IMAGES = {
   'Glossary': require('../../assets/Journal_Assets/Glossary_open.png'),
 };
 
-// ==================================== PAGE FLIP SETTINGS ====================================
 const BOOK_IMAGE = require('../../assets/Journal_Assets/Journal_Book.png');
 const FLIP_DURATION = 750;
 const FLIP_SHADE = 0.3;
@@ -38,7 +36,6 @@ const SWIPE_MIN_VELOCITY = 0.3;
 const SWIPE_CAPTURE_DIST = 20;
 const SWIPE_DIRECTION_RATIO = 1.5;
 
-// ==================================== LAMAN NG TABS SECTION ====================================
 const TIMELINE_TITLE = require('../../assets/Journal_Assets/Timeline_Title.png');
 const TIMELINE_BOX = require('../../assets/Journal_Assets/Timeline_box.png');
 const BOX_STEP = 18.5;
@@ -115,7 +112,6 @@ function BookmarkTab({ image, openImage, index, active, onPress }) {
   );
 }
 
-// ==================================== PAGE FLIP ====================================
 function PaperFace({ rect, rowRect, bookSize, style, children }) {
   return (
     <Animated.View style={[{ position: 'absolute', left: 0, top: 0, width: rect.width, height: rect.height, overflow: 'hidden' }, style]}>
@@ -257,7 +253,6 @@ function PagedSpread({ page, totalPages, onPageChange, renderLeft, renderRight, 
 
       {flip && rowRect && leftRect && rightRect && renderLeaf()}
 
-      {/* Tap arrows: same page-turn animation as swiping */}
       {!flip && page > 0 && (
         <Pressable
           onPress={() => startFlip('prev')}
@@ -280,7 +275,6 @@ function PagedSpread({ page, totalPages, onPageChange, renderLeft, renderRight, 
   );
 }
 
-// ==================================== TIMELINE STUFF ====================================
 function splitByLength(entries, headerWeight = 0) {
   const weight = (e) => e.content.length + (e['sub-content'] ?? []).reduce((n, x) => n + x.content.length + 30, 0) + 40;
   const total = entries.reduce((n, e) => n + weight(e), headerWeight);
@@ -333,7 +327,6 @@ function TimelineEntry({ entry }) {
   );
 }
 
-// ==================================== GLOSSARY STUFF ====================================
 function GlossaryEntry({ term, meaning, unit }) {
   return (
     <View style={styles.glossaryBlock}>
@@ -347,13 +340,38 @@ function GlossaryEntry({ term, meaning, unit }) {
   );
 }
 
-// ==================================== CHARACTER PROFILE STUFF ====================================
 function CharacterCard({ name, content, side, slot, unit, onPress }) {
   const top = side === 'left' ? LEFT_CARD_TOP + slot * LEFT_CARD_STEP : RIGHT_CARD_TOP + slot * RIGHT_CARD_STEP;
   const portrait = PORTRAITS[name];
   return (
     <Pressable onPress={onPress} style={[styles.profileCard, side === 'left' ? styles.profileCardLeft : styles.profileCardRight, { top: `${top}%` }]}>
-      <Image source={PROFILE_CARD} style={styles.fillAll} resizeMode="stretch" />
+      {portrait ? (
+        <View
+          pointerEvents="none"
+          style={{
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            right: 0,
+            left: `${PANEL_CROP * 100}%`,
+            overflow: 'hidden',
+          }}
+        >
+          <Image
+            source={PROFILE_CARD}
+            resizeMode="stretch"
+            style={{
+              position: 'absolute',
+              top: 0,
+              height: '100%',
+              width: `${100 / (1 - PANEL_CROP)}%`,
+              left: `-${(PANEL_CROP / (1 - PANEL_CROP)) * 100}%`,
+            }}
+          />
+        </View>
+      ) : (
+        <Image source={PROFILE_CARD} style={styles.fillAll} resizeMode="stretch" />
+      )}
       {portrait && <Image source={portrait} style={styles.cardPortraitSlot} resizeMode="cover" />}
       <View style={styles.cardTextSlot}>
         <Text style={[styles.cardName, { fontSize: Math.max(8, 28 * unit) }]} numberOfLines={1} adjustsFontSizeToFit>{name}</Text>
@@ -385,14 +403,11 @@ function Journalbook({ navigation }) {
   const [selectedChar, setSelectedChar] = useState(null);
   const [glossarypage, setGlossarypPage] = useState(0);
   const [timelinepage, setTimelinePage] = useState(0);
-  
-  // Remnant States
+
   const [remnantpage, setRemnantPage] = useState(0);
   const [selectedRemnant, setSelectedRemnant] = useState(null);
   
   const [bookSize, setBookSize] = useState({ w: 0, h: 0 });
-
-  // ==================================== FILTERED DATA ====================================
 
   const filteredTimelineContent = useMemo(() => {
     const timelineData = Journal.find((s) => s.title === 'Timeline')?.content || [];
@@ -457,7 +472,7 @@ function Journalbook({ navigation }) {
           content: unlockedTiers.map((t) => t.content).join('\n\n')
         };
       })
-      .filter((char) => char.content.length > 0);
+      .filter((char) => PORTRAITS[char.name] && char.content.length > 0);
   }, [unlockedIds]);
 
   const totalSpreads = Math.max(1, Math.ceil(characters.length / PER_SPREAD));
@@ -482,7 +497,6 @@ function Journalbook({ navigation }) {
     </>
   );
 
-  // ==================================== REMNANTS PAGINATION ====================================
   const totalRemnantSpreads = 8;
 
   const renderRemnantPiece = (chapNum, partNum) => {
@@ -579,7 +593,6 @@ function Journalbook({ navigation }) {
     );
   };
 
-  // ==================================== GLOSSARY ====================================
   const glossaryterm = Journal.find((s) => s.title === 'Glossary')?.content ?? [];
   const sortglossary = [...glossaryterm].sort((a, b) => a.term.localeCompare(b.term));
   const Glossary_per_side = 2;
@@ -680,7 +693,9 @@ function Journalbook({ navigation }) {
               <View key="char-detail" style={styles.spreadRow} pointerEvents="box-none">
                 <View style={styles.spreadPage} pointerEvents="box-none">
                   <View style={styles.detailFrame}>
-                    <Image source={PROFILE_FRAME} style={styles.fillAll} resizeMode="stretch" />
+                    {!PORTRAITS[selectedChar.name] && (
+                      <Image source={PROFILE_FRAME} style={styles.fillAll} resizeMode="stretch" />
+                    )}
                     {PORTRAITS[selectedChar.name] && <Image source={PORTRAITS[selectedChar.name]} style={styles.detailPortraitSlot} resizeMode="cover" />}
                   </View>
                   <View style={styles.detailNameBox}>
@@ -697,7 +712,6 @@ function Journalbook({ navigation }) {
               </View>
             )}
 
-            {/* ================= REMNANTS TAB ================= */}
             {activeTab === 'Minigame Collections' && (
               <PagedSpread
                 key="remnants-list"
@@ -728,7 +742,6 @@ function Journalbook({ navigation }) {
         <BookmarkTab image={EXIT_IMAGE} index={TABS.length} onPress={() => navigation.goBack()} />
       </View>
 
-      {/* ================= ZOOMED IN REMNANT OVERLAY ================= */}
       <Modal
         visible={!!selectedRemnant}
         transparent={true}

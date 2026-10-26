@@ -25,7 +25,7 @@ import SourcesScreen from './Main/Others/SourcesScreen';
 import GameplayScreen from './Main/Others/GameplayScreen';
 import DisplayScreen from './Main/Others/DisplayScreen';
 
-// Chapter 1 story screens
+
 import {
   Chap1Part1Screen,
   Chap1Part2Screen,
@@ -104,8 +104,6 @@ export default function App() {
                       component={AboutScreen}
                       options={{ presentation: 'transparentModal', animation: 'fade' }}
                     />
-
-                    {/* FIXED: Added presentation: 'transparentModal' */}
                     <Stack.Screen
                       name="Sources"
                       component={SourcesScreen}
@@ -117,8 +115,6 @@ export default function App() {
                       component={GameplayScreen}
                       options={{ presentation: 'transparentModal', animation: 'fade' }}
                     />
-
-                    {/* FIXED: Added presentation: 'transparentModal' */}
                     <Stack.Screen
                       name="DisplayScreen"
                       component={DisplayScreen}

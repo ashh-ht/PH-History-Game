@@ -24,9 +24,10 @@ const SLIDER_RIGHT = 0.12;
 const SLIDER_Y = [0.34, 0.52, 0.69];
 
 const THUMB_SIZE_PCT = 50 / 1205;
+const THUMB_SCALE = 4.2;
 const TRACK_HEIGHT = 16;
 const HITBOX_H = 100;
-const PERCENT_FONT = 30/ 1205;
+const PERCENT_FONT = 30 / 1205;
 
 function VolumeSlider({ panelW, value, onChange }) {
   const [width, setWidth] = useState(0);
@@ -74,12 +75,11 @@ function VolumeSlider({ panelW, value, onChange }) {
       }}
       {...pan.panHandlers}
     >
-      {/* PERCENTAGE TEXT ABOVE THUMB */}
       <View
         pointerEvents="none"
         style={{
           position: 'absolute',
-          top: 8,
+          top: 0,
           left: handleLeft + thumb / 2 - percentFont * 1.5,
           width: percentFont * 3,
           alignItems: 'center',
@@ -90,7 +90,6 @@ function VolumeSlider({ panelW, value, onChange }) {
         </Text>
       </View>
 
-      {/* Grey Track Background */}
       <View
         style={{
           position: "absolute",
@@ -105,7 +104,6 @@ function VolumeSlider({ panelW, value, onChange }) {
         pointerEvents="none"
       />
 
-      {/* Brown Track Fill */}
       <View
         style={{
           position: "absolute",
@@ -120,7 +118,6 @@ function VolumeSlider({ panelW, value, onChange }) {
         pointerEvents="none"
       />
 
-      {/* Thumb Circle */}
       <View
         pointerEvents="none"
         style={{
@@ -132,7 +129,11 @@ function VolumeSlider({ panelW, value, onChange }) {
           marginTop: -thumb / 2
         }}
       >
-        <Image source={CIRCLE_THUMB} style={{ width: '100%', height: '100%' }} resizeMode="contain" />
+        <Image
+          source={CIRCLE_THUMB}
+          style={{ width: '100%', height: '100%', transform: [{ scale: THUMB_SCALE }] }}
+          resizeMode="contain"
+        />
       </View>
     </View>
   );

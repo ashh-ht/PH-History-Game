@@ -1,5 +1,6 @@
 export const Chapter1_Part4 = [
 
+  // PROLOGUE
   {
     type: "system",
     intro: true,
@@ -14,10 +15,8 @@ export const Chapter1_Part4 = [
     text: "Soon, Bonifacio and his companions would give that struggle a new name."
   },
 
-
-
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 1
+  // SCENE 1: THE FOUNDING NIGHT
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
@@ -25,22 +24,22 @@ export const Chapter1_Part4 = [
     title: "The Founding Night",
     date: "July 7, 1892",
     background: require("../../../../Background Images/Usuals/Black Background.jpg"),
-    sfx:'oilLamp'
+    // SFX: oil lamp being lit
+    sfx: "oilLamp"
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
-    text: "After Rizal's exile, Andrés Bonifacio and the others realize that peaceful\nrequests alone have not been enough to bring change.",
+    text: "After Rizal's exile, Bonifacio and his companions decide that\npeaceful requests alone will not bring the change they seek.",
     music: "suspense",
     stopSfx: true
-    
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
-    text: "With their pact made, the six men turn to the question of what their\nnew brotherhood should become.",
+    text: "The small group gathers to form a secret brotherhood. Their goal:\nhelp one another and work for the Philippines' independence.",
     unlock: ["diaz-2", "diwa-2"]
   },
 
@@ -50,16 +49,17 @@ export const Chapter1_Part4 = [
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
     characters: [
       {
+        name: "DEODATO ARELLANO",
         source: require("../../../../Character Images/Chapter 4/Arellano Talking.png"),
         position: "left"
       },
       {
+        name: "ANDRÉS BONIFACIO",
         source: require("../../../../Character Images/Chapter 4/Bonifacio Unsure R.png"),
         position: "right"
       }
-
     ],
-    text: "Let's give this brotherhood a name. Not a league. Not\nanother reform group. A Katipunan."
+    text: "Let's give this brotherhood a name. Not a league. Not another reform\ngroup. A Katipunan."
   },
 
   {
@@ -68,15 +68,17 @@ export const Chapter1_Part4 = [
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
     characters: [
       {
+        name: "DEODATO ARELLANO",
         source: require("../../../../Character Images/Chapter 4/Arellano Neutral.png"),
         position: "left"
       },
       {
+        name: "ANDRÉS BONIFACIO",
         source: require("../../../../Character Images/Chapter 4/Bonifacio Talking R.png"),
         position: "right"
       }
     ],
-    text: "Yes. Tonight, we begin as one. The Katipunan will work for the\nfreedom of our country."
+    text: "Then let this be our promise: we stand together and work\nfor the freedom of our country."
   },
 
   {
@@ -88,7 +90,7 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
-    text: "Each man makes a small, symbolic cut on his arm and signs the founding register,\nmaking a solemn promise to their new brotherhood and its cause."
+    text: "Each man makes a small, symbolic cut on his arm and signs the\nfounding register, pledging himself to the brotherhood."
   },
 
   { type: "bloodtrace" },
@@ -96,14 +98,12 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
-    text: "The KKK is born. Dedicated to independence, mutual support,\ngood values, and education.",
+    text: "The Katipunan is born. A secret society committed to independence,\nmutual support, good values, and education.",
     unlock: ["Timeline_1892_07-07"]
   },
 
-
-
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 2
+  // SCENE 2: REDEFINING A NATION
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
@@ -111,23 +111,24 @@ export const Chapter1_Part4 = [
     title: "Redefining a Nation",
     date: "Mid-to-Late 1892",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx: 'stampPapers'
+    // SFX: papers being stamped
+    sfx: "stampPapers"
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Tondo_Caloocan street and market.png"),
-    text: "In the weeks that follow, Bonifacio and his young adviser, Emilio Jacinto,\nbegin redefining who belongs to the nation.",
+    text: "Bonifacio and his young adviser, Emilio Jacinto, want people\nfrom different islands to share one national identity.",
     unlock: ["jacinto-1", "Timeline_1892_MidLate"]
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Tondo_Caloocan street and market.png"),
-    text: "At the time, the word Filipino was mostly used for Spaniards born in the islands."
+    text: "Back then, the word Filipino was mostly used for Spaniards\nborn in the islands. Bonifacio and Jacinto want that to change."
   },
 
-  //T3_4 here
+  // T3_4 HERE
 
   {
     type: "dialogue",
@@ -135,10 +136,12 @@ export const Chapter1_Part4 = [
     background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
     characters: [
       {
+        name: "EMILIO JACINTO",
         source: require("../../../../Character Images/Chapter 4/Jacinto Talking.png"),
         position: "right"
       },
       {
+        name: "ANDRÉS BONIFACIO",
         source: require("../../../../Character Images/Chapter 4/Bonifacio Unsure.png"),
         position: "left"
       }
@@ -152,15 +155,17 @@ export const Chapter1_Part4 = [
     background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
     characters: [
       {
+        name: "EMILIO JACINTO",
         source: require("../../../../Character Images/Chapter 4/Jacinto Neutral.png"),
         position: "right"
       },
       {
+        name: "ANDRÉS BONIFACIO",
         source: require("../../../../Character Images/Chapter 4/Bonifacio Talking.png"),
         position: "left"
       }
     ],
-    text: "Tagalog, then. Not the language of one province, but the name for\neveryone born on this soil."
+    text: "Then let us reclaim the word Tagalog. Not just for one province,\nbut as a name for our people."
   },
 
   {
@@ -169,37 +174,38 @@ export const Chapter1_Part4 = [
     background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
     characters: [
       {
+        name: "EMILIO JACINTO",
         source: require("../../../../Character Images/Chapter 4/Jacinto Neutral.png"),
         position: "right"
       },
       {
+        name: "ANDRÉS BONIFACIO",
         source: require("../../../../Character Images/Chapter 4/Bonifacio Talking.png"),
         position: "left"
       }
     ],
-    text: "Mula ngayon, bisaya man, Iloko man, Kapampangan man, at iba pa ay Tagalog din.",
-    translation: "Whether Bisaya, Ilocano, Kapampangan, and so on, all are Tagalog too."
+    text: "Mula ngayon, Bisaya man, Iloko man, Kapampangan man,\nat iba pa ay Tagalog din.",
+    translation: "From now on, whether Bisaya, Ilocano, Kapampangan, or others, all are Tagalog too."
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
-    text: "The nation they imagine is called Katagalugan, a homeland\nbelonging to everyone in the archipelago.",
+    text: "They call this imagined homeland Katagalugan. A nation belonging\nto its people across the archipelago.",
     unlock: ["bonifacio-3"]
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
-    text: "To protect the movement from discovery, new members are recruited through\nthe Sistemang Patatsulok, or the \"Triangle System.\""
+    text: "But a growing movement faces another challenge: how can it recruit\nmore members without exposing its secrets?"
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
-    text: "Each member brings in only two others, who never learn each other's names. This\nsystem was slow but kept it difficult for Spanish spies to discover the alliance"
+    text: "The Triangle System offers one solution. Each member recruits two\nothers, who do not learn each other's identities."
   },
-
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // CHOICE 4.1
@@ -208,7 +214,7 @@ export const Chapter1_Part4 = [
   {
     type: "choice",
     title: "Choice 4.1: You are Andrés Bonifacio",
-    question: "The Triangle System keeps the Katipunan safe, but it is too\nslow to build a large movement.",
+    question: "The Triangle System protects the Katipunan, but it is too slow\nto build a large movement.",
     background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
     choices: [
       {
@@ -218,6 +224,7 @@ export const Chapter1_Part4 = [
         translation: "Groups of three won't be enough. We need thousands.",
         characters: [
           {
+            name: "ANDRÉS BONIFACIO",
             source: require("../../../../Character Images/Chapter 4/Bonifacio Talking.png"),
             position: "center"
           }
@@ -230,101 +237,93 @@ export const Chapter1_Part4 = [
         translation: "It's slow, but it's safe. Let's think it over before we change it.",
         characters: [
           {
+            name: "ANDRÉS BONIFACIO",
             source: require("../../../../Character Images/Chapter 4/Bonifacio Talking.png"),
             position: "center"
           }
         ]
       }
-    ],
-
-    nextScene: 22
+    ]
   },
-
-
 
   // CONTINUE
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Tondo_Caloocan street and market.png"),
-    text: "Either way, the slow system cannot keep up with the movement's needs."
+    text: "The Triangle System helps keep members hidden, but it cannot\nkeep up with the movement's growing needs."
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Tondo_Caloocan street and market.png"),
-    text: "Open recruiting begins around October 1892, and the Katipunan's\nmembership grows to the tens of thousands by 1896.",
+    text: "Around October 1892, the Katipunan begins recruiting more openly.\nBy 1896, its membership has grown to tens of thousands.",
     unlock: ["Timeline_1892_10"]
   },
 
-  //T1_4 here
+  // T1_4 HERE
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 3
+  // SCENE 3: DEGREES, PASSWORDS, AND SECRET SIGNS
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
-    title: "Degrees, Passwords, and the Chamber of Reflection",
+    title: "Degrees, Passwords, and Secret Signs",
     date: "1892–1894",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx:'quillWriting'
+    // SFX: quill writing
+    sfx: "quillWriting"
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
-    text: "Because many of the founders belonged to Masonic groups, the Katipunan\nborrows some of the same style of ceremony and structure."
+    text: "Inspired partly by Masonic traditions, the Katipunan develops\nits own ceremonies and levels of membership."
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
-    text: "Three levels of membership take shape, each with its own hood, sash, and password."
+    text: "Members advance through three levels: Katipon, Kawal, and Bayani.\nEach has its own clothing, signs, and passwords."
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
-    text: "The first level is Katipon, marked by a black hood with a white triangle. The second is\nKawal, with a green hood and ribbon. The third is Bayani, with a red mask and sash."
+    text: "Katipon wears a black hood with a white triangle. Kawal wears green,\nwhile Bayani wears a red mask and sash."
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
-    text: "New members go through a quiet initiation ceremony."
-  },
-
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 4/Katipunan initiation ritual.png"),
-    text: "This was meant to make them reflect on the nation's past, present, and future before\nreading and signing the Kartilya and making their own promise to the group."
+    text: "New members also take part in a quiet initiation. They reflect on\nthe nation's past, present, and future before pledging themselves."
   },
 
   { type: "oathtrace" },
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 4
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // SCENE 4: THE KARTILYA
+
 
   {
     type: "scene",
-    title: "The Kartilya and the Decalogue",
+    title: "The Kartilya",
     date: "1892–1893",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx:'quillWriting'
+    // SFX: quill writing
+    sfx: "quillWriting"
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
-    text: "Bonifacio has already written his own set of rules for the society, the Decalogue."
+    text: "Bonifacio writes a set of rules for the society called the Decalogue.\nBut Jacinto has a guide of his own: the Kartilya ng Katipunan."
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
-    text: "But Emilio Jacinto offers an alternative: the Kartilya ng Katipunan. Thirteen\nideas about honor, kindness, sacrifice, and treating people as equals.",
+    text: "Its thirteen teachings call for honor, kindness, sacrifice,\nand respect for people as equals.",
     unlock: ["jacinto-2", "Timeline_1894-1896"]
   },
 
@@ -334,15 +333,17 @@ export const Chapter1_Part4 = [
     background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
     characters: [
       {
+        name: "EMILIO JACINTO",
         source: require("../../../../Character Images/Chapter 4/Jacinto Talking R.png"),
         position: "left"
       },
       {
+        name: "ANDRÉS BONIFACIO",
         source: require("../../../../Character Images/Chapter 4/Bonifacio Happy.png"),
         position: "right"
       }
     ],
-    text: "Read this line, Andrés: \"All people are equal, whether their skin is light or dark.\""
+    text: "Read this line, Andrés: \"All people are equal,\nwhether their skin is light or dark.\""
   },
 
   {
@@ -351,15 +352,17 @@ export const Chapter1_Part4 = [
     background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
     characters: [
       {
+        name: "EMILIO JACINTO",
         source: require("../../../../Character Images/Chapter 4/Jacinto Talking R.png"),
         position: "left"
       },
       {
+        name: "ANDRÉS BONIFACIO",
         source: require("../../../../Character Images/Chapter 4/Bonifacio Happy.png"),
         position: "right"
       }
     ],
-    text: "One person may be wiser, richer, or more skilled than another, but that doesn't\nmake them more human. This is what should guide every member."
+    text: "Someone may be richer or wiser, but that doesn't make them\nmore human. Every member should live by this principle."
   },
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -369,44 +372,46 @@ export const Chapter1_Part4 = [
   {
     type: "choice",
     title: "Choice 4.2: You are Andrés Bonifacio",
-    question: "You've already written the Decalogue, but Jacinto's\nKartilya offers a clearer guide.",
+    question: "You've written the Decalogue, but Jacinto's Kartilya offers\na clearer guide for the society.",
     background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
     choices: [
       {
-        text: "Set your Decalogue aside and\nadopt Jacinto's Kartilya.",
+        text: "Adopt Jacinto's Kartilya.",
         speaker: "ANDRÉS BONIFACIO",
         dialogue: "Mas malalim ang isinulat mo kaysa sa akin, Emilio. Ito na ang gagamitin natin.",
         translation: "What you wrote goes deeper than mine, Emilio. This is what we'll use.",
         characters: [
           {
+            name: "EMILIO JACINTO",
             source: require("../../../../Character Images/Chapter 4/Jacinto Neutral R.png"),
             position: "left"
           },
           {
+            name: "ANDRÉS BONIFACIO",
             source: require("../../../../Character Images/Chapter 4/Bonifacio Talking R.png"),
             position: "right"
           }
         ]
       },
       {
-        text: "Ask Jacinto to help improve your\nDecalogue first.",
+        text: "Improve your Decalogue together first.",
         speaker: "ANDRÉS BONIFACIO",
         dialogue: "Tulungan mo akong pagandahin ang sa akin bago tayo magpasya.",
         translation: "Help me improve mine before we decide.",
         characters: [
           {
+            name: "EMILIO JACINTO",
             source: require("../../../../Character Images/Chapter 4/Jacinto Neutral R.png"),
             position: "left"
           },
           {
+            name: "ANDRÉS BONIFACIO",
             source: require("../../../../Character Images/Chapter 4/Bonifacio Talking R.png"),
             position: "right"
           }
         ]
       }
-    ],
-
-    nextScene: 38
+    ]
   },
 
   // CONTINUE
@@ -414,13 +419,13 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Kartilya ng Katipunan Emilio Jacinto, writng room.png"),
-    text: "Jacinto's Kartilya becomes the Katipunan's official guide, helping unite members \nfrom different parts of the archipelago under one shared set of values."
+    text: "Jacinto's Kartilya becomes the Katipunan's main guide. It reminds\nmembers that a person's worth isn't measured by wealth or skin color."
   },
 
-  //Q2_4 here
+  // Q2_4 HERE
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 5
+  // SCENE 5: THE LAKAMBINI AND THE RAIDS
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
@@ -428,23 +433,24 @@ export const Chapter1_Part4 = [
     title: "The Lakambini and the Raids",
     date: "1895–1896",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx: 'doorOpen'
+    // SFX: door opening
+    sfx: "doorOpen"
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Tondo_Caloocan street and market.png"),
-    text: "As the society grows, so does Spanish suspicion. Spanish authorities\nbegin searching homes across Caloocan and Tondo."
+    text: "As the Katipunan grows, Spanish suspicion grows with it.\nAuthorities begin searching homes in Tondo and Caloocan."
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Safe-house interior (Gregoria's scenes).png"),
-    text: "Gregoria de Jesús, Bonifacio's wife and the Lakambini of the KKK, becomes\nthe keeper of the group's secret papers, seals, and supplies.",
+    text: "Gregoria de Jesús, Bonifacio's wife and the Katipunan's Lakambini,\nguards its secret papers, seals, and supplies.",
     unlock: ["gregoria-1", "gregoria-2", "Timeline_1895-1896"]
   },
 
-  //T4_4 here
+  // T4_4 HERE
 
   {
     type: "dialogue",
@@ -452,6 +458,7 @@ export const Chapter1_Part4 = [
     background: require("../../../../Background Images/Part 4/Safe-house interior (Gregoria's scenes).png"),
     characters: [
       {
+        name: "GREGORIA DE JESÚS",
         source: require("../../../../Character Images/Chapter 4/Gregoria Neutral.png"),
         position: "center"
       }
@@ -467,16 +474,17 @@ export const Chapter1_Part4 = [
   {
     type: "choice",
     title: "Choice 4.3: You are Gregoria de Jesús",
-    question: "Spanish authorities are searching houses for Katipunan materials.",
+    question: "Spanish authorities are searching homes for Katipunan materials.",
     background: require("../../../../Background Images/Part 4/Safe-house interior (Gregoria's scenes).png"),
     choices: [
       {
-        text: "Keep moving the documents and\nsupplies from house to house.",
+        text: "Keep moving the documents\nfrom house to house.",
         speaker: "GREGORIA DE JESÚS",
         dialogue: "Isa pang bahay. Isa pa.",
         translation: "One more house. Just one more.",
         characters: [
           {
+            name: "GREGORIA DE JESÚS",
             source: require("../../../../Character Images/Chapter 4/Gregoria Neutral.png"),
             position: "center"
           }
@@ -489,71 +497,72 @@ export const Chapter1_Part4 = [
         translation: "If there's one truly safe place, I'll hide everything there.",
         characters: [
           {
+            name: "GREGORIA DE JESÚS",
             source: require("../../../../Character Images/Chapter 4/Gregoria Neutral.png"),
             position: "center"
           }
         ]
       }
-    ],
-
-    //nextScene: 40
-    //nextScene: 40
+    ]
   },
-
 
   // CONTINUE
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Tandang Sora Melchora Aquino house.png"),
-    text: "Gregoria protects the Katipunan's documents and supplies, keeping the movement's\nplans safe until the time comes for the Cry of Pugad Lawin."
+    text: "Gregoria keeps protecting the movement's papers and supplies,\nhelping preserve its plans for the struggle ahead."
   },
 
-
-  // -----!!!!!!!!!! SCENE 6 !!!!!!!!!!-----
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // SCENE 6: KALAYAAN AND THE SURGE
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
     title: "Kalayaan and the Surge",
     date: "March 1896",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx:'newspaper'
+    // SFX: newspaper printing
+    sfx: "newspaper"
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/19th century hand press printing shop.png"),
-    text: "To spread the society's ideas, Emilio Jacinto edits a\nsecret newspaper called: \"Kalayaan.\"",
+    text: "In March 1896, Emilio Jacinto helps spread the Katipunan's message\nthrough a secret newspaper called Kalayaan or \"Freedom.\"",
     unlock: ["jacinto-3", "Timeline_1896_03"]
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/19th century hand press printing shop.png"),
-    text: "To confuse Spanish investigators, it is printed with a false location and a decoy\neditor's name. Only one edition is printed, but it is enough."
+    text: "The paper uses a false printing location and a decoy editor's name\nto confuse Spanish investigators. Even one edition makes an impact."
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Tondo_Caloocan street and market.png"),
-    text: "Membership grows quickly across the country, reaching tens of thousands by 1896."
+    text: "More Filipinos join. By 1896, the Katipunan has grown\nto tens of thousands of members."
   },
 
-
-  // -----!!!!!!!!!! SCENE 7 !!!!!!!!!!-----
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // SCENE 7: DISCOVERY AND THE NATIONAL ASSEMBLY
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   {
     type: "scene",
     title: "Discovery and the National Assembly",
     date: "August 1896",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx:'marching'
+    // SFX: urgent marching
+    sfx: "marching"
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Tondo_Caloocan street and market.png"),
-    text: "On August 19, 1896, the Katipunan's existence is revealed to Spanish\nauthorities. Raids and arrests follow within hours.",
+    text: "On August 19, 1896, Spanish authorities discover the Katipunan.\nRaids and arrests put the secret movement in immediate danger.",
     unlock: ["Timeline_1896_08-19", "patino-1", "patino-2", "honoria-1", "teresa-1"]
   },
 
@@ -563,6 +572,7 @@ export const Chapter1_Part4 = [
     background: require("../../../../Background Images/Part 4/Tondo_Caloocan street and market.png"),
     characters: [
       {
+        name: "ANDRÉS BONIFACIO",
         source: require("../../../../Character Images/Chapter 4/Bonifacio Talking Mad.png"),
         position: "center"
       }
@@ -574,14 +584,14 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Melchora's barn, Banlat, Kalookan.png"),
-    text: "On August 24, 1896, Bonifacio gathers Katipunan leaders in a barn in\nBanlat, Kalookan, owned by Melchora Aquino.",
+    text: "On August 24, Bonifacio gathers Katipunan leaders in a barn\nin Banlat, Kalookan, owned by Melchora Aquino.",
     unlock: ["Timeline_1896_08-24", "melchora-1", "melchora-2"]
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Melchora's barn, Banlat, Kalookan.png"),
-    text: "Together, they decide to declare a nationwide movement for independence\nand turn the secret society into an organized, self-governing nation."
+    text: "The leaders decide to push forward with the struggle for independence\nand organize their movement for the fight ahead."
   },
 
   {
@@ -590,6 +600,7 @@ export const Chapter1_Part4 = [
     background: require("../../../../Background Images/Part 4/Melchora's barn, Banlat, Kalookan.png"),
     characters: [
       {
+        name: "ANDRÉS BONIFACIO",
         source: require("../../../../Character Images/Chapter 4/Bonifacio Talking Mad.png"),
         position: "center"
       }
@@ -601,16 +612,31 @@ export const Chapter1_Part4 = [
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 4/Melchora's barn, Banlat, Kalookan.png"),
-    text: "With Bonifacio chosen as its leader, the Katipunan becomes a self-governing movement\nand takes another major step toward the independence still to come.",
+    text: "With Bonifacio as its leader, the Katipunan takes another step\ntoward building a nation free from Spanish rule.",
     unlock: ["bonifacio-4"]
   },
 
+  // ENDING
 
   {
     type: "scene",
     title: "The Katipunan is no longer a secret.",
     date: "Its dream of independence is about to become a revolution.",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
+  },
+
+  {
+    type: "system",
+    intro: true,
+    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    text: "The Katipunan has grown from a small secret group into a large movement."
+  },
+
+  {
+    type: "system",
+    intro: true,
+    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    text: "Its members are ready to fight for independence.\nBut Spain has discovered their secret."
   },
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -636,6 +662,7 @@ export const Chapter1_Part4 = [
     correctIndex: 1,
     unlock: ["remnant-part4-1"]
   },
+
   {
     type: "quiz",
     question: "What name did the Katipunan use for the nation it imagined?",
@@ -648,6 +675,7 @@ export const Chapter1_Part4 = [
     correctIndex: 2,
     unlock: ["remnant-part4-2"]
   },
+
   {
     type: "quiz",
     question: "What was the purpose of the Triangle System?",
@@ -660,6 +688,7 @@ export const Chapter1_Part4 = [
     correctIndex: 2,
     unlock: ["remnant-part4-3"]
   },
+
   {
     type: "quiz",
     question: "Who wrote the Kartilya ng Katipunan?",
@@ -672,6 +701,7 @@ export const Chapter1_Part4 = [
     correctIndex: 1,
     unlock: ["remnant-part4-4"]
   },
+
   {
     type: "quiz",
     question: "What happened after the Katipunan was discovered by\nSpanish authorities in August 1896?",
@@ -684,10 +714,10 @@ export const Chapter1_Part4 = [
     correctIndex: 2,
     unlock: ["remnant-part4-5"]
   },
-  // NEW QUESTION ADDED
+
   {
     type: "quiz",
-    question: "Who was the 'Lakambini' (Muse) of the Katipunan who safeguarded its secret documents?",
+    question: "Who was the Lakambini of the Katipunan who safeguarded its secret documents?",
     options: [
       "Melchora Aquino",
       "Gregoria de Jesús",
@@ -699,10 +729,17 @@ export const Chapter1_Part4 = [
   },
 
   {
-      type: "scene",
-      title: "Chapter Complete.",
-      date: "The secret of the Katipunan is now out.",
-      background: require("../../../../Background Images/Usuals/Black Background.jpg")
+    type: "scene",
+    title: "Chapter Complete.",
+    date: "The secret is out.",
+    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+  },
+
+  {
+    type: "scene",
+    title: "What began in secret would soon shake the entire country.",
+    date: " ",
+    background: require("../../../../Background Images/Usuals/Black Background.jpg")
   }
 
 ];

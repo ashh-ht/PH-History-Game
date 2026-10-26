@@ -8,6 +8,7 @@ import {
     useWindowDimensions,
     View,
 } from 'react-native';
+import MinigameOverlay from '../../../Components/Minigameoverlay';
 
 const GAME_SECONDS = 60;
 const TARGET_SUPPLIES = 10;
@@ -15,16 +16,11 @@ const START_HULL = 5;
 
 const TICK_MS = 50;
 
-// NOTE: how fast the player's boat moves left/right (pixels per tick).
 const STEER_SPEED = 7;
 
-// NOTE: how fast rocks / supplies / waves fall.
-// Starts at BASE_SPEED and ramps up over time until it hits MAX_SPEED.
-// (MAX_SPEED must be higher than BASE_SPEED or nothing ever speeds up.)
 const BASE_SPEED = 6;
 const MAX_SPEED = 14;
 
-// NOTE: RATE AT WHICH THINGS SPAWN. HIGHER NUMBER = SLOWER SPAWN. LOWER NUMBER = FASTER SPAWN.
 const ROCK_SPAWN_MS = 3000;
 const SUPPLY_SPAWN_MS = 1900;
 const WAVE_SPAWN_MS = 2200;
@@ -41,9 +37,6 @@ const SUPPLY_HEIGHT = 60;
 const WAVE_WIDTH = 90;
 const WAVE_HEIGHT = 68;
 
-// =====================================================
-// OBSTACLE IMAGES
-// =====================================================
 const ROCK_IMAGES = [
     require('../../../assets/Minigames/Part1/Rock.png'),
     require('../../../assets/Minigames/Part1/Rock2.png'),
@@ -55,15 +48,8 @@ const WAVE_IMAGES = [
     require('../../../assets/Minigames/Part1/Waves2.png'),
 ];
 
-// NOTE: how far to move the ship DOWN, in pixels.
-// 0 = original spot, bigger = lower, negative = higher.
-// (The hitbox moves with it. Don't go much past 80 or rocks and waves
-// will disappear before they reach the ship.)
 const SHIP_Y_OFFSET = 30;
 
-// =====================================================
-// HITBOXES
-// =====================================================
 const HIT_LEFT = 0.15;
 const HIT_RIGHT = 0.15;
 const HIT_TOP = 0.58;
@@ -96,16 +82,13 @@ const overlaps = (a, b) =>
     a.top < b.bottom &&
     a.bottom > b.top;
 
-function VoyageMinigame({ onComplete, paused = false, onPhaseChange }) {
+function VoyageMinigame({ onComplete, onSettings }) {
+    const [paused, setPaused] = useState(false);
     const { width, height } = useWindowDimensions();
-
-    // Space reserved at the bottom for the (now lifted) control buttons
     const controlsHeight = 110;
-    // Space reserved at the top for the HUD + stats panel
     const playTop = 95;
     const playBottom = height - controlsHeight;
 
-    // Where the ship image is drawn (also used by the hitbox)
     const shipTop = playBottom - SHIP_HEIGHT - 12 + SHIP_Y_OFFSET;
 
     const [shipX, setShipX] = useState(
@@ -139,53 +122,29 @@ function VoyageMinigame({ onComplete, paused = false, onPhaseChange }) {
     const lastSecondRef = useRef(-1);
     const startTimeRef = useRef(Date.now());
 
-    // =====================================================
-    // PAUSE SUPPORT
-    // While paused the game loop skips every tick. When the game
-    // resumes, the round clock and the spawn timers are pushed back by
-    // however long the pause lasted, so nothing jumps ahead.
-    // =====================================================
-
-    const pausedRef = useRef(false);
+    
+    const pausedRef = useRef(paused);
     const pausedAtRef = useRef(null);
+    pausedRef.current = paused;
 
     useEffect(() => {
-        if (paused) {
-            pausedRef.current = true;
-            pausedAtRef.current = Date.now();
+        if (gameState !== 'playing') return;
 
-            // Let go of the steering buttons so the ship doesn't drift
+        if (paused) {
+            if (pausedAtRef.current === null) {
+                pausedAtRef.current = Date.now();
+            }
             directionRef.current = 0;
             setShipDirection(0);
-        } else if (pausedRef.current) {
-            pausedRef.current = false;
-
-            const delta = Date.now() - (pausedAtRef.current ?? Date.now());
-
-            startTimeRef.current += delta;
-            lastRockSpawnRef.current += delta;
-            lastSupplySpawnRef.current += delta;
-            lastWaveSpawnRef.current += delta;
-
+        } else if (pausedAtRef.current !== null) {
+            const pausedFor = Date.now() - pausedAtRef.current;
+            startTimeRef.current += pausedFor;
+            lastRockSpawnRef.current += pausedFor;
+            lastSupplySpawnRef.current += pausedFor;
+            lastWaveSpawnRef.current += pausedFor;
             pausedAtRef.current = null;
         }
-    }, [paused]);
-
-    // Tells the parent which screen we are on ("intro" = instructions,
-    // "playing", "result" = win / lose) so it can adjust the pause button.
-    useEffect(() => {
-        if (!onPhaseChange) {
-            return;
-        }
-
-        if (gameState === 'intro') {
-            onPhaseChange('intro');
-        } else if (gameState === 'won' || gameState === 'lost') {
-            onPhaseChange('result');
-        } else {
-            onPhaseChange('playing');
-        }
-    }, [gameState, onPhaseChange]);
+    }, [paused, gameState]);
 
     useEffect(() => {
         if (gameState !== 'playing') {
@@ -197,11 +156,10 @@ function VoyageMinigame({ onComplete, paused = false, onPhaseChange }) {
         lastSupplySpawnRef.current = Date.now();
         lastWaveSpawnRef.current = Date.now();
         lastSecondRef.current = -1;
+        pausedAtRef.current = null;
 
         const timer = setInterval(() => {
-            if (pausedRef.current) {
-                return;
-            }
+            if (pausedRef.current) return;
 
             const now = Date.now();
             const elapsed = (now - startTimeRef.current) / 1000;
@@ -212,7 +170,6 @@ function VoyageMinigame({ onComplete, paused = false, onPhaseChange }) {
                 setSeconds(Math.min(currentSecond, GAME_SECONDS));
             }
 
-            // Ramps from BASE_SPEED up to MAX_SPEED over the whole round
             const speed = Math.min(
                 BASE_SPEED + (elapsed / GAME_SECONDS) * (MAX_SPEED - BASE_SPEED),
                 MAX_SPEED
@@ -240,7 +197,6 @@ function VoyageMinigame({ onComplete, paused = false, onPhaseChange }) {
                 .map((item) => ({ ...item, y: item.y + speed * 0.55 }))
                 .filter((item) => item.y < playBottom + WAVE_HEIGHT);
 
-            // Spawn Rocks (Randomly picks one of the 3 rock images)
             if (now - lastRockSpawnRef.current > ROCK_SPAWN_MS) {
                 lastRockSpawnRef.current = now;
                 nextRocks.push({
@@ -251,7 +207,6 @@ function VoyageMinigame({ onComplete, paused = false, onPhaseChange }) {
                 });
             }
 
-            // Spawn Supplies
             if (now - lastSupplySpawnRef.current > SUPPLY_SPAWN_MS) {
                 lastSupplySpawnRef.current = now;
                 nextSupplies.push({
@@ -261,7 +216,6 @@ function VoyageMinigame({ onComplete, paused = false, onPhaseChange }) {
                 });
             }
 
-            // Spawn Waves (Randomly picks between Waves.png and Waves2.png)
             if (now - lastWaveSpawnRef.current > WAVE_SPAWN_MS) {
                 lastWaveSpawnRef.current = now;
                 nextWaves.push({
@@ -269,6 +223,7 @@ function VoyageMinigame({ onComplete, paused = false, onPhaseChange }) {
                     x: Math.random() * Math.max(1, width - WAVE_WIDTH),
                     y: playTop - WAVE_HEIGHT,
                     opacity: 0.7 + Math.random() * 0.2,
+                    type: Math.floor(Math.random() * WAVE_IMAGES.length),
                     type: Math.floor(Math.random() * WAVE_IMAGES.length),
                 });
             }
@@ -285,6 +240,7 @@ function VoyageMinigame({ onComplete, paused = false, onPhaseChange }) {
 
             let hitRock = false;
             nextRocks = nextRocks.filter((item) => {
+                const hit = overlaps(shipRect, objectRect(item, ROCK_WIDTH, ROCK_HEIGHT, ROCK_HIT));
                 const hit = overlaps(shipRect, objectRect(item, ROCK_WIDTH, ROCK_HEIGHT, ROCK_HIT));
                 if (hit) hitRock = true;
                 return !hit;
@@ -342,10 +298,6 @@ function VoyageMinigame({ onComplete, paused = false, onPhaseChange }) {
         return () => clearInterval(timer);
     }, [gameState, height, width, playBottom, playTop, shipTop]);
 
-    // =====================================================
-    // RESTART
-    // =====================================================
-
     const restart = () => {
         const startX = Math.max(0, width / 2 - SHIP_WIDTH / 2);
         directionRef.current = 0;
@@ -361,6 +313,8 @@ function VoyageMinigame({ onComplete, paused = false, onPhaseChange }) {
 
         lastSecondRef.current = -1;
         startTimeRef.current = Date.now();
+        pausedAtRef.current = null;
+        setPaused(false);
 
         hullRef.current = START_HULL;
         collectedRef.current = 0;
@@ -602,6 +556,21 @@ function VoyageMinigame({ onComplete, paused = false, onPhaseChange }) {
                         </View>
                     </View>
                 )}
+
+                {gameState === 'playing' && (
+                    <MinigameOverlay
+                        paused={paused}
+                        hideSettings={!onSettings}
+                        top={20}
+                        right={20}
+                        onPause={() => setPaused(true)}
+                        onResume={() => setPaused(false)}
+                        onSettings={() => {
+                            setPaused(true);
+                            onSettings?.();
+                        }}
+                    />
+                )}
             </ImageBackground>
         </View>
     );
@@ -620,7 +589,6 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(143, 180, 166, 0.89)',
     },
 
-    // Health and supplies sit together at the top left
     header: {
         position: 'absolute',
         top: 12,
@@ -631,7 +599,6 @@ const styles = StyleSheet.create({
         zIndex: 20,
     },
 
-    // Time stays centered at the top
     timeWrap: {
         position: 'absolute',
         top: 12,
@@ -706,7 +673,6 @@ const styles = StyleSheet.create({
         marginTop: 6,
     },
 
-    // Left button at the bottom left, right button at the bottom right
     controls: {
         position: 'absolute',
         bottom: 28,

@@ -13,7 +13,7 @@ import useScale from '../../../Components/ScreenScaler';
 
 const BACKGROUND = require('../../../Background Images/Part 4/tracingplatform.png');
 
-// pointers of x and y to determine each stroke
+
 const FONT = {
   A: [
     [[0, 1], [0.5, 0], [1, 1]],
@@ -49,15 +49,13 @@ const FONT = {
   ],
 };
 
-// ---------------------------------------------------------------
-// TUNING (all in dp, so they stay finger-sized on any phone)
-// ---------------------------------------------------------------
-const LETTER_ASPECT = 0.68; // letter width / letter height
-const LOOKAHEAD = 3; // how many checkpoints a fast finger may skip in one move
-const OFF_PATH = 1.6; // how far off the line (x radius) before the stroke resets. Lower = stricter
-const START_SLACK = 1.3; // start dot is a bit more forgiving (x radius)
-const RESET_ON_LIFT = true; // lifting your finger mid-stroke restarts that stroke
-const MIN_RADIUS = 26; // minimum touch tolerance in dp, about half a thumb pad
+
+const LETTER_ASPECT = 0.68; 
+const LOOKAHEAD = 3; 
+const OFF_PATH = 1.6; 
+const START_SLACK = 1.3; 
+const RESET_ON_LIFT = true; 
+const MIN_RADIUS = 26; 
 const GUIDE_FAINT = 'rgba(255, 242, 203, 0.18)';
 const GUIDE_STRONG = 'rgba(255, 242, 203, 0.5)';
 
@@ -67,7 +65,7 @@ function toPath(points) {
     .join(' ');
 }
 
-// Adds evenly spaced "checkpoints" along a stroke
+
 function sample(points, step) {
   const out = [points[0]];
   for (let i = 1; i < points.length; i++) {
@@ -82,7 +80,7 @@ function sample(points, step) {
   return out;
 }
 
-// Distance from point (x, y) to the closest spot on a polyline
+
 function distToPath(pts, x, y) {
   let best = Infinity;
   for (let i = 1; i < pts.length; i++) {
@@ -99,15 +97,13 @@ function distToPath(pts, x, y) {
   return best;
 }
 
-// How many checkpoints come before a given stroke inside letter.points
 function strokeBase(letter, strokeIdx) {
   let base = 0;
   for (let i = 0; i < strokeIdx; i++) base += letter.strokePts[i].length;
   return base;
 }
 
-// Where does the first stroke of a letter begin? ("bottom-left", "top", ...)
-// Used by the instructions screen so the text is right for any word.
+
 function describeStart(char) {
   const p = FONT[char]?.[0]?.[0];
   if (!p) return 'glowing dot';
@@ -120,7 +116,7 @@ function describeStart(char) {
   return `${v}-${h}`;
 }
 
-// One big letter at a time, so the thumb has room and the finger doesn't hide the whole word.
+
 function buildLayout(word, width, height) {
   const chars = word.toUpperCase().split('');
 
@@ -128,7 +124,7 @@ function buildLayout(word, width, height) {
   let letterW = letterH * LETTER_ASPECT;
 
   const strokeW = Math.max(letterW * 0.2, 16);
-  const pad = strokeW * 1.6; // extra touchable space around the letter
+  const pad = strokeW * 1.6;
   const step = Math.max(letterH / 14, 8);
 
   const letters = [];
@@ -157,7 +153,7 @@ function buildLayout(word, width, height) {
   };
 }
 
-// Draws the background image if you set one, otherwise a plain dark color
+
 function Screen({ style, children }) {
   if (BACKGROUND) {
     return (
@@ -175,23 +171,23 @@ function WordTrace({
   hint,
   doneText = 'Well done.',
   inkColor = '#B3201A',
-  paused = false, // set by PartRenderer when the pause panel is open
-  onPhaseChange, // tells PartRenderer: "intro" | "playing" | "result"
+  paused = false, 
+  onPhaseChange, 
   onComplete,
 }) {
-  // ALL hooks stay at the top, before any "if ... return"
+
   const { s } = useScale();
   const { width, height } = useWindowDimensions();
   const landscape = width > height;
   const styles = useMemo(() => makeStyles(s), [s]);
   const layout = useMemo(() => buildLayout(word, width, height), [word, width, height]);
 
-  const [started, setStarted] = useState(false); // false = instructions screen
-  const [idx, setIdx] = useState(0); // which letter is being traced
-  const [hits, setHits] = useState([]); // checkpoints already covered on this letter
-  const [trail, setTrail] = useState([]); // the finger's path on this stroke
+  const [started, setStarted] = useState(false);
+  const [idx, setIdx] = useState(0); 
+  const [hits, setHits] = useState([]); 
+  const [trail, setTrail] = useState([]); 
 
-  // The finger handler lives outside React's render cycle, so it reads these refs
+
   const layoutRef = useRef(layout);
   layoutRef.current = layout;
   const pausedRef = useRef(false);
@@ -199,11 +195,11 @@ function WordTrace({
   const idxRef = useRef(0);
   const hitsRef = useRef(new Set());
   const trailRef = useRef([]);
-  const progRef = useRef({ stroke: 0, next: 0 }); // next = next checkpoint to hit in the current stroke
+  const progRef = useRef({ stroke: 0, next: 0 }); 
 
   const pan = useRef(null);
   if (!pan.current) {
-    // wipe the stroke the player is currently on (finished strokes stay)
+
     const resetStroke = () => {
       const letter = layoutRef.current.letters[idxRef.current];
       if (!letter) return;
@@ -218,7 +214,7 @@ function WordTrace({
     };
 
     const touch = (e, start) => {
-      if (pausedRef.current) return; // paused: ignore the finger
+      if (pausedRef.current) return; 
 
       const x = e.nativeEvent.locationX;
       const y = e.nativeEvent.locationY;
@@ -234,18 +230,17 @@ function WordTrace({
 
       if (start) trailRef.current = [];
 
-      // 1) drifted off the line? wipe this stroke (only if they had made progress)
+
       if (distToPath(pts, x, y) > radius * OFF_PATH) {
         if (prog.next > 0) resetStroke();
         return;
       }
 
-      // 2) a stroke has to begin at its start dot
+
       if (prog.next === 0 && d(pts[0]) > radius * START_SLACK) return;
 
       trailRef.current.push({ x, y });
 
-      // 3) only the next few checkpoints can be hit, in order
       let reached = -1;
       const last = Math.min(prog.next + LOOKAHEAD, pts.length - 1);
       for (let k = prog.next; k <= last; k++) {
@@ -256,7 +251,6 @@ function WordTrace({
         prog.next = reached + 1;
       }
 
-      // 4) stroke done -> next stroke, all strokes done -> next letter
       if (prog.next >= pts.length) {
         prog.stroke += 1;
         prog.next = 0;
@@ -301,8 +295,7 @@ function WordTrace({
   const current = layout.letters[idx];
   const activeStroke = progRef.current.stroke;
 
-  // Tell the parent which screen we're on, so it only shows the
-  // pause button while the player is actually tracing.
+
   useEffect(() => {
     if (!onPhaseChange) return;
     if (!started) onPhaseChange('intro');
@@ -314,9 +307,7 @@ function WordTrace({
     if (onComplete) onComplete({ word });
   };
 
-  // ---------------------------------------------------------------
-  // INSTRUCTIONS SCREEN (shown before tracing begins)
-  // ---------------------------------------------------------------
+
   if (!started) {
     const first = layout.letters[0];
     const startPt = first?.strokes[0][0];
@@ -385,7 +376,7 @@ function WordTrace({
     );
   }
 
-  // small preview of the whole word on top (done / current / upcoming)
+  
   let letterCounter = -1;
   const preview = layout.chars.map((c, ci) => {
     if (c === ' ') return <View key={ci} style={styles.previewGap} />;
@@ -407,7 +398,7 @@ function WordTrace({
 
         <View style={styles.previewRow}>{preview}</View>
 
-        {/* The touch area. The drawing inside ignores touches so the finger position stays accurate. */}
+  
         <View
           style={{ width: layout.canvasW, height: layout.canvasH }}
           {...pan.current.panHandlers}
@@ -429,7 +420,7 @@ function WordTrace({
                 )),
               )}
 
-              {/* ink appears along the letter as you cover it */}
+
               {current &&
                 hits.map((k) => (
                   <Circle
@@ -440,8 +431,6 @@ function WordTrace({
                     fill={inkColor}
                   />
                 ))}
-
-              {/* start dot for the stroke you're on right now */}
               {current && current.strokes[activeStroke] && (
                 <Circle
                   cx={current.strokes[activeStroke][0].x}
@@ -451,7 +440,7 @@ function WordTrace({
                 />
               )}
 
-              {/* thin line that follows the finger */}
+
               {trail.length > 1 && (
                 <Path
                   d={toPath(trail)}
@@ -482,9 +471,7 @@ function WordTrace({
   );
 }
 
-// ---------------------------------------------------------------
-// The two Chapter 4 games. Both use the same component with different words.
-// ---------------------------------------------------------------
+
 export function BloodTrace(props) {
   return (
     <WordTrace
@@ -505,13 +492,13 @@ export function OathTrace(props) {
       title="Initiation Oath Tracing"
       hint="Start at the glowing dot and trace without lifting your finger."
       doneText="The oath is taken."
-      inkColor="#1f1d1c"
+      inkColor="#29271b"
       {...props}
     />
   );
 }
 
-// Every size is "number * s" so it scales on any phone
+
 const makeStyles = (s) =>
   StyleSheet.create({
     screen: {
@@ -551,10 +538,12 @@ const makeStyles = (s) =>
       fontWeight: '700',
       marginHorizontal: 2 * s,
     },
+
     previewDone: { opacity: 1 },
     previewNow: { color: '#FFF2CB' },
     previewNext: { color: 'rgba(255, 242, 203, 0.3)' },
     previewGap: { width: 12 * s },
+
     progress: {
       fontSize: 13 * s,
       color: 'rgba(255, 242, 203, 0.7)',
@@ -581,7 +570,7 @@ const makeStyles = (s) =>
       color: '#FFF2CB',
     },
 
-    // instructions screen
+   
     introRow: {
       flexDirection: 'row',
       gap: 24 * s,

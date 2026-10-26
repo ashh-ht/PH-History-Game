@@ -338,8 +338,6 @@ export default function DecipherMinigame({
     onCompleteRef.current = onComplete;
   }, [onComplete]);
 
-  // Pause support: the clock is frozen while `paused` is true, and the
-  // deadline is pushed back by however long the pause lasted.
   const pausedRef = useRef(false);
   const pausedAtRef = useRef(null);
 
@@ -358,8 +356,7 @@ export default function DecipherMinigame({
     }
   }, [paused]);
 
-  // Tells the parent which screen we are on ("intro" = instructions,
-  // "playing", "result" = final screen) so it can adjust the pause button.
+
   useEffect(() => {
     if (!onPhaseChange) return;
 
@@ -368,7 +365,6 @@ export default function DecipherMinigame({
     else onPhaseChange("playing");
   }, [screen, onPhaseChange]);
 
-  // Sound helper that never crashes if audio isn't ready
   const sfx = useCallback(
     (key) => {
       try {
@@ -381,7 +377,6 @@ export default function DecipherMinigame({
   const currentPuzzle = PUZZLES[puzzleIndex];
   const letters = currentPuzzle.scrambled;
 
-  // The word the player has built so far
   const answer = placed
     .map((tileIndex) => (tileIndex == null ? "" : letters[tileIndex]))
     .join("");
@@ -420,7 +415,6 @@ export default function DecipherMinigame({
         remainingMsRef.current = ms;
         setRemainingMs(ms);
         if (ms <= 0) {
-          // Set the phase synchronously so no submission can win at the deadline.
           phaseRef.current = "gameover";
           stopTimer();
           setRemainingMs(0);
@@ -472,7 +466,6 @@ export default function DecipherMinigame({
     [clearErrorFeedback, sfx]
   );
 
-  // Tap a tile: it goes into the first empty box
   const handleTileTap = useCallback(
     (tileIndex) => {
       if (phaseRef.current !== "active" || pausedRef.current) return;
@@ -485,7 +478,6 @@ export default function DecipherMinigame({
     [placeTile]
   );
 
-  // Tap a filled box: the letter goes back to the tray
   const removeFromSlot = useCallback(
     (slotIndex) => {
       if (phaseRef.current !== "active" || pausedRef.current) return;
@@ -626,8 +618,6 @@ export default function DecipherMinigame({
     puzzleIndexRef.current = nextIndex;
     setPuzzleIndex(nextIndex);
     setPlaced(emptySlots(nextIndex));
-    // Allow the next puzzle to be submitted; the single existing timer continues
-    // against the updated absolute deadline.
     submittedRef.current = false;
   }, [answer, allFilled, finishGameOver, stopTimer, sfx]);
 
@@ -639,19 +629,16 @@ export default function DecipherMinigame({
   const progress = Math.max(0, Math.min(1, remainingMs / TOTAL_MS));
   const lowTime = seconds <= 10;
 
-  // 1 = fits as is. Smaller = shrink to fit (never below 0.4).
-  const FIT_PADDING = 28; // top + bottom padding of the play area
+  const FIT_PADDING = 28;
   const fitScale =
     areaH > 0 && contentH > 0
       ? Math.min(1, Math.max(0.4, (areaH - FIT_PADDING) / contentH))
       : 1;
 
-  // Tray tiles shrink on small / landscape screens so long words always fit
+
   const tileW = landscape ? 30 : 36;
   const tileH = landscape ? 38 : 46;
   const tileFont = landscape ? 18 : 21;
-
-  // Answer boxes size themselves to fit the row (never bigger than 40)
   const SLOT_GAP = 5;
   const slotCount = placed.length;
   const slotW =
@@ -663,10 +650,6 @@ export default function DecipherMinigame({
       : 34;
   const slotH = Math.round(slotW * 1.2);
   const slotFont = Math.round(slotW * 0.55);
-
-  // ---------------------------------------------------
-  // SCREENS
-  // ---------------------------------------------------
 
   const startPanel = (
     <Panel style={styles.centerPanel}>
@@ -890,12 +873,8 @@ export default function DecipherMinigame({
   );
 }
 
-// =====================================================
-// STYLES
-// =====================================================
-
-const INK = "#422912"; // same brown the speaker names use
-const BUTTON_INK = "#371f10"; // same as quiz buttons
+const INK = "#422912";
+const BUTTON_INK = "#371f10";
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
@@ -913,7 +892,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
   },
 
-  // HEADER
+
   header: {
     alignItems: "center",
     justifyContent: "center",
@@ -940,7 +919,7 @@ const styles = StyleSheet.create({
   timerValue: { color: "#FFFFFF", fontSize: 20, fontWeight: "bold" },
   timerTextLow: { color: "#ff9b82" },
 
-  // PANELS
+
   panel: {
     paddingTop: PANEL_PAD_TOP,
     paddingBottom: PANEL_PAD_BOTTOM,
@@ -1009,7 +988,7 @@ const styles = StyleSheet.create({
   ruleBox: { marginVertical: 14, alignSelf: "center" },
   ruleText: { color: INK, fontSize: 14, lineHeight: 22 },
 
-  // LETTERS (tray)
+
   letterTray: {
     flexDirection: "row",
     justifyContent: "center",
@@ -1047,7 +1026,7 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
   },
 
-  // ANSWER BOXES
+
   inputLabel: {
     color: INK,
     fontSize: 13,
@@ -1098,7 +1077,7 @@ const styles = StyleSheet.create({
   successText: { color: "#1f6b34" },
   errorText: { color: "#a3281b" },
 
-  // BUTTONS
+
   buttonWrap: { alignSelf: "center", width: "80%", maxWidth: 300, marginTop: 8 },
   buttonSecondary: { opacity: 0.85 },
   buttonBg: {
@@ -1116,7 +1095,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 
-  // PROGRESS
+
   progressTrack: { flexDirection: "row", gap: 5, marginBottom: 10 },
   progressSegment: {
     flex: 1,
@@ -1136,7 +1115,7 @@ const styles = StyleSheet.create({
   timerFill: { height: "100%", backgroundColor: "#7a5a2a", borderRadius: 3 },
   timerFillLow: { backgroundColor: "#a3281b" },
 
-  // RESULTS
+
   bigNumber: {
     color: INK,
     fontSize: 36,

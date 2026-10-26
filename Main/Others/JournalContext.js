@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const STORAGE_KEY = '@journal_unlocks';
 
-// Default value so a missing Provider logs a warning instead of crashing
+
 const JournalContext = createContext({
   unlockedIds: new Set(),
   unlock: () => console.warn('[JournalContext] unlock called, but Provider is missing!'),
@@ -14,7 +14,7 @@ export const JournalProvider = ({ children }) => {
   const [unlockedIds, setUnlockedIds] = useState(() => new Set());
   const [loaded, setLoaded] = useState(false);
 
-  // Load saved IDs once on startup
+
   useEffect(() => {
     let cancelled = false;
 
@@ -23,7 +23,6 @@ export const JournalProvider = ({ children }) => {
         const saved = await AsyncStorage.getItem(STORAGE_KEY);
         if (saved && !cancelled) {
           const savedArray = JSON.parse(saved);
-          // Merge, in case something unlocked while we were still loading
           setUnlockedIds((prev) => new Set([...prev, ...savedArray]));
         }
       } catch (e) {
@@ -38,8 +37,6 @@ export const JournalProvider = ({ children }) => {
     };
   }, []);
 
-  // Save whenever the set changes. Waits for the initial load so saved progress
-  // is never overwritten by an empty/partial set.
   useEffect(() => {
     if (!loaded) return;
     AsyncStorage.setItem(STORAGE_KEY, JSON.stringify([...unlockedIds])).catch((e) =>
@@ -47,7 +44,6 @@ export const JournalProvider = ({ children }) => {
     );
   }, [unlockedIds, loaded]);
 
-  // Add new unlocks (stable identity + returns `prev` when nothing is new)
   const unlock = useCallback((ids) => {
     if (!ids || ids.length === 0) return;
 
@@ -59,7 +55,6 @@ export const JournalProvider = ({ children }) => {
     });
   }, []);
 
-  // Wipes memory AND storage. Used by the New Game screen.
   const resetUnlocks = useCallback(async () => {
     setUnlockedIds(new Set());
     try {

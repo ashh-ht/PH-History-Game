@@ -17,13 +17,8 @@ import {
   useWindowDimensions,
 } from "react-native";
 
-import { useAudio } from "../../../Audiostore"; // same file PartRenderer uses
+import { useAudio } from "../../../Audiostore";
 
-// =====================================================
-// ARTWORK
-// Same images and paths as DecipherMinigame. Adjust the
-// paths if your folders are laid out differently.
-// =====================================================
 
 const IMG = {
   background: require("../../../Background Images/Usuals/Paper_scroll.png"),
@@ -31,24 +26,16 @@ const IMG = {
   button: require("../../../assets/buttons/choice_button.png"),
 };
 
-// Does the panel image have a name tab built in (like dialogue_box.png)?
-//  true  -> labels sit on the tab
-//  false -> plain framed image: the label shows as a small heading inside
-//           the panel, and padding is wider to clear a decorative border
 const PANEL_HAS_TAB = false;
 const PANEL_PAD_TOP = PANEL_HAS_TAB ? 58 : 38;
 const PANEL_PAD_BOTTOM = PANEL_HAS_TAB ? 26 : 42;
 const PANEL_PAD_SIDE = PANEL_HAS_TAB ? 34 : 54;
-
-// How much blank/transparent space the panel PNG has around its visible
-// frame, as a fraction of the image (0.1 = 10%). Tune these if the content
-// still looks off-center. Use all zeros for an image with no blank margins.
 const PANEL_INSET = PANEL_HAS_TAB
   ? { left: 0, right: 0, top: 0, bottom: 0 }
   : { left: 0, right: 0.196, top: 0.06, bottom: 0.06 };
 
-const INK = "#352313"; // same brown the speaker names use
-const BUTTON_INK = "#371f10"; // same as quiz buttons
+const INK = "#352313";
+const BUTTON_INK = "#371f10";
 const GOLD = "#7a5a2a";
 const GREEN = "#1f6b34";
 const RED = "#a3281b";
@@ -57,7 +44,7 @@ const START_SECONDS = 45;
 const BONUS_SECONDS = 10;
 const TICK_MS = 200;
 const CARD_GAP = 6;
-const CARD_MAX_H = 72; // cards never get taller than this
+const CARD_MAX_H = 72; 
 
 const EVENT_LIBRARY = {
   legazpi: {
@@ -171,10 +158,6 @@ const getCorrectOrder = (eventIds) =>
     .filter(Boolean)
     .sort((a, b) => a.sortDate - b.sortDate);
 
-// =====================================================
-// SHARED UI PIECES
-// =====================================================
-
 function GameButton({ label, onPress, secondary }) {
   const scale = useRef(new Animated.Value(1)).current;
   const translateY = useRef(new Animated.Value(0)).current;
@@ -223,9 +206,6 @@ function GameButton({ label, onPress, secondary }) {
   );
 }
 
-// The panel image is drawn slightly oversized and shifted so that its
-// VISIBLE frame lines up exactly with the box, even when the PNG has blank
-// transparent margins. Content is then centered inside the visible frame.
 function Panel({ children, style }) {
   const L = PANEL_INSET.left;
   const R = PANEL_INSET.right;
@@ -253,7 +233,6 @@ function Panel({ children, style }) {
   );
 }
 
-// Text that sits on the little name tab built into the box art.
 function PanelTab({ children }) {
   if (!PANEL_HAS_TAB) {
     return <Text style={styles.kicker}>{children}</Text>;
@@ -280,10 +259,6 @@ function Backdrop({ children }) {
   );
 }
 
-// A card is just text + two arrow buttons. There is NO gesture handler on the
-// card. Cards share the available height equally (see cardsList), and their
-// text / buttons shrink a little when there are many cards on a short screen,
-// so the whole timeline always fits without scrolling.
 function TimelineCard({
   event,
   index,
@@ -380,21 +355,17 @@ function TimelineCard({
   );
 }
 
-// =====================================================
-// MINIGAME
-// =====================================================
 
 export default function ChronologicalOrderMinigame({
   onComplete,
-  paused = false, // set by PartRenderer when the pause panel is open
-  onPhaseChange, // tells PartRenderer: "intro" | "playing" | "result"
+  paused = false, 
+  onPhaseChange, 
 }) {
   const { width, height } = useWindowDimensions();
   const audio = useAudio();
 
   const landscape = width > height;
 
-  // Small cards and tighter spacing on narrow or short devices.
   const compact = width <= 390 || height <= 740;
 
   const [screen, setScreen] = useState("start");
@@ -409,11 +380,9 @@ export default function ChronologicalOrderMinigame({
   const [roundPoints, setRoundPoints] = useState(0);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
-  // Height of the area the cards live in (so every card fits, no scrolling)
   const [listH, setListH] = useState(0);
 
-  // Fit-to-screen for the start / result panels: they never scroll. If the
-  // content is taller than the space available it is scaled down a little.
+  
   const [areaH, setAreaH] = useState(0);
   const [contentH, setContentH] = useState(0);
 
@@ -429,15 +398,13 @@ export default function ChronologicalOrderMinigame({
   const startTimeRef = useRef(null);
   const onCompleteRef = useRef(onComplete);
 
-  // true while the "Round complete" panel is showing: the clock waits there
+ 
   const holdRef = useRef(false);
 
   useEffect(() => {
     onCompleteRef.current = onComplete;
   }, [onComplete]);
 
-  // Pause support: the clock is frozen while `paused` is true, and the
-  // deadline is pushed back by however long the pause lasted.
   const pausedRef = useRef(false);
   const pausedAtRef = useRef(null);
 
@@ -456,9 +423,6 @@ export default function ChronologicalOrderMinigame({
     }
   }, [paused]);
 
-  // Tells the parent which screen we are on ("intro" = instructions,
-  // "playing", "result" = between rounds / final screens) so it can show
-  // the pause button only while the clock is running.
   useEffect(() => {
     if (!onPhaseChange) return;
 
@@ -467,7 +431,6 @@ export default function ChronologicalOrderMinigame({
     else onPhaseChange("result");
   }, [screen, onPhaseChange]);
 
-  // Sound helper that never crashes if audio isn't ready
   const sfx = useCallback(
     (key) => {
       try {
@@ -584,8 +547,6 @@ export default function ChronologicalOrderMinigame({
     startTimer(START_SECONDS * 1000);
   }, [loadRound, startTimer, stopTimer]);
 
-  // Move one card up (-1) or down (+1). The card keeps a gold outline
-  // afterwards so you can see where it landed.
   const moveCard = useCallback(
     (index, direction) => {
       if (phaseRef.current !== "active") return;
@@ -655,7 +616,6 @@ export default function ChronologicalOrderMinigame({
     );
     setFeedbackType("success");
 
-    // Reset the timer to 45 seconds after each correct round.
     const nextRemaining = START_SECONDS * 1000;
 
     deadlineRef.current = now + nextRemaining;
@@ -674,8 +634,6 @@ export default function ChronologicalOrderMinigame({
       setScreen("victory");
       return;
     }
-
-    // The clock waits on the "Round complete" panel (no pause button there).
     holdRef.current = true;
     setScreen("roundComplete");
   }, [finishGameOver, stopTimer, sfx]);
@@ -687,8 +645,6 @@ export default function ChronologicalOrderMinigame({
     const nextIndex = roundIndexRef.current + 1;
 
     if (nextIndex >= ROUNDS.length) return;
-
-    // fresh 45 seconds starting now, and the clock runs again
     deadlineRef.current = Date.now() + START_SECONDS * 1000;
     remainingMsRef.current = START_SECONDS * 1000;
     setRemainingMs(START_SECONDS * 1000);
@@ -706,10 +662,6 @@ export default function ChronologicalOrderMinigame({
 
   const seconds = Math.ceil(remainingMs / 1000);
   const lowTime = seconds <= 10;
-
-  // ---------------------------------------------------
-  // PIECES
-  // ---------------------------------------------------
 
   const feedbackStyle = [
     styles.feedback,
@@ -738,7 +690,6 @@ export default function ChronologicalOrderMinigame({
     </View>
   );
 
-  // paddingRight leaves room for the pause button in the top-right corner
   const activeHeader = (
     <View style={styles.activeHeader}>
       <View style={styles.headerLeft}>
@@ -760,8 +711,6 @@ export default function ChronologicalOrderMinigame({
     </View>
   );
 
-  // Every card gets an equal share of the available height, so the whole
-  // timeline is always visible. No ScrollView.
   const cardCount = orderedEvents.length || 1;
   const cardH =
     listH > 0
@@ -795,7 +744,6 @@ export default function ChronologicalOrderMinigame({
     </View>
   );
 
-  // Landscape: controls live in a parchment panel beside the list.
   const sidePanel = (
     <Panel style={styles.sidePanel}>
       <PanelTab>
@@ -814,10 +762,6 @@ export default function ChronologicalOrderMinigame({
       <GameButton label="Submit Order" onPress={submitAnswer} />
     </Panel>
   );
-
-  // ---------------------------------------------------
-  // SCREENS
-  // ---------------------------------------------------
 
   if (screen === "active") {
     return (
@@ -853,7 +797,6 @@ export default function ChronologicalOrderMinigame({
     );
   }
 
-  // Every other screen is a centered parchment panel.
   let content = null;
 
   if (screen === "start") {
@@ -952,8 +895,7 @@ export default function ChronologicalOrderMinigame({
     );
   }
 
-  // 1 = fits as is. Smaller = shrink to fit (never below 0.4).
-  const FIT_PADDING = 28; // top + bottom padding of the area
+  const FIT_PADDING = 28;
   const fitScale =
     areaH > 0 && contentH > 0
       ? Math.min(1, Math.max(0.4, (areaH - FIT_PADDING) / contentH))
@@ -977,14 +919,10 @@ export default function ChronologicalOrderMinigame({
   );
 }
 
-// =====================================================
-// STYLES
-// =====================================================
 
 const styles = StyleSheet.create({
   background: { flex: 1, width: "100%", height: "100%", backgroundColor: "#000" },
   safeArea: { flex: 1 },
-  // Start / result panels: centered, no scrolling (scaled down if too tall)
   fitArea: {
     flex: 1,
     justifyContent: "center",
@@ -992,7 +930,6 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
   },
 
-  // HEADERS
   introHeader: {
     alignItems: "center",
     marginBottom: 10,
@@ -1007,7 +944,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 4,
-    paddingRight: 44, // room for the pause button (top-right corner)
+    paddingRight: 44,
     paddingBottom: 8,
   },
   headerLeft: {
@@ -1058,7 +995,6 @@ const styles = StyleSheet.create({
   pillText: { color: "#FFFFFF", fontSize: 14, fontWeight: "bold" },
   pillTextLow: { color: "#ff9b82" },
 
-  // PANELS
   panel: {
     paddingTop: PANEL_PAD_TOP,
     paddingBottom: PANEL_PAD_BOTTOM,
@@ -1126,7 +1062,6 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
 
-  // GAMEPLAY LAYOUT
   gameArea: {
     flex: 1,
     minHeight: 0,
@@ -1196,7 +1131,6 @@ const styles = StyleSheet.create({
     letterSpacing: 0.8,
   },
 
-  // CARDS (equal share of the height, no scrolling)
   cardsList: {
     flex: 1,
     minHeight: 0,
@@ -1253,7 +1187,6 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
 
-  // Thumb-sized arrow buttons (width / height are set per card).
   arrowRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -1278,7 +1211,7 @@ const styles = StyleSheet.create({
   },
   arrowTextOff: { color: "rgba(53, 35, 19, 0.35)" },
 
-  // Controls at the bottom of portrait gameplay.
+
   bottomArea: {
     flexShrink: 0,
     paddingTop: 2,
@@ -1295,7 +1228,6 @@ const styles = StyleSheet.create({
   successText: { color: GREEN },
   errorText: { color: RED },
 
-  // BUTTONS
   buttonWrap: { alignSelf: "center", width: "80%", maxWidth: 300, marginTop: 8 },
   buttonSecondary: { opacity: 0.85 },
   buttonBg: {

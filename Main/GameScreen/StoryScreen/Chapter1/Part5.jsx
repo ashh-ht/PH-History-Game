@@ -1,37 +1,48 @@
+
 export const Chapter1_Part5 = [
 
+  // ===========================================
+  // PROLOGUE
+  // ===========================================
+
   {
     type: "system",
     intro: true,
     background: require("../../../../Background Images/Usuals/Black Background.jpg"),
-    text: "The Katipunan had spent years preparing in secret."
+    text: "The Katipunan had prepared in secret. Now, its secret is out."
   },
 
   {
     type: "system",
     intro: true,
     background: require("../../../../Background Images/Usuals/Black Background.jpg"),
-    text: "Now, its secret was out. There's no turning back."
+    text: "Arrests spread quickly."
   },
 
+  {
+    type: "system",
+    intro: true,
+    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    text: "Now, Bonifacio and his fellow Katipuneros must decide: wait, or fight for freedom."
+  },
 
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 1
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // ===========================================
+  // SCENE 1: THE CATALYST
+  // ===========================================
 
   {
     type: "scene",
     title: "The Catalyst",
     date: "August 19, 1896",
     background: require("../../../../Background Images/Usuals/Black Background.jpg"),
-    sfx: 'running'
+    // SFX: running
+    sfx: "running"
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 5/19th century hand press printing shop ransacked.png"),
-    text: "The Katipunan has been exposed. Father Gil sends people to Diario de Manila.",
+    text: "Spanish authorities discover the Katipunan. Father Mariano Gil\norders a search of the Diario de Manila printing press.",
     music: "suspense",
     unlock: ["Timeline_1896_08-19", "gil-1"]
   },
@@ -42,46 +53,46 @@ export const Chapter1_Part5 = [
     background: require("../../../../Background Images/Part 5/19th century hand press printing shop ransacked.png"),
     characters: [
       {
+        name: "FATHER MARIANO GIL",
         source: require("../../../../Character Images/Chapter 5/Gil.png"),
         position: "center"
       }
     ],
-    text: "Search the Diario de Manila press right away. There may be evidence\nthere. Find names, plans, everything.",
+    text: "Search the press! Find their names, their plans!\nAnything that reveals this secret society.",
     unlock: ["gil-2"]
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 5/19th century hand press printing shop ransacked.png"),
-    text: "Arrests spread through Manila, and Bonifacio knows the Spanish authorities\nwill soon come for more of his men."
+    text: "Arrests spread through Manila. Bonifacio knows the authorities\nmay soon come for the rest of his men."
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 5/Katipunan hideout 1896,.png"),
-    text: "Bonifacio knows there is no time left for quiet planning. He leaves Manila\nand calls the Katipunan leaders to an emergency meeting."
+    text: "There is no time left for quiet planning. Bonifacio calls\nthe Katipunan leaders to an emergency meeting."
   },
 
+  // T2_5 here
 
-  //T2_5 here
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 2
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // ===========================================
+  // SCENE 2: THE EMERGENCY COUNCIL
+  // ===========================================
 
   {
     type: "scene",
     title: "The Emergency Council",
     date: "August 1896",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx: 'chairSit'
-
+    // SFX: chairSit
+    sfx: "chairSit"
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 5/Katipunan hideout 1896,.png"),
-    text: "At the meeting, the leaders face a difficult choice. They can act with the\nweapons they have, or wait and risk being arrested one by one."
+    text: "The leaders face a hard choice. Their weapons are few,\nbut waiting could mean arrest."
   },
 
   {
@@ -90,15 +101,17 @@ export const Chapter1_Part5 = [
     background: require("../../../../Background Images/Part 5/Katipunan hideout 1896,.png"),
     characters: [
       {
+        name: "TEODORO PLATA",
         source: require("../../../../Character Images/Chapter 5/Plata Talking.png"),
         position: "left"
       },
       {
+        name: "ANDRÉS BONIFACIO",
         source: require("../../../../Character Images/Chapter 5/Bonifacio Unsure R.png"),
         position: "right"
       }
     ],
-    text: "Andrés, we barely have enough muskets for one man in ten.\nStarting a revolution now is too risky.",
+    text: "Andrés, we barely have enough muskets for one man in ten.\nIf we fight now, we may lose before we begin.",
     unlock: ["plata-2"]
   },
 
@@ -108,37 +121,38 @@ export const Chapter1_Part5 = [
     background: require("../../../../Background Images/Part 5/Katipunan hideout 1896,.png"),
     characters: [
       {
+        name: "TEODORO PLATA",
         source: require("../../../../Character Images/Chapter 5/Plata Talking.png"),
         position: "left"
       },
       {
+        name: "ANDRÉS BONIFACIO",
         source: require("../../../../Character Images/Chapter 4/Bonifacio Talking Mad R.png"),
         position: "right"
       }
     ],
-    text: "And waiting is risky too, Teodoro! They already know our names. Do we\nwait to be arrested one by one, or do we stand together and fight?"
+    text: "And if we wait, Teodoro? They know our names!\nDo we let them arrest us one by one?"
   },
-  //T4_5 here
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 5.1
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // T4_5 here
 
   {
     type: "choice",
     title: "Choice 5.1: You are Andrés Bonifacio",
     background: require("../../../../Background Images/Part 5/Katipunan hideout 1896,.png"),
-    question: "Teodoro Plata worries that starting the revolution without\nenough weapons is too dangerous.",
+    question: "Plata warns that the Katipunan has too few weapons.\nWhat should Bonifacio do?",
     choices: [
       {
-        text: "Overrule Plata and call for\nthe revolution to begin now.",
+        text: "Call for the revolution to begin now.",
         speaker: "ANDRÉS BONIFACIO",
         characters: [
           {
+            name: "TEODORO PLATA",
             source: require("../../../../Character Images/Chapter 5/Plata Neutral.png"),
             position: "left"
           },
           {
+            name: "ANDRÉS BONIFACIO",
             source: require("../../../../Character Images/Chapter 4/Bonifacio Talking Mad R.png"),
             position: "right"
           }
@@ -148,171 +162,170 @@ export const Chapter1_Part5 = [
       },
 
       {
-        text: "Suggest securing more weapons first,\neven if it means a delay.",
+        text: "Seek more weapons before making a move.",
         speaker: "ANDRÉS BONIFACIO",
         characters: [
           {
+            name: "TEODORO PLATA",
             source: require("../../../../Character Images/Chapter 5/Plata Neutral.png"),
             position: "left"
           },
           {
+            name: "ANDRÉS BONIFACIO",
             source: require("../../../../Character Images/Chapter 5/Bonifacio Talking R.png"),
             position: "right"
           }
         ],
-        dialogue: "Baka mas mabuti nga na maghintay tayo ng ilang araw, hanggang sa marami na tayong sandata.",
-        translation: "Maybe it's better to wait a few days, until we have more weapons."
+        dialogue: "Maghintay muna tayo ng ilang araw, hanggang\nsa mas marami tayong sandata.",
+        translation: "Let's wait a few days, until we have more weapons."
       }
-    ],
-    nextScene: 12
+    ]
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 5/Katipunan hideout 1896,.png"),
-    text: "There is little time left, and the Katipunan has been exposed. The decision\nto rise against Spanish rule is already taking shape.",
-    unlock: ["plata-3", "Timeline_1897_02"]
+    text: "The Katipunan has little time left. Whatever they decide,\nthe struggle against Spanish rule is drawing near.",
+    unlock: ["plata-3"]
   },
 
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 3
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // ===========================================
+  // SCENE 3: THE HISTORIAN'S INTERLUDE
+  // ===========================================
 
   {
     type: "scene",
     title: "The Historian's Interlude",
+    date: "The Cry of the Revolution",
     background: require("../../../../Background Images/Part 5/Map of the eight provinces under martial law.png"),
-    sfx: 'singlePageFlip'
+    // SFX: singlePageFlip
+    sfx: "singlePageFlip"
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 5/Map of the eight provinces under martial law.png"),
-    text: "History is not always perfectly clear-cut. Historians have given different\naccounts of exactly when and where the Cry took place."
+    text: "Historians disagree about exactly when and where\nthe Cry of the Revolution took place."
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 5/Map of the eight provinces under martial law.png"),
-    text: "Teodoro Agoncillo's account places the event on August 23, 1896, at Pugad Lawin."
+    text: "Teodoro Agoncillo places the event on August 23, 1896,\nat Pugad Lawin."
   },
-
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 5/Map of the eight provinces under martial law.png"),
-    text: "General Artemio Ricarte, also gives August 23, but identifies Balintawak as the location."
+    text: "General Artemio Ricarte also gives August 23,\nbut identifies Balintawak as the location."
   },
-
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 5/Map of the eight provinces under martial law.png"),
-    text: "General Santiago Álvarez's account places the main event instead on August 29, 1896."
+    text: "General Santiago Álvarez's account places the main event\non August 29, 1896."
   },
 
   {
     type: "scene",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
-    title: "The exact date and location remains\ndebated. But the significance is clear.",
-    date: "The Katipunan was no longer staying in the shadows."
+    title: "The date and location remain debated.",
+    date: "The decision to resist Spanish rule did not.",
+    background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
 
-  //T1_5 here
+  {
+    type: "narrator",
+    background: require("../../../../Background Images/Part 5/Map of the eight provinces under martial law.png"),
+    text: "Though accounts differ, the Cry became a lasting symbol\nof Filipinos choosing to fight for freedom."
+  },
 
+  // T1_5 here
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 4
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // ===========================================
+  // SCENE 4: THE TEARING OF THE CÉDULAS
+  // ===========================================
 
   {
     type: "scene",
     title: "The Tearing of the Cédulas",
     date: "August 23, 1896",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx: 'footstepsGround'
-
+    // SFX: footstepsGround
+    sfx: "footstepsGround"
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 5/Cry of Pugad Lawin.png"),
-    text: "At Pugad Lawin, Bonifacio and about a thousand Katipuneros gather at the\nhome of Melchora Aquino, known as Tandang Sora.",
+    text: "At Pugad Lawin, Bonifacio and about a thousand Katipuneros gather.\nEach holds a cédula, an identity paper under Spanish rule.",
     unlock: ["Timeline_1896_08-23", "melchora-3"]
   },
 
   {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 5/Cry of Pugad Lawin.png"),
-    text: "They face a choice that will make their break with Spanish rule impossible to hide."
-  },
-
-  {
     type: "dialogue",
     speaker: "ANDRÉS BONIFACIO",
-    background: require("../../../../Background Images/Part 4/Safe-house interior (Gregoria's scenes).png"),
+    background: require("../../../../Background Images/Part 5/Cry of Pugad Lawin.png"),
     characters: [
       {
+        name: "ANDRÉS BONIFACIO",
         source: require("../../../../Character Images/Chapter 5/Bonifacio Cedula.png"),
         position: "left"
       },
       {
+        name: "TANDANG SORA",
         source: require("../../../../Character Images/Chapter 5/Tandang Sora Surprised.png"),
         position: "right"
       }
     ],
-    text: "This paper says we belong to Spain. Tonight, we say otherwise."
+    text: "This paper says we belong to Spain.\nTonight, we say otherwise."
   },
 
   {
     type: "dialogue",
     speaker: "ANDRÉS BONIFACIO",
-    background: require("../../../../Background Images/Part 4/Safe-house interior (Gregoria's scenes).png"),
+    background: require("../../../../Background Images/Part 5/Cry of Pugad Lawin.png"),
     characters: [
       {
+        name: "ANDRÉS BONIFACIO",
         source: require("../../../../Character Images/Chapter 5/Bonifacio Cedula.png"),
         position: "center"
       },
       {
+        name: "CHEERING CROWD",
         source: require("../../../../Character Images/Chapter 5/cheeringcrowd.png"),
         position: "left"
       },
       {
+        name: "CHEERING CROWD",
         source: require("../../../../Character Images/Chapter 5/cheeringcrowd.png"),
         position: "right"
       }
-
     ],
     text: "Show me your cédulas!"
   },
 
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 5.2
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   {
     type: "choice",
     title: "Choice 5.2: You are a Katipunan Soldier",
-    background: require("../../../../Background Images/Part 4/Safe-house interior (Gregoria's scenes).png"),
-    question: "You know that tearing your cédula means openly\nbreaking with Spanish rule.",
+    background: require("../../../../Background Images/Part 5/Cry of Pugad Lawin.png"),
+    question: "Tearing your cédula means openly rejecting\nSpanish rule.",
     choices: [
       {
-        text: "Tear the cédula without hesitation.",
+        text: "Tear it without hesitation.",
         speaker: "KATIPUNAN SOLDIERS",
         characters: [
           {
+            name: "ANDRÉS BONIFACIO",
             source: require("../../../../Character Images/Chapter 5/Bonifacio Cedula.png"),
             position: "center"
           },
-          ,
           {
+            name: "CHEERING CROWD",
             source: require("../../../../Character Images/Chapter 5/cheeringcrowd.png"),
             position: "left"
           },
           {
+            name: "CHEERING CROWD",
             source: require("../../../../Character Images/Chapter 5/cheeringcrowd.png"),
             position: "right"
           }
@@ -322,18 +335,21 @@ export const Chapter1_Part5 = [
       },
 
       {
-        text: "Hesitate for a moment, then tear it.",
+        text: "Hesitate, then tear it with the others.",
         speaker: "KATIPUNAN SOLDIER",
         characters: [
           {
+            name: "ANDRÉS BONIFACIO",
             source: require("../../../../Character Images/Chapter 5/Bonifacio Cedula.png"),
             position: "center"
           },
           {
+            name: "CHEERING CROWD",
             source: require("../../../../Character Images/Chapter 5/cheeringcrowd.png"),
             position: "left"
           },
           {
+            name: "CHEERING CROWD",
             source: require("../../../../Character Images/Chapter 5/cheeringcrowd.png"),
             position: "right"
           }
@@ -341,43 +357,40 @@ export const Chapter1_Part5 = [
         dialogue: "Malaking hakbang ito... pero panahon na.",
         translation: "This is a big step... but it's time."
       }
-    ],
-    nextScene: 25
+    ]
   },
 
-  //Q1_5 here
+  // Q1_5 here
 
   {
-    type: "cedula",
+    type: "cedula"
   },
-
-  // CONTINUE
 
   {
     type: "narrator",
-    background: require("../../../../Background Images/Part 4/Safe-house interior (Gregoria's scenes).png"),
-    text: "You tear your cédula along with the others. The act becomes a powerful\nsymbol of their decision to rise against Spanish rule.",
-    sfx: 'paperRip'
+    background: require("../../../../Background Images/Part 5/Cry of Pugad Lawin.png"),
+    text: "The cédulas tear. The crowd's decision is clear:\nthey reject Spanish rule and choose the path to independence.",
+    // SFX: paperRip
+    sfx: "paperRip"
   },
 
-
-
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // SCENE 5
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // ===========================================
+  // SCENE 5: THE FIRST BATTLE
+  // ===========================================
 
   {
     type: "scene",
     title: "The First Battle: San Juan del Monte",
     date: "August 30, 1896",
     background: require("../../../../Background Images/Usuals/Brown Background.jpg"),
-    sfx: 'footstepsGround'
+    // SFX: footstepsGround
+    sfx: "footstepsGround"
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 5/Battle of San Juan del Monte 1896.png"),
-    text: "A week after the cry, the Katipuneros launch a major attack at San Juan del\nMonte, hoping to capture the Spanish weapons depot at the Polvorín.",
+    text: "On August 30, revolutionaries attack the Spanish weapons depot\nat San Juan del Monte, hoping to seize guns and ammunition.",
     unlock: ["Timeline_1896_08-30"]
   },
 
@@ -387,6 +400,7 @@ export const Chapter1_Part5 = [
     background: require("../../../../Background Images/Part 5/Battle of San Juan del Monte 1896.png"),
     characters: [
       {
+        name: "ANDRÉS BONIFACIO",
         source: require("../../../../Character Images/Chapter 5/Bonifacio Talking Mad.png"),
         position: "center"
       }
@@ -395,21 +409,18 @@ export const Chapter1_Part5 = [
     translation: "Let's take their weapons. If we don't have arms today, we'll have them tomorrow."
   },
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // CHOICE 5.3
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   {
     type: "choice",
     title: "Choice 5.3: You are Andrés Bonifacio",
     background: require("../../../../Background Images/Part 5/Battle of San Juan del Monte 1896.png"),
-    question: "Your fighters are preparing to attack the Spanish weapons depot in San Juan.",
+    question: "Your fighters are ready to attack the Spanish weapons depot.",
     choices: [
       {
         text: "Launch the assault immediately.",
         speaker: "ANDRÉS BONIFACIO",
         characters: [
           {
+            name: "ANDRÉS BONIFACIO",
             source: require("../../../../Character Images/Chapter 5/Bonifacio Talking Mad.png"),
             position: "center"
           }
@@ -419,10 +430,11 @@ export const Chapter1_Part5 = [
       },
 
       {
-        text: "Wait and surround the depot\nwhile more allies arrive.",
+        text: "Wait for allies and surround the depot.",
         speaker: "ANDRÉS BONIFACIO",
         characters: [
           {
+            name: "ANDRÉS BONIFACIO",
             source: require("../../../../Character Images/Chapter 5/Bonifacio Talking.png"),
             position: "center"
           }
@@ -430,23 +442,19 @@ export const Chapter1_Part5 = [
         dialogue: "Hintayin muna natin sila. Palilibutan natin ang Polvorín.",
         translation: "Let's wait for them. We'll surround the Polvorín."
       }
-    ],
-
-  },
-
-
-  // CONTINUE
-
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 5/Battle of San Juan del Monte 1896.png"),
-    text: "The Revolution begins. After the Cry of Pugad Lawin, Bonifacio and the\nKatipunan leaders move quickly to organize their first attacks."
+    ]
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 5/Battle of San Juan del Monte 1896.png"),
-    text: "One of their plans is a coordinated attack on Manila, with different groups\nentering from several directions.",
+    text: "The attack fails. The revolutionaries suffer heavy losses\nand retreat, but the struggle has begun."
+  },
+
+  {
+    type: "narrator",
+    background: require("../../../../Background Images/Part 5/Battle of San Juan del Monte 1896.png"),
+    text: "The Katipunan also plans coordinated attacks on Manila,\nwith groups approaching from different directions.",
     unlock: ["Timeline_1896_08-29"]
   },
 
@@ -456,45 +464,40 @@ export const Chapter1_Part5 = [
     background: require("../../../../Background Images/Part 5/Battle of San Juan del Monte 1896.png"),
     characters: [
       {
+        name: "ANDRÉS BONIFACIO",
         source: require("../../../../Character Images/Chapter 5/Bonifacio Talking.png"),
         position: "center"
       }
     ],
-    text: "Tatlong daan. Tatlong direksyon. Kung sabay tayong tatama sa Maynila,\nhindi nila kayang ipagtanggol ang lahat.",
-    translation: "Three routes. Three directions. If we strike Manila together, they won't be able to defend everything."
-  },
-
-  {
-    type: "narrator",
-    background: require("../../../../Background Images/Part 5/Battle of San Juan del Monte 1896.png"),
-    text: "But the plan fails. The attack at San Juan del Monte ends in heavy losses, and\nthe revolutionaries are forced to retreat."
+    text: "Tatlong direksyon. Kung sabay tayong kikilos,\nhindi nila kayang ipagtanggol ang lahat.",
+    translation: "Three directions. If we move together, they cannot defend everything."
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 5/Map of the eight provinces under martial law.png"),
-    text: "On August 30, Governor-General Ramón Blanco places eight\nprovinces under a state of war.",
+    text: "On August 30, Governor-General Ramón Blanco places\neight provinces under a state of war.",
     unlock: ["Timeline_1896_08-29_30"]
   },
 
   {
     type: "narrator",
     background: require("../../../../Background Images/Part 5/Map of the eight provinces under martial law.png"),
-    text: "The Spanish government now knows the rebellion is no longer a small, hidden movement."
+    text: "Spain now faces a rebellion that can no longer be hidden."
   },
 
   {
     type: "scene",
-    title: "The fighting at San Juan del Monte makes one thing clear:",
-    date: "the Revolution has begun.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg"),
+    title: "The Revolution has begun.",
+    date: "But the first battles reveal how hard the fight will be.",
+    background: require("../../../../Background Images/Usuals/Black Background.jpg")
   },
 
-  //T3_5 here
+  // T3_5 here
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // ===========================================
   // QUIZ TIME
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // ===========================================
 
   {
     type: "scene",
@@ -515,6 +518,7 @@ export const Chapter1_Part5 = [
     correctIndex: 1,
     unlock: ["remnant-part5-1"]
   },
+
   {
     type: "quiz",
     question: "What did the tearing of the cédulas symbolize?",
@@ -527,6 +531,7 @@ export const Chapter1_Part5 = [
     correctIndex: 1,
     unlock: ["remnant-part5-2"]
   },
+
   {
     type: "quiz",
     question: "Where did the Katipuneros launch a major attack on August 30, 1896?",
@@ -539,6 +544,7 @@ export const Chapter1_Part5 = [
     correctIndex: 2,
     unlock: ["remnant-part5-3"]
   },
+
   {
     type: "quiz",
     question: "What happened after the attack at San Juan del Monte?",
@@ -551,6 +557,7 @@ export const Chapter1_Part5 = [
     correctIndex: 2,
     unlock: ["remnant-part5-4"]
   },
+
   {
     type: "quiz",
     question: "What did Governor-General Ramón Blanco declare on August 30, 1896?",
@@ -563,24 +570,22 @@ export const Chapter1_Part5 = [
     correctIndex: 1,
     unlock: ["remnant-part5-5"]
   },
-  // NEW QUESTION ADDED
-  {
-    type: "quiz",
-    question: "What was the name of the Spanish weapons depot that the Katipuneros tried to capture in San Juan?",
-    options: [
-      "Fort Santiago",
-      "El Polvorín",
-      "Intramuros",
-      "Casa Hacienda"
-    ],
-    correctIndex: 1,
-    unlock: ["remnant-part5-6"]
-  },
+
+  // ===========================================
+  // CLOSING
+  // ===========================================
 
   {
     type: "scene",
     title: "Chapter Complete.",
-    date: "The uprising has begun.",
+    date: "The uprising had begun.",
+    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+  },
+
+  {
+    type: "scene",
+    title: "The first battles were only the beginning.",
+    date: " ",
     background: require("../../../../Background Images/Usuals/Black Background.jpg")
   }
 

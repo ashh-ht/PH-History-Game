@@ -14,10 +14,6 @@ import {
 
 import { useAudio } from "../../../Audiostore";
 
-// =====================================================
-// ARTWORK (same set as the Decipher minigame)
-// =====================================================
-
 const IMG = {
   background: require("../../../Background Images/Usuals/Paper_scroll.png"),
   panel: require("../../../Background Images/Usuals/Minigames_Foreground.png"),
@@ -27,7 +23,7 @@ const IMG = {
 const CEDULA = require("../../../assets/Minigames/Part5/Cedula.jpg");
 const CEDULA_TORN = require("../../../assets/Minigames/Part5/Cedula Torn.jpg");
 
-// Panel setup (identical to Decipher)
+
 const PANEL_HAS_TAB = false;
 const PANEL_PAD_TOP = PANEL_HAS_TAB ? 58 : 38;
 const PANEL_PAD_BOTTOM = PANEL_HAS_TAB ? 26 : 42;
@@ -47,9 +43,6 @@ const CEDULA_RATIO =
     ? CEDULA_SOURCE.width / CEDULA_SOURCE.height
     : 0.75;
 
-// =====================================================
-// SHARED UI (button + panel, same as Decipher)
-// =====================================================
 
 function GameButton({ label, onPress, secondary }) {
   const scale = useRef(new Animated.Value(1)).current;
@@ -158,14 +151,12 @@ function PanelTab({ children }) {
   );
 }
 
-// =====================================================
-// MINIGAME
-// =====================================================
+
 
 export default function CedulaMinigame({
   onComplete,
-  paused = false, // set by PartRenderer when the pause panel is open
-  onPhaseChange, // tells PartRenderer: "playing" | "result"
+  paused = false, 
+  onPhaseChange, 
 }) {
   const { width, height } = useWindowDimensions();
   const compact = height < 700;
@@ -181,7 +172,6 @@ export default function CedulaMinigame({
     [audio]
   );
 
-  // Starts directly in gameplay (no intro screen).
   const [screen, setScreen] = useState("playing");
   const [timeLeft, setTimeLeft] = useState(GAME_TIME);
   const [tears, setTears] = useState([]);
@@ -191,8 +181,7 @@ export default function CedulaMinigame({
   const [paperArea, setPaperArea] = useState({ width: 0, height: 0 });
   const [paperSize, setPaperSize] = useState({ width: 1, height: 1 });
 
-  // Fit-to-screen for the result screens: no scrolling. If the content is
-  // taller than the space available it is scaled down a little instead.
+
   const [areaH, setAreaH] = useState(0);
   const [contentH, setContentH] = useState(0);
 
@@ -200,14 +189,13 @@ export default function CedulaMinigame({
   const startRef = useRef(null);
   const tearCountRef = useRef(0);
   const finishingRef = useRef(false);
-  const deadlineRef = useRef(null); // null until the first swipe
+  const deadlineRef = useRef(null); 
   const finishTimerRef = useRef(null);
 
   const shake = useRef(new Animated.Value(0)).current;
   const flash = useRef(new Animated.Value(0)).current;
 
-  // Pause support: the clock is frozen while `paused` is true, and the
-  // deadline is pushed back by however long the pause lasted.
+
   const pausedRef = useRef(false);
   const pausedAtRef = useRef(null);
 
@@ -215,7 +203,6 @@ export default function CedulaMinigame({
     if (paused) {
       pausedRef.current = true;
       pausedAtRef.current = Date.now();
-      // cancel a swipe that was in progress
       startRef.current = null;
       setSlash(null);
     } else if (pausedRef.current) {
@@ -229,8 +216,7 @@ export default function CedulaMinigame({
     }
   }, [paused]);
 
-  // Tells the parent which screen we are on, so the pause button
-  // only shows while the player is actually playing.
+ 
   useEffect(() => {
     if (!onPhaseChange) return;
     onPhaseChange(screen === "playing" ? "playing" : "result");
@@ -293,13 +279,13 @@ export default function CedulaMinigame({
     );
   }, [fittedPaper]);
 
-  // Deadline-based timer; does nothing until the first swipe sets deadlineRef.
+ 
   useEffect(() => {
     if (screen !== "playing") return;
 
     const tick = () => {
       if (screenRef.current !== "playing" || deadlineRef.current == null) return;
-      if (pausedRef.current) return; // clock is stopped while paused
+      if (pausedRef.current) return;
 
       const remainingMs = Math.max(0, deadlineRef.current - Date.now());
       setTimeLeft(Math.ceil(remainingMs / 1000));
@@ -444,7 +430,7 @@ export default function CedulaMinigame({
         onPanResponderGrant: (event) => {
           if (!canSwipe()) return;
 
-          // First touch starts the 30-second clock.
+       
           if (deadlineRef.current == null) {
             deadlineRef.current = Date.now() + GAME_TIME * 1000;
           }
@@ -561,8 +547,7 @@ export default function CedulaMinigame({
 
   const lowTime = timeLeft <= 10;
 
-  // While playing there is a pause button in the top-right corner, so the
-  // timer pill gets some extra room on the right to stay out of its way.
+
   const header = (showTimer) => (
     <View style={[styles.header, showTimer && styles.headerWithPause]}>
       <Text style={styles.title}>The Cry of Pugad Lawin</Text>
@@ -586,14 +571,14 @@ export default function CedulaMinigame({
     </ImageBackground>
   );
 
-  // 1 = fits as is. Smaller = shrink to fit (never below 0.4).
+
   const FIT_PADDING = 28;
   const fitScale =
     areaH > 0 && contentH > 0
       ? Math.min(1, Math.max(0.4, (areaH - FIT_PADDING) / contentH))
       : 1;
 
-  // Result screens: centered, never scrolls, shrinks a little if too tall.
+  
   const fit = (body) => (
     <View
       style={[styles.fitArea, { paddingHorizontal: horizontalPadding }]}
@@ -608,9 +593,6 @@ export default function CedulaMinigame({
     </View>
   );
 
-  // ---------------------------------------------------
-  // WON
-  // ---------------------------------------------------
   if (screen === "won") {
     return shell(
       fit(
@@ -637,9 +619,6 @@ export default function CedulaMinigame({
     );
   }
 
-  // ---------------------------------------------------
-  // FAILED
-  // ---------------------------------------------------
   if (screen === "failed") {
     return shell(
       fit(
@@ -662,9 +641,7 @@ export default function CedulaMinigame({
     );
   }
 
-  // ---------------------------------------------------
-  // GAMEPLAY
-  // ---------------------------------------------------
+
   return shell(
     <View style={[styles.gameWrap, { paddingHorizontal: horizontalPadding }]}>
       {header(true)}
@@ -699,9 +676,7 @@ export default function CedulaMinigame({
   );
 }
 
-// =====================================================
-// STYLES
-// =====================================================
+
 
 const INK = "#352313";
 const BUTTON_INK = "#371f10";
@@ -713,7 +688,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.05)",
   },
   safeArea: { flex: 1 },
-  // Result screens: centered, no scrolling (scaled down if too tall)
+
   fitArea: {
     flex: 1,
     justifyContent: "center",
@@ -721,14 +696,13 @@ const styles = StyleSheet.create({
   },
   gameWrap: { flex: 1, paddingVertical: 14 },
 
-  // HEADER
+
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 10,
   },
-  // leaves room for the pause button in the top-right corner
   headerWithPause: { paddingRight: 46 },
   title: { color: INK, fontSize: 22, fontWeight: "bold", flexShrink: 1 },
   timerPill: {
@@ -745,7 +719,7 @@ const styles = StyleSheet.create({
   timerValue: { color: "#FFFFFF", fontSize: 20, fontWeight: "bold" },
   timerTextLow: { color: "#ff9b82" },
 
-  // PANELS
+
   panel: {
     paddingTop: PANEL_PAD_TOP,
     paddingBottom: PANEL_PAD_BOTTOM,
@@ -824,7 +798,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
 
-  // PROGRESS
+
   progressTrack: { flexDirection: "row", gap: 5 },
   progressSegment: {
     flex: 1,
@@ -835,7 +809,6 @@ const styles = StyleSheet.create({
   progressComplete: { backgroundColor: "#7a5a2a" },
   progressCurrent: { backgroundColor: INK },
 
-  // PAPER
   paperArea: {
     flex: 1,
     minHeight: 0,
@@ -899,7 +872,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFCF5",
   },
 
-  // RESULTS
   completionImageWrap: {
     width: "100%",
     alignItems: "center",
@@ -922,7 +894,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
 
-  // BUTTONS
+
   buttonWrap: { alignSelf: "center", width: "80%", maxWidth: 300, marginTop: 8 },
   buttonSecondary: { opacity: 0.85 },
   buttonBg: {

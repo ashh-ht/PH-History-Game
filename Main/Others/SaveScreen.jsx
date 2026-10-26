@@ -33,11 +33,7 @@ const BTN_X_CIRCLE = require('../../assets/Settings_Assets/Saves_DeleteSave.png'
 const BTN_X_CIRCLE_C = require('../../assets/Settings_Assets/Saves_DeleteSaveClicked.png');
 
 const PANEL_ASPECT = 1205 / 630;
-
-// width / height of Saves_DeleteAll.png (tweak if the button looks squished)
 const DELETE_ASPECT = 4.8;
-
-// Fine-tune horizontal position in pixels (negative = left, positive = right)
 const DELETE_NUDGE_X = 0;
 
 const timeAgo = (ts) => {
@@ -417,7 +413,6 @@ const styles = StyleSheet.create({
     height: 60,
   },
 
-  // Delete All: pinned to the bottom center of the panel
   deleteAllRow: {
     position: "absolute",
     left: 0,
