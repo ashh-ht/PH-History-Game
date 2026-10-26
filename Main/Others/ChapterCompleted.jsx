@@ -15,25 +15,18 @@ const JOURNEY_BACKGROUND = require("../../Background Images/Intro/CONTINUEJOURNE
 const RETURN_BUTTON = require("../../Background Images/Intro/CONTINUEJOURNEY_RETURN.png");
 const CONTINUE_BUTTON = require("../../Background Images/Intro/CONTINUEJOURNEY_CONTINUE.png");
 
-// =====================================================
-// TUNE THESE
-// =====================================================
+
 const BUTTON_WIDTH = 260;
 const BUTTON_HEIGHT = 100;
 const BUTTON_LIFT = 90;
 const BG_FADE_MS = 500;
 
-// =====================================================
-// ANIMATED IMAGE BUTTON
-// Press: shrinks and dips slightly.
-// Release: springs back with a small bounce.
-// =====================================================
+
 function JourneyButton({ imageSource, onPress }) {
     const scale = useRef(new Animated.Value(1)).current;
     const translateY = useRef(new Animated.Value(0)).current;
 
     const animatePress = (isPressed) => {
-        // Stop the previous animation so rapid taps stay responsive.
         scale.stopAnimation();
         translateY.stopAnimation();
 
@@ -81,10 +74,6 @@ function JourneyButton({ imageSource, onPress }) {
     );
 }
 
-// =====================================================
-// CONTINUE YOUR JOURNEY SCREEN
-// Drawn in a Modal so other screens cannot cover it.
-// =====================================================
 export default function ChapterCompleted({
     showContinue = true,
     onReturnToMenu,
@@ -164,9 +153,6 @@ export default function ChapterCompleted({
     );
 }
 
-// =====================================================
-// STYLES
-// =====================================================
 const styles = StyleSheet.create({
     root: {
         flex: 1,

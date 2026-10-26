@@ -21,9 +21,6 @@ import { useJournal } from "../../Main/Others/JournalContext";
 import { useFocusEffect } from "@react-navigation/native";
 import { REMNANT_DATA } from "../RemnantData";
 
-// =====================================================
-// MINIGAMES
-// =====================================================
 import VoyageMinigame from "../GameScreen/Minigames/VoyageMinigame";
 import SantoNinoMinigame from "../GameScreen/Minigames/SantoNinoMinigame";
 import CedulaMinigame from "../GameScreen/Minigames/CedulaMinigame";
@@ -35,9 +32,6 @@ import TimelineSort from "../GameScreen/Minigames/Timelinesort";
 import { BloodTrace, OathTrace } from "../GameScreen/Minigames/TracingMinigame";
 import MinigameOverlay from "../../Components/Minigameoverlay";
 
-// =====================================================
-// HELPERS
-// =====================================================
 const getMusicFor = (sceneData, idx) => {
   for (let i = Math.min(idx, sceneData.length - 1); i >= 0; i--) {
     const music = sceneData[i].music ?? sceneData[i].Music;
@@ -46,9 +40,6 @@ const getMusicFor = (sceneData, idx) => {
   return null;
 };
 
-// =====================================================
-// CHAPTER COMPLETE SCREEN
-// =====================================================
 function ChapterCompleteScreen({ onContinue }) {
   const titleScale = useRef(new Animated.Value(0.65)).current;
   const titleOpacity = useRef(new Animated.Value(0)).current;
@@ -99,9 +90,6 @@ function ChapterCompleteScreen({ onContinue }) {
   );
 }
 
-// =====================================================
-// ANIMATED NEXT BUTTON
-// =====================================================
 function AnimatedNextButton({ onPress }) {
   const { playSfx } = useAudio();
   const [pressed, setPressed] = useState(false);
@@ -157,9 +145,6 @@ function AnimatedNextButton({ onPress }) {
   );
 }
 
-// =====================================================
-// ANIMATED CHOICE BUTTON
-// =====================================================
 function AnimatedChoiceButton({ children, onPress, style }) {
   const scale = useRef(new Animated.Value(1)).current;
   const translateY = useRef(new Animated.Value(0)).current;
@@ -197,9 +182,6 @@ function AnimatedChoiceButton({ children, onPress, style }) {
   );
 }
 
-// =====================================================
-// ANIMATED QUIZ BUTTON
-// =====================================================
 function AnimatedQuizButton({ children, onPress, style }) {
   const scale = useRef(new Animated.Value(1)).current;
   const translateY = useRef(new Animated.Value(0)).current;
@@ -237,9 +219,6 @@ function AnimatedQuizButton({ children, onPress, style }) {
   );
 }
 
-// =====================================================
-// ANIMATED IMAGE BUTTON
-// =====================================================
 function AnimatedImageButton({
   normalSource,
   pressedSource,
@@ -290,9 +269,17 @@ function AnimatedImageButton({
   );
 }
 
-// =====================================================
-// MINIGAME MAPS
-// =====================================================
+const QUIZ_BACKGROUND = require("../../assets/quiz_assets/Quiz_Background.png");
+
+const QUIZ_PANELS = [
+  require("../../assets/quiz_assets/QuizQuestion_1.png"),
+  require("../../assets/quiz_assets/QuizQuestion_2.png"),
+  require("../../assets/quiz_assets/QuizQuestion_3.png"),
+  require("../../assets/quiz_assets/QuizQuestion_4.png"),
+  require("../../assets/quiz_assets/QuizQuestion_5.png"),
+  require("../../assets/quiz_assets/QuizQuestion_6.png"),
+];
+
 const MINIGAMES = {
   voyage: VoyageMinigame,
   santoNino: SantoNinoMinigame,
@@ -312,9 +299,6 @@ const MINIGAME_TYPES = new Set([
   "oathtrace",
 ]);
 
-// =====================================================
-// TYPEWRITER
-// =====================================================
 const SPEED_MS = { Slow: 60, Normal: 30, Fast: 12 };
 
 function useTypewriter(text, msPerChar, resetKey) {
@@ -353,9 +337,6 @@ function TypedText({ style, full, shown }) {
   );
 }
 
-// =====================================================
-// GAMEPLAY MENU OVERLAY
-// =====================================================
 function GameplayMenuOverlay({ navigation }) {
   return (
     <View style={styles.menuOverlay}>
@@ -378,16 +359,7 @@ function GameplayMenuOverlay({ navigation }) {
   );
 }
 
-// =====================================================
-// FADING BACKGROUND
-// Replaces ImageBackground for story scenes. When the picture changes it
-// fades the new one in over the old one instead of switching instantly.
-// Change `duration` (ms) to make the fade faster or slower.
-// =====================================================
 function FadeBackground({ source, style, children, duration = 700 }) {
-  // Two stacked pictures. Layer B sits on top of layer A.
-  // Only the layer that is currently hidden ever gets a new picture,
-  // so a visible picture never reloads or flickers.
   const [srcA, setSrcA] = useState(source);
   const [srcB, setSrcB] = useState(null);
   const bOpacity = useRef(new Animated.Value(0)).current;
@@ -396,7 +368,6 @@ function FadeBackground({ source, style, children, duration = 700 }) {
   const startFadeRef = useRef(null);
   const timerRef = useRef(null);
 
-  // Runs the waiting fade (once)
   const startFade = useCallback(() => {
     if (timerRef.current) {
       clearTimeout(timerRef.current);
@@ -411,10 +382,10 @@ function FadeBackground({ source, style, children, duration = 700 }) {
     if (source === targetRef.current) return;
     targetRef.current = source;
 
-    startFade(); // finish a fade that was still waiting
+    startFade();
     bOpacity.stopAnimation();
 
-    const intoB = !showingB.current; // load into whichever layer is hidden
+    const intoB = !showingB.current;
     const alreadyThere = intoB ? srcB === source : srcA === source;
 
     if (intoB) setSrcB(source);
@@ -429,11 +400,8 @@ function FadeBackground({ source, style, children, duration = 700 }) {
       }).start();
     };
 
-    // Wait until the new picture has loaded (onLoad below), then fade.
-    // If it was already loaded, or onLoad never fires, don't wait.
     if (alreadyThere) startFade();
     else timerRef.current = setTimeout(startFade, 400);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [source]);
 
   useEffect(
@@ -465,9 +433,6 @@ function FadeBackground({ source, style, children, duration = 700 }) {
   );
 }
 
-// =====================================================
-// CHARACTER LAYER
-// =====================================================
 function CharacterSprite({ char, talking }) {
   const bob = useRef(new Animated.Value(0)).current;
   const animationRef = useRef(null);
@@ -571,9 +536,6 @@ function CharacterLayer({ characters, speaker, typing, sceneKey }) {
   );
 }
 
-// =====================================================
-// PART RENDERER
-// =====================================================
 function PartRenderer(props) {
   const {
     sceneData,
@@ -612,15 +574,12 @@ function PartRenderer(props) {
 
   const [sceneIdx, setSceneIdx] = useState(startIdx);
 
-  // Regular choices: selection and confirmation are separate.
   const [picked, setPicked] = useState(null);
   const [choiceConfirmed, setChoiceConfirmed] = useState(false);
 
-  // Quiz state remains independent from regular choices.
   const [quizAnswer, setQuizAnswer] = useState(null);
   const [quizConfirmed, setQuizConfirmed] = useState(false);
 
-  // Minigame pause state.
   const [paused, setPaused] = useState(false);
   const [minigamePhase, setMinigamePhase] = useState("intro");
 
@@ -634,7 +593,6 @@ function PartRenderer(props) {
     }, [])
   );
 
-  // Remnant popup.
   const [showRewardPopup, setShowRewardPopup] = useState(false);
   const [rewardImage, setRewardImage] = useState(null);
 
@@ -655,7 +613,6 @@ function PartRenderer(props) {
       game.setInGame(false);
       stopLoops();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getSceneInfo = useCallback(
@@ -682,7 +639,6 @@ function PartRenderer(props) {
       sceneIdx: startIdx,
       ...getSceneInfo(startIdx),
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const hasMoreScenes = sceneIdx < sceneData.length;
@@ -700,7 +656,6 @@ function PartRenderer(props) {
 
   const { unlock } = useJournal();
 
-  // Do not automatically unlock quiz rewards before an answer is confirmed.
   useEffect(() => {
     if (current && current.unlock && current.type !== "quiz") {
       unlock(current.unlock);
@@ -719,7 +674,6 @@ function PartRenderer(props) {
     if (scene.stopSfx) stopLoops();
 
     [].concat(scene.sfx ?? []).forEach((key) => playSfx(key));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sceneIdx, sceneData]);
 
   useEffect(() => {
@@ -741,9 +695,6 @@ function PartRenderer(props) {
     return () => animation.stop();
   }, [sceneIdx, current?.type, chapterTitleOpacity]);
 
-  // =====================================================
-  // CHECKPOINTS AND DECISIONS
-  // =====================================================
   const saveDecision = (choiceIndex) => {
     if (!current || current.type !== "choice") return;
 
@@ -774,7 +725,6 @@ function PartRenderer(props) {
       return;
     }
 
-    // Clear all per-scene selection/confirmation state.
     setPicked(null);
     setChoiceConfirmed(false);
     setQuizAnswer(null);
@@ -831,10 +781,6 @@ function PartRenderer(props) {
     });
   };
 
-  // =====================================================
-  // TYPEWRITER TEXT
-  // A choice response appears only after the choice is confirmed.
-  // =====================================================
   const isTyped =
     current &&
     !isMinigame &&
@@ -864,7 +810,6 @@ function PartRenderer(props) {
     if (!current) return;
 
     if (current.type === "choice") {
-      // Safety guard: never advance an unconfirmed choice.
       if (!choiceConfirmed || picked === null) return;
 
       return goToIndex(
@@ -883,36 +828,24 @@ function PartRenderer(props) {
 
   const advance = () => (done ? next() : skip());
 
-  // Auto-play cannot confirm or advance an unconfirmed choice.
   useEffect(() => {
     if (!settings?.autoPlay || !done || !current) return;
-    if (isMinigame) return;
-    if (current.type === "quiz") return;
-
-    if (
-      current.type === "choice" &&
-      (picked === null || !choiceConfirmed)
-    ) {
-      return;
-    }
+    if (isMinigame || !lineText) return;
 
     const id = setTimeout(next, settings.autoDelay * 1000);
     return () => clearTimeout(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     sceneIdx,
     picked,
     choiceConfirmed,
     done,
+    lineText,
     settings?.autoPlay,
     settings?.autoDelay,
     current,
     isMinigame,
   ]);
 
-  // =====================================================
-  // MINIGAMES
-  // =====================================================
   if (current?.type === "voyage") {
     return <VoyageMinigame onComplete={goNext} />;
   }
@@ -1044,9 +977,6 @@ function PartRenderer(props) {
     </>
   );
 
-  // =====================================================
-  // PART COMPLETE
-  // =====================================================
   if (!hasMoreScenes) {
     return (
       <ChapterCompleteScreen
@@ -1063,9 +993,6 @@ function PartRenderer(props) {
     );
   }
 
-  // =====================================================
-  // CHAPTER INTRO
-  // =====================================================
   if (current.type === "chapterIntro") {
     return withOverlay(
       <ImageBackground
@@ -1086,9 +1013,6 @@ function PartRenderer(props) {
     );
   }
 
-  // =====================================================
-  // SYSTEM INTRO
-  // =====================================================
   if (current.type === "system" && current.intro === true) {
     const nextIntro =
       introNextIndex !== null ? sceneData[introNextIndex] : null;
@@ -1145,25 +1069,27 @@ function PartRenderer(props) {
     );
   }
 
-  // =====================================================
-  // QUIZ — TAP ONCE TO SELECT, TAP AGAIN TO CONFIRM
-  // =====================================================
   if (current.type === "quiz") {
     const isConfirmed = quizConfirmed;
     const isAnswered = quizAnswer !== null;
     const isCorrect = quizAnswer === current.correctIndex;
 
+    const quizNumber = sceneData
+      .slice(0, sceneIdx + 1)
+      .filter((scene) => scene.type === "quiz").length;
+
+    const panelIndex = current.panel ? current.panel - 1 : quizNumber - 1;
+    const panelSource = QUIZ_PANELS[panelIndex % QUIZ_PANELS.length];
+
     const handleQuizTap = (index) => {
       if (isConfirmed) return;
 
-      // First tap, or selecting a different answer.
       if (quizAnswer !== index) {
         setQuizAnswer(index);
         playSfx("choose");
         return;
       }
 
-      // Second tap on the same answer confirms it.
       setQuizConfirmed(true);
 
       const correct = index === current.correctIndex;
@@ -1198,11 +1124,15 @@ function PartRenderer(props) {
     };
 
     return withOverlay(
-      <View style={[styles.choiceScreen, styles.quizBackground]}>
-        <View style={styles.choiceParchmentWrapper}>
+      <ImageBackground
+        source={QUIZ_BACKGROUND}
+        style={styles.choiceScreen}
+        resizeMode="cover"
+      >
+        <View style={styles.quizParchmentWrapper}>
           <ImageBackground
-            source={require("../../assets/foreground/quizzing_box.png")}
-            style={styles.choiceParchmentBox}
+            source={panelSource}
+            style={styles.quizParchmentBox}
             imageStyle={boxImage}
             resizeMode="stretch"
           >
@@ -1234,15 +1164,15 @@ function PartRenderer(props) {
 
         <View style={styles.quizButtonsGrid}>
           {current.options.map((option, index) => {
-            let buttonSource = require("../../assets/buttons/choice_button.png");
+            let buttonSource = require("../../assets/buttons/Quiz_Choices.png");
 
             if (quizAnswer === index) {
               if (!isConfirmed) {
-                buttonSource = require("../../assets/buttons/choice_picked.png");
+                buttonSource = require("../../assets/buttons/Quiz_ChoicesSelected.png");
               } else if (index === current.correctIndex) {
-                buttonSource = require("../../assets/buttons/choice_correct.png");
+                buttonSource = require("../../assets/buttons/wrong.png");
               } else {
-                buttonSource = require("../../assets/buttons/choice_wrong.png");
+                buttonSource = require("../../assets/buttons/right.png");
               }
             }
 
@@ -1296,13 +1226,10 @@ function PartRenderer(props) {
             </View>
           </View>
         )}
-      </View>
+      </ImageBackground>
     );
   }
 
-  // =====================================================
-  // SYSTEM NARRATION
-  // =====================================================
   if (current.type === "system") {
     const systemContent = (
       <>
@@ -1342,15 +1269,11 @@ function PartRenderer(props) {
     );
   }
 
-  // =====================================================
-  // SCENE TITLE
-  // =====================================================
   if (current.type === "scene") {
     return withOverlay(
-      <ImageBackground
+      <FadeBackground
         source={current.background}
         style={styles.sceneScreen}
-        resizeMode="cover"
       >
         <View style={styles.sceneDarkOverlay}>
           <View style={styles.sceneTitleBox}>
@@ -1366,9 +1289,6 @@ function PartRenderer(props) {
     );
   }
 
-  // =====================================================
-  // NARRATOR
-  // =====================================================
   if (current.type === "narrator") {
     const narratorContent = (
       <>
@@ -1414,26 +1334,17 @@ function PartRenderer(props) {
     );
   }
 
-  // =====================================================
-  // CHOICES — SELECT FIRST, CONFIRM SECOND
-  // =====================================================
   if (current.type === "choice") {
-    // Keep the choice-selection screen visible until the player
-    // explicitly confirms the selected option.
     if (picked === null || !choiceConfirmed) {
       const handleChoiceTap = (index) => {
         if (choiceConfirmed) return;
 
-        // First tap, or tapping a different option:
-        // select it, show the gold artwork, and wait.
         if (picked !== index) {
           setPicked(index);
           playSfx("choose");
           return;
         }
 
-        // Second tap on the SAME option confirms the decision.
-        // Only now save the decision and show its dialogue response.
         setChoiceConfirmed(true);
         playSfx("dialogueClick");
         saveDecision(index);
@@ -1445,7 +1356,7 @@ function PartRenderer(props) {
             <ImageBackground
               source={require("../../assets/foreground/quizzing_box.png")}
               style={styles.choiceParchmentBox}
-              imageStyle={boxImage}
+              imageStyle={[boxImage, { transform: [{ translateX: 32 }] }]}
               resizeMode="stretch"
             >
               <Text style={scaled(styles.choiceQuestion)}>
@@ -1477,6 +1388,7 @@ function PartRenderer(props) {
                   <ImageBackground
                     source={buttonSource}
                     style={styles.choiceImageButtonBg}
+                    imageStyle={{ transform: [{ translateX: 10 }] }}
                     resizeMode="stretch"
                   >
                     <Text style={scaled(styles.choiceButtonText)}>
@@ -1507,7 +1419,6 @@ function PartRenderer(props) {
       );
     }
 
-    // Response dialogue is only rendered after confirmation.
     const selectedChoice = current.choices[picked];
 
     const responseContent = (
@@ -1565,9 +1476,6 @@ function PartRenderer(props) {
     );
   }
 
-  // =====================================================
-  // STANDARD DIALOGUE
-  // =====================================================
   const dialogueContent = (
     <>
       <CharacterLayer
@@ -1623,9 +1531,6 @@ function PartRenderer(props) {
   );
 }
 
-// =====================================================
-// PART SELECT HAND-OFF
-// =====================================================
 const PART_SELECT_ROUTE = "PartSelect";
 
 const goToUnlockSequence = (navigation, completedPart) => {
@@ -1643,9 +1548,6 @@ const goToUnlockSequence = (navigation, completedPart) => {
   }
 };
 
-// =====================================================
-// SCREEN EXPORTS
-// =====================================================
 export function Chap1Part1Screen({ navigation, ...props }) {
   return (
     <PartRenderer
@@ -1763,11 +1665,7 @@ export function Chap1Part8Screen({ navigation, ...props }) {
   );
 }
 
-// =====================================================
-// STYLES
-// =====================================================
 const styles = StyleSheet.create({
-  // Both background pictures of FadeBackground: full size, centered crop
   fadeLayer: {
     position: "absolute",
     top: 0,
@@ -1777,10 +1675,6 @@ const styles = StyleSheet.create({
   },
   opacityZero: {
     opacity: 0,
-  },
-
-  quizBackground: {
-    backgroundColor: "#fffca0",
   },
 
   chapterIntroScreen: {
@@ -2090,18 +1984,40 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fafafa",
     justifyContent: "center",
+    alignItems: "center",
   },
 
   choiceParchmentWrapper: {
-    paddingHorizontal: 20,
-    marginBottom: 20,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 100,
+    paddingVertical: 25,
   },
 
   choiceParchmentBox: {
     width: "100%",
     minHeight: 180,
     justifyContent: "center",
+    alignItems: "center",
     padding: 30,
+  },
+
+  quizParchmentWrapper: {
+    width: "85%",
+    marginBottom: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  quizParchmentBox: {
+    width: "100%",
+    minHeight: 175,
+    alignSelf: "center",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 10,
+
   },
 
   choiceQuestion: {
@@ -2120,13 +2036,13 @@ const styles = StyleSheet.create({
   },
 
   choiceButtonsGrid: {
-    paddingHorizontal: 20,
+    width: "98%",
+    alignSelf: "center",
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
     alignItems: "stretch",
     gap: 12,
-    transform: [{ translateX: -15 }],
   },
 
   choiceImageButton: {
@@ -2150,15 +2066,16 @@ const styles = StyleSheet.create({
   },
 
   quizButtonsGrid: {
-    paddingHorizontal: 15,
+    width: "90%",
+    alignSelf: "center",
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
-    gap: 10,
+    gap: 15,
   },
 
   quizImageButton: {
-    width: "47%",
+    width: "45%",
   },
 
   quizImageButtonBg: {
@@ -2172,7 +2089,7 @@ const styles = StyleSheet.create({
 
   quizButtonText: {
     color: "#371f10",
-    fontSize: 15,
+    fontSize: 13,
     lineHeight: 20,
     textAlign: "center",
     fontWeight: "bold",
@@ -2216,9 +2133,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 
-  // =====================================================
-  // REMNANT REWARD POPUP
-  // =====================================================
   rewardPopupOverlay: {
     position: "absolute",
     top: 0,

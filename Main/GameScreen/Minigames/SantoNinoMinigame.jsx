@@ -14,7 +14,6 @@ import {
 const GRID_SIZE = 3;
 const PIECE_COUNT = GRID_SIZE * GRID_SIZE;
 
-// Set to true if you want the little ✓ badge on placed pieces
 const SHOW_CHECKMARKS = false;
 
 const PIECES = [
@@ -33,18 +32,13 @@ const COMPLETE_IMAGE = require('../../../assets/Minigames/Part1/Santo Nino.png')
 
 const DISCOVERY_BACKGROUND = require('../../../Background Images/Part 1/nipa hut interior santo nino discovery.png');
 
-/*
- * Real width / height of ONE piece PNG.
- * Every piece is 1/3 of the full image in both directions,
- * so this is also the aspect ratio of the whole puzzle.
- */
+
 const pieceSource = Image.resolveAssetSource(PIECES[0]);
 const PIECE_ASPECT =
   pieceSource && pieceSource.width && pieceSource.height
     ? pieceSource.width / pieceSource.height
     : 1;
 
-// Full shuffle used at the start (never starts already solved)
 function shuffle(array) {
   const shuffled = [...array];
 
@@ -58,8 +52,6 @@ function shuffle(array) {
   return shuffled;
 }
 
-// Shuffles any list of values and makes sure the order really changes
-// (needs at least 2 values).
 function shuffleDifferent(values) {
   const original = [...values];
   const shuffled = [...values];
@@ -81,20 +73,12 @@ export default function SantoNinoMinigame({
 }) {
   const { width, height } = useWindowDimensions();
 
-  /*
-   * =====================================================
-   * LAYOUT (board keeps the image's real proportions)
-   * =====================================================
-   */
-
   const trayGap = 5;
   const boardTop = 100;
 
-  // Board: as tall as fits, width follows the image aspect ratio
   let boardHeight = Math.min(Math.max(120, height - boardTop - 16), 240);
   let boardWidth = boardHeight * PIECE_ASPECT;
 
-  // Don't let the board eat more than half the screen width
   const maxBoardWidth = width * 0.5;
   if (boardWidth > maxBoardWidth) {
     boardWidth = maxBoardWidth;
@@ -104,10 +88,8 @@ export default function SantoNinoMinigame({
   const boardPieceW = boardWidth / GRID_SIZE;
   const boardPieceH = boardHeight / GRID_SIZE;
 
-  // Tray pieces: same aspect ratio as board pieces (3 columns)
   let trayPieceW = Math.min(42, (width - boardWidth - 40) / 3);
 
-  // Make sure tray + label + shuffle button fit vertically
   const maxTrayHeight = Math.max(90, height - boardTop - 60);
   const maxTrayPieceH = (maxTrayHeight - trayGap * 2) / 3;
   trayPieceW = Math.min(trayPieceW, maxTrayPieceH * PIECE_ASPECT);
@@ -124,11 +106,6 @@ export default function SantoNinoMinigame({
   const trayLeft = boardLeft + boardWidth + 14;
   const trayTop = boardTop;
 
-  /*
-   * =====================================================
-   * GAME STATE
-   * =====================================================
-   */
 
   const [pieces, setPieces] = useState(() =>
     shuffle(Array.from({ length: PIECE_COUNT }, (_, index) => index))
@@ -137,7 +114,6 @@ export default function SantoNinoMinigame({
   const [locked, setLocked] = useState([]);
   const [gameState, setGameState] = useState('playing');
 
-  // The piece currently being dragged (so it renders on top)
   const [activePiece, setActivePiece] = useState(null);
 
   const lockedRef = useRef(locked);
@@ -146,27 +122,17 @@ export default function SantoNinoMinigame({
     lockedRef.current = locked;
   }, [locked]);
 
-  // Pieces that are flying into their slot right now (not locked yet).
-  // They must not be touched or shuffled while they are on their way.
   const settlingRef = useRef(new Set());
 
-  // Pause support: while paused, nothing can be dragged or shuffled.
   const pausedRef = useRef(paused);
   pausedRef.current = paused;
 
-  // Tells the parent which screen we are on ("playing" or "result") so it
-  // can show the pause button only while the puzzle is being played.
   useEffect(() => {
     if (!onPhaseChange) return;
 
     onPhaseChange(gameState === 'won' ? 'result' : 'playing');
   }, [gameState, onPhaseChange]);
 
-  /*
-   * =====================================================
-   * ANIMATIONS
-   * =====================================================
-   */
 
   const pieceAnimations = useMemo(() => {
     return Array.from({ length: PIECE_COUNT }, () => ({
@@ -179,11 +145,6 @@ export default function SantoNinoMinigame({
   const successScale = useRef(new Animated.Value(0.85)).current;
   const successOpacity = useRef(new Animated.Value(0)).current;
 
-  /*
-   * =====================================================
-   * CHECK COMPLETION
-   * =====================================================
-   */
 
   useEffect(() => {
     if (locked.length !== PIECE_COUNT) {
@@ -196,12 +157,6 @@ export default function SantoNinoMinigame({
 
     return () => clearTimeout(timer);
   }, [locked]);
-
-  /*
-   * =====================================================
-   * SUCCESS ANIMATION
-   * =====================================================
-   */
 
   useEffect(() => {
     if (gameState !== 'won') {
@@ -223,17 +178,6 @@ export default function SantoNinoMinigame({
     ]).start();
   }, [gameState, successOpacity, successScale]);
 
-  /*
-   * =====================================================
-   * SHUFFLE
-   *
-   * Only the pieces that are still in the tray get shuffled.
-   * Pieces already placed on the board stay exactly where they are,
-   * and they keep their original tray slot so their position on the
-   * board stays correct.
-   * =====================================================
-   */
-
   const shufflePieces = () => {
     if (gameState !== 'playing' || pausedRef.current) return;
 
@@ -241,13 +185,11 @@ export default function SantoNinoMinigame({
       lockedRef.current.includes(pieceIndex) ||
       settlingRef.current.has(pieceIndex);
 
-    // Tray slots that currently hold a piece that is still free
     const freeSlots = [];
     pieces.forEach((pieceIndex, slot) => {
       if (!isFrozen(pieceIndex)) freeSlots.push(slot);
     });
 
-    // Put every free piece (not a placed one) back to rest in the tray
     pieces.forEach((pieceIndex) => {
       if (isFrozen(pieceIndex)) return;
 
@@ -259,7 +201,6 @@ export default function SantoNinoMinigame({
 
     setActivePiece(null);
 
-    // Nothing (or only one piece) left to shuffle
     if (freeSlots.length < 2) return;
 
     const freePieces = freeSlots.map((slot) => pieces[slot]);
@@ -272,12 +213,6 @@ export default function SantoNinoMinigame({
 
     setPieces(next);
   };
-
-  /*
-   * =====================================================
-   * RETURN PIECE TO TRAY
-   * =====================================================
-   */
 
   const returnPiece = (pieceIndex) => {
     Animated.parallel([
@@ -301,12 +236,6 @@ export default function SantoNinoMinigame({
       }),
     ]).start();
   };
-
-  /*
-   * =====================================================
-   * HANDLE DROP
-   * =====================================================
-   */
 
   const handleDrop = (pieceIndex, gestureX, gestureY) => {
     if (
@@ -389,15 +318,14 @@ export default function SantoNinoMinigame({
 
     const requiredScale = boardPieceW / trayPieceW;
 
-    // scale happens around the piece's center, so compensate
+
     const scaleOffsetX = (trayPieceW - boardPieceW) / 2;
     const scaleOffsetY = (trayPieceH - boardPieceH) / 2;
 
     const requiredX = targetLeft - originalLeft - scaleOffsetX;
     const requiredY = targetTop - originalTop - scaleOffsetY;
 
-    // From now on this piece belongs to the board: it can't be shuffled
-    // or grabbed again, even before the animation has finished.
+
     settlingRef.current.add(pieceIndex);
 
     Animated.parallel([
@@ -481,8 +409,6 @@ export default function SantoNinoMinigame({
             ) {
               return;
             }
-
-            // Paused mid-drag: just send the piece back to the tray
             if (pausedRef.current) {
               returnPiece(pieceIndex);
               return;
@@ -509,15 +435,10 @@ export default function SantoNinoMinigame({
     []
   );
 
-  // Is there anything left to shuffle? (at least 2 free pieces)
+
   const freePieceCount = PIECE_COUNT - locked.length;
   const canShuffle = freePieceCount >= 2;
 
-  /*
-   * =====================================================
-   * RENDER
-   * =====================================================
-   */
 
   return (
     <ImageBackground
@@ -526,8 +447,6 @@ export default function SantoNinoMinigame({
       resizeMode="cover"
     >
       <View style={styles.darkOverlay} />
-
-      {/* ================= HEADER ================= */}
 
       <View style={styles.header}>
         <Text style={styles.title}>Restore the Santo Niño</Text>
@@ -541,8 +460,6 @@ export default function SantoNinoMinigame({
         </Text>
       </View>
 
-      {/* ================= BOARD FRAME ================= */}
-
       <View
         style={[
           styles.boardFrame,
@@ -554,8 +471,6 @@ export default function SantoNinoMinigame({
           },
         ]}
       />
-
-      {/* ================= BOARD SLOTS ================= */}
 
       <View
         style={[
@@ -589,8 +504,6 @@ export default function SantoNinoMinigame({
         })}
       </View>
 
-      {/* ================= PIECE TRAY ================= */}
-
       <View
         style={[
           styles.tray,
@@ -602,8 +515,6 @@ export default function SantoNinoMinigame({
           },
         ]}
       />
-
-      {/* ================= PIECES ================= */}
 
       <View
         pointerEvents={paused ? 'none' : 'box-none'}
@@ -640,7 +551,6 @@ export default function SantoNinoMinigame({
                     { scale: pieceAnimations[pieceIndex].scale },
                   ],
 
-                  // dragged piece on top, locked pieces underneath
                   zIndex: isLocked ? 20 : isActive ? 100 : 30,
                   elevation: isLocked ? 20 : isActive ? 100 : 30,
                 },
@@ -662,8 +572,6 @@ export default function SantoNinoMinigame({
         })}
       </View>
 
-      {/* ================= PIECES LABEL ================= */}
-
       <Text
         style={[
           styles.piecesLabel,
@@ -676,8 +584,6 @@ export default function SantoNinoMinigame({
       >
         PIECES
       </Text>
-
-      {/* ================= SHUFFLE ================= */}
 
       <Pressable
         onPress={shufflePieces}
@@ -695,8 +601,6 @@ export default function SantoNinoMinigame({
       >
         <Text style={styles.shuffleText}>SHUFFLE</Text>
       </Pressable>
-
-      {/* ================= SUCCESS ================= */}
 
       {gameState === 'won' && (
         <Animated.View
@@ -748,8 +652,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.38)',
   },
 
-  /* ================= HEADER ================= */
-
   header: {
     position: 'absolute',
     top: 27,
@@ -781,9 +683,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 
-  /* ================= BOARD ================= */
-
-  // gold border + dark backing
   boardFrame: {
     position: 'absolute',
     borderWidth: 2,
@@ -804,8 +703,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.025)',
   },
 
-  /* ================= TRAY ================= */
-
   tray: {
     position: 'absolute',
     borderWidth: 1,
@@ -815,8 +712,6 @@ const styles = StyleSheet.create({
     zIndex: 4,
   },
 
-  /* ================= PIECES ================= */
-
   piece: {
     position: 'absolute',
     borderWidth: 1,
@@ -825,7 +720,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
 
-  // this is para magiging part na nang border
   pieceLocked: {
     borderWidth: 0,
     backgroundColor: 'transparent',
@@ -854,8 +748,6 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
 
-  /* ================= PIECES LABEL ================= */
-
   piecesLabel: {
     position: 'absolute',
     color: '#d6bd84',
@@ -864,8 +756,6 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     textAlign: 'center',
   },
-
-  /* ================= SHUFFLE ================= */
 
   shuffleButton: {
     position: 'absolute',
@@ -878,7 +768,6 @@ const styles = StyleSheet.create({
     zIndex: 50,
   },
 
-  // nothing left to shuffle (0 or 1 piece still in the tray)
   shuffleDisabled: {
     opacity: 0.4,
   },
@@ -894,7 +783,7 @@ const styles = StyleSheet.create({
     opacity: 0.65,
   },
 
-  /* ================= SUCCESS ================= */
+
 
   resultOverlay: {
     position: 'absolute',

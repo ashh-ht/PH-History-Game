@@ -46,6 +46,10 @@ const SFX = {
   doorKnock: { file: 'door_knock' },
 };
 
+const MUSIC_GAIN = 0.5;
+const SFX_GAIN = 3;
+const CLICK_GAIN = 0.8;
+
 export function AudioProvider({ children }) {
   const [masterVolume, setMasterVolume] = useState(0.8);
   const [musicVolume, setMusicVolume] = useState(0.4);
@@ -53,12 +57,12 @@ export function AudioProvider({ children }) {
 
   const bgmRef = useRef(null);
   const clickref = useRef(null);
-  const currentTrackRef = useRef(null); // name of the track that SHOULD be playing
-  const appPausedRef = useRef(false);   // true while app is in background
-  const heldByGameRef = useRef(false);  // true while a minigame holds the music
-  const sfxRef = useRef({});            // sound effects, loaded on first use
+  const currentTrackRef = useRef(null); 
+  const appPausedRef = useRef(false);   
+  const heldByGameRef = useRef(false);  
+  const sfxRef = useRef({});          
 
-  const musicEffectiveVolume = masterVolume * musicVolume;
+  const musicEffectiveVolume = masterVolume * musicVolume * MUSIC_GAIN;
   const soundEffectiveVolume = masterVolume * soundVolume;
 
   const bgmDuckedRef = useRef(false);
@@ -68,21 +72,17 @@ export function AudioProvider({ children }) {
     const duckMultiplier = bgmDuckedRef.current ? 0.5 : 1;
     bgmRef.current?.setVolume(musicEffectiveVolume * duckMultiplier);
   };
-  // Always-current volumes so async callbacks never use a stale value
+
   const volumeRef = useRef(musicEffectiveVolume);
   volumeRef.current = musicEffectiveVolume;
   const sfxVolRef = useRef(soundEffectiveVolume);
   sfxVolRef.current = soundEffectiveVolume;
 
-  // Each playMusic call gets an id. A load callback only counts if its id is
-  // still the latest, so double-mounts / fast scene changes can't leave stray tracks.
   const loadIdRef = useRef(0);
 
-  // ---------------------------------------------------
-  // MUSIC
-  // ---------------------------------------------------
+
   const lastTrackRef = useRef('somber');
-  // Switch background music. Same track = do nothing (no restart).
+
   const playMusic = (rawName) => {
     if (!rawName) return;
     const name = String(rawName).toLowerCase();
@@ -124,7 +124,7 @@ export function AudioProvider({ children }) {
 
   useEffect(() => {
     Sound.setCategory('Playback');
-    playMusic('somber'); // default / menu music
+    playMusic('somber');
 
     const clicks = new Sound('click', Sound.MAIN_BUNDLE, (error) => {
       if (error) console.log('did not load default click', error);
@@ -141,14 +141,11 @@ export function AudioProvider({ children }) {
     };
   }, []);
 
-  // FIXED: Dependency array changed to [musicEffectiveVolume]
+
   useEffect(() => {
     bgmRef.current?.setVolume(musicEffectiveVolume);
   }, [musicEffectiveVolume]);
 
-  // ---------------------------------------------------
-  // SOUND EFFECTS (loaded the first time they are used)
-  // ---------------------------------------------------
 
   const playSfx = (key) => {
     const def = SFX[key];
@@ -160,7 +157,7 @@ export function AudioProvider({ children }) {
     const fire = (snd) => {
       console.log('[sfx] playing:', key, 'volume:', sfxVolRef.current);
 
-      snd.setVolume(Math.min(sfxVolRef.current * 2, 1));
+      snd.setVolume(Math.min(sfxVolRef.current * SFX_GAIN, 1));
       snd.stop(() => {
         snd.play((success) => {
           console.log('[sfx] playback result:', key, success);
@@ -186,7 +183,7 @@ export function AudioProvider({ children }) {
     sfxRef.current[key] = snd;
   };
 
-  // Stop every looping effect (war, oil lamp, ...)
+
   const stopLoops = () => {
     Object.keys(SFX).forEach((key) => {
       if (SFX[key].loop && sfxRef.current[key]) {
@@ -195,7 +192,7 @@ export function AudioProvider({ children }) {
     });
   };
 
-  // Free all loaded effects when the provider unmounts
+
   useEffect(() => {
     return () => {
       Object.values(sfxRef.current).forEach((s) => s.release());
@@ -203,9 +200,6 @@ export function AudioProvider({ children }) {
     };
   }, []);
 
-  // ---------------------------------------------------
-  // APP IN BACKGROUND / FOREGROUND
-  // ---------------------------------------------------
 
 useEffect(() => {
   const sub = AppState.addEventListener('change', (state) => {
@@ -213,13 +207,13 @@ useEffect(() => {
       appPausedRef.current = false;
 
       if (!bgmRef.current) {
-        // Quitapp (or a failed load) wiped the music, so reload it
+
         playMusic(lastTrackRef.current || 'somber');
       } else if (!heldByGameRef.current) {
         bgmRef.current.play();
       }
 
-      // click sound was released in Quitapp, so recreate it
+
       if (!clickref.current) {
         clickref.current = new Sound('click', Sound.MAIN_BUNDLE, (error) => {
           if (error) console.log('did not load default click', error);
@@ -234,13 +228,10 @@ useEffect(() => {
   return () => sub.remove();
 }, []);
 
-  // ---------------------------------------------------
-  // BUTTON CLICK
-  // ---------------------------------------------------
 
   const Playclick = () => {
     if (clickref.current) {
-      clickref.current.setVolume(soundEffectiveVolume * 0.4);
+      clickref.current.setVolume(Math.min(soundEffectiveVolume * CLICK_GAIN, 1));
       clickref.current.stop();
       clickref.current.play();
     } else {
@@ -248,10 +239,7 @@ useEffect(() => {
     }
   };
 
-  // ---------------------------------------------------
-  // MINIGAME HOLD
-  // ---------------------------------------------------
-
+ 
   const pauseMusic = () => {
     heldByGameRef.current = true;
     bgmRef.current?.pause();
@@ -262,11 +250,6 @@ useEffect(() => {
     if (!appPausedRef.current) bgmRef.current?.play();
   };
 
-  // ---------------------------------------------------
-  // QUIT
-  // ---------------------------------------------------
-
-  // Stop audio, then close the app (BackHandler is built in, no extra package)
   const Quitapp = () => {
     try {
       stopLoops();

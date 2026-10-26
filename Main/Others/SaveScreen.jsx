@@ -24,17 +24,13 @@ import {
 } from "../Others/saveProgress";
 import { useGameProgress } from "../../GameProgress";
 
-// --- IMAGE IMPORTS ---
+
 const BG_PARCHMENT = require('../../assets/Settings_Assets/Saves_Base.png');
 const BTN_DELETE_ALL = require('../../assets/Settings_Assets/Saves_DeleteAll.png');
 const BTN_X_CIRCLE = require('../../assets/Settings_Assets/Saves_DeleteSave.png');
 
 const PANEL_ASPECT = 1205 / 630;
-
-// width / height of Saves_DeleteAll.png (tweak if the button looks squished)
 const DELETE_ASPECT = 4.8;
-
-// Fine-tune horizontal position in pixels (negative = left, positive = right)
 const DELETE_NUDGE_X = 0;
 
 const timeAgo = (ts) => {
@@ -151,7 +147,7 @@ export default function SavesScreen({ navigation }) {
   const { s, insets } = useScale();
   const { width: winW, height: winH } = useWindowDimensions();
 
-  // Exact pixel size of the panel - identical to the Settings panel
+
   const panelH = Math.min(winH * 0.92, 700, (winW * 0.9) / PANEL_ASPECT);
   const panelW = panelH * PANEL_ASPECT;
 
@@ -160,10 +156,10 @@ export default function SavesScreen({ navigation }) {
   const listTop = panelH * 0.24;
   const listH = panelH * 0.5;
 
-  // Delete All button: bigger, centered, pinned to the bottom of the panel
-  const delW = panelW * 0.52;             // raise/lower to resize
+
+  const delW = panelW * 0.52;        
   const delH = delW / DELETE_ASPECT;
-  const delBottom = panelH * 0.085;       // raise/lower to move up/down
+  const delBottom = panelH * 0.085;  
 
   const cardH = Math.max(40, panelH * 0.16);
   const cardFont = Math.max(12, panelH * 0.05);
@@ -285,7 +281,6 @@ export default function SavesScreen({ navigation }) {
           </View>
 
           {saves.length > 0 && (
-            // Full-width row pinned to the bottom; alignItems centers the button
             <View
               pointerEvents="box-none"
               style={[styles.deleteAllRow, { bottom: delBottom }]}
@@ -416,7 +411,6 @@ const styles = StyleSheet.create({
     height: 60,
   },
 
-  // Delete All: pinned to the bottom center of the panel
   deleteAllRow: {
     position: "absolute",
     left: 0,

@@ -23,9 +23,9 @@ export const Chapter1_Part1 = [
     background: require("../../../../Background Images/Intro/Intro 4.png")
   },
 
-  // ===========================================
+
   // SCENE 1: CIBABAO, SAMAR
-  // ===========================================
+ 
 
   {
     type: "scene",
@@ -36,7 +36,6 @@ export const Chapter1_Part1 = [
     sfx: "shipArrival"
   },
 
-  // SFX: waves, ship creaking, sailors shouting
 
   {
     type: "narrator",
@@ -76,7 +75,7 @@ export const Chapter1_Part1 = [
     text: "We come in peace! We offer you a sandugo as a pact of friendship."
   },
 
-  // CHOICE 1.1
+
 
   {
     type: "choice",
@@ -124,7 +123,7 @@ export const Chapter1_Part1 = [
     nextScene: 9
   },
 
-  // CONTINUE
+
 
   {
     type: "narrator",
@@ -132,9 +131,8 @@ export const Chapter1_Part1 = [
     background: require("../../../../Background Images/Part 1/Spanish Coast.png")
   },
 
-  // ===========================================
+  
   // SCENE 2: FORMAL CLAIMS & ISLAND HOPPING
-  // ===========================================
 
   {
     type: "scene",
@@ -145,7 +143,7 @@ export const Chapter1_Part1 = [
     sfx: "shipArrival"
   },
 
-  // SFX: waves, footsteps on shore
+  
 
   {
     type: "narrator",
@@ -167,7 +165,7 @@ export const Chapter1_Part1 = [
     text: "This cross marks our claim in the name of King Philip II!"
   },
 
-  // SFX: waves, quiet gathering
+
 
   {
     type: "narrator",
@@ -193,7 +191,7 @@ export const Chapter1_Part1 = [
     text: "Take this cup, Legazpi. Let our blood seal our friendship."
   },
 
-  // SFX: cup being passed, quiet ambience
+
 
   {
     type: "dialogue",
@@ -227,7 +225,6 @@ export const Chapter1_Part1 = [
     sfx: "shipArrival"
   },
 
-  // SFX: waves, ship ropes, footsteps on shore
 
   {
     type: "narrator",
@@ -298,7 +295,7 @@ export const Chapter1_Part1 = [
     text: "You have three days to decide. My men need food and a place to stay."
   },
 
-  // CHOICE 1.2
+
 
   {
     type: "choice",
@@ -341,9 +338,6 @@ export const Chapter1_Part1 = [
     nextScene: 22
   },
 
-  // CONTINUE
-
-  // SFX: hurried footsteps, rustling leaves
 
   {
     type: "narrator",
@@ -351,8 +345,6 @@ export const Chapter1_Part1 = [
     background: require("../../../../Background Images/Part 1/Cebu hills Tupas's retreat.png"),
     unlock: ["tupas-2", "Timeline_1565_04-27"]
   },
-
-  // SFX: hammering, sawing wood, workers calling out
 
   {
     type: "narrator",
@@ -362,8 +354,6 @@ export const Chapter1_Part1 = [
     unlock: ["Timeline_1565_05-08"]
   },
 
-  // SFX: distant fire crackling, falling debris
-  // Use only if the scene is intended to depict a burned settlement.
 
   {
     type: "dialogue",

@@ -19,8 +19,6 @@ const EXIT_BG = require('../../Background Images/Intro/EXITGAME_BG.png');
 const EXIT_BUTTON = require('../../Background Images/Intro/exit.png');
 const CANCEL_BUTTON = require('../../Background Images/Intro/cancel.png');
 
-// A checkpoint must contain a usable chapter, part, and scene index.
-// This prevents empty objects and malformed entries from enabling Continue.
 const isValidCheckpoint = (checkpoint) => {
   if (!checkpoint || typeof checkpoint !== 'object') {
     return false;
@@ -48,7 +46,6 @@ const hasValidSave = (checkpoints) => {
   return checkpoints.some(isValidCheckpoint);
 };
 
-// Same spring animation structure as NewGameConfirmScreen.
 function AnimatedButton({ onPress, image, style }) {
   const scale = useRef(new Animated.Value(1)).current;
 
@@ -97,7 +94,6 @@ function MainMenuScreen({ navigation }) {
   const { Quitapp } = useAudio();
   const { resetUnlocks } = useJournal();
 
-  // Check the stored checkpoints before displaying Continue Game.
   const refreshSaveState = useCallback(async () => {
     try {
       const checkpoints = await getCheckpoints();
@@ -114,7 +110,6 @@ function MainMenuScreen({ navigation }) {
     }
   }, []);
 
-  // Refresh whenever the main menu comes into focus.
   useFocusEffect(
     useCallback(() => {
       let active = true;
@@ -150,7 +145,7 @@ function MainMenuScreen({ navigation }) {
     }, [])
   );
 
-  // Handle Android hardware-back while exit confirmation is open.
+
   useEffect(() => {
     if (!showExitConfirm) return undefined;
 
@@ -166,7 +161,6 @@ function MainMenuScreen({ navigation }) {
     return () => subscription.remove();
   }, [showExitConfirm]);
 
-  // Start a fresh journey and clear previous saved progress.
   const startFresh = async () => {
     setHasSave(false);
 
@@ -241,7 +235,6 @@ function MainMenuScreen({ navigation }) {
     },
   ];
 
-  // EXIT CONFIRMATION SCREEN
   if (showExitConfirm) {
     return (
       <ImageBackground
@@ -264,7 +257,6 @@ function MainMenuScreen({ navigation }) {
     );
   }
 
-  // MAIN MENU SCREEN
   return (
     <ImageBackground
       source={require('../../Menu Images/Main Menu.png')}

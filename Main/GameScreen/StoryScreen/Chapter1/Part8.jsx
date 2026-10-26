@@ -1034,14 +1034,14 @@ export const Chapter1_Part8 = [
     type: "system",
     intro: true,
     text: "Their courage and sacrifices shaped the generations that followed.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+    background: require("../../../../Background Images/Usuals/ending.png")
   },
 
   {
     type: "system",
     intro: true,
     text: "From Sulayman and Lakan Dula to Dagohoy, Rizal, Bonifacio, and Aguinaldo.",
-    background: require("../../../../Background Images/Usuals/Black Background.jpg")
+    background: require("../../../../Background Images/Usuals/Aurafarmers.png")
   },
 
   {

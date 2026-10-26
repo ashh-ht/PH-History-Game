@@ -26,7 +26,7 @@ const DELAY_DIM = { left: 1285/1920, top: 440/1080, w: 415/1920, h: 320/1080 };
 const CIRCLE_W = 84/1920;
 const ROW_H = 108/1080;
 const ACTIVE_GREEN = '#4CAF50';
-const DOT_INSET = '18%'; // smaller % = bigger green dot
+const DOT_INSET = '18%';
 
 const SPEED_OPTIONS = [
   { value: 'Slow', y: 473/1080 },

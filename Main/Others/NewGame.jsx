@@ -9,10 +9,8 @@ import {
 import { useGameProgress } from '../../GameProgress';
 import Sound_clicks from '../../Components/Sound_clicks';
 import { restartProgress } from './saveProgress';
-import { useJournal } from './JournalContext'; // same folder as saveProgress
+import { useJournal } from './JournalContext';
 
-
-// Note: spring animation for le buttons.
 function AnimatedButton({ onPress, image }) {
   const scale = useRef(new Animated.Value(1)).current;
 
@@ -58,8 +56,8 @@ function NewGameConfirmScreen({ navigation }) {
 
   const restart = async () => {
     console.log("RESTART PRESSED");
-    await restartProgress();   // clears saves + unlocked parts
-    await resetUnlocks();     // clears remnants, timeline, profiles, glossary unlocks
+    await restartProgress();
+    await resetUnlocks();
     console.log("RESET DONE");
 
     setChapter(1);

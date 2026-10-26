@@ -5,7 +5,6 @@ import styles from '../../Styles/Others/StyleJournal';
 import { useJournal } from '../../Main/Others/JournalContext'; 
 import { REMNANT_DATA } from '../RemnantData';
 
-// ==================================== IMAGES OF TABS ====================================
 const TABS = ['Timeline', 'Character Profiles', 'Minigame Collections', 'Glossary'];
 const TAB_IMAGES = {
   'Timeline': require('../../assets/Journal_Assets/Timeline_closed.png'),
@@ -18,7 +17,7 @@ const CLOSE_BUTTON_IMAGE = require('../../assets/icons/x_button.png');
 const CLOSE_BUTTON_PRESSED_IMAGE = require('../../assets/icons/x_buttonpressed.png');
 
 const STAGE_W = 1.15;
-const TAB_TOP = 5;
+const TAB_TOP = 9;
 const TAB_STEP = 15;
 
 const TAB_OPEN_IMAGES = {
@@ -28,7 +27,6 @@ const TAB_OPEN_IMAGES = {
   'Glossary': require('../../assets/Journal_Assets/Glossary_open.png'),
 };
 
-// ==================================== PAGE FLIP SETTINGS ====================================
 const BOOK_IMAGE = require('../../assets/Journal_Assets/Journal_Book.png');
 const FLIP_DURATION = 750;
 const FLIP_SHADE = 0.3;
@@ -38,12 +36,12 @@ const SWIPE_MIN_VELOCITY = 0.3;
 const SWIPE_CAPTURE_DIST = 20;
 const SWIPE_DIRECTION_RATIO = 1.5;
 
-// ==================================== LAMAN NG TABS SECTION ====================================
 const TIMELINE_TITLE = require('../../assets/Journal_Assets/Timeline_Title.png');
 const TIMELINE_BOX = require('../../assets/Journal_Assets/Timeline_box.png');
-const BOX_STEP = 16.5;
-const LEFT_BOX_TOP = 22;
-const RIGHT_BOX_TOP = 22;
+
+const BOX_STEP = 17.5;
+const LEFT_BOX_TOP = 21;
+const RIGHT_BOX_TOP = 21;
 
 const PROFILE_TITLE = require('../../assets/Journal_Assets/Profile_Title.png');
 const PROFILE_CARD = require('../../assets/Journal_Assets/Profile_w_Details_Box.png');
@@ -52,9 +50,11 @@ const CARDS_LEFT = 2;
 const CARDS_RIGHT = 3;
 const PER_SPREAD = CARDS_LEFT + CARDS_RIGHT;
 const LEFT_CARD_TOP = 30;
-const LEFT_CARD_STEP = 25;
-const RIGHT_CARD_TOP = 13.5;
-const RIGHT_CARD_STEP = 26.0;
+const LEFT_CARD_STEP = 30;
+const RIGHT_CARD_TOP = 10.5;
+const RIGHT_CARD_STEP = 29.0;
+
+const PANEL_CROP = 0.44;
 
 const REMNANTS_TITLE = require('../../assets/Journal_Assets/Remnants_Title.png');
 const REMNANTS_BOX_LOCKED = require('../../assets/Journal_Assets/Remnants_Box_locked.png');
@@ -64,12 +64,37 @@ const REMNANTS_BOXCOMPLETE_LOCKED = require('../../assets/Journal_Assets/Remnant
 const REMNANTS_BOXCOMPLETE_UNLOCKED = require('../../assets/Journal_Assets/Remnants_BoxComplete_unlocked.png');
 
 const GLOSSARY_TITLE = require('../../assets/Journal_Assets/Glossary_Title.png');
-const GLOSSARY_DIVIDER = require('../../assets/Journal_Assets/Glossary_Line.png');
 
 const PORTRAITS = {
-  'Andrés Bonifacio': require('../../Character Images/Temporary Placeholders/Bonifacio.png'),
-  'Dr. José Rizal': require('../../Character Images/Temporary Placeholders/Rizal.png'),
-  'Apolinario Mabini': require('../../Character Images/Temporary Placeholders/Mabini.png'),
+  'Rajah Tupas': require('../../assets/Journal_Profiles/Rajah Tupas.png'),
+  'Martín de Goiti': require('../../assets/Journal_Profiles/Martin de Goiti.png'),
+  'Juan de Salcedo': require('../../assets/Journal_Profiles/Juan de Salcedo.png'),
+  'Francisco Dagohoy (Francisco Sendrijas)': require('../../assets/Journal_Profiles/Francisco Dagohoy.png'),
+  'Father Gaspar Morales': require('../../assets/Journal_Profiles/Father Gaspar Morales.png'),
+  'Captain Manuel Sanz': require('../../assets/Journal_Profiles/Captain Manuel Sanz.png'),
+  'Governor-General Mariano Ricafort': require('../../assets/Journal_Profiles/Mariano Ricafort.png'),
+  'Dr. José Rizal': require('../../assets/Journal_Profiles/Rizal.png'),
+  'Andrés Bonifacio': require('../../assets/Journal_Profiles/Bonifacio.png'),
+  'Apolinario Mabini': require('../../assets/Journal_Profiles/Mabini.png'),
+  'Deodato Arellano': require('../../assets/Journal_Profiles/Deodato Arellano.png'),
+  'Eulogio Despujol': require('../../assets/Journal_Profiles/Eulogio Despujol.png'),
+  'Domingo Franco': require('../../assets/Journal_Profiles/Domingo Franco.png'),
+  'Ladislao Diwa': require('../../assets/Journal_Profiles/Ladislao Diwa.png'),
+  'Jose Dizon': require('../../assets/Journal_Profiles/Jose Dizon.png'),
+  'Teodoro Plata': require('../../assets/Journal_Profiles/Teodoro Plata.png'),
+  "Emilio Jacinto ('Brains of the Katipunan')": require('../../assets/Journal_Profiles/Emilio Jacinto.png'),
+  'Gregoria de Jesús': require('../../assets/Journal_Profiles/Gregoria de Jesus.png'),
+  "Melchora Aquino ('Tandang Sora')": require('../../assets/Journal_Profiles/Melchora Aquino.png'),
+  'Father Mariano Gil': require('../../assets/Journal_Profiles/Father Mariano Gil.png'),
+  'Mariano Álvarez': require('../../assets/Journal_Profiles/Mariano Alvarez.png'),
+  'Emilio Aguinaldo': require('../../assets/Journal_Profiles/Emilio Aguinaldo.png'),
+  'Daniel Tirona': require('../../assets/Journal_Profiles/Daniel Tirona.png'),
+  "General Artemio Ricarte ('Vibora')": require('../../assets/Journal_Profiles/Artemio Ricarte.png'),
+  'General Mariano Noriel': require('../../assets/Journal_Profiles/Mariano Noriel.png'),
+  'Mariano Trías': require('../../assets/Journal_Profiles/Mariano Trias.png'),
+  'Ambrosio Rianzares Bautista': require('../../assets/Journal_Profiles/Ambrosio Bautista.png'),
+  'Admiral George Dewey': require('../../assets/Journal_Profiles/Admiral Dewey.png'),
+  'E. Spencer Pratt': require('../../assets/Journal_Profiles/E. Spencer Pratt.png'),
 };
 
 function BookmarkTab({ image, openImage, index, active, onPress }) {
@@ -84,7 +109,6 @@ function BookmarkTab({ image, openImage, index, active, onPress }) {
   );
 }
 
-// ==================================== PAGE FLIP ====================================
 function PaperFace({ rect, rowRect, bookSize, style, children }) {
   return (
     <Animated.View style={[{ position: 'absolute', left: 0, top: 0, width: rect.width, height: rect.height, overflow: 'hidden' }, style]}>
@@ -154,12 +178,9 @@ function PagedSpread({ page, totalPages, onPageChange, renderLeft, renderRight, 
           );
         },
         onPanResponderRelease: (_, gs) => {
-          // Debug: shows what the gesture reports (filter Logcat by ReactNativeJS)
-          console.log('SWIPE dx:', gs.dx, 'vx:', gs.vx);
           if (gs.dx < -SWIPE_MIN_DIST || gs.vx < -SWIPE_MIN_VELOCITY) {
             startFlipRef.current('next');
-          } else if (gs.dx > SWIPE_MIN_DIST / 2 || gs.vx > SWIPE_MIN_VELOCITY / 2) {
-            // easier threshold going backwards
+          } else if (gs.dx > SWIPE_MIN_DIST || gs.vx > SWIPE_MIN_VELOCITY) {
             startFlipRef.current('prev');
           }
         },
@@ -229,7 +250,6 @@ function PagedSpread({ page, totalPages, onPageChange, renderLeft, renderRight, 
 
       {flip && rowRect && leftRect && rightRect && renderLeaf()}
 
-      {/* Tap arrows: same page-turn animation as swiping */}
       {!flip && page > 0 && (
         <Pressable
           onPress={() => startFlip('prev')}
@@ -252,7 +272,6 @@ function PagedSpread({ page, totalPages, onPageChange, renderLeft, renderRight, 
   );
 }
 
-// ==================================== TIMELINE STUFF ====================================
 function splitByLength(entries, headerWeight = 0) {
   const weight = (e) => e.content.length + (e['sub-content'] ?? []).reduce((n, x) => n + x.content.length + 30, 0) + 40;
   const total = entries.reduce((n, e) => n + weight(e), headerWeight);
@@ -305,7 +324,6 @@ function TimelineEntry({ entry }) {
   );
 }
 
-// ==================================== GLOSSARY STUFF ====================================
 function GlossaryEntry({ term, meaning, unit }) {
   return (
     <View style={styles.glossaryBlock}>
@@ -315,18 +333,42 @@ function GlossaryEntry({ term, meaning, unit }) {
       <Text style={[styles.glossaryMeaning, { fontSize: Math.max(8, 22 * unit), lineHeight: Math.max(12, 30 * unit) }]}>
         {meaning}
       </Text>
-      <Image source={GLOSSARY_DIVIDER} style={styles.glossaryDivider} resizeMode="contain" />
     </View>
   );
 }
 
-// ==================================== CHARACTER PROFILE STUFF ====================================
 function CharacterCard({ name, content, side, slot, unit, onPress }) {
   const top = side === 'left' ? LEFT_CARD_TOP + slot * LEFT_CARD_STEP : RIGHT_CARD_TOP + slot * RIGHT_CARD_STEP;
   const portrait = PORTRAITS[name];
   return (
     <Pressable onPress={onPress} style={[styles.profileCard, side === 'left' ? styles.profileCardLeft : styles.profileCardRight, { top: `${top}%` }]}>
-      <Image source={PROFILE_CARD} style={styles.fillAll} resizeMode="stretch" />
+      {portrait ? (
+        <View
+          pointerEvents="none"
+          style={{
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            right: 0,
+            left: `${PANEL_CROP * 100}%`,
+            overflow: 'hidden',
+          }}
+        >
+          <Image
+            source={PROFILE_CARD}
+            resizeMode="stretch"
+            style={{
+              position: 'absolute',
+              top: 0,
+              height: '100%',
+              width: `${100 / (1 - PANEL_CROP)}%`,
+              left: `-${(PANEL_CROP / (1 - PANEL_CROP)) * 100}%`,
+            }}
+          />
+        </View>
+      ) : (
+        <Image source={PROFILE_CARD} style={styles.fillAll} resizeMode="stretch" />
+      )}
       {portrait && <Image source={portrait} style={styles.cardPortraitSlot} resizeMode="cover" />}
       <View style={styles.cardTextSlot}>
         <Text style={[styles.cardName, { fontSize: Math.max(8, 28 * unit) }]} numberOfLines={1} adjustsFontSizeToFit>{name}</Text>
@@ -358,14 +400,11 @@ function Journalbook({ navigation }) {
   const [selectedChar, setSelectedChar] = useState(null);
   const [glossarypage, setGlossarypPage] = useState(0);
   const [timelinepage, setTimelinePage] = useState(0);
-  
-  // Remnant States
+
   const [remnantpage, setRemnantPage] = useState(0);
   const [selectedRemnant, setSelectedRemnant] = useState(null);
   
   const [bookSize, setBookSize] = useState({ w: 0, h: 0 });
-
-  // ==================================== FILTERED DATA ====================================
 
   const filteredTimelineContent = useMemo(() => {
     const timelineData = Journal.find((s) => s.title === 'Timeline')?.content || [];
@@ -430,7 +469,7 @@ function Journalbook({ navigation }) {
           content: unlockedTiers.map((t) => t.content).join('\n\n')
         };
       })
-      .filter((char) => char.content.length > 0);
+      .filter((char) => PORTRAITS[char.name] && char.content.length > 0);
   }, [unlockedIds]);
 
   const totalSpreads = Math.max(1, Math.ceil(characters.length / PER_SPREAD));
@@ -455,7 +494,6 @@ function Journalbook({ navigation }) {
     </>
   );
 
-  // ==================================== REMNANTS PAGINATION ====================================
   const totalRemnantSpreads = 8;
 
   const renderRemnantPiece = (chapNum, partNum) => {
@@ -552,7 +590,6 @@ function Journalbook({ navigation }) {
     );
   };
 
-  // ==================================== GLOSSARY ====================================
   const glossaryterm = Journal.find((s) => s.title === 'Glossary')?.content ?? [];
   const sortglossary = [...glossaryterm].sort((a, b) => a.term.localeCompare(b.term));
   const Glossary_per_side = 2;
@@ -653,7 +690,9 @@ function Journalbook({ navigation }) {
               <View key="char-detail" style={styles.spreadRow} pointerEvents="box-none">
                 <View style={styles.spreadPage} pointerEvents="box-none">
                   <View style={styles.detailFrame}>
-                    <Image source={PROFILE_FRAME} style={styles.fillAll} resizeMode="stretch" />
+                    {!PORTRAITS[selectedChar.name] && (
+                      <Image source={PROFILE_FRAME} style={styles.fillAll} resizeMode="stretch" />
+                    )}
                     {PORTRAITS[selectedChar.name] && <Image source={PORTRAITS[selectedChar.name]} style={styles.detailPortraitSlot} resizeMode="cover" />}
                   </View>
                   <View style={styles.detailNameBox}>
@@ -670,7 +709,6 @@ function Journalbook({ navigation }) {
               </View>
             )}
 
-            {/* ================= REMNANTS TAB ================= */}
             {activeTab === 'Minigame Collections' && (
               <PagedSpread
                 key="remnants-list"
@@ -701,7 +739,6 @@ function Journalbook({ navigation }) {
         <BookmarkTab image={EXIT_IMAGE} index={TABS.length} onPress={() => navigation.goBack()} />
       </View>
 
-      {/* ================= ZOOMED IN REMNANT OVERLAY ================= */}
       <Modal
         visible={!!selectedRemnant}
         transparent={true}

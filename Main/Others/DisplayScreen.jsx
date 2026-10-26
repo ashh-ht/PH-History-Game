@@ -18,41 +18,42 @@ const BG_BASE = require('../../assets/Settings_Assets/Display_Base.png');
 const PANEL_FONT_SIZE = require('../../assets/Settings_Assets/Display_FontSize.png');
 const BANNER_OPACITY = require('../../assets/Settings_Assets/Display_DialogueOpacity.png');
 const CIRCLE_THUMB = require('../../assets/Settings_Assets/CircleButton.png');
-const CIRCLE_THUMB_CHECKED = require('../../assets/Settings_Assets/CircleButton_Checked.png');
 
 const PANEL_ASPECT = 1205 / 630;
 
-const ROW_LEFT = 215/1920;
-const ROW_W = 370/1920;
-const ROW_H = 108/1080; 
-const CIRCLE_CX = 252/1920;
-const CIRCLE_W = 84/1920;
-const ACTIVE_GREEN = '#4CAF50'; 
+const ROW_LEFT = 215 / 1920;
+const ROW_W = 370 / 1920;
+const ROW_H = 108 / 1080;
+const CIRCLE_CX = 252 / 1920;
+const CIRCLE_W = 84 / 1920;
+const CIRCLE_SCALE = 2;
+const SELECTED_INSET = '14%';
+const ACTIVE_GREEN = '#4CAF50';
 
 const FONT_OPTIONS = [
-  { value: 'Small', y: 473/1080 },
-  { value: 'Medium', y: 587/1080 },
-  { value: 'Large', y: 708/1080 },
+  { value: 'Small', y: 473 / 1080 },
+  { value: 'Medium', y: 587 / 1080 },
+  { value: 'Large', y: 708 / 1080 },
 ];
 
-const SLIDER_LEFT = 703/1920;
-const SLIDER_W = 1000/1920;
-const SLIDER_CY = 670/1080;
-const SLIDER_H = 170/1080;
-const THUMB_W = 64/1920;
-const TRACK_H = 14/1080;
-const PERCENT_FONT = 54/1920;
+const SLIDER_LEFT = 703 / 1920;
+const SLIDER_W = 1000 / 1920;
+const SLIDER_CY = 670 / 1080;
+const SLIDER_H = 170 / 1080;
+const THUMB_W = 64 / 1920;
+const THUMB_SCALE = 4.2;
+const TRACK_H = 14 / 1080;
+const PERCENT_FONT = 54 / 1920;
 
 function OpacitySlider({ panelW, panelH, value, onChange }) {
   const [width, setWidth] = useState(0);
   const widthRef = useRef(0);
   const containerRef = useRef(null);
-  const leftRef = useRef(0); // container's screen-absolute left edge
+  const leftRef = useRef(0);
   const thumb = THUMB_W * panelW;
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
 
-  // pageX is screen-absolute, so it doesn't matter which child was touched
   const setFromPageX = (pageX) => {
     const usable = widthRef.current - thumb;
     if (usable <= 0) return;
@@ -67,7 +68,6 @@ function OpacitySlider({ panelW, panelH, value, onChange }) {
       onPanResponderTerminationRequest: () => false,
       onPanResponderGrant: (e) => {
         const pageX = e.nativeEvent.pageX;
-        // Re-measure on every touch so layout changes / transitions don't matter
         containerRef.current?.measure((x, y, w, h, px) => {
           leftRef.current = px;
           setFromPageX(pageX);
@@ -137,7 +137,6 @@ function OpacitySlider({ panelW, panelH, value, onChange }) {
         }}
       />
 
-      {/* Thumb (Image wrapped in a View so pointerEvents is reliable) */}
       <View
         pointerEvents="none"
         style={{
@@ -152,7 +151,7 @@ function OpacitySlider({ panelW, panelH, value, onChange }) {
         <Image
           source={CIRCLE_THUMB}
           resizeMode="contain"
-          style={{ width: '100%', height: '100%' }}
+          style={{ width: '100%', height: '100%', transform: [{ scale: THUMB_SCALE }] }}
         />
       </View>
     </View>
@@ -217,53 +216,53 @@ export default function DisplayScreen({ navigation }) {
           <Image source={PANEL_FONT_SIZE} style={{ position: 'absolute', width: panelW, height: panelH }} resizeMode="stretch" pointerEvents="none" />
           <Image source={BANNER_OPACITY} style={{ position: 'absolute', width: panelW, height: panelH }} resizeMode="stretch" pointerEvents="none" />
 
-{FONT_OPTIONS.map((opt) => {
-  const selected = fontSize === opt.value;
-  const size = CIRCLE_W * panelW;
-  return (
-    <Sound_clicks
-      key={opt.value}
-      onPress={() => setFontSize(opt.value)}
-      style={{
-        position: 'absolute',
-        left: ROW_LEFT * panelW,
-        top: (opt.y - ROW_H / 2) * panelH,
-        width: ROW_W * panelW,
-        height: ROW_H * panelH,
-        justifyContent: 'center',
-      }}
-    >
-      <View
-        style={{
-          position: 'absolute',
-          left: (CIRCLE_CX - CIRCLE_W / 2 - ROW_LEFT) * panelW,
-          width: size,
-          height: size,
-        }}
-      >
-        <Image
-          source={CIRCLE_THUMB}
-          resizeMode="contain"
-          style={{ width: '100%', height: '100%' }}
-        />
-        {selected && (
-          <View
-            pointerEvents="none"
-            style={{
-              position: 'absolute',
-              top: '18%',
-              left: '18%',
-              right: '18%',
-              bottom: '18%',
-              borderRadius: size / 2,
-              backgroundColor: ACTIVE_GREEN,
-            }}
-          />
-        )}
-      </View>
-    </Sound_clicks>
-  );
-})}
+          {FONT_OPTIONS.map((opt) => {
+            const selected = fontSize === opt.value;
+            const size = CIRCLE_W * panelW;
+            return (
+              <Sound_clicks
+                key={opt.value}
+                onPress={() => setFontSize(opt.value)}
+                style={{
+                  position: 'absolute',
+                  left: ROW_LEFT * panelW,
+                  top: (opt.y - ROW_H / 2) * panelH,
+                  width: ROW_W * panelW,
+                  height: ROW_H * panelH,
+                  justifyContent: 'center',
+                }}
+              >
+                <View
+                  style={{
+                    position: 'absolute',
+                    left: (CIRCLE_CX - CIRCLE_W / 2 - ROW_LEFT) * panelW,
+                    width: size,
+                    height: size,
+                  }}
+                >
+                  <Image
+                    source={CIRCLE_THUMB}
+                    resizeMode="contain"
+                    style={{ width: '100%', height: '100%', transform: [{ scale: CIRCLE_SCALE }] }}
+                  />
+                  {selected && (
+                    <View
+                      pointerEvents="none"
+                      style={{
+                        position: 'absolute',
+                        top: SELECTED_INSET,
+                        left: SELECTED_INSET,
+                        right: SELECTED_INSET,
+                        bottom: SELECTED_INSET,
+                        borderRadius: size / 2,
+                        backgroundColor: ACTIVE_GREEN,
+                      }}
+                    />
+                  )}
+                </View>
+              </Sound_clicks>
+            );
+          })}
 
           <View
             style={{

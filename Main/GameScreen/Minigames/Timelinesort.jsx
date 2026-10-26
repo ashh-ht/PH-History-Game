@@ -1,16 +1,14 @@
-import { useMemo, useRef , useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
-import { Animated, ImageBackground , ScrollView , StyleSheet , Text, View } from "react-native";
-
+import { Animated, ImageBackground, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import Sound_clicks from '../../../Components/Sound_clicks';
 import useScale from '../../../Components/ScreenScaler';
 
 const BACKGROUND = require('../../../Background Images/Part 8/Sorting_background.png');
 
-
 const EVENTS = [
-    {
+  {
     id: 'sulayman',
     date: '1571-01-01',
     label: '1571',
@@ -47,10 +45,6 @@ const EVENTS = [
   },
 ];
 
-
-
-    
- 
 function shuffle(list) {
   const copy = [...list];
   for (let i = copy.length - 1; i > 0; i--) {
@@ -59,8 +53,8 @@ function shuffle(list) {
   }
   return copy;
 }
- 
-// Draws the background image if you set one, otherwise a plain dark color
+
+
 function Screen({ style, children }) {
   if (BACKGROUND) {
     return (
@@ -71,41 +65,41 @@ function Screen({ style, children }) {
   }
   return <View style={style}>{children}</View>;
 }
- 
+
 function TimelineSort({ onComplete, events = EVENTS, count = 5 }) {
-  // ALL hooks stay at the top, before any "if ... return"
+
   const { s } = useScale();
   const styles = useMemo(() => makeStyles(s), [s]);
- 
-   
-   // drop any events that repeat an id
+
+
   const unique = events.filter(
     (e, i, arr) => arr.findIndex((x) => x.id === e.id) === i
   );
   const size = Math.min(count, unique.length);
-  const [stage, setStage] = useState('intro'); // 'intro' | 'play' | 'done'
-  const [round] = useState(() => shuffle(unique).slice(0, size)); // the cards for this play
-  const [slots, setSlots] = useState(() => Array(size).fill(null)); // holds event ids
+  const [stage, setStage] = useState('intro');
+  const [round] = useState(() => shuffle(unique).slice(0, size));
+  const [slots, setSlots] = useState(() => Array(size).fill(null)); 
   const [selectedId, setSelectedId] = useState(null);
   const [wrongSlots, setWrongSlots] = useState([]);
   const [attempts, setAttempts] = useState(0);
   const shake = useRef(new Animated.Value(0)).current;
- 
+
   const correctOrder = useMemo(
     () => [...round].sort((a, b) => a.date.localeCompare(b.date)).map((e) => e.id),
     [round],
   );
- 
+
   const byId = (id) => round.find((e) => e.id === id);
   const trayCards = round.filter((e) => !slots.includes(e.id));
   const selectedEvent = selectedId ? byId(selectedId) : null;
   const allPlaced = slots.every(Boolean);
- 
+  const placedCount = slots.filter(Boolean).length;
+
   const translateX = shake.interpolate({
     inputRange: [-1, 1],
     outputRange: [-8 * s, 8 * s],
   });
- 
+
   const runShake = () => {
     shake.setValue(0);
     Animated.sequence([
@@ -115,37 +109,36 @@ function TimelineSort({ onComplete, events = EVENTS, count = 5 }) {
       Animated.timing(shake, { toValue: 0, duration: 60, useNativeDriver: true }),
     ]).start();
   };
- 
-  // Tap a card in the tray: select it (tap again to un-select)
+
   const handleCardPress = (id) => {
     setWrongSlots([]);
     setSelectedId(id === selectedId ? null : id);
   };
- 
-  // Tap a slot: place the selected card, or pick up the card that's already there
+
+  
   const handleSlotPress = (index) => {
     if (stage !== 'play') return;
     setWrongSlots([]);
     const occupant = slots[index];
     const next = [...slots];
- 
+
     if (selectedId) {
-      next[index] = selectedId; // an old card in this slot automatically goes back to the tray
+      next[index] = selectedId;
       setSlots(next);
       setSelectedId(null);
     } else if (occupant) {
       next[index] = null;
       setSlots(next);
-      setSelectedId(occupant); // picked up, so its description shows too
+      setSelectedId(occupant); 
     }
   };
- 
+
   const handleCheck = () => {
     const wrong = slots
       .map((id, i) => (id === correctOrder[i] ? -1 : i))
       .filter((i) => i >= 0);
     setAttempts((a) => a + 1);
- 
+
     if (wrong.length === 0) {
       setSelectedId(null);
       setStage('done');
@@ -154,16 +147,16 @@ function TimelineSort({ onComplete, events = EVENTS, count = 5 }) {
       runShake();
     }
   };
- 
+
   const handleContinue = () => {
     if (onComplete) onComplete({ attempts, order: correctOrder });
   };
- 
-  // ---------- INTRO ----------
+
   if (stage === 'intro') {
     return (
       <Screen style={styles.screen}>
         <View style={styles.introPanel}>
+          <View style={styles.introRule} />
           <Text style={styles.introTitle}>Past Events</Text>
           <Text style={styles.introText}>
             Put the moments you have lived through in the order they happened.
@@ -175,17 +168,20 @@ function TimelineSort({ onComplete, events = EVENTS, count = 5 }) {
       </Screen>
     );
   }
- 
-  // ---------- PLAY + DONE ----------
+
+
   let message = 'Tap an event to read about it, then tap a slot to place it.';
+  let messageKind = 'neutral';
   if (stage === 'done') {
     message = 'Correct! That is how it happened.';
+    messageKind = 'good';
   } else if (selectedEvent) {
     message = selectedEvent.desc;
   } else if (wrongSlots.length > 0) {
     message = 'Not quite. The red slots are out of order. Tap one to pick it up and swap it.';
+    messageKind = 'bad';
   }
- 
+
   return (
     <Screen style={styles.screen}>
       <ScrollView
@@ -193,10 +189,13 @@ function TimelineSort({ onComplete, events = EVENTS, count = 5 }) {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.titleBanner}>
-          <Text style={styles.titleText}>Sort the correct timeline based on the event</Text>
+          <Text style={styles.titleText}>Sort the events from earliest to latest</Text>
+          <Text style={styles.progressText}>{placedCount} of {size} placed</Text>
         </View>
- 
+
+        {/* timeline: a cord runs behind the slots */}
         <Animated.View style={[styles.slotsRow, { transform: [{ translateX }] }]}>
+          <View style={[styles.cord, stage === 'done' && styles.cordDone]} />
           {slots.map((id, i) => {
             const ev = id ? byId(id) : null;
             const slotStyle = StyleSheet.flatten([
@@ -204,6 +203,7 @@ function TimelineSort({ onComplete, events = EVENTS, count = 5 }) {
               i % 2 === 1 && styles.slotLow,
               ev && styles.slotFilled,
               wrongSlots.includes(i) && styles.slotWrong,
+              stage === 'done' && styles.slotDone,
             ]);
             return (
               <Sound_clicks key={i} style={slotStyle} onPress={() => handleSlotPress(i)}>
@@ -219,7 +219,7 @@ function TimelineSort({ onComplete, events = EVENTS, count = 5 }) {
             );
           })}
         </Animated.View>
- 
+
         <View style={styles.tray}>
           {trayCards.map((ev) => (
             <Sound_clicks
@@ -234,11 +234,17 @@ function TimelineSort({ onComplete, events = EVENTS, count = 5 }) {
             </Sound_clicks>
           ))}
         </View>
- 
-        <View style={styles.descBox}>
+
+        <View
+          style={StyleSheet.flatten([
+            styles.descBox,
+            messageKind === 'bad' && styles.descBad,
+            messageKind === 'good' && styles.descGood,
+          ])}
+        >
           <Text style={styles.descText}>{message}</Text>
         </View>
- 
+
         {stage === 'play' && allPlaced && (
           <Sound_clicks style={styles.button} onPress={handleCheck}>
             <Text style={styles.buttonText}>Check order</Text>
@@ -253,8 +259,14 @@ function TimelineSort({ onComplete, events = EVENTS, count = 5 }) {
     </Screen>
   );
 }
- 
 
+const INK = '#2b1d0e';       
+const WOOD = '#6b4f2a';       
+const PAPER = '#EADBB4';      
+const PAPER_LIGHT = '#F6EBCB'; 
+const GOLD = '#E3A83A';     
+const RED = '#A3281F';        
+const GREEN = '#3F6B3A';     
 const makeStyles = (s) =>
   StyleSheet.create({
     screen: {
@@ -270,66 +282,101 @@ const makeStyles = (s) =>
       paddingVertical: 14 * s,
       paddingHorizontal: 20 * s,
     },
- 
-    // intro
+
     introPanel: {
       width: '60%',
       maxWidth: 700,
-      backgroundColor: '#E9D5A1',
-      borderRadius: 12 * s,
+      backgroundColor: PAPER,
+      borderRadius: 14 * s,
       borderWidth: 2 * s,
-      borderColor: '#6b4f2a',
-      padding: 24 * s,
+      borderColor: WOOD,
+      paddingVertical: 26 * s,
+      paddingHorizontal: 28 * s,
       alignItems: 'center',
+      shadowColor: '#000',
+      shadowOpacity: 0.35,
+      shadowRadius: 12 * s,
+      shadowOffset: { width: 0, height: 6 * s },
+      elevation: 8,
+    },
+    introRule: {
+      width: 56 * s,
+      height: 4 * s,
+      borderRadius: 2 * s,
+      backgroundColor: GOLD,
+      marginBottom: 14 * s,
     },
     introTitle: {
-      fontSize: 24 * s,
-      fontWeight: '700',
-      color: '#2b1d0e',
+      fontSize: 28 * s,
+      fontWeight: '800',
+      color: INK,
       marginBottom: 10 * s,
       textAlign: 'center',
+      letterSpacing: 0.5 * s,
     },
     introText: {
-      fontSize: 15 * s,
-      color: '#2b1d0e',
+      fontSize: 16 * s,
+      lineHeight: 23 * s,
+      color: INK,
       textAlign: 'center',
-      marginBottom: 18 * s,
+      marginBottom: 20 * s,
     },
- 
-    // title banner
+
     titleBanner: {
-      backgroundColor: '#E9D5A1',
-      borderRadius: 8 * s,
+      backgroundColor: PAPER,
+      borderRadius: 10 * s,
       borderWidth: 2 * s,
-      borderColor: '#6b4f2a',
+      borderColor: WOOD,
       paddingVertical: 8 * s,
-      paddingHorizontal: 16 * s,
-      marginBottom: 14 * s,
+      paddingHorizontal: 20 * s,
+      marginBottom: 16 * s,
       maxWidth: '90%',
+      alignItems: 'center',
     },
     titleText: {
       fontSize: 20 * s,
-      fontWeight: '600',
-      color: '#2b1d0e',
+      fontWeight: '700',
+      color: INK,
       textAlign: 'center',
     },
- 
-    // the zigzag row of slots
+    progressText: {
+      fontSize: 12 * s,
+      color: WOOD,
+      marginTop: 2 * s,
+      fontWeight: '600',
+    },
+
+
     slotsRow: {
       width: '100%',
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'flex-start',
       marginBottom: 12 * s,
-      paddingBottom: 30 * s, // room for the "low" slots
+      paddingBottom: 30 * s,
+    },
+    cord: {
+      position: 'absolute',
+      left: '4%',
+      right: '4%',
+      top: 47 * s,
+      height: 4 * s,
+      borderRadius: 2 * s,
+      backgroundColor: GOLD,
+      opacity: 0.85,
+    },
+    cordDone: {
+      backgroundColor: '#8DC27F',
+      opacity: 1,
     },
     slot: {
       width: '18%',
       minHeight: 64 * s,
-      backgroundColor: '#d9d9d9',
-      borderRadius: 6 * s,
+      backgroundColor: 'rgba(40, 28, 16, 0.78)',
+      borderRadius: 10 * s,
       borderWidth: 2 * s,
-      borderColor: '#8a8a8a',
+      borderStyle: 'dashed',
+      borderColor: '#b9a47a',
       padding: 6 * s,
       alignItems: 'center',
       justifyContent: 'center',
@@ -338,32 +385,36 @@ const makeStyles = (s) =>
       marginTop: 30 * s,
     },
     slotFilled: {
-      backgroundColor: '#F3E2B3',
-      borderColor: '#6b4f2a',
+      backgroundColor: PAPER_LIGHT,
+      borderStyle: 'solid',
+      borderColor: WOOD,
     },
     slotWrong: {
-      backgroundColor: '#f0b3ac',
-      borderColor: '#b3382c',
+      backgroundColor: '#f2bdb6',
+      borderColor: RED,
+    },
+    slotDone: {
+      borderColor: GREEN,
+      backgroundColor: '#E4EBC8',
     },
     slotNumber: {
-      fontSize: 20 * s,
-      fontWeight: '700',
-      color: '#8a8a8a',
+      fontSize: 22 * s,
+      fontWeight: '800',
+      color: '#d8c394',
     },
     slotText: {
       fontSize: 11 * s,
-      fontWeight: '600',
-      color: '#2b1d0e',
+      fontWeight: '700',
+      color: INK,
       textAlign: 'center',
     },
     slotLabel: {
       fontSize: 10 * s,
-      color: '#6b4f2a',
+      fontWeight: '700',
+      color: GREEN,
       marginTop: 3 * s,
       textAlign: 'center',
     },
- 
-    // cards waiting to be placed
     tray: {
       flexDirection: 'row',
       flexWrap: 'wrap',
@@ -372,63 +423,78 @@ const makeStyles = (s) =>
     },
     card: {
       width: 130 * s,
-      backgroundColor: '#E9D5A1',
-      borderRadius: 6 * s,
+      backgroundColor: PAPER,
+      borderRadius: 10 * s,
       borderWidth: 2 * s,
-      borderColor: '#6b4f2a',
-      paddingVertical: 8 * s,
+      borderColor: WOOD,
+      paddingVertical: 10 * s,
       paddingHorizontal: 8 * s,
       margin: 4 * s,
       alignItems: 'center',
       justifyContent: 'center',
+      shadowColor: '#000',
+      shadowOpacity: 0.3,
+      shadowRadius: 4 * s,
+      shadowOffset: { width: 0, height: 3 * s },
+      elevation: 4,
     },
     cardSelected: {
-      backgroundColor: '#f7c95c',
-      borderColor: '#a8700f',
+      backgroundColor: GOLD,
+      borderColor: '#8a5a0c',
+      transform: [{ translateY: -4 * s }],
     },
     cardText: {
       fontSize: 12 * s,
-      fontWeight: '600',
-      color: '#2b1d0e',
+      fontWeight: '700',
+      color: INK,
       textAlign: 'center',
     },
- 
-    // description of the picked card
+
+
     descBox: {
       width: '75%',
-      backgroundColor: '#E9D5A1',
-      borderRadius: 8 * s,
+      backgroundColor: PAPER,
+      borderRadius: 10 * s,
       borderWidth: 2 * s,
-      borderColor: '#6b4f2a',
+      borderColor: WOOD,
       paddingVertical: 8 * s,
-      paddingHorizontal: 14 * s,
+      paddingHorizontal: 16 * s,
       marginTop: 6 * s,
-      marginBottom: 10 * s,
+      marginBottom: 12 * s,
       minHeight: 47 * s,
       justifyContent: 'center',
     },
+    descBad: {
+      backgroundColor: '#f2bdb6',
+      borderColor: RED,
+    },
+    descGood: {
+      backgroundColor: '#D5E6C3',
+      borderColor: GREEN,
+    },
     descText: {
-      fontSize: 20 * s,
-      color: '#2b1d0e',
+      fontSize: 18 * s,
+      lineHeight: 25 * s,
+      color: INK,
       textAlign: 'center',
     },
+
  
-    // buttons
     button: {
-      backgroundColor: '#6b4f2a',
-      borderRadius: 8 * s,
+      backgroundColor: WOOD,
+      borderRadius: 10 * s,
+      borderBottomWidth: 4 * s,
+      borderBottomColor: '#3b2a14',
       paddingVertical: 10 * s,
-      paddingHorizontal: 28 * s,
+      paddingHorizontal: 32 * s,
       alignItems: 'center',
       justifyContent: 'center',
     },
     buttonText: {
-      fontSize: 15 * s,
-      fontWeight: '600',
+      fontSize: 16 * s,
+      fontWeight: '700',
       color: '#FFF2CB',
     },
   });
 
-
-  export default TimelineSort;
-
+export default TimelineSort;

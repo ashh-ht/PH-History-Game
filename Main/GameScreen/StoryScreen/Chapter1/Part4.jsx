@@ -302,9 +302,8 @@ export const Chapter1_Part4 = [
 
   { type: "oathtrace" },
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SCENE 4: THE KARTILYA
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 
   {
     type: "scene",

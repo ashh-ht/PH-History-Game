@@ -207,7 +207,7 @@ export const Chapter1_Part3 = [
       {
         text: "Admit his concern deserves attention.",
         speaker: "DR. JOSÉ RIZAL",
-        dialogue: "May punto ka, Andrés. Pag-isipan natin kung\ paano tayo haharap sa panganib.",
+        dialogue: "May punto ka, Andrés. Pag-isipan natin kung\n paano tayo haharap sa panganib.",
         translation: "You have a point, Andrés. Let us think about how we would face danger.",
         characters: [
           {

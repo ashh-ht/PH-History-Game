@@ -16,9 +16,6 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useAudio } from "../../../Audiostore";
 import MinigameOverlay from "../../../Components/Minigameoverlay";
 
-// =====================================================
-// ARTWORK
-// =====================================================
 
 const IMG = {
   background: require("../../../Background Images/Usuals/Paper_scroll.png"),
@@ -40,11 +37,6 @@ const CORRECT_TIME_BONUS = 5;
 const WRONG_TIME_PENALTY = 3;
 const FEEDBACK_MS = 2600;
 
-// =====================================================
-// QUESTIONS
-// Script dialogue is dramatized unless otherwise noted.
-// "Consummatum est" is traditionally attributed to Rizal.
-// =====================================================
 
 const DEFAULT_QUESTIONS = [
   {
@@ -277,7 +269,6 @@ function shuffle(items) {
 }
 
 function makeGameQuestions(sourceQuestions) {
-  // One question from Chapters 1–6 and four from Chapter 7.
   const chosen = [];
 
   for (let chapter = 1; chapter <= 6; chapter += 1) {
@@ -299,10 +290,6 @@ function makeGameQuestions(sourceQuestions) {
     choices: shuffle(question.choices),
   }));
 }
-
-// =====================================================
-// TEXT HELPERS
-// =====================================================
 
 const MAX_LINE_CHARS = 58;
 
@@ -340,10 +327,6 @@ function formatTime(seconds) {
     remainingSeconds
   ).padStart(2, "0")}`;
 }
-
-// =====================================================
-// SHARED UI
-// =====================================================
 
 function useSpringPress() {
   const scale = useRef(new Animated.Value(1)).current;
@@ -559,10 +542,6 @@ function RevealOverlay({ correct, question, onContinue }) {
   );
 }
 
-// =====================================================
-// MINIGAME
-// =====================================================
-
 export default function WhoSaidItMinigame({
   questions = DEFAULT_QUESTIONS,
   onComplete,
@@ -592,9 +571,8 @@ export default function WhoSaidItMinigame({
       try {
         audio?.playSfx?.(key);
       } catch (e) {
-        // Audio failure should not interrupt the game.
-      }
-    },
+    }
+  },
     [audio]
   );
 
@@ -836,10 +814,6 @@ export default function WhoSaidItMinigame({
     );
   }
 
-  // ===================================================
-  // RESULTS
-  // ===================================================
-
   if (finished) {
     return shell(
       <Panel style={styles.centerPanel}>
@@ -895,9 +869,6 @@ export default function WhoSaidItMinigame({
     selectedChoiceId === currentQuestion.correctChoiceId;
   const lowTime = secondsLeft <= 10;
 
-  // ===================================================
-  // GAMEPLAY
-  // ===================================================
 
   const header = (
     <View style={styles.header}>
@@ -1013,10 +984,6 @@ export default function WhoSaidItMinigame({
     revealOverlay
   );
 }
-
-// =====================================================
-// STYLES
-// =====================================================
 
 const INK = "#352313";
 const BUTTON_INK = "#371f10";

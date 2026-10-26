@@ -35,10 +35,6 @@ export default function App({ navigation }) {
   );
 }
 
-// --------------------------------------------------
-// 1. DISCLAIMER — TAP ANYWHERE TO SKIP
-// --------------------------------------------------
-
 function Disclaimer({ onComplete }) {
   const opacity = useRef(new Animated.Value(0)).current;
   const finished = useRef(false);
@@ -70,7 +66,6 @@ function Disclaimer({ onComplete }) {
       });
     }
 
-    // Store the handler for the invisible tap target.
     skipRef.current = finish;
 
     return () => {
@@ -97,13 +92,8 @@ function Disclaimer({ onComplete }) {
   );
 }
 
-// Shared handler for tapping the disclaimer.
+
 const skipRef = { current: null };
-
-// --------------------------------------------------
-// 2. DEVELOPMENT TEAM -> PAMANA LOGO
-// --------------------------------------------------
-
 function Intro({ onComplete }) {
   const teamOpacity = useRef(new Animated.Value(0)).current;
   const teamScale = useRef(new Animated.Value(0.15)).current;
@@ -127,7 +117,6 @@ function Intro({ onComplete }) {
 
   useEffect(() => {
     const animation = Animated.sequence([
-      // Team logo bounces into the center.
       Animated.parallel([
         Animated.spring(teamScale, {
           toValue: 1,
@@ -149,8 +138,6 @@ function Intro({ onComplete }) {
       ]),
 
       Animated.delay(450),
-
-      // Presents graphic pops in beneath the team logo.
       Animated.parallel([
         Animated.spring(presentsScale, {
           toValue: 1,
@@ -172,8 +159,6 @@ function Intro({ onComplete }) {
       ]),
 
       Animated.delay(1300),
-
-      // Quick playful shake.
       Animated.sequence([
         Animated.timing(teamRotation, {
           toValue: 1,
@@ -204,8 +189,6 @@ function Intro({ onComplete }) {
       ]),
 
       Animated.delay(180),
-
-      // White backdrop and Pamana logo appear together.
       Animated.parallel([
         Animated.timing(whiteOpacity, {
           toValue: 1,
@@ -249,8 +232,6 @@ function Intro({ onComplete }) {
       ]),
 
       Animated.delay(1000),
-
-      // The logo grows, darkens, and blends into black.
       Animated.parallel([
         Animated.timing(pamanaScale, {
           toValue: 12,
@@ -413,10 +394,6 @@ function Intro({ onComplete }) {
   );
 }
 
-// --------------------------------------------------
-// 3. ANIMATED STARTUP SCREEN
-// --------------------------------------------------
-
 function StartGame({ navigation }) {
   const backgroundOpacity = useRef(new Animated.Value(0)).current;
 
@@ -435,14 +412,11 @@ function StartGame({ navigation }) {
     mounted.current = true;
 
     const intro = Animated.sequence([
-      // Background fades in first.
       Animated.timing(backgroundOpacity, {
         toValue: 1,
         duration: 450,
         useNativeDriver: true,
       }),
-
-      // Sun drops into position.
       Animated.parallel([
         Animated.spring(sunScale, {
           toValue: 1,
@@ -465,7 +439,6 @@ function StartGame({ navigation }) {
 
       Animated.delay(200),
 
-      // Game title appears after the sun.
       Animated.parallel([
         Animated.spring(wordsScale, {
           toValue: 1,
@@ -488,8 +461,6 @@ function StartGame({ navigation }) {
     ]);
 
     intro.start();
-
-    // A very subtle floating motion after the reveal.
     const floatLoop = Animated.loop(
       Animated.sequence([
         Animated.timing(float, {
@@ -507,7 +478,6 @@ function StartGame({ navigation }) {
       ])
     );
 
-    // Begin the float after the sun and words have appeared.
     const timer = setTimeout(() => {
       if (mounted.current) floatLoop.start();
     }, 1700);
@@ -592,10 +562,6 @@ function StartGame({ navigation }) {
   );
 }
 
-// --------------------------------------------------
-// START BUTTON
-// --------------------------------------------------
-
 function AnimatedButtonImage({ image, onPress }) {
   const scale = useRef(new Animated.Value(1)).current;
   const pressed = useRef(false);
@@ -638,9 +604,6 @@ function AnimatedButtonImage({ image, onPress }) {
   );
 }
 
-// --------------------------------------------------
-// STYLES
-// --------------------------------------------------
 
 const styles = StyleSheet.create({
   root: {
@@ -688,7 +651,6 @@ const styles = StyleSheet.create({
     height: '100%',
   },
 
-  // White backdrop stays behind the logo while it grows.
   whiteLogoBackdrop: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: '#FFFFFF',
@@ -724,7 +686,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#000000',
   },
 
-  // Title group positioned in the upper-middle region.
   titleGroup: {
     position: 'absolute',
     top: '8%',
