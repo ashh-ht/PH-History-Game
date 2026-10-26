@@ -202,6 +202,39 @@ function AnimatedImageButton({ normalSource, pressedSource, onPress, style, imag
   );
 }
 
+const QUIZ_BACKGROUND = require("../../assets/quiz_assets/Quiz_Background.png");
+
+const QUIZ_PANELS = [
+  require("../../assets/quiz_assets/QuizQuestion_1.png"),
+  require("../../assets/quiz_assets/QuizQuestion_2.png"),
+  require("../../assets/quiz_assets/QuizQuestion_3.png"),
+  require("../../assets/quiz_assets/QuizQuestion_4.png"),
+  require("../../assets/quiz_assets/QuizQuestion_5.png"),
+  require("../../assets/quiz_assets/QuizQuestion_6.png"),
+];
+
+// NOTE: voyage is handled separately in PartRenderer (it needs onSettings
+// and draws its own pause overlay), so it is not listed here.
+const MINIGAMES = {
+  santoNino: SantoNinoMinigame,
+  sortingtimeline: TimelineSort,
+};
+
+const MINIGAME_TYPES = new Set([
+  "voyage",
+  "santoNino",
+  "cedula",
+  "decipher",
+  "matching",
+  "chronological",
+  "whoSaidIt",
+  "sortingtimeline",
+  "bloodtrace",
+  "oathtrace",
+]);
+
+const SPEED_MS = { Slow: 60, Normal: 30, Fast: 12 };
+
 function useTypewriter(text, msPerChar, resetKey) {
   const [state, setState] = useState({ key: resetKey, count: 0 });
   const length = text ? text.length : 0;
@@ -706,6 +739,18 @@ function PartRenderer(props) {
     isMinigame,
   ]);
 
+  // Voyage draws its own pause/settings overlay, so it is rendered directly
+  // (no withMinigameOverlay) and only needs onComplete + onSettings.
+  if (current?.type === "voyage") {
+    return (
+      <VoyageMinigame
+        key={`voyage-${chapterNumber}-${partNumber}-${sceneIdx}`}
+        onComplete={goNext}
+        onSettings={() => navigation.navigate("Second")}
+      />
+    );
+  }
+
   const withMinigameOverlay = (
     node,
     { hideSettings = false, top = 20, right = 20 } = {}
@@ -728,16 +773,6 @@ function PartRenderer(props) {
       )}
     </>
   );
-
-  if (current?.type === "voyage") {
-    return withMinigameOverlay(
-      <VoyageMinigame
-        paused={paused}
-        onPhaseChange={setMinigamePhase}
-        onComplete={goNext}
-      />
-    );
-  }
 
   if (current?.type === "santoNino") {
     return <SantoNinoMinigame onComplete={goNext} />;

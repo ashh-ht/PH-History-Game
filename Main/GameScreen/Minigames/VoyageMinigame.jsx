@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import {
     Image,
     ImageBackground,
@@ -84,6 +85,14 @@ const overlaps = (a, b) =>
 
 function VoyageMinigame({ onComplete, onSettings }) {
     const [paused, setPaused] = useState(false);
+
+    const navigation = useNavigation();
+
+    const openSettings = () => {
+        setPaused(true);
+        if (onSettings) onSettings();
+        else navigation.navigate('Second');
+    };
     const { width, height } = useWindowDimensions();
     const controlsHeight = 110;
     const playTop = 95;
@@ -127,6 +136,8 @@ function VoyageMinigame({ onComplete, onSettings }) {
     const pausedAtRef = useRef(null);
     pausedRef.current = paused;
 
+    // When paused: remember when. When resumed: push every timestamp forward
+    // by the paused duration so the clock and spawn timers don't jump.
     useEffect(() => {
         if (gameState !== 'playing') return;
 
@@ -539,15 +550,12 @@ function VoyageMinigame({ onComplete, onSettings }) {
                 {gameState === 'playing' && (
                     <MinigameOverlay
                         paused={paused}
-                        hideSettings={!onSettings}
+                        hideSettings
                         top={20}
                         right={20}
                         onPause={() => setPaused(true)}
                         onResume={() => setPaused(false)}
-                        onSettings={() => {
-                            setPaused(true);
-                            onSettings?.();
-                        }}
+                        onSettings={openSettings}
                     />
                 )}
             </ImageBackground>
