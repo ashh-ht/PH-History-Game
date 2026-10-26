@@ -7,21 +7,31 @@ import {
   ImageBackground,
   Pressable,
   StyleSheet,
+  TouchableOpacity,
   useWindowDimensions
 } from 'react-native';
 import useScale from '../../Components/ScreenScaler';
+import Sound_clicks from '../../Components/Sound_clicks';
 import styles from '../../Styles/Others/StyleSettings';
 import { useAudio } from '../../Audiostore';
 
 const BG_PARCHMENT = require('../../assets/Settings_Assets/Settings_Base.png');
 
-const BTN_SAVES = require('../../assets/Settings_Assets/Settings_Saves.png');
+const BTN_SAVES    = require('../../assets/Settings_Assets/Settings_Saves.png');
 const BTN_GAMEPLAY = require('../../assets/Settings_Assets/Settings_Gameplay.png');
-const BTN_AUDIO = require('../../assets/Settings_Assets/Settings_Audio.png');
-const BTN_DISPLAY = require('../../assets/Settings_Assets/Settings_Display.png');
-const BTN_SOURCES = require('../../assets/Settings_Assets/Settings_Sources.png');
-const BTN_ABOUT = require('../../assets/Settings_Assets/Settings_About.png');
-const BTN_EXIT = require('../../assets/Settings_Assets/Settings_ExitGame.png');
+const BTN_AUDIO    = require('../../assets/Settings_Assets/Settings_Audio.png');
+const BTN_DISPLAY  = require('../../assets/Settings_Assets/Settings_Display.png');
+const BTN_SOURCES  = require('../../assets/Settings_Assets/Settings_Sources.png');
+const BTN_ABOUT    = require('../../assets/Settings_Assets/Settings_About.png');
+const BTN_EXIT     = require('../../assets/Settings_Assets/Settings_ExitGame.png');
+
+const BTN_SAVES_C    = BTN_SAVES;
+const BTN_GAMEPLAY_C = BTN_GAMEPLAY;
+const BTN_AUDIO_C    = BTN_AUDIO;
+const BTN_DISPLAY_C  = BTN_DISPLAY;
+const BTN_SOURCES_C  = BTN_SOURCES;
+const BTN_ABOUT_C    = BTN_ABOUT;
+const BTN_EXIT_C     = BTN_EXIT;
 
 const PANEL_ASPECT = 1205 / 630;
 const BTN_ASPECT = 2.0;
@@ -167,7 +177,8 @@ function AnimatedHelpButton({ onPress, size }) {
   );
 }
 
-function AnimatedPanelButton({ source, onPress, containerStyle, imageStyle }) {
+function AnimatedPanelButton({ source, pressedSource, onPress, containerStyle, imageStyle }) {
+  const { playSfx } = useAudio();
   const [pressed, setPressed] = useState(false);
   const scale = useRef(new Animated.Value(1)).current;
   const translateY = useRef(new Animated.Value(0)).current;

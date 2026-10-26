@@ -23,7 +23,7 @@ const PANEL_ASPECT = 1205 / 630;
 
 // BIGGER RADIO CIRCLES
 const CIRCLE_W = 90/1920;  
-const ROW_H = 300/1080;     
+const ROW_H = 100/1080;     
 
 const SPEED_ROW = { left: 240/1920, w: 410/1920, cx: 318/1920 };
 const AUTO_ROW = { left: 855/1920, w: 350/1920, cx: 921/1920 };

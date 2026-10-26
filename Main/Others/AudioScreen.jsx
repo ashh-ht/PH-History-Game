@@ -24,7 +24,7 @@ const SLIDER_RIGHT = 0.12;
 const SLIDER_Y = [0.34, 0.52, 0.69];
 
 const THUMB_SIZE_PCT = 50 / 1205;
-const THUMB_SCALE = 4.2;
+const THUMB_SCALE = 1.2;
 const TRACK_HEIGHT = 16;
 const HITBOX_H = 100;
 const PERCENT_FONT = 30 / 1205;

@@ -53,6 +53,8 @@ const LEFT_CARD_STEP = 30;
 const RIGHT_CARD_TOP = 10.5;
 const RIGHT_CARD_STEP = 29.0;
 
+const PANEL_CROP = 0.01;
+
 const REMNANTS_TITLE = require('../../assets/Journal_Assets/Remnants_Title.png');
 const REMNANTS_BOX_LOCKED = require('../../assets/Journal_Assets/Remnants_Box_locked.png');
 const REMNANTS_BOX_UNLOCKED = require('../../assets/Journal_Assets/Remnants_Box_unlocked.png');
@@ -381,13 +383,6 @@ function CharacterCard({ name, content, side, slot, unit, onPress }) {
   );
 }
 
-function getAppearance(c) {
-  const parts = String(c.part ?? '').split(',').map((p) => p.trim()).filter(Boolean);
-  const chapter = `Chapter ${c.chapter}`;
-  if (parts.length === 0) return chapter;
-  return `${chapter} · Part${parts.length > 1 ? 's' : ''} ${parts.join(', ')}`;
-}
-
 function Journalbook({ navigation }) {
   const { unlockedIds } = useJournal();
   const { width: screenW, height: screenH } = useWindowDimensions();
@@ -693,15 +688,17 @@ function Journalbook({ navigation }) {
               <View key="char-detail" style={styles.spreadRow} pointerEvents="box-none">
                 <View style={styles.spreadPage} pointerEvents="box-none">
                   <View style={styles.detailFrame}>
-                    {!PORTRAITS[selectedChar.name] && (
-                      <Image source={PROFILE_FRAME} style={styles.fillAll} resizeMode="stretch" />
+                    {/* Render the frame first as the background */}
+                    <Image source={PROFILE_FRAME} style={styles.fillAll} resizeMode="stretch" />
+                    
+                    {/* Render the portrait on top of it */}
+                    {PORTRAITS[selectedChar.name] && (
+                      <Image source={PORTRAITS[selectedChar.name]} style={styles.detailPortraitSlot} resizeMode="cover" />
                     )}
-                    {PORTRAITS[selectedChar.name] && <Image source={PORTRAITS[selectedChar.name]} style={styles.detailPortraitSlot} resizeMode="cover" />}
                   </View>
                   <View style={styles.detailNameBox}>
                     <Text style={[styles.detailName, { fontSize: Math.max(12, 64 * unit) }]} numberOfLines={2} adjustsFontSizeToFit>{selectedChar.name}</Text>
                   </View>
-                  <Text style={[styles.detailInfo, { fontSize: Math.max(9, 34 * unit) }]}>{getAppearance(selectedChar)}</Text>
                   <Pressable style={styles.detailBack} onPress={() => setSelectedChar(null)}><Text style={styles.backLink}>← Back to profiles</Text></Pressable>
                 </View>
                 <View style={styles.spreadPage} pointerEvents="box-none">

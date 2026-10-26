@@ -32,7 +32,6 @@ const COMPLETE_IMAGE = require('../../../assets/Minigames/Part1/Santo Nino.png')
 
 const DISCOVERY_BACKGROUND = require('../../../Background Images/Part 1/nipa hut interior santo nino discovery.png');
 
-
 const pieceSource = Image.resolveAssetSource(PIECES[0]);
 const PIECE_ASPECT =
   pieceSource && pieceSource.width && pieceSource.height
@@ -106,7 +105,6 @@ export default function SantoNinoMinigame({
   const trayLeft = boardLeft + boardWidth + 14;
   const trayTop = boardTop;
 
-
   const [pieces, setPieces] = useState(() =>
     shuffle(Array.from({ length: PIECE_COUNT }, (_, index) => index))
   );
@@ -133,7 +131,6 @@ export default function SantoNinoMinigame({
     onPhaseChange(gameState === 'won' ? 'result' : 'playing');
   }, [gameState, onPhaseChange]);
 
-
   const pieceAnimations = useMemo(() => {
     return Array.from({ length: PIECE_COUNT }, () => ({
       x: new Animated.Value(0),
@@ -144,7 +141,6 @@ export default function SantoNinoMinigame({
 
   const successScale = useRef(new Animated.Value(0.85)).current;
   const successOpacity = useRef(new Animated.Value(0)).current;
-
 
   useEffect(() => {
     if (locked.length !== PIECE_COUNT) {
@@ -318,13 +314,11 @@ export default function SantoNinoMinigame({
 
     const requiredScale = boardPieceW / trayPieceW;
 
-
     const scaleOffsetX = (trayPieceW - boardPieceW) / 2;
     const scaleOffsetY = (trayPieceH - boardPieceH) / 2;
 
     const requiredX = targetLeft - originalLeft - scaleOffsetX;
     const requiredY = targetTop - originalTop - scaleOffsetY;
-
 
     settlingRef.current.add(pieceIndex);
 
@@ -391,7 +385,7 @@ export default function SantoNinoMinigame({
             }).start();
           },
 
-          onPanResponderMove: (_, gesture) => {
+          onPanResponderMove: (_evt, gesture) => {
             if (!canTouch(pieceIndex)) {
               return;
             }
@@ -400,7 +394,7 @@ export default function SantoNinoMinigame({
             pieceAnimations[pieceIndex].y.setValue(gesture.dy);
           },
 
-          onPanResponderRelease: (_, gesture) => {
+          onPanResponderRelease: (_evt, gesture) => {
             setActivePiece(null);
 
             if (
@@ -435,10 +429,8 @@ export default function SantoNinoMinigame({
     []
   );
 
-
   const freePieceCount = PIECE_COUNT - locked.length;
   const canShuffle = freePieceCount >= 2;
-
 
   return (
     <ImageBackground
@@ -539,6 +531,11 @@ export default function SantoNinoMinigame({
               style={[
                 styles.piece,
                 isLocked && styles.pieceLocked,
+                isLocked
+                  ? styles.pieceZLocked
+                  : isActive
+                    ? styles.pieceZActive
+                    : styles.pieceZNormal,
                 {
                   width: trayPieceW,
                   height: trayPieceH,
@@ -550,9 +547,6 @@ export default function SantoNinoMinigame({
                     { translateY: pieceAnimations[pieceIndex].y },
                     { scale: pieceAnimations[pieceIndex].scale },
                   ],
-
-                  zIndex: isLocked ? 20 : isActive ? 100 : 30,
-                  elevation: isLocked ? 20 : isActive ? 100 : 30,
                 },
               ]}
             >
@@ -725,6 +719,21 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
 
+  pieceZLocked: {
+    zIndex: 20,
+    elevation: 20,
+  },
+
+  pieceZActive: {
+    zIndex: 100,
+    elevation: 100,
+  },
+
+  pieceZNormal: {
+    zIndex: 30,
+    elevation: 30,
+  },
+
   pieceImage: {
     width: '100%',
     height: '100%',
@@ -782,8 +791,6 @@ const styles = StyleSheet.create({
   buttonPressed: {
     opacity: 0.65,
   },
-
-
 
   resultOverlay: {
     position: 'absolute',

@@ -32,15 +32,11 @@ import TimelineSort from "../GameScreen/Minigames/Timelinesort";
 import { BloodTrace, OathTrace } from "../GameScreen/Minigames/TracingMinigame";
 import MinigameOverlay from "../../Components/Minigameoverlay";
 
-// =====================================================
-// QUIZ UI IMAGES
-// =====================================================
 const QUIZ_BACKGROUND = require("../../assets/Quiz_Assets/Quiz_Background.png");
 const QUIZ_CHOICES = require("../../assets/Quiz_Assets/Quiz_Choices.png");
 const QUIZ_CHOICES_SELECTED = require("../../assets/Quiz_Assets/Quiz_ChoicesSelected.png");
-const QUIZ_SUBMIT = require("../../assets/Quiz_Assets/Quiz_Submit.png");
-const QUIZ_SUBMIT_PRESSED = require("../../assets/Quiz_Assets/Quiz_SubmitPressed.png");
-const QUIZ_QUESTION_IMAGES = [
+
+const QUIZ_PANELS = [
   require("../../assets/Quiz_Assets/QuizQuestion_1.png"),
   require("../../assets/Quiz_Assets/QuizQuestion_2.png"),
   require("../../assets/Quiz_Assets/QuizQuestion_3.png"),
@@ -49,22 +45,17 @@ const QUIZ_QUESTION_IMAGES = [
   require("../../assets/Quiz_Assets/QuizQuestion_6.png"),
 ];
 
-// =====================================================
-// QUIZ UI IMAGES
-// =====================================================
-const QUIZ_BACKGROUND = require("../../assets/Quiz_Assets/Quiz_Background.png");
-const QUIZ_CHOICES = require("../../assets/Quiz_Assets/Quiz_Choices.png");
-const QUIZ_CHOICES_SELECTED = require("../../assets/Quiz_Assets/Quiz_ChoicesSelected.png");
-const QUIZ_SUBMIT = require("../../assets/Quiz_Assets/Quiz_Submit.png");
-const QUIZ_SUBMIT_PRESSED = require("../../assets/Quiz_Assets/Quiz_SubmitPressed.png");
-const QUIZ_QUESTION_IMAGES = [
-  require("../../assets/Quiz_Assets/QuizQuestion_1.png"),
-  require("../../assets/Quiz_Assets/QuizQuestion_2.png"),
-  require("../../assets/Quiz_Assets/QuizQuestion_3.png"),
-  require("../../assets/Quiz_Assets/QuizQuestion_4.png"),
-  require("../../assets/Quiz_Assets/QuizQuestion_5.png"),
-  require("../../assets/Quiz_Assets/QuizQuestion_6.png"),
-];
+const MINIGAMES = {
+  voyage: VoyageMinigame,
+  santoNino: SantoNinoMinigame,
+  sortingtimeline: TimelineSort,
+};
+
+const MINIGAME_TYPES = new Set([
+  "voyage", "santoNino", "cedula", "decipher", "matching", "chronological", "whoSaidIt", "sortingtimeline", "bloodtrace", "oathtrace",
+]);
+
+const SPEED_MS = { Slow: 60, Normal: 30, Fast: 12 };
 
 const getMusicFor = (sceneData, idx) => {
   for (let i = Math.min(idx, sceneData.length - 1); i >= 0; i--) {
@@ -172,40 +163,9 @@ function AnimatedChoiceButton({ children, onPress, style }) {
         onPressIn={() => animate(true)}
         onPressOut={() => animate(false)}
         onPress={onPress}
+        style={{ width: "100%", height: "100%" }} // <--- THIS IS THE FIX
       >
         {children}
-      </TouchableOpacity>
-    </Animated.View>
-  );
-}
-
-// Custom button for the Quiz choices (handles normal/selected image states)
-function AnimatedQuizChoiceButton({ children, onPress, style, isSelected }) {
-  const scale = useRef(new Animated.Value(1)).current;
-  const translateY = useRef(new Animated.Value(0)).current;
-
-  const animate = (isPressed) => {
-    Animated.parallel([
-      Animated.spring(scale, { toValue: isPressed ? 0.93 : 1, speed: 22, bounciness: 10, useNativeDriver: true }),
-      Animated.spring(translateY, { toValue: isPressed ? 3 : 0, speed: 22, bounciness: 8, useNativeDriver: true }),
-    ]).start();
-  };
-
-  return (
-    <Animated.View style={[style, { transform: [{ scale }, { translateY }] }]}>
-      <TouchableOpacity
-        activeOpacity={1}
-        onPressIn={() => animate(true)}
-        onPressOut={() => animate(false)}
-        onPress={onPress}
-      >
-        <ImageBackground
-          source={isSelected ? QUIZ_CHOICES_SELECTED : QUIZ_CHOICES}
-          style={styles.quizImageButtonBg}
-          resizeMode="stretch"
-        >
-          {children}
-        </ImageBackground>
       </TouchableOpacity>
     </Animated.View>
   );
@@ -241,29 +201,6 @@ function AnimatedImageButton({ normalSource, pressedSource, onPress, style, imag
     </Animated.View>
   );
 }
-
-const QUIZ_BACKGROUND = require("../../assets/quiz_assets/Quiz_Background.png");
-
-const QUIZ_PANELS = [
-  require("../../assets/quiz_assets/QuizQuestion_1.png"),
-  require("../../assets/quiz_assets/QuizQuestion_2.png"),
-  require("../../assets/quiz_assets/QuizQuestion_3.png"),
-  require("../../assets/quiz_assets/QuizQuestion_4.png"),
-  require("../../assets/quiz_assets/QuizQuestion_5.png"),
-  require("../../assets/quiz_assets/QuizQuestion_6.png"),
-];
-
-const MINIGAMES = {
-  voyage: VoyageMinigame,
-  santoNino: SantoNinoMinigame,
-  sortingtimeline: TimelineSort,
-};
-
-const MINIGAME_TYPES = new Set([
-  "voyage", "santoNino", "cedula", "decipher", "matching", "chronological", "whoSaidIt", "sortingtimeline", "bloodtrace", "oathtrace",
-]);
-
-const SPEED_MS = { Slow: 60, Normal: 30, Fast: 12 };
 
 function useTypewriter(text, msPerChar, resetKey) {
   const [state, setState] = useState({ key: resetKey, count: 0 });
@@ -325,6 +262,8 @@ function GameplayMenuOverlay({ navigation }) {
 function FadeBackground({ source, style, children, duration = 700 }) {
   const [srcA, setSrcA] = useState(source);
   const [srcB, setSrcB] = useState(null);
+  const srcARef = useRef(source);
+  const srcBRef = useRef(null);
   const bOpacity = useRef(new Animated.Value(0)).current;
   const showingB = useRef(false);
   const targetRef = useRef(source);
@@ -349,10 +288,17 @@ function FadeBackground({ source, style, children, duration = 700 }) {
     bOpacity.stopAnimation();
 
     const intoB = !showingB.current;
-    const alreadyThere = intoB ? srcB === source : srcA === source;
+    const alreadyThere = intoB
+      ? srcBRef.current === source
+      : srcARef.current === source;
 
-    if (intoB) setSrcB(source);
-    else setSrcA(source);
+    if (intoB) {
+      srcBRef.current = source;
+      setSrcB(source);
+    } else {
+      srcARef.current = source;
+      setSrcA(source);
+    }
     showingB.current = intoB;
 
     startFadeRef.current = () => {
@@ -365,7 +311,7 @@ function FadeBackground({ source, style, children, duration = 700 }) {
 
     if (alreadyThere) startFade();
     else timerRef.current = setTimeout(startFade, 400);
-  }, [source]);
+  }, [source, duration, startFade, bOpacity]);
 
   useEffect(
     () => () => {
@@ -537,6 +483,8 @@ function PartRenderer(props) {
   const [paused, setPaused] = useState(false);
   const [minigamePhase, setMinigamePhase] = useState("intro");
 
+  const nextRef = useRef();
+
   useEffect(() => {
     setPaused(false);
   }, [sceneIdx]);
@@ -556,16 +504,16 @@ function PartRenderer(props) {
   const chapterTitleOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    const g = gameRef.current;
-    g.setChapter(chapterNumber);
-    g.setPart(partNumber);
-    g.setInGame(true);
+    game.setChapter(chapterNumber);
+    game.setPart(partNumber);
+    game.setInGame(true);
     markPartReached(partNumber);
 
     return () => {
-      gameRef.current.setInGame(false);
-      stopLoopsRef.current();
+      game.setInGame(false);
+      stopLoops();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getSceneInfo = useCallback(
@@ -585,19 +533,22 @@ function PartRenderer(props) {
     [sceneData]
   );
 
-  useEffect(() => {
-    saveCheckpoint({
+  const initialCheckpointRef = useRef(null);
+  if (initialCheckpointRef.current === null) {
+    initialCheckpointRef.current = {
       chap: chapterNumber,
       part: partNumber,
       sceneIdx: startIdx,
       ...getSceneInfo(startIdx),
-    });
+    };
+  }
+
+  useEffect(() => {
+    saveCheckpoint(initialCheckpointRef.current);
   }, []);
 
   const hasMoreScenes = sceneIdx < sceneData.length;
   const current = hasMoreScenes ? sceneData[sceneIdx] : null;
-
-  console.log("part", partNumber, "idx", sceneIdx, "type", current?.type);
 
   const isMinigame = current ? MINIGAME_TYPES.has(current.type) : false;
 
@@ -627,9 +578,7 @@ function PartRenderer(props) {
     if (scene.stopSfx) stopLoops();
 
     [].concat(scene.sfx ?? []).forEach((key) => playSfx(key));
-    if (scene.stopSfx) stopLoopsRef.current();
-    [].concat(scene.sfx ?? []).forEach((key) => playSfxRef.current(key));
-  }, [sceneIdx, sceneData]);
+  }, [sceneIdx, sceneData, playSfx, stopLoops]);
 
   useEffect(() => {
     if (current?.type !== "chapterIntro") return undefined;
@@ -641,18 +590,6 @@ function PartRenderer(props) {
     animation.start();
     return () => animation.stop();
   }, [sceneIdx, current?.type, chapterTitleOpacity]);
-
-  const getSceneInfo = useCallback((idx) => {
-    let sceneNumber = 0;
-    let sceneTitle = "";
-    for (let i = 0; i <= idx && i < sceneData.length; i++) {
-      if (sceneData[i].type === "scene") {
-        sceneNumber += 1;
-        sceneTitle = sceneData[i].title;
-      }
-    }
-    return { sceneNumber, sceneTitle };
-  }, [sceneData]);
 
   useEffect(() => {
     if (!current || current.type !== "scene") return;
@@ -747,8 +684,6 @@ function PartRenderer(props) {
     return goNext();
   };
 
-  // Always points at the newest `next`, so the auto-play timer below
-  // never calls an out-of-date version.
   nextRef.current = next;
 
   const advance = () => (done ? next() : skip());
@@ -757,7 +692,7 @@ function PartRenderer(props) {
     if (!settings?.autoPlay || !done || !current) return;
     if (isMinigame || !lineText) return;
 
-    const id = setTimeout(next, settings.autoDelay * 1000);
+    const id = setTimeout(() => nextRef.current(), settings.autoDelay * 1000);
     return () => clearTimeout(id);
   }, [
     sceneIdx,
@@ -770,10 +705,6 @@ function PartRenderer(props) {
     current,
     isMinigame,
   ]);
-
-  if (current?.type === "voyage") {
-    return <VoyageMinigame onComplete={goNext} />;
-  }
 
   const withMinigameOverlay = (
     node,
@@ -881,7 +812,7 @@ function PartRenderer(props) {
   }
 
   if (current?.type === "whoSaidIt") {
-    return <WhoSaidItMinigame key={`who-said-it-${chapterNumber}-${partNumber}-${sceneIdx}`} onComplete={(results) => { console.log("Who Said It results:", results); goNext(); }} />;
+    return <WhoSaidItMinigame key={`who-said-it-${chapterNumber}-${partNumber}-${sceneIdx}`} onComplete={(results) => { goNext(); }} />;
   }
 
   const Minigame = current ? MINIGAMES[current.type] : null;
@@ -961,10 +892,6 @@ function PartRenderer(props) {
     const isConfirmed = quizConfirmed;
     const isAnswered = quizAnswer !== null;
     const isCorrect = quizAnswer === current.correctIndex;
-    const submitVisible = !isAnswered && selectedOption !== null;
-
-    const quizIndex = sceneData.slice(0, sceneIdx).filter(s => s.type === 'quiz').length;
-    const questionParchment = QUIZ_QUESTION_IMAGES[quizIndex % QUIZ_QUESTION_IMAGES.length];
 
     const quizNumber = sceneData
       .slice(0, sceneIdx + 1)
@@ -1028,7 +955,7 @@ function PartRenderer(props) {
             imageStyle={boxImage}
             resizeMode="stretch"
           >
-            <Text style={scaled(styles.choiceQuestion)}>
+            <Text style={scaled(styles.quizQuestionText)}>
               {current.question}
             </Text>
 
@@ -1069,7 +996,7 @@ function PartRenderer(props) {
             }
 
             return (
-              <AnimatedQuizButton
+              <AnimatedChoiceButton
                 key={index}
                 style={styles.quizImageButton}
                 onPress={() => handleQuizTap(index)}
@@ -1079,38 +1006,19 @@ function PartRenderer(props) {
                   style={styles.quizImageButtonBg}
                   resizeMode="stretch"
                 >
-                  <Text style={scaled(styles.quizButtonText)}>
+                  <Text style={scaled(styles.quizButtonText)} numberOfLines={2}>
                     {option}
                   </Text>
                 </ImageBackground>
-              </AnimatedQuizButton>
+              </AnimatedChoiceButton>
             );
           })}
         </View>
 
-        {/* SUBMIT BUTTON (Always in layout, but only visible/active when selected) */}
-        <View 
-          style={[
-            styles.quizSubmitWrapper, 
-            submitVisible ? styles.quizSubmitVisible : styles.quizSubmitHidden,
-          ]} 
-          pointerEvents={submitVisible ? 'auto' : 'none'}
-        >
-          <AnimatedImageButton
-            normalSource={QUIZ_SUBMIT}
-            pressedSource={QUIZ_SUBMIT_PRESSED}
-            onPress={handleQuizSubmit}
-            style={styles.quizSubmitBtn}
-            imageStyle={styles.quizSubmitImage}
-          />
-        </View>
-
-        {/* NEXT ARROW (Only shows after submitting) */}
         {isAnswered && (
           <AnimatedNextButton onPress={goNext} />
         )}
 
-        {/* REMNANT CONGRATULATIONS POPUP */}
         {showRewardPopup && (
           <View style={styles.rewardPopupOverlay}>
             <View style={styles.rewardPopupBox}>
@@ -1482,7 +1390,6 @@ const styles = StyleSheet.create({
     top: 0,
   },
 
-  // ---------- MENU OVERLAY ----------
   menuOverlay: {
     position: "absolute",
     top: 20,
@@ -1502,7 +1409,6 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
 
-  // ---------- SYSTEM INTRO ----------
   introScreen: {
     flex: 1,
     width: "100%",
@@ -1544,7 +1450,6 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
 
-  // ---------- SCENE TITLE ----------
   sceneScreen: {
     flex: 1,
     width: "100%",
@@ -1575,7 +1480,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 
-  // ---------- NEXT ARROW ----------
   arrowButton: {
     position: "absolute",
     right: 50,
@@ -1588,7 +1492,6 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
 
-  // ---------- SYSTEM NARRATION ----------
   systemScreen: {
     flex: 1,
     width: "100%",
@@ -1614,7 +1517,6 @@ const styles = StyleSheet.create({
     lineHeight: 25,
   },
 
-  // ---------- NARRATOR ----------
   narratorWrapper: {
     position: "absolute",
     left: 20,
@@ -1651,7 +1553,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 
-  // ---------- CHARACTERS ----------
   characterLayer: {
     position: "absolute",
     left: 0,
@@ -1679,7 +1580,6 @@ const styles = StyleSheet.create({
     left: "30%",
   },
 
-  // ---------- DIALOGUE ----------
   dialogueWrapper: {
     position: "absolute",
     left: 20,
@@ -1724,20 +1624,13 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
   },
 
-  // ---------- CHOICES ----------
   choiceScreen: {
     flex: 1,
     backgroundColor: "#fafafa",
     justifyContent: "center",
     alignItems: "center",
-    alignItems: "center",
   },
   choiceParchmentWrapper: {
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 100,
-    paddingVertical: 25,
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
@@ -1750,11 +1643,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 30,
-    alignItems: "center",
   },
 
   quizParchmentWrapper: {
     width: "85%",
+    marginTop: -40,
     marginBottom: 10,
     alignItems: "center",
     justifyContent: "center",
@@ -1767,7 +1660,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 10,
-
   },
 
   choiceQuestion: {
@@ -1810,9 +1702,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 
-  // =====================================================
-  // QUIZ UI STYLES (Adjust sizes here)
-  // =====================================================
   quizScreen: {
     flex: 1,
     justifyContent: "center",
@@ -1820,7 +1709,6 @@ const styles = StyleSheet.create({
     paddingBottom: 65,
   },
 
-  // 1. Question Parchment Image Sizing
   quizQuestionWrapper: {
     width: "85%",
     marginTop: 90,
@@ -1835,23 +1723,26 @@ const styles = StyleSheet.create({
   },
 
   quizQuestionText: {
-    color: "#72503d", 
+    color: "#63534a",
     fontSize: 18,
     lineHeight: 25,
     textAlign: "center",
   },
 
-  // 2. Choices Grid and Buttons
-  quizChoicesGrid: {
+  // <--- RESTORED THE PROPER GRID STYLE
+  quizButtonsGrid: {
+    width: "98%",
+    alignSelf: "center",
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
-    gap: 15,
-    width: "90%",
+    alignItems: "stretch",
+    gap: 12,
   },
+
   quizImageButton: {
     width: "45%",
-    height: 50,
+    height: 65, // <--- FIXED: Increased height for 2 lines of text
   },
   quizImageButtonBg: {
     width: "100%",
@@ -1868,7 +1759,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 
-  // 3. Submit Button
   quizSubmitWrapper: {
     marginTop: 5,
     alignItems: "center",
@@ -1890,7 +1780,6 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
 
-  // 4. Result Text
   quizCorrectPrompt: {
     color: "#218838",
     fontSize: 18,
