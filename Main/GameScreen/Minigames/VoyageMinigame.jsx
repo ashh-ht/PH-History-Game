@@ -8,6 +8,7 @@ import {
     useWindowDimensions,
     View,
 } from 'react-native';
+import MinigameOverlay from '../../../Components/Minigameoverlay';
 
 const GAME_SECONDS = 60;
 const TARGET_SUPPLIES = 10;
@@ -16,7 +17,6 @@ const START_HULL = 5;
 const TICK_MS = 50;
 
 const STEER_SPEED = 7;
-
 
 const BASE_SPEED = 6;
 const MAX_SPEED = 14;
@@ -37,7 +37,6 @@ const SUPPLY_HEIGHT = 60;
 const WAVE_WIDTH = 90;
 const WAVE_HEIGHT = 68;
 
-
 const ROCK_IMAGES = [
     require('../../../assets/Minigames/Part1/Rock.png'),
     require('../../../assets/Minigames/Part1/Rock2.png'),
@@ -48,7 +47,6 @@ const WAVE_IMAGES = [
     require('../../../assets/Minigames/Part1/Waves.png'),
     require('../../../assets/Minigames/Part1/Waves2.png'),
 ];
-
 
 const SHIP_Y_OFFSET = 30;
 
@@ -84,7 +82,8 @@ const overlaps = (a, b) =>
     a.top < b.bottom &&
     a.bottom > b.top;
 
-function VoyageMinigame({ onComplete }) {
+function VoyageMinigame({ onComplete, onSettings }) {
+    const [paused, setPaused] = useState(false);
     const { width, height } = useWindowDimensions();
     const controlsHeight = 110;
     const playTop = 95;
@@ -123,6 +122,30 @@ function VoyageMinigame({ onComplete }) {
     const lastSecondRef = useRef(-1);
     const startTimeRef = useRef(Date.now());
 
+    
+    const pausedRef = useRef(paused);
+    const pausedAtRef = useRef(null);
+    pausedRef.current = paused;
+
+    useEffect(() => {
+        if (gameState !== 'playing') return;
+
+        if (paused) {
+            if (pausedAtRef.current === null) {
+                pausedAtRef.current = Date.now();
+            }
+            directionRef.current = 0;
+            setShipDirection(0);
+        } else if (pausedAtRef.current !== null) {
+            const pausedFor = Date.now() - pausedAtRef.current;
+            startTimeRef.current += pausedFor;
+            lastRockSpawnRef.current += pausedFor;
+            lastSupplySpawnRef.current += pausedFor;
+            lastWaveSpawnRef.current += pausedFor;
+            pausedAtRef.current = null;
+        }
+    }, [paused, gameState]);
+
     useEffect(() => {
         if (gameState !== 'playing') {
             return;
@@ -133,8 +156,11 @@ function VoyageMinigame({ onComplete }) {
         lastSupplySpawnRef.current = Date.now();
         lastWaveSpawnRef.current = Date.now();
         lastSecondRef.current = -1;
+        pausedAtRef.current = null;
 
         const timer = setInterval(() => {
+            if (pausedRef.current) return;
+
             const now = Date.now();
             const elapsed = (now - startTimeRef.current) / 1000;
             const currentSecond = Math.floor(elapsed);
@@ -285,6 +311,8 @@ function VoyageMinigame({ onComplete }) {
 
         lastSecondRef.current = -1;
         startTimeRef.current = Date.now();
+        pausedAtRef.current = null;
+        setPaused(false);
 
         hullRef.current = START_HULL;
         collectedRef.current = 0;
@@ -525,6 +553,21 @@ function VoyageMinigame({ onComplete }) {
                             )}
                         </View>
                     </View>
+                )}
+
+                {gameState === 'playing' && (
+                    <MinigameOverlay
+                        paused={paused}
+                        hideSettings={!onSettings}
+                        top={20}
+                        right={20}
+                        onPause={() => setPaused(true)}
+                        onResume={() => setPaused(false)}
+                        onSettings={() => {
+                            setPaused(true);
+                            onSettings?.();
+                        }}
+                    />
                 )}
             </ImageBackground>
         </View>
