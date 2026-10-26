@@ -1,18 +1,23 @@
 buildscript {
   ext {
-    buildToolsVersion = "35.0.0"
+    buildToolsVersion = "36.0.0"
     minSdkVersion = 24
     compileSdkVersion = 36
     targetSdkVersion = 36
     ndkVersion = "27.1.12297006"
+    kotlinVersion = "2.2.10"
   }
   repositories {
     google()
     mavenCentral()
   }
   dependencies {
-    classpath('com.facebook.react:react-native-gradle-plugin')
-    classpath('org.jetbrains.kotlin:kotlin-gradle-plugin:2.2.0')
+    classpath("com.android.tools.build:gradle:9.2.1")
+    classpath("com.facebook.react:react-native-gradle-plugin")
+    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+    
+    classpath("com.google.devtools.ksp:symbol-processing-gradle-plugin:2.2.10-2.0.2")
+    
     classpath('com.google.gms:google-services:4.4.2')
   }
 }

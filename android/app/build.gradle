@@ -57,4 +57,4 @@ dependencies {
     } else {
         implementation jscFlavor
     }
-}
+}  

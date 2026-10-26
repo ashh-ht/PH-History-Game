@@ -32,6 +32,31 @@ import TimelineSort from "../GameScreen/Minigames/Timelinesort";
 import { BloodTrace, OathTrace } from "../GameScreen/Minigames/TracingMinigame";
 import MinigameOverlay from "../../Components/Minigameoverlay";
 
+const QUIZ_BACKGROUND = require("../../assets/Quiz_Assets/Quiz_Background.png");
+const QUIZ_CHOICES = require("../../assets/Quiz_Assets/Quiz_Choices.png");
+const QUIZ_CHOICES_SELECTED = require("../../assets/Quiz_Assets/Quiz_ChoicesSelected.png");
+
+const QUIZ_PANELS = [
+  require("../../assets/Quiz_Assets/QuizQuestion_1.png"),
+  require("../../assets/Quiz_Assets/QuizQuestion_2.png"),
+  require("../../assets/Quiz_Assets/QuizQuestion_3.png"),
+  require("../../assets/Quiz_Assets/QuizQuestion_4.png"),
+  require("../../assets/Quiz_Assets/QuizQuestion_5.png"),
+  require("../../assets/Quiz_Assets/QuizQuestion_6.png"),
+];
+
+const MINIGAMES = {
+  voyage: VoyageMinigame,
+  santoNino: SantoNinoMinigame,
+  sortingtimeline: TimelineSort,
+};
+
+const MINIGAME_TYPES = new Set([
+  "voyage", "santoNino", "cedula", "decipher", "matching", "chronological", "whoSaidIt", "sortingtimeline", "bloodtrace", "oathtrace",
+]);
+
+const SPEED_MS = { Slow: 60, Normal: 30, Fast: 12 };
+
 const getMusicFor = (sceneData, idx) => {
   for (let i = Math.min(idx, sceneData.length - 1); i >= 0; i--) {
     const music = sceneData[i].music ?? sceneData[i].Music;
@@ -61,7 +86,6 @@ function ChapterCompleteScreen({ onContinue }) {
         }),
       ]),
     ]);
-
     animation.start();
     return () => animation.stop();
   }, [titleOpacity, titleScale]);
@@ -78,13 +102,9 @@ function ChapterCompleteScreen({ onContinue }) {
         resizeMode="contain"
         style={[
           styles.chapterCompleteArtwork,
-          {
-            opacity: titleOpacity,
-            transform: [{ scale: titleScale }],
-          },
+          { opacity: titleOpacity, transform: [{ scale: titleScale }] },
         ]}
       />
-
       <AnimatedNextButton onPress={onContinue} />
     </ImageBackground>
   );
@@ -98,30 +118,14 @@ function AnimatedNextButton({ onPress }) {
 
   const animatePress = (isPressed) => {
     setPressed(isPressed);
-
     Animated.parallel([
-      Animated.spring(scale, {
-        toValue: isPressed ? 0.88 : 1,
-        speed: isPressed ? 24 : 18,
-        bounciness: isPressed ? 8 : 12,
-        useNativeDriver: true,
-      }),
-      Animated.spring(translateY, {
-        toValue: isPressed ? 4 : 0,
-        speed: isPressed ? 24 : 18,
-        bounciness: isPressed ? 4 : 12,
-        useNativeDriver: true,
-      }),
+      Animated.spring(scale, { toValue: isPressed ? 0.88 : 1, speed: isPressed ? 24 : 18, bounciness: isPressed ? 8 : 12, useNativeDriver: true }),
+      Animated.spring(translateY, { toValue: isPressed ? 4 : 0, speed: isPressed ? 24 : 18, bounciness: isPressed ? 4 : 12, useNativeDriver: true }),
     ]).start();
   };
 
   return (
-    <Animated.View
-      style={[
-        styles.arrowButton,
-        { transform: [{ scale }, { translateY }] },
-      ]}
-    >
+    <Animated.View style={[styles.arrowButton, { transform: [{ scale }, { translateY }] }]}>
       <TouchableOpacity
         activeOpacity={1}
         onPressIn={() => animatePress(true)}
@@ -132,11 +136,7 @@ function AnimatedNextButton({ onPress }) {
         }}
       >
         <Image
-          source={
-            pressed
-              ? require("../../assets/icons/arrow_nextpressed.png")
-              : require("../../assets/icons/arrow_next.png")
-          }
+          source={pressed ? require("../../assets/icons/arrow_nextpressed.png") : require("../../assets/icons/arrow_next.png")}
           style={styles.arrowImage}
           resizeMode="contain"
         />
@@ -151,30 +151,19 @@ function AnimatedChoiceButton({ children, onPress, style }) {
 
   const animate = (isPressed) => {
     Animated.parallel([
-      Animated.spring(scale, {
-        toValue: isPressed ? 0.94 : 1,
-        speed: 20,
-        bounciness: 12,
-        useNativeDriver: true,
-      }),
-      Animated.spring(translateY, {
-        toValue: isPressed ? 3 : 0,
-        speed: 20,
-        bounciness: 10,
-        useNativeDriver: true,
-      }),
+      Animated.spring(scale, { toValue: isPressed ? 0.94 : 1, speed: 20, bounciness: 12, useNativeDriver: true }),
+      Animated.spring(translateY, { toValue: isPressed ? 3 : 0, speed: 20, bounciness: 10, useNativeDriver: true }),
     ]).start();
   };
 
   return (
-    <Animated.View
-      style={[style, { transform: [{ scale }, { translateY }] }]}
-    >
+    <Animated.View style={[style, { transform: [{ scale }, { translateY }] }]}>
       <TouchableOpacity
         activeOpacity={1}
         onPressIn={() => animate(true)}
         onPressOut={() => animate(false)}
         onPress={onPress}
+        style={{ width: "100%", height: "100%" }} // <--- THIS IS THE FIX
       >
         {children}
       </TouchableOpacity>
@@ -182,77 +171,21 @@ function AnimatedChoiceButton({ children, onPress, style }) {
   );
 }
 
-function AnimatedQuizButton({ children, onPress, style }) {
-  const scale = useRef(new Animated.Value(1)).current;
-  const translateY = useRef(new Animated.Value(0)).current;
-
-  const animate = (isPressed) => {
-    Animated.parallel([
-      Animated.spring(scale, {
-        toValue: isPressed ? 0.93 : 1,
-        speed: 22,
-        bounciness: 10,
-        useNativeDriver: true,
-      }),
-      Animated.spring(translateY, {
-        toValue: isPressed ? 3 : 0,
-        speed: 22,
-        bounciness: 8,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  };
-
-  return (
-    <Animated.View
-      style={[style, { transform: [{ scale }, { translateY }] }]}
-    >
-      <TouchableOpacity
-        activeOpacity={1}
-        onPressIn={() => animate(true)}
-        onPressOut={() => animate(false)}
-        onPress={onPress}
-      >
-        {children}
-      </TouchableOpacity>
-    </Animated.View>
-  );
-}
-
-function AnimatedImageButton({
-  normalSource,
-  pressedSource,
-  onPress,
-  style,
-  imageStyle,
-}) {
+function AnimatedImageButton({ normalSource, pressedSource, onPress, style, imageStyle }) {
   const [pressed, setPressed] = useState(false);
   const scale = useRef(new Animated.Value(1)).current;
   const translateY = useRef(new Animated.Value(0)).current;
 
   const animate = (isPressed) => {
     setPressed(isPressed);
-
     Animated.parallel([
-      Animated.spring(scale, {
-        toValue: isPressed ? 0.9 : 1,
-        speed: isPressed ? 22 : 18,
-        bounciness: isPressed ? 6 : 12,
-        useNativeDriver: true,
-      }),
-      Animated.spring(translateY, {
-        toValue: isPressed ? 3 : 0,
-        speed: isPressed ? 22 : 18,
-        bounciness: isPressed ? 4 : 10,
-        useNativeDriver: true,
-      }),
+      Animated.spring(scale, { toValue: isPressed ? 0.9 : 1, speed: isPressed ? 22 : 18, bounciness: isPressed ? 6 : 12, useNativeDriver: true }),
+      Animated.spring(translateY, { toValue: isPressed ? 3 : 0, speed: isPressed ? 22 : 18, bounciness: isPressed ? 4 : 10, useNativeDriver: true }),
     ]).start();
   };
 
   return (
-    <Animated.View
-      style={[style, { transform: [{ scale }, { translateY }] }]}
-    >
+    <Animated.View style={[style, { transform: [{ scale }, { translateY }] }]}>
       <TouchableOpacity
         activeOpacity={1}
         onPressIn={() => animate(true)}
@@ -346,7 +279,6 @@ function GameplayMenuOverlay({ navigation }) {
         imageStyle={styles.menuButtonImage}
         onPress={() => navigation.navigate("Second")}
       />
-
       <AnimatedImageButton
         normalSource={require("../../assets/icons/journal_button.png")}
         pressedSource={require("../../assets/icons/journal_buttonpressed.png")}
@@ -361,6 +293,8 @@ function GameplayMenuOverlay({ navigation }) {
 function FadeBackground({ source, style, children, duration = 700 }) {
   const [srcA, setSrcA] = useState(source);
   const [srcB, setSrcB] = useState(null);
+  const srcARef = useRef(source);
+  const srcBRef = useRef(null);
   const bOpacity = useRef(new Animated.Value(0)).current;
   const showingB = useRef(false);
   const targetRef = useRef(source);
@@ -385,10 +319,17 @@ function FadeBackground({ source, style, children, duration = 700 }) {
     bOpacity.stopAnimation();
 
     const intoB = !showingB.current;
-    const alreadyThere = intoB ? srcB === source : srcA === source;
+    const alreadyThere = intoB
+      ? srcBRef.current === source
+      : srcARef.current === source;
 
-    if (intoB) setSrcB(source);
-    else setSrcA(source);
+    if (intoB) {
+      srcBRef.current = source;
+      setSrcB(source);
+    } else {
+      srcARef.current = source;
+      setSrcA(source);
+    }
     showingB.current = intoB;
 
     startFadeRef.current = () => {
@@ -401,7 +342,7 @@ function FadeBackground({ source, style, children, duration = 700 }) {
 
     if (alreadyThere) startFade();
     else timerRef.current = setTimeout(startFade, 400);
-  }, [source]);
+  }, [source, duration, startFade, bOpacity]);
 
   useEffect(
     () => () => {
@@ -536,13 +477,7 @@ function CharacterLayer({ characters, speaker, typing, sceneKey }) {
 }
 
 function PartRenderer(props) {
-  const {
-    sceneData,
-    chapterNumber,
-    partNumber,
-    isLastPart,
-    navigation,
-  } = props;
+  const { sceneData, chapterNumber, partNumber, isLastPart, navigation } = props;
 
   const game = useGameProgress();
   const { playMusic, stopLoops, playSfx } = useAudio();
@@ -550,10 +485,7 @@ function PartRenderer(props) {
   const display = useDisplaySettings();
 
   const fontScale = FONT_SCALE[display?.fontSize] ?? 1;
-
-  const boxImage = {
-    opacity: display?.boxOpacity ?? 1,
-  };
+  const boxImage = { opacity: display?.boxOpacity ?? 1 };
 
   const scaled = (style) => {
     const flattened = StyleSheet.flatten(style) || {};
@@ -582,6 +514,8 @@ function PartRenderer(props) {
   const [paused, setPaused] = useState(false);
   const [minigamePhase, setMinigamePhase] = useState("intro");
 
+  const nextRef = useRef();
+
   useEffect(() => {
     setPaused(false);
   }, [sceneIdx]);
@@ -606,12 +540,11 @@ function PartRenderer(props) {
     game.setInGame(true);
     markPartReached(partNumber);
 
-    console.log(`loaded ch${chapterNumber} part${partNumber}`);
-
     return () => {
       game.setInGame(false);
       stopLoops();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getSceneInfo = useCallback(
@@ -642,7 +575,11 @@ function PartRenderer(props) {
       part: partNumber,
       sceneIdx: startIdx,
       ...getSceneInfo(startIdx),
-    });
+    };
+  }
+
+  useEffect(() => {
+    saveCheckpoint(initialCheckpointRef.current);
   }, []);
 
   const hasMoreScenes = sceneIdx < sceneData.length;
@@ -689,57 +626,34 @@ function PartRenderer(props) {
     if (scene.stopSfx) stopLoops();
 
     [].concat(scene.sfx ?? []).forEach((key) => playSfx(key));
-  }, [sceneIdx, sceneData]);
+  }, [sceneIdx, sceneData, playSfx, stopLoops]);
 
   useEffect(() => {
     if (current?.type !== "chapterIntro") return undefined;
-
     chapterTitleOpacity.setValue(0);
-
     const animation = Animated.sequence([
       Animated.delay(500),
-      Animated.timing(chapterTitleOpacity, {
-        toValue: 1,
-        duration: 1800,
-        useNativeDriver: true,
-      }),
+      Animated.timing(chapterTitleOpacity, { toValue: 1, duration: 1800, useNativeDriver: true }),
     ]);
-
     animation.start();
-
     return () => animation.stop();
   }, [sceneIdx, current?.type, chapterTitleOpacity]);
 
+  useEffect(() => {
+    if (!current || current.type !== "scene") return;
+    if (sceneIdx === sceneData.length - 1) return;
+    saveCheckpoint({ chap: chapterNumber, part: partNumber, sceneIdx, ...getSceneInfo(sceneIdx) });
+  }, [sceneIdx, current, chapterNumber, partNumber, sceneData.length, getSceneInfo]);
+
   const saveDecision = (choiceIndex) => {
     if (!current || current.type !== "choice") return;
-
-    const decNum =
-      current.title?.match(/Choice (\d+\.\d+)/)?.[1] ?? null;
-
-    const resumeIdx =
-      typeof current.nextScene === "number"
-        ? current.nextScene
-        : sceneIdx + 1;
-
-    saveCheckpoint({
-      chap: chapterNumber,
-      part: partNumber,
-      sceneIdx: resumeIdx,
-      ...getSceneInfo(resumeIdx),
-      decNum,
-      choice: current.choices[choiceIndex].text,
-    });
+    const decNum = current.title?.match(/Choice (\d+\.\d+)/)?.[1] ?? null;
+    const resumeIdx = typeof current.nextScene === "number" ? current.nextScene : sceneIdx + 1;
+    saveCheckpoint({ chap: chapterNumber, part: partNumber, sceneIdx: resumeIdx, ...getSceneInfo(resumeIdx), decNum, choice: current.choices[choiceIndex].text });
   };
 
   const goToIndex = (index) => {
-    if (
-      typeof index !== "number" ||
-      index < 0 ||
-      index >= sceneData.length
-    ) {
-      return;
-    }
-
+    if (typeof index !== "number" || index < 0 || index >= sceneData.length) return;
     setPicked(null);
     setChoiceConfirmed(false);
     setQuizAnswer(null);
@@ -752,42 +666,27 @@ function PartRenderer(props) {
 
   const goNext = () => {
     const nextIndex = sceneIdx + 1;
-
     if (nextIndex >= sceneData.length) {
       setSceneIdx(sceneData.length);
       game.setScene(sceneData.length);
       return;
     }
-
     goToIndex(nextIndex);
   };
 
   const goToNextIntro = () => {
     if (introChanging) return;
-
     const nextIndex = sceneIdx + 1;
     if (nextIndex < 0 || nextIndex >= sceneData.length) return;
-
     const nextScene = sceneData[nextIndex];
-
-    if (
-      !nextScene ||
-      nextScene.type !== "system" ||
-      nextScene.intro !== true
-    ) {
+    if (!nextScene || nextScene.type !== "system" || nextScene.intro !== true) {
       goToIndex(nextIndex);
       return;
     }
-
     setIntroNextIndex(nextIndex);
     setIntroChanging(true);
     introProgress.setValue(0);
-
-    Animated.timing(introProgress, {
-      toValue: 1,
-      duration: 1400,
-      useNativeDriver: true,
-    }).start(() => {
+    Animated.timing(introProgress, { toValue: 1, duration: 1400, useNativeDriver: true }).start(() => {
       setSceneIdx(nextIndex);
       game.setScene(nextIndex);
       setIntroNextIndex(null);
@@ -796,12 +695,7 @@ function PartRenderer(props) {
     });
   };
 
-  const isTyped =
-    current &&
-    !isMinigame &&
-    current.type !== "scene" &&
-    current.type !== "quiz";
-
+  const isTyped = current && !isMinigame && current.type !== "scene" && current.type !== "quiz";
   let lineText = null;
 
   if (isTyped) {
@@ -823,7 +717,6 @@ function PartRenderer(props) {
 
   const next = () => {
     if (!current) return;
-
     if (current.type === "choice") {
       if (!choiceConfirmed || picked === null) return;
 
@@ -833,13 +726,13 @@ function PartRenderer(props) {
           : sceneIdx + 1
       );
     }
-
     if (current.type === "system" && current.intro) {
       return goToNextIntro();
     }
-
     return goNext();
   };
+
+  nextRef.current = next;
 
   const advance = () => (done ? next() : skip());
 
@@ -847,7 +740,7 @@ function PartRenderer(props) {
     if (!settings?.autoPlay || !done || !current) return;
     if (isMinigame || !lineText) return;
 
-    const id = setTimeout(next, settings.autoDelay * 1000);
+    const id = setTimeout(() => nextRef.current(), settings.autoDelay * 1000);
     return () => clearTimeout(id);
   }, [
     sceneIdx,
@@ -967,15 +860,7 @@ function PartRenderer(props) {
   }
 
   if (current?.type === "whoSaidIt") {
-    return (
-      <WhoSaidItMinigame
-        key={`who-said-it-${chapterNumber}-${partNumber}-${sceneIdx}`}
-        onComplete={(results) => {
-          console.log("Who Said It results:", results);
-          goNext();
-        }}
-      />
-    );
+    return <WhoSaidItMinigame key={`who-said-it-${chapterNumber}-${partNumber}-${sceneIdx}`} onComplete={(results) => { goNext(); }} />;
   }
 
   const Minigame = current ? MINIGAMES[current.type] : null;
@@ -993,7 +878,6 @@ function PartRenderer(props) {
       <ChapterCompleteScreen
         onContinue={() => {
           game.setScene(0);
-
           if (isLastPart) {
             props.onChapterComplete?.(chapterNumber + 1);
           } else {
@@ -1006,35 +890,18 @@ function PartRenderer(props) {
 
   if (current.type === "chapterIntro") {
     return withOverlay(
-      <ImageBackground
-        source={current.background}
-        style={styles.chapterIntroScreen}
-        resizeMode="cover"
-      >
-        <Animated.Image
-          source={current.titleImage}
-          resizeMode="contain"
-          style={[
-            styles.chapterIntroTitle,
-            { opacity: chapterTitleOpacity },
-          ]}
-        />
+      <ImageBackground source={current.background} style={styles.chapterIntroScreen} resizeMode="cover">
+        <Animated.Image source={current.titleImage} resizeMode="contain" style={[styles.chapterIntroTitle, { opacity: chapterTitleOpacity }]} />
         <AnimatedNextButton onPress={goNext} />
       </ImageBackground>
     );
   }
 
   if (current.type === "system" && current.intro === true) {
-    const nextIntro =
-      introNextIndex !== null ? sceneData[introNextIndex] : null;
-
+    const nextIntro = introNextIndex !== null ? sceneData[introNextIndex] : null;
     return withOverlay(
       <View style={styles.introScreen}>
-        <ImageBackground
-          source={current.background}
-          style={styles.introBackground}
-          resizeMode="cover"
-        >
+        <ImageBackground source={current.background} style={styles.introBackground} resizeMode="cover">
           <View style={styles.introTextBox}>
             <TypedText
               style={scaled(styles.introText)}
@@ -1043,20 +910,9 @@ function PartRenderer(props) {
             />
           </View>
         </ImageBackground>
-
         {nextIntro && (
-          <Animated.View
-            pointerEvents="none"
-            style={[
-              styles.introNextLayer,
-              { opacity: introProgress },
-            ]}
-          >
-            <ImageBackground
-              source={nextIntro.background}
-              style={styles.introBackground}
-              resizeMode="cover"
-            >
+          <Animated.View pointerEvents="none" style={[styles.introNextLayer, { opacity: introProgress }]}>
+            <ImageBackground source={nextIntro.background} style={styles.introBackground} resizeMode="cover">
               <View style={styles.introTextBox}>
                 <TypedText
                   style={scaled(styles.introText)}
@@ -1147,7 +1003,7 @@ function PartRenderer(props) {
             imageStyle={boxImage}
             resizeMode="stretch"
           >
-            <Text style={scaled(styles.choiceQuestion)}>
+            <Text style={scaled(styles.quizQuestionText)}>
               {current.question}
             </Text>
 
@@ -1188,7 +1044,7 @@ function PartRenderer(props) {
             }
 
             return (
-              <AnimatedQuizButton
+              <AnimatedChoiceButton
                 key={index}
                 style={styles.quizImageButton}
                 onPress={() => handleQuizTap(index)}
@@ -1198,16 +1054,18 @@ function PartRenderer(props) {
                   style={styles.quizImageButtonBg}
                   resizeMode="stretch"
                 >
-                  <Text style={scaled(styles.quizButtonText)}>
+                  <Text style={scaled(styles.quizButtonText)} numberOfLines={2}>
                     {option}
                   </Text>
                 </ImageBackground>
-              </AnimatedQuizButton>
+              </AnimatedChoiceButton>
             );
           })}
         </View>
 
-        {isConfirmed && <AnimatedNextButton onPress={goNext} />}
+        {isAnswered && (
+          <AnimatedNextButton onPress={goNext} />
+        )}
 
         {showRewardPopup && (
           <View style={styles.rewardPopupOverlay}>
@@ -1245,24 +1103,13 @@ function PartRenderer(props) {
     const systemContent = (
       <>
         <View style={styles.systemParchmentWrapper}>
-          <ImageBackground
-            source={require("../../assets/foreground/narration_box.png")}
-            style={styles.systemParchmentBox}
-            imageStyle={boxImage}
-            resizeMode="stretch"
-          >
-            <TypedText
-              style={scaled(styles.systemText)}
-              full={lineText}
-              shown={shown}
-            />
+          <ImageBackground source={require("../../assets/foreground/narration_box.png")} style={styles.systemParchmentBox} imageStyle={boxImage} resizeMode="stretch">
+            <TypedText style={scaled(styles.systemText)} full={lineText} shown={shown} />
           </ImageBackground>
         </View>
-
         <AnimatedNextButton onPress={advance} />
       </>
     );
-
     if (current.background) {
       return withOverlay(
         <ImageBackground
@@ -1274,10 +1121,7 @@ function PartRenderer(props) {
         </ImageBackground>
       );
     }
-
-    return withOverlay(
-      <View style={styles.systemScreen}>{systemContent}</View>
-    );
+    return withOverlay(<View style={styles.systemScreen}>{systemContent}</View>);
   }
 
   if (current.type === "scene") {
@@ -1289,12 +1133,9 @@ function PartRenderer(props) {
         <View style={styles.sceneDarkOverlay}>
           <View style={styles.sceneTitleBox}>
             <Text style={styles.sceneTitle}>{current.title}</Text>
-            {current.date ? (
-              <Text style={styles.sceneDate}>{current.date}</Text>
-            ) : null}
+            {current.date ? <Text style={styles.sceneDate}>{current.date}</Text> : null}
           </View>
         </View>
-
         <AnimatedNextButton onPress={goNext} />
       </FadeBackground>
     );
@@ -1309,25 +1150,14 @@ function PartRenderer(props) {
         />
 
         <View style={styles.narratorWrapper}>
-          <ImageBackground
-            source={require("../../assets/foreground/narration_box.png")}
-            style={styles.narratorBox}
-            imageStyle={boxImage}
-            resizeMode="stretch"
-          >
+          <ImageBackground source={require("../../assets/foreground/narration_box.png")} style={styles.narratorBox} imageStyle={boxImage} resizeMode="stretch">
             <Text style={scaled(styles.narratorLabel)}>Narrator:</Text>
-            <TypedText
-              style={scaled(styles.narratorText)}
-              full={lineText}
-              shown={shown}
-            />
+            <TypedText style={scaled(styles.narratorText)} full={lineText} shown={shown} />
           </ImageBackground>
         </View>
-
         <AnimatedNextButton onPress={advance} />
       </>
     );
-
     if (current.background) {
       return withOverlay(
         <ImageBackground
@@ -1339,10 +1169,7 @@ function PartRenderer(props) {
         </ImageBackground>
       );
     }
-
-    return withOverlay(
-      <View style={styles.background}>{narratorContent}</View>
-    );
+    return withOverlay(<View style={styles.background}>{narratorContent}</View>);
   }
 
   if (current.type === "choice") {
@@ -1381,7 +1208,6 @@ function PartRenderer(props) {
               </Text>
             </ImageBackground>
           </View>
-
           <View style={styles.choiceButtonsGrid}>
             {current.choices.map((choice, index) => {
               const isSelected = picked === index;
@@ -1412,7 +1238,6 @@ function PartRenderer(props) {
           </View>
         </>
       );
-
       if (current.background) {
         return withOverlay(
           <ImageBackground
@@ -1424,14 +1249,10 @@ function PartRenderer(props) {
           </ImageBackground>
         );
       }
-
-      return withOverlay(
-        <View style={styles.choiceScreen}>{choiceContent}</View>
-      );
+      return withOverlay(<View style={styles.choiceScreen}>{choiceContent}</View>);
     }
 
     const selectedChoice = current.choices[picked];
-
     const responseContent = (
       <>
         <CharacterLayer
@@ -1442,34 +1263,15 @@ function PartRenderer(props) {
         />
 
         <View style={styles.dialogueWrapper}>
-          <ImageBackground
-            source={require("../../assets/foreground/dialogue_box.png")}
-            style={styles.dialogueBox}
-            imageStyle={boxImage}
-            resizeMode="stretch"
-          >
-            <Text style={scaled(styles.speakerName)}>
-              {selectedChoice.speaker}
-            </Text>
-
-            <TypedText
-              style={scaled(styles.dialogueText)}
-              full={lineText}
-              shown={shown}
-            />
-
-            {selectedChoice.translation ? (
-              <Text style={scaled(styles.dialogueTranslation)}>
-                {selectedChoice.translation}
-              </Text>
-            ) : null}
+          <ImageBackground source={require("../../assets/foreground/dialogue_box.png")} style={styles.dialogueBox} imageStyle={boxImage} resizeMode="stretch">
+            <Text style={scaled(styles.speakerName)}>{selectedChoice.speaker}</Text>
+            <TypedText style={scaled(styles.dialogueText)} full={lineText} shown={shown} />
+            {selectedChoice.translation ? <Text style={scaled(styles.dialogueTranslation)}>{selectedChoice.translation}</Text> : null}
           </ImageBackground>
         </View>
-
         <AnimatedNextButton onPress={advance} />
       </>
     );
-
     if (current.background) {
       return withOverlay(
         <ImageBackground
@@ -1481,10 +1283,7 @@ function PartRenderer(props) {
         </ImageBackground>
       );
     }
-
-    return withOverlay(
-      <View style={styles.background}>{responseContent}</View>
-    );
+    return withOverlay(<View style={styles.background}>{responseContent}</View>);
   }
 
   const dialogueContent = (
@@ -1520,7 +1319,6 @@ function PartRenderer(props) {
           ) : null}
         </ImageBackground>
       </View>
-
       <AnimatedNextButton onPress={advance} />
     </>
   );
@@ -1536,22 +1334,13 @@ function PartRenderer(props) {
       </ImageBackground>
     );
   }
-
-  return withOverlay(
-    <View style={styles.background}>{dialogueContent}</View>
-  );
+  return withOverlay(<View style={styles.background}>{dialogueContent}</View>);
 }
 
 const PART_SELECT_ROUTE = "PartSelect";
 
 const goToUnlockSequence = (navigation, completedPart) => {
-  const params = {
-    unlockSequence: {
-      completedPart,
-      token: Date.now(),
-    },
-  };
-
+  const params = { unlockSequence: { completedPart, token: Date.now() } };
   if (typeof navigation.popTo === "function") {
     navigation.popTo(PART_SELECT_ROUTE, params);
   } else {
@@ -1560,106 +1349,28 @@ const goToUnlockSequence = (navigation, completedPart) => {
 };
 
 export function Chap1Part1Screen({ navigation, ...props }) {
-  return (
-    <PartRenderer
-      sceneData={Chapter1.part1}
-      chapterNumber={1}
-      partNumber={1}
-      isLastPart={false}
-      onPartComplete={() => goToUnlockSequence(navigation, 1)}
-      navigation={navigation}
-      {...props}
-    />
-  );
+  return <PartRenderer sceneData={Chapter1.part1} chapterNumber={1} partNumber={1} isLastPart={false} onPartComplete={() => goToUnlockSequence(navigation, 1)} navigation={navigation} {...props} />;
 }
-
 export function Chap1Part2Screen({ navigation, ...props }) {
-  return (
-    <PartRenderer
-      sceneData={Chapter1.part2}
-      chapterNumber={1}
-      partNumber={2}
-      isLastPart={false}
-      onPartComplete={() => goToUnlockSequence(navigation, 2)}
-      navigation={navigation}
-      {...props}
-    />
-  );
+  return <PartRenderer sceneData={Chapter1.part2} chapterNumber={1} partNumber={2} isLastPart={false} onPartComplete={() => goToUnlockSequence(navigation, 2)} navigation={navigation} {...props} />;
 }
-
 export function Chap1Part3Screen({ navigation, ...props }) {
-  return (
-    <PartRenderer
-      sceneData={Chapter1.part3}
-      chapterNumber={1}
-      partNumber={3}
-      isLastPart={false}
-      onPartComplete={() => goToUnlockSequence(navigation, 3)}
-      navigation={navigation}
-      {...props}
-    />
-  );
+  return <PartRenderer sceneData={Chapter1.part3} chapterNumber={1} partNumber={3} isLastPart={false} onPartComplete={() => goToUnlockSequence(navigation, 3)} navigation={navigation} {...props} />;
 }
-
 export function Chap1Part4Screen({ navigation, ...props }) {
-  return (
-    <PartRenderer
-      sceneData={Chapter1.part4}
-      chapterNumber={1}
-      partNumber={4}
-      isLastPart={false}
-      onPartComplete={() => goToUnlockSequence(navigation, 4)}
-      navigation={navigation}
-      {...props}
-    />
-  );
+  return <PartRenderer sceneData={Chapter1.part4} chapterNumber={1} partNumber={4} isLastPart={false} onPartComplete={() => goToUnlockSequence(navigation, 4)} navigation={navigation} {...props} />;
 }
-
 export function Chap1Part5Screen({ navigation, ...props }) {
-  return (
-    <PartRenderer
-      sceneData={Chapter1.part5}
-      chapterNumber={1}
-      partNumber={5}
-      isLastPart={false}
-      onPartComplete={() => goToUnlockSequence(navigation, 5)}
-      navigation={navigation}
-      {...props}
-    />
-  );
+  return <PartRenderer sceneData={Chapter1.part5} chapterNumber={1} partNumber={5} isLastPart={false} onPartComplete={() => goToUnlockSequence(navigation, 5)} navigation={navigation} {...props} />;
 }
-
 export function Chap1Part6Screen({ navigation, ...props }) {
-  return (
-    <PartRenderer
-      sceneData={Chapter1.part6}
-      chapterNumber={1}
-      partNumber={6}
-      isLastPart={false}
-      onPartComplete={() => goToUnlockSequence(navigation, 6)}
-      navigation={navigation}
-      {...props}
-    />
-  );
+  return <PartRenderer sceneData={Chapter1.part6} chapterNumber={1} partNumber={6} isLastPart={false} onPartComplete={() => goToUnlockSequence(navigation, 6)} navigation={navigation} {...props} />;
 }
-
 export function Chap1Part7Screen({ navigation, ...props }) {
-  return (
-    <PartRenderer
-      sceneData={Chapter1.part7}
-      chapterNumber={1}
-      partNumber={7}
-      isLastPart={false}
-      onPartComplete={() => goToUnlockSequence(navigation, 7)}
-      navigation={navigation}
-      {...props}
-    />
-  );
+  return <PartRenderer sceneData={Chapter1.part7} chapterNumber={1} partNumber={7} isLastPart={false} onPartComplete={() => goToUnlockSequence(navigation, 7)} navigation={navigation} {...props} />;
 }
-
 export function Chap1Part8Screen({ navigation, ...props }) {
   const { stopLoops } = useAudio();
-
   return (
     <PartRenderer
       sceneData={Chapter1.part8}
@@ -1696,7 +1407,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-
   chapterIntroTitle: {
     width: "60%",
     height: "45%",
@@ -1710,7 +1420,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-
   chapterCompleteArtwork: {
     width: "60%",
     height: "45%",
@@ -1722,7 +1431,6 @@ const styles = StyleSheet.create({
     height: "100%",
     backgroundColor: "#000000",
   },
-
   typedOverlay: {
     position: "absolute",
     left: 0,
@@ -1739,12 +1447,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 10,
   },
-
   menuButton: {
     width: 42,
     height: 42,
   },
-
   menuButtonImage: {
     width: "100%",
     height: "100%",
@@ -1757,13 +1463,11 @@ const styles = StyleSheet.create({
     height: "100%",
     backgroundColor: "#000000",
   },
-
   introBackground: {
     flex: 1,
     width: "100%",
     height: "100%",
   },
-
   introNextLayer: {
     position: "absolute",
     left: 0,
@@ -1771,7 +1475,6 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
   },
-
   introTouchable: {
     position: "absolute",
     left: 0,
@@ -1779,7 +1482,6 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
   },
-
   introTextBox: {
     position: "absolute",
     bottom: 0,
@@ -1788,9 +1490,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.78)",
     paddingVertical: 12,
     paddingHorizontal: 48,
-    borderRadius: 0,
   },
-
   introText: {
     color: "#FFFFFF",
     textAlign: "center",
@@ -1804,7 +1504,6 @@ const styles = StyleSheet.create({
     height: "100%",
     backgroundColor: "#000000",
   },
-
   sceneDarkOverlay: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.35)",
@@ -1812,12 +1511,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 25,
   },
-
   sceneTitleBox: {
     alignItems: "center",
     justifyContent: "center",
   },
-
   sceneTitle: {
     color: "#FFFFFF",
     fontSize: 28,
@@ -1825,7 +1522,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 10,
   },
-
   sceneDate: {
     color: "#FFFFFF",
     fontSize: 18,
@@ -1838,7 +1534,6 @@ const styles = StyleSheet.create({
     bottom: 25,
     zIndex: 50,
   },
-
   arrowImage: {
     width: 35,
     height: 35,
@@ -1851,21 +1546,18 @@ const styles = StyleSheet.create({
     height: "100%",
     backgroundColor: "#000000",
   },
-
   systemParchmentWrapper: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     padding: 25,
   },
-
   systemParchmentBox: {
     width: "100%",
     minHeight: 180,
     justifyContent: "center",
     padding: 30,
   },
-
   systemText: {
     color: "#000000",
     fontSize: 18,
@@ -1880,7 +1572,6 @@ const styles = StyleSheet.create({
     bottom: 5,
     zIndex: 20,
   },
-
   narratorBox: {
     width: "100%",
     minHeight: 165,
@@ -1890,7 +1581,6 @@ const styles = StyleSheet.create({
     paddingLeft: 30,
     paddingRight: -120,
   },
-
   narratorLabel: {
     position: "absolute",
     top: -1,
@@ -1904,7 +1594,6 @@ const styles = StyleSheet.create({
     textAlignVertical: "center",
     includeFontPadding: false,
   },
-
   narratorText: {
     color: "#FFFFFF",
     fontSize: 17,
@@ -1920,7 +1609,6 @@ const styles = StyleSheet.create({
     height: "100%",
     zIndex: 10,
   },
-
   characterImage: {
     position: "absolute",
     bottom: 100,
@@ -1928,17 +1616,14 @@ const styles = StyleSheet.create({
     height: "72%",
     resizeMode: "contain",
   },
-
   characterLeft: {
     width: "28%",
     left: "2%",
   },
-
   characterRight: {
     width: "28%",
     right: "4%",
   },
-
   characterCenter: {
     left: "30%",
   },
@@ -1950,7 +1635,6 @@ const styles = StyleSheet.create({
     bottom: 7,
     zIndex: 20,
   },
-
   dialogueBox: {
     width: "100%",
     minHeight: 160,
@@ -1960,7 +1644,6 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: -30,
   },
-
   speakerName: {
     position: "absolute",
     top: -1,
@@ -1974,14 +1657,12 @@ const styles = StyleSheet.create({
     textAlignVertical: "center",
     includeFontPadding: false,
   },
-
   dialogueText: {
     color: "#0f0f0f",
     fontSize: 17,
     lineHeight: 24,
     textAlign: "center",
   },
-
   dialogueTranslation: {
     color: "#141414",
     fontSize: 14,
@@ -1997,7 +1678,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-
   choiceParchmentWrapper: {
     width: "100%",
     alignItems: "center",
@@ -2005,7 +1685,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 100,
     paddingVertical: 25,
   },
-
   choiceParchmentBox: {
     width: "100%",
     minHeight: 180,
@@ -2016,6 +1695,7 @@ const styles = StyleSheet.create({
 
   quizParchmentWrapper: {
     width: "85%",
+    marginTop: -40,
     marginBottom: 10,
     alignItems: "center",
     justifyContent: "center",
@@ -2031,12 +1711,11 @@ const styles = StyleSheet.create({
   },
 
   choiceQuestion: {
-    color: "#fdfdfd",
+    color: "#ecc28c",
     fontSize: 18,
     lineHeight: 25,
     textAlign: "center",
   },
-
   choicePrompt: {
     color: "#d7cfbe",
     fontSize: 16,
@@ -2044,7 +1723,6 @@ const styles = StyleSheet.create({
     marginTop: 15,
     fontWeight: "bold",
   },
-
   choiceButtonsGrid: {
     width: "98%",
     alignSelf: "center",
@@ -2054,11 +1732,9 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
     gap: 12,
   },
-
   choiceImageButton: {
     width: "47%",
   },
-
   choiceImageButtonBg: {
     width: "100%",
     minHeight: 90,
@@ -2067,7 +1743,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 12,
   },
-
   choiceButtonText: {
     color: "#000000",
     fontSize: 16,
@@ -2075,47 +1750,94 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 
+  quizScreen: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingBottom: 65,
+  },
+
+  quizQuestionWrapper: {
+    width: "85%",
+    marginTop: 90,
+    marginBottom: 10,
+    alignItems: "center",
+  },
+  quizQuestionBox: {
+    width: "100%",
+    minHeight: 175,
+    justifyContent: "center",
+    padding: 10,
+  },
+
+  quizQuestionText: {
+    color: "#63534a",
+    fontSize: 18,
+    lineHeight: 25,
+    textAlign: "center",
+  },
+
+  // <--- RESTORED THE PROPER GRID STYLE
   quizButtonsGrid: {
-    width: "90%",
+    width: "98%",
     alignSelf: "center",
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
-    gap: 15,
+    alignItems: "stretch",
+    gap: 12,
   },
 
   quizImageButton: {
     width: "45%",
+    height: 65, // <--- FIXED: Increased height for 2 lines of text
   },
-
   quizImageButtonBg: {
     width: "100%",
-    minHeight: 65,
+    height: "100%",
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 10,
-    paddingVertical: 10,
   },
-
   quizButtonText: {
-    color: "#371f10",
-    fontSize: 13,
+    color: "#724c35",
+    fontSize: 14,
     lineHeight: 20,
     textAlign: "center",
     fontWeight: "bold",
   },
 
+  quizSubmitWrapper: {
+    marginTop: 5,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  quizSubmitVisible: {
+    opacity: 1,
+  },
+  quizSubmitHidden: {
+    opacity: 0,
+  },
+  quizSubmitBtn: {
+    width: 120,
+    height: 70,
+  },
+  quizSubmitImage: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "contain",
+  },
+
   quizCorrectPrompt: {
     color: "#218838",
-    fontSize: 16,
+    fontSize: 18,
     textAlign: "center",
     marginTop: 15,
     fontWeight: "bold",
   },
-
   quizIncorrectPrompt: {
-    color: "#dc3545",
-    fontSize: 16,
+    color: "#af1121",
+    fontSize: 18,
     textAlign: "center",
     marginTop: 15,
     fontWeight: "bold",

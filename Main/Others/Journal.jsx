@@ -3,7 +3,7 @@ import { Animated, Easing, ImageBackground, Text, View, Pressable, Image, useWin
 import Journal from './Journal.json';
 import styles from '../../Styles/Others/StyleJournal';
 import { useJournal } from '../../Main/Others/JournalContext'; 
-import { REMNANT_DATA } from '../RemnantData';
+import { REMNANT_DATA } from '../GameScreen/RemnantData';
 
 const TABS = ['Timeline', 'Character Profiles', 'Minigame Collections', 'Glossary'];
 const TAB_IMAGES = {
@@ -38,10 +38,9 @@ const SWIPE_DIRECTION_RATIO = 1.5;
 
 const TIMELINE_TITLE = require('../../assets/Journal_Assets/Timeline_Title.png');
 const TIMELINE_BOX = require('../../assets/Journal_Assets/Timeline_box.png');
-
-const BOX_STEP = 17.5;
-const LEFT_BOX_TOP = 21;
-const RIGHT_BOX_TOP = 21;
+const BOX_STEP = 18.5;
+const LEFT_BOX_TOP = 24;
+const RIGHT_BOX_TOP = 24;
 
 const PROFILE_TITLE = require('../../assets/Journal_Assets/Profile_Title.png');
 const PROFILE_CARD = require('../../assets/Journal_Assets/Profile_w_Details_Box.png');
@@ -54,7 +53,7 @@ const LEFT_CARD_STEP = 30;
 const RIGHT_CARD_TOP = 10.5;
 const RIGHT_CARD_STEP = 29.0;
 
-const PANEL_CROP = 0.44;
+const PANEL_CROP = 0.01;
 
 const REMNANTS_TITLE = require('../../assets/Journal_Assets/Remnants_Title.png');
 const REMNANTS_BOX_LOCKED = require('../../assets/Journal_Assets/Remnants_Box_locked.png');
@@ -79,12 +78,16 @@ const PORTRAITS = {
   'Deodato Arellano': require('../../assets/Journal_Profiles/Deodato Arellano.png'),
   'Eulogio Despujol': require('../../assets/Journal_Profiles/Eulogio Despujol.png'),
   'Domingo Franco': require('../../assets/Journal_Profiles/Domingo Franco.png'),
+  //'Valentin Diaz': require('../../assets/Journal_Profiles/Valentin Diaz.png'),
   'Ladislao Diwa': require('../../assets/Journal_Profiles/Ladislao Diwa.png'),
   'Jose Dizon': require('../../assets/Journal_Profiles/Jose Dizon.png'),
   'Teodoro Plata': require('../../assets/Journal_Profiles/Teodoro Plata.png'),
   "Emilio Jacinto ('Brains of the Katipunan')": require('../../assets/Journal_Profiles/Emilio Jacinto.png'),
   'Gregoria de Jesús': require('../../assets/Journal_Profiles/Gregoria de Jesus.png'),
   "Melchora Aquino ('Tandang Sora')": require('../../assets/Journal_Profiles/Melchora Aquino.png'),
+  //'Teodoro Patiño': require('../../assets/Journal_Profiles/Teodoro Patino.png'),
+  //'Honoria Patiño': require('../../assets/Journal_Profiles/Honoria Patino.png'),
+  //'Sor Teresa de Jesús': require('../../assets/Journal_Profiles/Sor Teresa de Jesus.png'),
   'Father Mariano Gil': require('../../assets/Journal_Profiles/Father Mariano Gil.png'),
   'Mariano Álvarez': require('../../assets/Journal_Profiles/Mariano Alvarez.png'),
   'Emilio Aguinaldo': require('../../assets/Journal_Profiles/Emilio Aguinaldo.png'),
@@ -95,6 +98,8 @@ const PORTRAITS = {
   'Ambrosio Rianzares Bautista': require('../../assets/Journal_Profiles/Ambrosio Bautista.png'),
   'Admiral George Dewey': require('../../assets/Journal_Profiles/Admiral Dewey.png'),
   'E. Spencer Pratt': require('../../assets/Journal_Profiles/E. Spencer Pratt.png'),
+  //'Rounsevelle Wildman': require('../../assets/Journal_Profiles/Rounsevelle Wildman.png'),
+  //'U.S. President William McKinley': require('../../assets/Journal_Profiles/William McKinley.png'),
 };
 
 function BookmarkTab({ image, openImage, index, active, onPress }) {
@@ -376,13 +381,6 @@ function CharacterCard({ name, content, side, slot, unit, onPress }) {
       </View>
     </Pressable>
   );
-}
-
-function getAppearance(c) {
-  const parts = String(c.part ?? '').split(',').map((p) => p.trim()).filter(Boolean);
-  const chapter = `Chapter ${c.chapter}`;
-  if (parts.length === 0) return chapter;
-  return `${chapter} · Part${parts.length > 1 ? 's' : ''} ${parts.join(', ')}`;
 }
 
 function Journalbook({ navigation }) {
@@ -690,15 +688,17 @@ function Journalbook({ navigation }) {
               <View key="char-detail" style={styles.spreadRow} pointerEvents="box-none">
                 <View style={styles.spreadPage} pointerEvents="box-none">
                   <View style={styles.detailFrame}>
-                    {!PORTRAITS[selectedChar.name] && (
-                      <Image source={PROFILE_FRAME} style={styles.fillAll} resizeMode="stretch" />
+                    {/* Render the frame first as the background */}
+                    <Image source={PROFILE_FRAME} style={styles.fillAll} resizeMode="stretch" />
+                    
+                    {/* Render the portrait on top of it */}
+                    {PORTRAITS[selectedChar.name] && (
+                      <Image source={PORTRAITS[selectedChar.name]} style={styles.detailPortraitSlot} resizeMode="cover" />
                     )}
-                    {PORTRAITS[selectedChar.name] && <Image source={PORTRAITS[selectedChar.name]} style={styles.detailPortraitSlot} resizeMode="cover" />}
                   </View>
                   <View style={styles.detailNameBox}>
                     <Text style={[styles.detailName, { fontSize: Math.max(12, 64 * unit) }]} numberOfLines={2} adjustsFontSizeToFit>{selectedChar.name}</Text>
                   </View>
-                  <Text style={[styles.detailInfo, { fontSize: Math.max(9, 34 * unit) }]}>{getAppearance(selectedChar)}</Text>
                   <Pressable style={styles.detailBack} onPress={() => setSelectedChar(null)}><Text style={styles.backLink}>← Back to profiles</Text></Pressable>
                 </View>
                 <View style={styles.spreadPage} pointerEvents="box-none">

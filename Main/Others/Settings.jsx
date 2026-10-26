@@ -7,42 +7,50 @@ import {
   ImageBackground,
   Pressable,
   StyleSheet,
+  TouchableOpacity,
   useWindowDimensions
 } from 'react-native';
-import Sound_clicks from '../../Components/Sound_clicks';
 import useScale from '../../Components/ScreenScaler';
+import Sound_clicks from '../../Components/Sound_clicks';
 import styles from '../../Styles/Others/StyleSettings';
 import { useAudio } from '../../Audiostore';
 
 const BG_PARCHMENT = require('../../assets/Settings_Assets/Settings_Base.png');
 
-const BTN_SAVES = require('../../assets/Settings_Assets/Settings_Saves.png');
+const BTN_SAVES    = require('../../assets/Settings_Assets/Settings_Saves.png');
 const BTN_GAMEPLAY = require('../../assets/Settings_Assets/Settings_Gameplay.png');
-const BTN_AUDIO = require('../../assets/Settings_Assets/Settings_Audio.png');
-const BTN_DISPLAY = require('../../assets/Settings_Assets/Settings_Display.png');
-const BTN_SOURCES = require('../../assets/Settings_Assets/Settings_Sources.png');
-const BTN_ABOUT = require('../../assets/Settings_Assets/Settings_About.png');
-const BTN_EXIT = require('../../assets/Settings_Assets/Settings_ExitGame.png');
+const BTN_AUDIO    = require('../../assets/Settings_Assets/Settings_Audio.png');
+const BTN_DISPLAY  = require('../../assets/Settings_Assets/Settings_Display.png');
+const BTN_SOURCES  = require('../../assets/Settings_Assets/Settings_Sources.png');
+const BTN_ABOUT    = require('../../assets/Settings_Assets/Settings_About.png');
+const BTN_EXIT     = require('../../assets/Settings_Assets/Settings_ExitGame.png');
+
+const BTN_SAVES_C    = BTN_SAVES;
+const BTN_GAMEPLAY_C = BTN_GAMEPLAY;
+const BTN_AUDIO_C    = BTN_AUDIO;
+const BTN_DISPLAY_C  = BTN_DISPLAY;
+const BTN_SOURCES_C  = BTN_SOURCES;
+const BTN_ABOUT_C    = BTN_ABOUT;
+const BTN_EXIT_C     = BTN_EXIT;
 
 const PANEL_ASPECT = 1205 / 630;
-
 const BTN_ASPECT = 2.0;
 const BTN_W = 0.43;
 const COLS = [0.00005, 0.29, 0.58];
 const ROWS = [0.10, 0.36];
 
 const EXIT_ASPECT = 3.0;
-const EXIT_W = 0.35;
-const EXIT_LEFT = 0.325;
-const EXIT_TOP = 0.71;
+const EXIT_W = 0.19;
+const EXIT_LEFT = 0.41;
+const EXIT_TOP = 0.74;
 
 const SETTING_ITEMS = [
-  { label: 'Saves',    image: BTN_SAVES,    route: 'SaveScreen',     col: COLS[0], row: ROWS[0] },
-  { label: 'Gameplay', image: BTN_GAMEPLAY, route: 'GameplayScreen', col: COLS[1], row: ROWS[0] },
-  { label: 'Audio',    image: BTN_AUDIO,    route: 'AudioScreen',    col: COLS[2], row: ROWS[0] },
-  { label: 'Display',  image: BTN_DISPLAY,  route: 'DisplayScreen',  col: COLS[0], row: ROWS[1] },
-  { label: 'Sources',  image: BTN_SOURCES,  route: 'Sources',        col: COLS[1], row: ROWS[1] },
-  { label: 'About',    image: BTN_ABOUT,    route: 'About',          col: COLS[2], row: ROWS[1] },
+  { label: 'Saves',    image: BTN_SAVES,    clicked: BTN_SAVES_C,    route: 'SaveScreen',     col: COLS[0], row: ROWS[0] },
+  { label: 'Gameplay', image: BTN_GAMEPLAY, clicked: BTN_GAMEPLAY_C, route: 'GameplayScreen', col: COLS[1], row: ROWS[0] },
+  { label: 'Audio',    image: BTN_AUDIO,    clicked: BTN_AUDIO_C,    route: 'AudioScreen',    col: COLS[2], row: ROWS[0] },
+  { label: 'Display',  image: BTN_DISPLAY,  clicked: BTN_DISPLAY_C,  route: 'DisplayScreen',  col: COLS[0], row: ROWS[1] },
+  { label: 'Sources',  image: BTN_SOURCES,  clicked: BTN_SOURCES_C,  route: 'Sources',        col: COLS[1], row: ROWS[1] },
+  { label: 'About',    image: BTN_ABOUT,    clicked: BTN_ABOUT_C,    route: 'About',          col: COLS[2], row: ROWS[1] },
 ];
 
 const GUIDE_LEFT = [
@@ -82,23 +90,24 @@ const GUIDE_PAGES = [
 ];
 
 function AnimatedTopButton({ normalSource, pressedSource, onPress, imageStyle }) {
+  const { playSfx } = useAudio();
   const [pressed, setPressed] = useState(false);
   const scale = useRef(new Animated.Value(1)).current;
   const translateY = useRef(new Animated.Value(0)).current;
 
-  const animate = (isPressed) => {
+  const animatePress = (isPressed) => {
     setPressed(isPressed);
     Animated.parallel([
       Animated.spring(scale, {
-        toValue: isPressed ? 0.9 : 1,
-        speed: isPressed ? 22 : 18,
-        bounciness: isPressed ? 6 : 12,
+        toValue: isPressed ? 0.88 : 1,
+        speed: isPressed ? 24 : 18,
+        bounciness: isPressed ? 8 : 12,
         useNativeDriver: true,
       }),
       Animated.spring(translateY, {
-        toValue: isPressed ? 3 : 0,
-        speed: isPressed ? 22 : 18,
-        bounciness: isPressed ? 4 : 10,
+        toValue: isPressed ? 4 : 0,
+        speed: isPressed ? 24 : 18,
+        bounciness: isPressed ? 4 : 12,
         useNativeDriver: true,
       }),
     ]).start();
@@ -106,17 +115,21 @@ function AnimatedTopButton({ normalSource, pressedSource, onPress, imageStyle })
 
   return (
     <Animated.View style={{ transform: [{ scale }, { translateY }] }}>
-      <Sound_clicks
-        onPressIn={() => animate(true)}
-        onPressOut={() => animate(false)}
-        onPress={onPress}
+      <TouchableOpacity
+        activeOpacity={1}
+        onPressIn={() => animatePress(true)}
+        onPressOut={() => animatePress(false)}
+        onPress={() => {
+          playSfx("dialogueClick");
+          onPress();
+        }}
       >
         <Image
           source={pressed ? pressedSource : normalSource}
           style={imageStyle}
           resizeMode="contain"
         />
-      </Sound_clicks>
+      </TouchableOpacity>
     </Animated.View>
   );
 }
@@ -164,24 +177,25 @@ function AnimatedHelpButton({ onPress, size }) {
   );
 }
 
-function AnimatedPanelButton({ source, onPress, containerStyle, imageStyle }) {
+function AnimatedPanelButton({ source, pressedSource, onPress, containerStyle, imageStyle }) {
+  const { playSfx } = useAudio();
   const [pressed, setPressed] = useState(false);
   const scale = useRef(new Animated.Value(1)).current;
   const translateY = useRef(new Animated.Value(0)).current;
 
-  const animate = (isPressed) => {
+  const animatePress = (isPressed) => {
     setPressed(isPressed);
     Animated.parallel([
       Animated.spring(scale, {
-        toValue: isPressed ? 0.95 : 1,
-        speed: isPressed ? 30 : 18,
-        bounciness: isPressed ? 0 : 10,
+        toValue: isPressed ? 0.88 : 1,
+        speed: isPressed ? 24 : 18,
+        bounciness: isPressed ? 8 : 12,
         useNativeDriver: true,
       }),
       Animated.spring(translateY, {
-        toValue: isPressed ? 3 : 0,
-        speed: isPressed ? 30 : 18,
-        bounciness: isPressed ? 0 : 8,
+        toValue: isPressed ? 4 : 0,
+        speed: isPressed ? 24 : 18,
+        bounciness: isPressed ? 4 : 12,
         useNativeDriver: true,
       }),
     ]).start();
@@ -190,15 +204,18 @@ function AnimatedPanelButton({ source, onPress, containerStyle, imageStyle }) {
   return (
     <View style={containerStyle}>
       <Animated.View style={{ flex: 1, transform: [{ scale }, { translateY }] }}>
-        <Sound_clicks
+        <TouchableOpacity
           style={{ flex: 1 }}
-          onPressIn={() => animate(true)}
-          onPressOut={() => animate(false)}
-          onPress={onPress}
+          activeOpacity={1}
+          onPressIn={() => animatePress(true)}
+          onPressOut={() => animatePress(false)}
+          onPress={() => {
+            playSfx("dialogueClick");
+            onPress();
+          }}
         >
-          <Image source={source} style={imageStyle} resizeMode="stretch" />
-          {pressed && <View pointerEvents="none" style={styles.pressOverlay} />}
-        </Sound_clicks>
+          <Image source={pressed ? pressedSource : source} style={imageStyle} resizeMode="stretch" />
+        </TouchableOpacity>
       </Animated.View>
     </View>
   );
@@ -395,6 +412,7 @@ function Setting_screen({ navigation }) {
             <AnimatedPanelButton
               key={item.label}
               source={item.image}
+              pressedSource={item.clicked}
               onPress={() => navigation.navigate(item.route)}
               containerStyle={{
                 position: 'absolute',
@@ -409,6 +427,7 @@ function Setting_screen({ navigation }) {
 
           <AnimatedPanelButton
             source={BTN_EXIT}
+            pressedSource={BTN_EXIT_C}
             onPress={() => setShowExitConfirm(true)}
             containerStyle={{
               position: 'absolute',
@@ -439,19 +458,19 @@ function Setting_screen({ navigation }) {
             </Text>
 
             <View style={styles.confirmButtonsRow}>
-              <Sound_clicks
+              <TouchableOpacity
                 style={styles.confirmButtonNo}
                 onPress={() => setShowExitConfirm(false)}
               >
                 <Text style={styles.confirmBtnText}>No</Text>
-              </Sound_clicks>
+              </TouchableOpacity>
 
-              <Sound_clicks
+              <TouchableOpacity
                 style={styles.confirmButtonYes}
                 onPress={handleExitToMenu}
               >
                 <Text style={styles.confirmBtnText}>Yes</Text>
-              </Sound_clicks>
+              </TouchableOpacity>
             </View>
           </View>
         </View>

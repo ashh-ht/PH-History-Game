@@ -20,8 +20,8 @@ const IMG = {
   button: require("../../../assets/buttons/choice_button.png"),
 };
 
-const CEDULA = require("../../../assets/Minigames/Part1/Part5/Cedula.jpg");
-const CEDULA_TORN = require("../../../assets/Minigames/Part1/Part5/Cedula Torn.jpg");
+const CEDULA = require("../../../assets/Minigames/Part5/Cedula.jpg");
+const CEDULA_TORN = require("../../../assets/Minigames/Part5/Cedula Torn.jpg");
 
 
 const PANEL_HAS_TAB = false;

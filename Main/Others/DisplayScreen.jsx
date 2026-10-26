@@ -17,18 +17,17 @@ import { useDisplaySettings, MIN_BOX_OPACITY } from './DisplaySetting';
 const BG_BASE = require('../../assets/Settings_Assets/Display_Base.png');
 const PANEL_FONT_SIZE = require('../../assets/Settings_Assets/Display_FontSize.png');
 const BANNER_OPACITY = require('../../assets/Settings_Assets/Display_DialogueOpacity.png');
+
 const CIRCLE_THUMB = require('../../assets/Settings_Assets/CircleButton.png');
+const CIRCLE_THUMB_CHECKED = require('../../assets/Settings_Assets/CircleButton_Checked.png');
 
 const PANEL_ASPECT = 1205 / 630;
 
-const ROW_LEFT = 215 / 1920;
-const ROW_W = 370 / 1920;
-const ROW_H = 108 / 1080;
-const CIRCLE_CX = 252 / 1920;
-const CIRCLE_W = 84 / 1920;
-const CIRCLE_SCALE = 2;
-const SELECTED_INSET = '14%';
-const ACTIVE_GREEN = '#4CAF50';
+const CIRCLE_W = 90/1920;
+const ROW_H = 100/1080;
+const ROW_LEFT = 200/1920;
+const ROW_W = 400/1920;
+const CIRCLE_CX = 250/1920;
 
 const FONT_OPTIONS = [
   { value: 'Small', y: 473 / 1080 },
@@ -36,14 +35,14 @@ const FONT_OPTIONS = [
   { value: 'Large', y: 708 / 1080 },
 ];
 
-const SLIDER_LEFT = 703 / 1920;
-const SLIDER_W = 1000 / 1920;
-const SLIDER_CY = 670 / 1080;
-const SLIDER_H = 170 / 1080;
-const THUMB_W = 64 / 1920;
-const THUMB_SCALE = 4.2;
-const TRACK_H = 14 / 1080;
-const PERCENT_FONT = 54 / 1920;
+const SLIDER_LEFT = 703/1920;
+const SLIDER_W = 1000/1920;
+const SLIDER_CY = 670/1080;
+const SLIDER_H = 170/1080;
+const THUMB_W = 90/1920;
+const THUMB_SCALE = 1;
+const TRACK_H = 16/1080;
+const PERCENT_FONT = 68/1920;
 
 function OpacitySlider({ panelW, panelH, value, onChange }) {
   const [width, setWidth] = useState(0);
@@ -87,7 +86,7 @@ function OpacitySlider({ panelW, panelH, value, onChange }) {
     <View
       ref={containerRef}
       collapsable={false}
-      style={{ flex: 1 }}
+      style={styles.sliderContainer}
       onLayout={(e) => {
         widthRef.current = e.nativeEvent.layout.width;
         setWidth(e.nativeEvent.layout.width);
@@ -95,13 +94,14 @@ function OpacitySlider({ panelW, panelH, value, onChange }) {
       {...pan.panHandlers}
     >
       <View
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: handleLeft + thumb / 2 - percentFont * 1.5,
-          width: percentFont * 3,
-          alignItems: 'center',
-        }}
+        style={[
+          styles.percentLabel,
+          {
+            top: -percentFont * 0.8,
+            left: handleLeft + thumb / 2 - percentFont * 1.5,
+            width: percentFont * 3,
+          },
+        ]}
         pointerEvents="none"
       >
         <Text style={[styles.percentText, { fontSize: percentFont }]} allowFontScaling={false}>
@@ -111,47 +111,47 @@ function OpacitySlider({ panelW, panelH, value, onChange }) {
 
       <View
         pointerEvents="none"
-        style={{
-          position: 'absolute',
-          left: thumb / 2,
-          right: 0,
-          top: '50%',
-          marginTop: -trackH / 2 + percentFont * 0.2,
-          height: trackH,
-          borderRadius: trackH / 2,
-          backgroundColor: '#8C9395',
-        }}
+        style={[
+          styles.trackFill,
+          {
+            left: thumb / 2,
+            marginTop: -trackH / 2 + percentFont * 0.2,
+            height: trackH,
+            borderRadius: trackH / 2,
+          },
+        ]}
       />
 
       <View
         pointerEvents="none"
-        style={{
-          position: 'absolute',
-          left: thumb / 2,
-          top: '50%',
-          marginTop: -trackH / 2 + percentFont * 0.2,
-          width: handleLeft,
-          height: trackH,
-          borderRadius: trackH / 2,
-          backgroundColor: '#9D704E',
-        }}
+        style={[
+          styles.progressFill,
+          {
+            left: thumb / 2,
+            marginTop: -trackH / 2 + percentFont * 0.2,
+            width: handleLeft,
+            height: trackH,
+            borderRadius: trackH / 2,
+          },
+        ]}
       />
 
       <View
         pointerEvents="none"
-        style={{
-          position: 'absolute',
-          left: handleLeft,
-          top: '50%',
-          marginTop: -thumb / 2 + percentFont * 0.2,
-          width: thumb,
-          height: thumb,
-        }}
+        style={[
+          styles.thumbContainer,
+          {
+            left: handleLeft,
+            marginTop: -thumb / 2 + percentFont * 0.2,
+            width: thumb,
+            height: thumb,
+          },
+        ]}
       >
         <Image
           source={CIRCLE_THUMB}
           resizeMode="contain"
-          style={{ width: '100%', height: '100%', transform: [{ scale: THUMB_SCALE }] }}
+          style={[styles.thumbImage, { transform: [{ scale: THUMB_SCALE }] }]}
         />
       </View>
     </View>
@@ -194,10 +194,7 @@ export default function DisplayScreen({ navigation }) {
       top: Math.max(insets.top, 12 * s),
       left: Math.max(insets.left, 20 * s),
     },
-    topIconImage: {
-      width: 40 * s,
-      height: 40 * s,
-    },
+    topIconImage: { width: 40 * s, height: 40 * s },
   };
 
   return (
@@ -213,8 +210,18 @@ export default function DisplayScreen({ navigation }) {
 
       <View style={{ width: panelW, height: panelH }}>
         <ImageBackground source={BG_BASE} style={{ width: panelW, height: panelH }} resizeMode="stretch">
-          <Image source={PANEL_FONT_SIZE} style={{ position: 'absolute', width: panelW, height: panelH }} resizeMode="stretch" pointerEvents="none" />
-          <Image source={BANNER_OPACITY} style={{ position: 'absolute', width: panelW, height: panelH }} resizeMode="stretch" pointerEvents="none" />
+          <Image
+            source={PANEL_FONT_SIZE}
+            style={[styles.bgImageOverlay, { width: panelW, height: panelH }]}
+            resizeMode="stretch"
+            pointerEvents="none"
+          />
+          <Image
+            source={BANNER_OPACITY}
+            style={[styles.bgImageOverlay, { width: panelW, height: panelH }]}
+            resizeMode="stretch"
+            pointerEvents="none"
+          />
 
           {FONT_OPTIONS.map((opt) => {
             const selected = fontSize === opt.value;
@@ -223,43 +230,28 @@ export default function DisplayScreen({ navigation }) {
               <Sound_clicks
                 key={opt.value}
                 onPress={() => setFontSize(opt.value)}
-                style={{
-                  position: 'absolute',
-                  left: ROW_LEFT * panelW,
-                  top: (opt.y - ROW_H / 2) * panelH,
-                  width: ROW_W * panelW,
-                  height: ROW_H * panelH,
-                  justifyContent: 'center',
-                }}
+                style={[
+                  styles.radioRow,
+                  {
+                    left: ROW_LEFT * panelW,
+                    top: (opt.y - ROW_H / 2) * panelH,
+                    width: ROW_W * panelW,
+                    height: ROW_H * panelH,
+                  },
+                ]}
               >
-                <View
-                  style={{
-                    position: 'absolute',
-                    left: (CIRCLE_CX - CIRCLE_W / 2 - ROW_LEFT) * panelW,
-                    width: size,
-                    height: size,
-                  }}
-                >
-                  <Image
-                    source={CIRCLE_THUMB}
-                    resizeMode="contain"
-                    style={{ width: '100%', height: '100%', transform: [{ scale: CIRCLE_SCALE }] }}
-                  />
-                  {selected && (
-                    <View
-                      pointerEvents="none"
-                      style={{
-                        position: 'absolute',
-                        top: SELECTED_INSET,
-                        left: SELECTED_INSET,
-                        right: SELECTED_INSET,
-                        bottom: SELECTED_INSET,
-                        borderRadius: size / 2,
-                        backgroundColor: ACTIVE_GREEN,
-                      }}
-                    />
-                  )}
-                </View>
+                <Image
+                  source={selected ? CIRCLE_THUMB_CHECKED : CIRCLE_THUMB}
+                  resizeMode="stretch"
+                  style={[
+                    styles.radioCircle,
+                    {
+                      left: (CIRCLE_CX - CIRCLE_W / 2 - ROW_LEFT) * panelW,
+                      width: size,
+                      height: size,
+                    },
+                  ]}
+                />
               </Sound_clicks>
             );
           })}
@@ -302,5 +294,41 @@ const styles = StyleSheet.create({
     fontFamily: "serif",
     color: "#5A4A32",
     fontWeight: "bold",
+  },
+  sliderContainer: {
+    flex: 1,
+  },
+  percentLabel: {
+    position: 'absolute',
+    alignItems: 'center',
+  },
+  trackFill: {
+    position: 'absolute',
+    right: 0,
+    top: '50%',
+    backgroundColor: '#8C9395',
+  },
+  progressFill: {
+    position: 'absolute',
+    top: '50%',
+    backgroundColor: '#9D704E',
+  },
+  thumbContainer: {
+    position: 'absolute',
+    top: '50%',
+  },
+  thumbImage: {
+    width: '100%',
+    height: '100%',
+  },
+  bgImageOverlay: {
+    position: 'absolute',
+  },
+  radioRow: {
+    position: 'absolute',
+    justifyContent: 'center',
+  },
+  radioCircle: {
+    position: 'absolute',
   },
 });

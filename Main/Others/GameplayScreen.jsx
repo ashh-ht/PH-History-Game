@@ -15,18 +15,20 @@ import { useGameplaySettings } from './GameplaySetting';
 const BG_BASE = require('../../assets/Settings_Assets/Gameplay_Base.png');
 const BG_TEXT_SPEED = require('../../assets/Settings_Assets/Gameplay_TextSpeed.png');
 const BG_PLAY_MODE = require('../../assets/Settings_Assets/Gameplay_PlayMode.png');
+
 const IMG_CIRCLE = require('../../assets/Settings_Assets/CircleButton.png');
+const IMG_CIRCLE_CHECKED = require('../../assets/Settings_Assets/CircleButton_Checked.png');
 
 const PANEL_ASPECT = 1205 / 630;
 
-const SPEED_ROW = { left: 255/1920, w: 380/1920, cx: 318/1920 };
-const AUTO_ROW = { left: 870/1920, w: 330/1920, cx: 921/1920 };
-const DELAY_ROW = { left: 1288/1920, w: 410/1920, cx: 1339/1920 };
-const DELAY_DIM = { left: 1285/1920, top: 440/1080, w: 415/1920, h: 320/1080 };
-const CIRCLE_W = 84/1920;
-const ROW_H = 108/1080;
-const ACTIVE_GREEN = '#4CAF50';
-const DOT_INSET = '18%';
+// BIGGER RADIO CIRCLES
+const CIRCLE_W = 90/1920;  
+const ROW_H = 100/1080;     
+
+const SPEED_ROW = { left: 240/1920, w: 410/1920, cx: 318/1920 };
+const AUTO_ROW = { left: 855/1920, w: 350/1920, cx: 921/1920 };
+const DELAY_ROW = { left: 1273/1920, w: 440/1920, cx: 1339/1920 };
+const DELAY_DIM = { left: 1270/1920, top: 420/1080, w: 445/1920, h: 360/1080 };
 
 const SPEED_OPTIONS = [
   { value: 'Slow', y: 473/1080 },
@@ -81,34 +83,16 @@ function RadioRow({ panelW, panelH, row, y, selected, onPress, disabled }) {
         justifyContent: 'center',
       }}
     >
-      <View
+      <Image
+        source={selected ? IMG_CIRCLE_CHECKED : IMG_CIRCLE}
+        resizeMode="stretch"
         style={{
           position: 'absolute',
           left: (row.cx - CIRCLE_W / 2 - row.left) * panelW,
           width: size,
           height: size,
         }}
-      >
-        <Image
-          source={IMG_CIRCLE}
-          resizeMode="contain"
-          style={{ width: '100%', height: '100%' }}
-        />
-        {selected && (
-          <View
-            pointerEvents="none"
-            style={{
-              position: 'absolute',
-              top: DOT_INSET,
-              left: DOT_INSET,
-              right: DOT_INSET,
-              bottom: DOT_INSET,
-              borderRadius: size / 2,
-              backgroundColor: ACTIVE_GREEN,
-            }}
-          />
-        )}
-      </View>
+      />
     </Sound_clicks>
   );
 }
@@ -127,10 +111,7 @@ export default function GameplayScreen({ navigation }) {
       top: Math.max(insets.top, 12 * s),
       left: Math.max(insets.left, 20 * s),
     },
-    topIconImage: {
-      width: 40 * s,
-      height: 40 * s,
-    },
+    topIconImage: { width: 40 * s, height: 40 * s },
   };
 
   return (
@@ -145,12 +126,7 @@ export default function GameplayScreen({ navigation }) {
       </View>
 
       <View style={{ width: panelW, height: panelH }}>
-        <ImageBackground
-          source={BG_BASE}
-          style={{ width: panelW, height: panelH }}
-          resizeMode="stretch"
-        >
-          {/* Stacks the text images perfectly on top of the base */}
+        <ImageBackground source={BG_BASE} style={{ width: panelW, height: panelH }} resizeMode="stretch">
           <Image source={BG_TEXT_SPEED} style={{ position: 'absolute', width: panelW, height: panelH }} resizeMode="stretch" pointerEvents="none" />
           <Image source={BG_PLAY_MODE} style={{ position: 'absolute', width: panelW, height: panelH }} resizeMode="stretch" pointerEvents="none" />
 

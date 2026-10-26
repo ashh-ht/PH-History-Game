@@ -131,7 +131,7 @@ function VoyageMinigame({ onComplete, onSettings }) {
     const lastSecondRef = useRef(-1);
     const startTimeRef = useRef(Date.now());
 
-    // --- pause support ---
+
     const pausedRef = useRef(paused);
     const pausedAtRef = useRef(null);
     pausedRef.current = paused;
@@ -381,7 +381,6 @@ function VoyageMinigame({ onComplete, onSettings }) {
                 <View style={styles.darkOverlay} />
 
                 <View style={styles.header}>
-                    {/* LEFT: health */}
                     <View style={styles.panel}>
                         <Text style={styles.panelLabel}>Health</Text>
                         <Text style={styles.panelValue}>
@@ -389,7 +388,6 @@ function VoyageMinigame({ onComplete, onSettings }) {
                         </Text>
                     </View>
 
-                    {/* LEFT (next to health): supplies */}
                     <View style={styles.panel}>
                         <Text style={styles.panelLabel}>SUPPLIES</Text>
                         <Text style={styles.panelValue}>
@@ -398,7 +396,6 @@ function VoyageMinigame({ onComplete, onSettings }) {
                     </View>
                 </View>
 
-                {/* CENTER: time */}
                 <View style={styles.timeWrap} pointerEvents="none">
                     <View style={styles.panel}>
                         <Text style={styles.panelLabel}>TIME</Text>
@@ -408,7 +405,6 @@ function VoyageMinigame({ onComplete, onSettings }) {
                     </View>
                 </View>
 
-                {/* WAVES */}
                 {waves.map((item) => (
                     <Image
                         key={item.id}
@@ -424,7 +420,6 @@ function VoyageMinigame({ onComplete, onSettings }) {
                     />
                 ))}
 
-                {/* ROCKS */}
                 {rocks.map((item) => (
                     <Image
                         key={item.id}
@@ -433,7 +428,6 @@ function VoyageMinigame({ onComplete, onSettings }) {
                     />
                 ))}
 
-                {/* SUPPLIES */}
                 {supplies.map((item) => (
                     <Image
                         key={item.id}
@@ -442,7 +436,6 @@ function VoyageMinigame({ onComplete, onSettings }) {
                     />
                 ))}
 
-                {/* PLAYER SHIP */}
                 <Image
                     source={shipSource}
                     style={[styles.ship, { left: shipX, top: shipTop }]}
@@ -463,10 +456,6 @@ function VoyageMinigame({ onComplete, onSettings }) {
                         }}
                     />
                 ))}
-
-                {/* =================================================
-                    CONTROLS
-                ================================================= */}
 
                 <View style={styles.controls}>
                     <Pressable
@@ -495,10 +484,6 @@ function VoyageMinigame({ onComplete, onSettings }) {
                         <Text style={styles.controlText}>▶</Text>
                     </Pressable>
                 </View>
-
-                {/* =================================================
-                    INTRO / INSTRUCTIONS (shown before the game starts)
-                ================================================= */}
 
                 {gameState === 'intro' && (
                     <View style={styles.resultOverlay}>
@@ -533,10 +518,6 @@ function VoyageMinigame({ onComplete, onSettings }) {
                         </View>
                     </View>
                 )}
-
-                {/* =================================================
-                    RESULT SCREEN
-                ================================================= */}
 
                 {(gameState === 'won' || gameState === 'lost') && (
                     <View style={styles.resultOverlay}>
