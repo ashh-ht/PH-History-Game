@@ -46,7 +46,6 @@ const QUIZ_PANELS = [
 ];
 
 const MINIGAMES = {
-  voyage: VoyageMinigame,
   santoNino: SantoNinoMinigame,
   sortingtimeline: TimelineSort,
 };
@@ -163,7 +162,7 @@ function AnimatedChoiceButton({ children, onPress, style }) {
         onPressIn={() => animate(true)}
         onPressOut={() => animate(false)}
         onPress={onPress}
-        style={{ width: "100%", height: "100%" }} // <--- THIS IS THE FIX
+        style={{ width: "100%", height: "100%" }} 
       >
         {children}
       </TouchableOpacity>
@@ -201,39 +200,6 @@ function AnimatedImageButton({ normalSource, pressedSource, onPress, style, imag
     </Animated.View>
   );
 }
-
-const QUIZ_BACKGROUND = require("../../assets/quiz_assets/Quiz_Background.png");
-
-const QUIZ_PANELS = [
-  require("../../assets/quiz_assets/QuizQuestion_1.png"),
-  require("../../assets/quiz_assets/QuizQuestion_2.png"),
-  require("../../assets/quiz_assets/QuizQuestion_3.png"),
-  require("../../assets/quiz_assets/QuizQuestion_4.png"),
-  require("../../assets/quiz_assets/QuizQuestion_5.png"),
-  require("../../assets/quiz_assets/QuizQuestion_6.png"),
-];
-
-// NOTE: voyage is handled separately in PartRenderer (it needs onSettings
-// and draws its own pause overlay), so it is not listed here.
-const MINIGAMES = {
-  santoNino: SantoNinoMinigame,
-  sortingtimeline: TimelineSort,
-};
-
-const MINIGAME_TYPES = new Set([
-  "voyage",
-  "santoNino",
-  "cedula",
-  "decipher",
-  "matching",
-  "chronological",
-  "whoSaidIt",
-  "sortingtimeline",
-  "bloodtrace",
-  "oathtrace",
-]);
-
-const SPEED_MS = { Slow: 60, Normal: 30, Fast: 12 };
 
 function useTypewriter(text, msPerChar, resetKey) {
   const [state, setState] = useState({ key: resetKey, count: 0 });
@@ -739,8 +705,6 @@ function PartRenderer(props) {
     isMinigame,
   ]);
 
-  // Voyage draws its own pause/settings overlay, so it is rendered directly
-  // (no withMinigameOverlay) and only needs onComplete + onSettings.
   if (current?.type === "voyage") {
     return (
       <VoyageMinigame
@@ -980,7 +944,7 @@ function PartRenderer(props) {
     return withOverlay(
       <ImageBackground
         source={QUIZ_BACKGROUND}
-        style={styles.choiceScreen}
+        style={[styles.choiceScreen, { justifyContent: "flex-start", paddingTop: 20 }]}
         resizeMode="cover"
       >
         <View style={styles.quizParchmentWrapper}>
@@ -1181,7 +1145,7 @@ function PartRenderer(props) {
             <ImageBackground
               source={require("../../assets/foreground/quizzing_box.png")}
               style={styles.choiceParchmentBox}
-              imageStyle={[boxImage, { transform: [{ translateX: 32 }] }]}
+              imageStyle={boxImage}
               resizeMode="stretch"
             >
               <Text style={scaled(styles.choiceQuestion)}>
@@ -1212,7 +1176,6 @@ function PartRenderer(props) {
                   <ImageBackground
                     source={buttonSource}
                     style={styles.choiceImageButtonBg}
-                    imageStyle={{ transform: [{ translateX: 10 }] }}
                     resizeMode="stretch"
                   >
                     <Text style={scaled(styles.choiceButtonText)}>
@@ -1229,7 +1192,7 @@ function PartRenderer(props) {
         return withOverlay(
           <ImageBackground
             source={current.background}
-            style={styles.choiceScreen}
+            style={[styles.choiceScreen, { justifyContent: "flex-start" }]}
             resizeMode="cover"
           >
             {choiceContent}
@@ -1671,6 +1634,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 100,
     paddingVertical: 25,
+    marginTop: 20,
   },
   choiceParchmentBox: {
     width: "100%",
@@ -1682,7 +1646,7 @@ const styles = StyleSheet.create({
 
   quizParchmentWrapper: {
     width: "85%",
-    marginTop: -40,
+    marginTop: 0,
     marginBottom: 10,
     alignItems: "center",
     justifyContent: "center",
@@ -1764,7 +1728,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 
-  // <--- RESTORED THE PROPER GRID STYLE
   quizButtonsGrid: {
     width: "98%",
     alignSelf: "center",
@@ -1777,7 +1740,7 @@ const styles = StyleSheet.create({
 
   quizImageButton: {
     width: "45%",
-    height: 65, // <--- FIXED: Increased height for 2 lines of text
+    height: 65,
   },
   quizImageButtonBg: {
     width: "100%",
